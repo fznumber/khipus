@@ -102,15 +102,15 @@
                     </h:inputText>
                 </s:decorate>
 
-                <s:decorate id="measureUnitField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionInput.measureUnit']}</ui:define>
-                    <h:selectOneMenu id="measureUnit"
-                                     value="#{productionInput.measureUnit}"
+                <s:decorate id="measureUnitProductionField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionInput.measureUnitProduction']}</ui:define>
+                    <h:selectOneMenu id="measureUnitProduction"
+                                     value="#{productionInput.measureUnitProduction}"
                                      styleClass="input"
                                      required="true"
                                      tabindex="6">
-                        <s:selectItems value="#{measureUnitProductionList}" var="measureUnit"
-                                       label="#{measureUnit.name}"
+                        <s:selectItems value="#{measureUnitProductionList}" var="measureUnitProduction"
+                                       label="#{measureUnitProduction.name}"
                                        noSelectionLabel=""
                                        hideNoSelectionLabel="false"/>
                         <s:convertEntity/>
