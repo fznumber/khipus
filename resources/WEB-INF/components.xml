@@ -60,6 +60,8 @@
             <value>/WEB-INF/cashbox/pages.xml</value>
             <value>/WEB-INF/dashboard/pages.xml</value>
             <value>/WEB-INF/treasury/pages.xml</value>
+            <value>/WEB-INF/production/pages.xml</value>
+
         </navigation:resources>
     </navigation:pages>
 

@@ -1,0 +1,511 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:app="http://encens.com/products/khipus/facelets"
+                template="/layout/template.xhtml">
+    <ui:define name="pageTitle">
+        <c:choose>
+            <c:when test="#{productionPlanningAction.managed}">
+                #{messages['ProductionPlanning.edit']}
+            </c:when>
+            <c:otherwise>
+                #{messages['ProductionPlanning.new']}
+            </c:otherwise>
+        </c:choose>
+    </ui:define>
+    <ui:param name="bodyWidth" value="100%"/>
+    <ui:param name="selectedTab" value="products"/>
+    <ui:define name="body">
+        <style type="text/css">
+            .top-aligned {
+                vertical-align: top;
+            }
+        </style>
+        <h:form id="productionPlanningForm">
+
+
+            <div class="buttons">
+                <s:div id="ruleBotton1">
+                    <h:commandButton action="#{productionPlanningAction.makeFinalized}" value="#{messages['ProductionPlanning.makeFinalized']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+                    <h:commandButton action="#{productionPlanningAction.makeExecuted}" value="#{messages['ProductionPlanning.makeExecuted']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+
+                    <h:commandButton action="#{productionPlanningAction.create}" value="#{messages['Common.save']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
+                                     tabindex="1">
+                        <s:defaultAction/>
+                    </h:commandButton>
+                    <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.save']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+                    <h:commandButton value="#{messages['Common.delete']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                                     tabindex="3">
+                        <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
+                    </h:commandButton>
+
+                    <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.cancel']}"
+                                     styleClass="button" immediate="true"
+                                     tabindex="4">
+                    </h:commandButton>
+                </s:div>
+            </div>
+
+            <rich:panel id="productionPlanningPanel">
+                <f:facet name="header">
+                    <c:choose>
+                        <c:when test="#{productionPlanningAction.managed}">
+                            #{messages['ProductionPlanning.edit']}
+                        </c:when>
+                        <c:otherwise>
+                            #{messages['ProductionPlanning.new']}
+                        </c:otherwise>
+                    </c:choose>
+                </f:facet>
+                <h:panelGrid columns="2" width="100%">
+                    <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['ProductionPlanning.date']}</ui:define>
+                        <rich:calendar id="date" value="#{productionPlanning.date}" required="true" readonly="#{productionPlanning.state eq 'EXECUTED'}">
+                            <a4j:support event="onchange" />
+                        </rich:calendar>
+                    </s:decorate>
+                    <h:outputText style="font-weight: bold; font-size:1.2em; color: #{productionPlanning.state == 'PENDING' ? 'red' :(productionPlanning.state == 'EXECUTED' ? 'blue' : 'green')}" value="#{productionPlanning.state == 'PENDING' ? messages['ProductionPlanning.state.pending'] : (productionPlanning.state == 'EXECUTED' ? messages['ProductionPlanning.state.executed'] : messages['ProductionPlanning.state.finalized'])}" />
+                </h:panelGrid>
+
+                <rich:separator />
+                <br />
+                <h:panelGroup id="formulaSet"  >
+                    <a4j:commandButton id="editFormulaButton" value="#{messages['ProductionPlanning.editFormulaButton']}"
+                                       action="#{productionPlanningAction.initEditFormula}" reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
+                                       rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE'}" ajaxSingle="true"/>
+
+                    <a4j:region>
+                        <h:panelGrid columns="2" width="100%" rendered="#{!(productionPlanningAction.formulaState eq 'NONE') and productionPlanning.state eq 'PENDING'}">
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
+                                <h:inputText value="#{productionOrderForPlanning.code}"
+                                             required="false" readonly="true" maxlength="500" styleClass="input" tabindex="5">
+                                </h:inputText>
+                            </s:decorate>
+                            <s:decorate id="processedProductField" template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
+                                <h:inputText id="processedProduct" value="#{processedProductForPlanning.fullName}"
+                                             required="true" maxlength="500" styleClass="input" tabindex="5"
+                                             disabled="#{productionPlanning.state eq 'EXECUTED'}">
+                                </h:inputText>
+                                <a4j:commandLink id="selectProcessedProduct" ajaxSingle="true" immediate="true"
+                                                 tabindex="2"
+                                                 title="#{messages['ProductionPlanning.selectProcessedProduct']}"
+                                                 onclick="Richfaces.showModalPanel('processedProductListModalPanel');"
+                                                 rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionPlanning.state != 'EXECUTED'}">
+                                    <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+                                </a4j:commandLink>
+                            </s:decorate>
+                            <s:decorate id="productCompositionField" template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionPlanning.productComposition']}</ui:define>
+                                <h:selectOneMenu id="productComposition" value="#{productionPlanningAction.productComposition}"
+                                                 styleClass="input" tabindex="6"
+                                                 required="true"
+                                                 disabled="#{productionPlanning.state eq 'EXECUTED'}">
+                                    <s:selectItems value="#{productionPlanningAction.productCompositionList}"
+                                                   var="productCompositionItem"
+                                                   label="#{productCompositionItem.name}"
+                                                   noSelectionLabel="" hideNoSelectionLabel="false"/>
+                                    <s:convertEntity/>
+                                    <a4j:support ajaxSingle="true" event="onchange" reRender="formulaSet"
+                                                 actionListener="#{productionPlanningAction.productCompositionSelected}"/>
+                                </h:selectOneMenu>
+                            </s:decorate>
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionPlanning.producingAmount']}</ui:define>
+                                <h:inputText value="#{productionOrderForPlanning.producingAmount}"
+                                             required="true" styleClass="input" tabindex="5"
+                                             disabled="#{productionPlanning.state eq 'EXECUTED'}">
+                                    <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
+                                                 actionListener="#{productionPlanningAction.evaluateExpressionActionListener}" />
+                                </h:inputText>
+                            </s:decorate>
+
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionPlanning.containerWeight']}</ui:define>
+                                <h:inputText value="#{productionOrderForPlanning.containerWeight}"
+                                             required="false" styleClass="input" tabindex="5" readonly="true"/>
+                            </s:decorate>
+
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionPlanning.totalWeight']}</ui:define>
+                                <h:inputText value="#{productionPlanningAction.totalWeight}"
+                                             required="false" styleClass="input" tabindex="5" readonly="true"/>
+                            </s:decorate>
+                        </h:panelGrid>
+                        <s:div rendered="#{!(productionPlanningAction.formulaState eq 'NONE') and productionPlanning.state eq 'PENDING'}">
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:70%">
+                                        <rich:dataTable value="#{productCompositionForPlanning.productionIngredientList}" var="productionIngredientItem"
+                                                        id="productionIngredientList" styleClass="formRow" width="100%">
+                                            <f:facet name="header">
+                                                <rich:columnGroup>
+                                                    <rich:column>
+                                                        #{messages['ProductionPlanning.inputName']}
+                                                    </rich:column>
+                                                    <rich:column>
+                                                        #{messages['ProductionOrder.productionInput.measureUnit']}
+                                                    </rich:column>
+                                                    <rich:column>
+                                                        #{messages['ProductionPlanning.inputAmount']}
+                                                    </rich:column>
+                                                </rich:columnGroup>
+                                            </f:facet>
+                                            <rich:column>
+                                                <h:outputText value="#{productionIngredientItem.metaProduct.name}"/>
+                                            </rich:column>
+                                            <rich:column>
+                                                <h:outputText value="#{productionIngredientItem.metaProduct.measureUnit.name}"/>
+                                            </rich:column>
+                                            <rich:column>
+                                                <h:outputText value="#{productionIngredientItem.amount}"/>
+                                            </rich:column>
+                                        </rich:dataTable>
+                                    </td>
+                                    <td style="width:30%; vertical-align: bottom; text-align: right;">
+                                        <s:div>
+                                            <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
+                                                               value="#{messages['ProductionPlanning.innerButtonAdd']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                                                               rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionPlanning.state != 'EXECUTED'}"/>
+                                            <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
+                                                               value="#{messages['ProductionPlanning.innerButtonUpdate']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                                                               rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'EXECUTED'}"/>
+                                            <a4j:commandButton id="removeInnerButton" action="#{productionPlanningAction.removeFormulation}"
+                                                               value="#{messages['ProductionPlanning.innerButtonRemove']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                                                               rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'EXECUTED'}"/>
+                                            <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}" ajaxSingle="true"
+                                                               value="#{messages['ProductionPlanning.innerButtonCancel']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
+                                        </s:div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </s:div>
+                    </a4j:region>
+
+
+                    <a4j:region>
+                        <h:panelGrid columns="3" columnClasses="top-aligned,top-aligned,top-aligned" width="100%" rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'PENDING'}">
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
+                                <h:inputText value="#{productionOrderForPlanning.code}"
+                                             required="false" readonly="true" maxlength="500" styleClass="input" tabindex="5">
+                                </h:inputText>
+                            </s:decorate>
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionOrder.productComposition.name']}</ui:define>
+                                <h:inputText value="#{productCompositionForPlanning.name}"
+                                             required="false" readonly="true" maxlength="500" styleClass="input" tabindex="5">
+                                </h:inputText>
+                            </s:decorate>
+                            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                                <ui:define name="label">#{messages['ProductionOrder.producingAmount']}</ui:define>
+                                <h:inputText value="#{productionOrderForPlanning.producingAmount}"
+                                             required="false" readonly="true" maxlength="500" styleClass="input" tabindex="5">
+                                </h:inputText>
+                            </s:decorate>
+                        </h:panelGrid>
+
+                        <s:div rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'PENDING'}">
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:70%">
+                                        <a4j:commandButton   ajaxSingle="true" immediate="true"
+                                                             tabindex="2" value="#{messages['Common.add']}"
+                                                             title="#{messages['ProductionPlanning.selectProcessedProduct']}"
+                                                             onclick="Richfaces.showModalPanel('resultProcessedProductListModalPanel');"
+                                                             rendered="#{productionPlanning.state == 'EXECUTED'}">
+                                        </a4j:commandButton>
+                                        <rich:dataTable value="#{productionOrderForPlanning.outputProductionVoucherList}" var="outputProductionVoucherItem"
+                                                        id="OutputProductionVoucherList" style="width:100%" columnsWidth="30%,20%,40%">
+                                            <f:facet name="header">
+                                                <rich:columnGroup>
+                                                    <rich:column>
+                                                        #{messages['ProductionOrder.processedProduct.name']}
+                                                    </rich:column>
+                                                    <rich:column>
+                                                        #{messages['OutputProductionVoucher.producedAmount']}
+                                                    </rich:column>
+                                                    <rich:column>
+                                                        #{messages['OutputProductionVoucher.observations']}
+                                                    </rich:column>
+                                                    <rich:column styleClass="center" rendered="#{productionPlanning.state == 'EXECUTED'}">
+                                                        #{messages['Common.action']}
+                                                    </rich:column>
+                                                </rich:columnGroup>
+                                            </f:facet>
+                                            <rich:column>
+                                                <h:outputText value="#{outputProductionVoucherItem.processedProduct.fullName}"/>
+                                            </rich:column>
+                                            <rich:column>
+                                                <c:choose>
+                                                    <c:when test="#{productionPlanning.state != 'FINALIZED'}">
+                                                        <h:inputText id="outputVoucherProducerAmount" value="#{outputProductionVoucherItem.producedAmount}"
+                                                                     required="true" style="width:95%;">
+                                                            <a4j:support event="onblur" ajaxSingle="true"/>
+                                                        </h:inputText>
+                                                        <rich:message for="outputVoucherProducerAmount" styleClass="errors"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <h:outputText value="#{outputProductionVoucherItem.producedAmount}"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </rich:column>
+                                            <rich:column>
+                                                <c:choose>
+                                                    <c:when test="#{productionPlanning.state != 'FINALIZED'}">
+                                                        <h:inputTextarea value="#{outputProductionVoucherItem.observations}" style="width:95%;">
+                                                            <a4j:support event="onblur" ajaxSingle="true" />
+                                                        </h:inputTextarea>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <h:outputText value="#{outputProductionVoucherItem.observations}"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </rich:column>
+                                            <rich:column rendered="#{productionPlanning.state == 'EXECUTED'}">
+                                                <a4j:commandLink value="#{messages['Common.remove']}" reRender="OutputProductionVoucherList"
+                                                                 action="#{productionPlanningAction.removeOutputProductionVoucher(outputProductionVoucherItem)}"/>
+                                            </rich:column>
+                                        </rich:dataTable>
+                                    </td>
+                                    <td style="width:30%; vertical-align: bottom; text-align: right;">
+                                        <s:div>
+                                            <a4j:commandButton action="#{productionPlanningAction.updateProducedAmount}"
+                                                               value="#{messages['ProductionPlanning.innerButtonUpdate']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                                                               rendered="#{productionPlanning.state == 'EXECUTED'}"/>
+                                            <rich:spacer width="10"/>
+                                            <a4j:commandButton action="#{productionPlanningAction.cancelFormulation}" ajaxSingle="true"
+                                                               value="#{messages['ProductionPlanning.innerButtonCancel']}" reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
+                                        </s:div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </s:div>
+                    </a4j:region>
+                </h:panelGroup>
+            </rich:panel>
+
+
+
+            <h:panelGrid id="productionList" columns="2" columnClasses="top-aligned" width="100%">
+                <rich:dataTable value="#{productionPlanning.productionOrderList}" var="productionOrderItem" id="productionOrderList" width="100%">
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column>
+                                #{messages['ProductionOrder.processedProduct.name']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.processedProduct.code']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.order']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.formula']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.producingAmount']}
+                            </rich:column>
+                            <!--<rich:column>
+                                #{messages['ProductionOrder.producedAmount']}
+                            </rich:column>-->
+                            <rich:column styleClass="center">
+                                #{messages['Common.action']}
+                            </rich:column>
+                        </rich:columnGroup>
+                    </f:facet>
+                    <rich:column>
+                        <h:outputText value="#{productionOrderItem.productComposition.processedProduct.name}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{productionOrderItem.productComposition.processedProduct.code}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{productionOrderItem.code}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{productionOrderItem.productComposition.name}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{productionOrderItem.producingAmount}"/>
+                    </rich:column>
+                    <!--<rich:column>
+                        <h:outputText value="#{productionOrderItem.outputProductionVoucher.producedAmount}"/>
+                    </rich:column>-->
+                    <rich:column styleClass="center">
+                        <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['Common.select']}"
+                                         action="#{productionPlanningAction.select(productionOrderItem)}" reRender="formulaSet,ruleBotton2,ruleBotton1" />
+                        <rich:spacer width="5"/>
+                        <c:if test="#{productionPlanning.state == 'FINALIZED'}">
+                            <s:link id="reportOutputProductionVoucher" target="_blank" view="/production/reportOutputProductionVoucher.xhtml">
+                                <f:param name="id" value="#{productionOrderItem.id}"/>
+                                <h:graphicImage value="/img/report-icon.png"/>
+                            </s:link>
+                            <rich:toolTip value="#{messages['ProductionOrder.report.outputProductionVoucherTooltip']}" for="reportOutputProductionVoucher"/>
+                        </c:if>
+                        <c:if test="#{productionPlanning.state != 'PENDING'}">
+                            <s:link id="reportInputProductionVoucher" target="_blank" view="/production/reportInputProductionVoucher.xhtml">
+                                <f:param name="id" value="#{productionOrderItem.id}"/>
+                                <h:graphicImage value="/img/report-icon.png"/>
+                            </s:link>
+                            <rich:toolTip value="#{messages['ProductionOrder.report.inputProductionVoucherTooltip']}" for="reportInputProductionVoucher"/>
+                        </c:if>
+                    </rich:column>
+                </rich:dataTable>
+
+                <rich:dataTable value="#{productionPlanningAction.consolidatedInputs}" var="consolidatedItem" id="consolidatedList" width="100%">
+                    <f:facet name="header">
+                        <rich:columnGroup>
+                            <rich:column>
+                                #{messages['ProductionOrder.productionInput.name']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.productionInput.measureUnit']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.productionInput.code']}
+                            </rich:column>
+                            <rich:column>
+                                #{messages['ProductionOrder.productionInput.amount']}
+                            </rich:column>
+                        </rich:columnGroup>
+                    </f:facet>
+                    <rich:column>
+                        <h:outputText value="#{consolidatedItem.product.name}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{consolidatedItem.product.measureUnit.name}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{consolidatedItem.product.code}"/>
+                    </rich:column>
+                    <rich:column>
+                        <h:outputText value="#{consolidatedItem.amount}"/>
+                    </rich:column>
+                </rich:dataTable>
+            </h:panelGrid>
+
+
+            <div class="buttons">
+                <s:div id="ruleBotton2">
+                    <h:commandButton action="#{productionPlanningAction.makeFinalized}" value="#{messages['ProductionPlanning.makeFinalized']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+                    <h:commandButton action="#{productionPlanningAction.makeExecuted}" value="#{messages['ProductionPlanning.makeExecuted']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+
+                    <h:commandButton action="#{productionPlanningAction.create}" value="#{messages['Common.save']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
+                                     tabindex="1">
+                        <s:defaultAction/>
+                    </h:commandButton>
+
+                    <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.save']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                     tabindex="2"/>
+                    <h:commandButton value="#{messages['Common.delete']}"
+                                     styleClass="button"
+                                     rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                                     tabindex="3">
+                        <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
+                    </h:commandButton>
+
+                    <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.cancel']}"
+                                 styleClass="button" tabindex="21" immediate="true"/>
+                </s:div>
+            </div>
+        </h:form>
+
+        <s:decorate template="/include/modalDialog.xhtml"
+                    rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}">
+            <ui:param name="dialogId" value="deleteConfirmation"/>
+            <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
+            <ui:define name="dialogContent">
+                <p>
+                    <h:outputFormat value="#{messages['ProductionPlanning.delete.confirmation']}">
+                        <f:param value="#{productionPlanning.date}"/>
+                    </h:outputFormat>
+                </p>
+            </ui:define>
+            <ui:define name="dialogOption">
+                <a4j:commandButton action="#{productionPlanningAction.delete}"
+                                   value="#{messages['Common.delete']}"
+                                   immediate="true"
+                                   rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                                   tabindex="1000"
+                                   styleClass="button"/>
+            </ui:define>
+        </s:decorate>
+
+        <s:decorate id="processedProductListModalPanelContainer" template="/production/metaProductListModalPanel.xhtml">
+            <ui:param name="listTitle" value="#{messages['ProductionPlanning.selectProcessedProduct']}" />
+            <ui:param name="searchPanelTitle" value="#{messages['ProductionPlanning.searchProcessedProduct']}" />
+            <ui:param name="nameSortProperty" value="processedProduct.name" />
+            <ui:param name="codeSortProperty" value="processedProduct.code" />
+            <ui:param name="dialogId" value="processedProductListModalPanel"/>
+            <ui:param name="dataModel" value="#{processedProductDataModel}"/>
+            <ui:param name="showMeasureUnit" value="false"/>
+            <ui:define name="assignButton">
+                <a4j:commandButton id="assignButton"
+                                   title="#{messages['Common.choose']}"
+                                   action="#{productionPlanningAction.selectProcessedProduct(dataItem)}"
+                                   image="/img/active.gif"
+                                   styleClass="select-image-middle"
+                                   ajaxSingle="true"
+                                   reRender="productionPlanningPanel"
+                                   oncomplete="Richfaces.hideModalPanel('processedProductListModalPanel');"
+                                   style="width:0.8em"/>
+
+            </ui:define>
+        </s:decorate>
+
+        <s:decorate id="secondProcessedProductListModalPanelContainer" template="/production/metaProductListModalPanel.xhtml">
+            <ui:param name="listTitle" value="#{messages['ProductionPlanning.selectProcessedProduct']}" />
+            <ui:param name="searchPanelTitle" value="#{messages['ProductionPlanning.searchProcessedProduct']}" />
+            <ui:param name="nameSortProperty" value="processedProduct.name" />
+            <ui:param name="codeSortProperty" value="processedProduct.code" />
+            <ui:param name="dialogId" value="resultProcessedProductListModalPanel"/>
+            <ui:param name="dataModel" value="#{processedProductDataModel}"/>
+            <ui:param name="showMeasureUnit" value="false"/>
+            <ui:define name="assignButton">
+                <a4j:commandButton id="assignButton"
+                                   title="#{messages['Common.choose']}"
+                                   action="#{productionPlanningAction.selectResultProcessedProduct(dataItem)}"
+                                   image="/img/active.gif"
+                                   styleClass="select-image-middle"
+                                   ajaxSingle="true"
+                                   reRender="OutputProductionVoucherList"
+                                   oncomplete="Richfaces.hideModalPanel('resultProcessedProductListModalPanel');"
+                                   style="width:0.8em"/>
+
+            </ui:define>
+        </s:decorate>
+
+        <rich:jQuery selector="#name" query="focus()" timing="onload"/>
+
+    </ui:define>
+</ui:composition>

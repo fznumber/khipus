@@ -7,6 +7,9 @@
                  http://jboss.com/products/seam/components http://jboss.com/products/seam/components-2.2.xsd
                  http://jboss.com/products/seam/framework http://jboss.com/products/seam/framework-2.2.xsd">
 
+    <factory name="finishedGoodsWarehouseList" value="#{finishedGoodsWarehouseQuery}" />
+    <framework:entity-query name="finishedGoodsWarehouseQuery" ejbql="select warehouse from FinishedGoodsWarehouse warehouse " />
+
     <factory name="subGroupList" value="#{subGroupQuery}"/>
     <framework:entity-query name="subGroupQuery"
                             ejbql="select subGroup from SubGroup subGroup">
