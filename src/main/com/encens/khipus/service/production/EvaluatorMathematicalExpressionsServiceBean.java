@@ -1,0 +1,261 @@
+package main.com.encens.khipus.service.production;
+
+import com.encens.hp90.exception.production.ProductCompositionException;
+import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
+import com.encens.hp90.model.production.*;
+import com.encens.hp90.service.production.EvaluatorMathematicalExpressionsService;
+import com.encens.hp90.util.TopologicalSorting;
+import de.congrace.exp4j.Calculable;
+import de.congrace.exp4j.ExpressionBuilder;
+import de.congrace.exp4j.UnknownFunctionException;
+import de.congrace.exp4j.UnparsableExpressionException;
+import org.apache.commons.lang.StringUtils;
+import org.jboss.seam.annotations.*;
+import org.jboss.seam.log.Log;
+
+import javax.ejb.ApplicationException;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.encens.hp90.exception.production.ProductCompositionException.NO_FOUND_VARIABLE;
+import static com.encens.hp90.exception.production.ProductCompositionException.TOPOLOGICAL_SORTING;
+
+@Name("evaluatorMathematicalExpressionsService")
+@AutoCreate
+public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGenericServiceBean implements EvaluatorMathematicalExpressionsService {
+
+    @In("#{messages['ProductComposition.defaultContainerWeight']}")
+    private String containerVariable;
+
+    @In("#{messages['ProductComposition.defaultProducingAmountVariable']}")
+    private String amountVariable;
+
+    @In("#{messages['ProductComposition.defaultSupposedAmount']}")
+    private String supposedVariable;
+
+    Pattern variablePattern;
+
+    @Create
+    public void initalizeService() {
+        String format = String.format("%s|%s|%s|%s", "ING\\d+", containerVariable, amountVariable, supposedVariable);
+        variablePattern =  Pattern.compile(format);
+    }
+
+    @Override
+    public void executeMathematicalFormulas(ProductionOrder productionOrder) throws ProductCompositionException, IOException {
+        EquationMap map = new EquationMap();
+        map.addProductionIngredient(productionOrder.getProductComposition().getProductionIngredientList());
+        map.addLiteralEquation(amountVariable, productionOrder.getProducingAmount());
+        map.addLiteralEquation(containerVariable, productionOrder.getContainerWeight());
+        map.addLiteralEquation(supposedVariable, productionOrder.getSupposedAmount());
+
+        calculateMathematicalFormula(map);
+    }
+
+    private void calculateMathematicalFormula(EquationMap map) throws ProductCompositionException, IOException {
+        calculateMathematicalFormulasWithoutDependencies(map);
+        calculateMathematicalFormulasWithDependencies(map);
+    }
+
+    @Override
+    public void executeMathematicalFormulas(ProductComposition productComposition) throws ProductCompositionException, IOException {
+
+        EquationMap map = new EquationMap();
+        map.addProductionIngredient(productComposition.getProductionIngredientList());
+        map.addLiteralEquation(amountVariable, productComposition.getProducingAmount());
+        map.addLiteralEquation(containerVariable, productComposition.getContainerWeight());
+        map.addLiteralEquation(supposedVariable, productComposition.getSupposedAmount());
+
+        calculateMathematicalFormula(map);
+    }
+
+    private void calculateMathematicalFormulasWithoutDependencies(EquationMap map) throws ProductCompositionException {
+        String formula = "";
+        try {
+            for(Equation pi : map.values()) {
+                if (extractVariables(pi.getFormula()).size() > 0) {
+                    continue;
+                }
+
+                formula = pi.getFormula();
+                Calculable calc = new ExpressionBuilder(formula).build();
+                double result = calc.calculate();
+                pi.setResult(result);
+            }
+        } catch (Exception ex) {
+            throw new ProductCompositionException(TOPOLOGICAL_SORTING, formula, ex);
+        }
+    }
+
+    private void calculateMathematicalFormulasWithDependencies(EquationMap map) throws IOException, ProductCompositionException {
+        String graph = generateDependenciesGraph(map);
+        List<String> executionOrder = findExecutionOrder(graph);
+
+        executeFormulas(map, executionOrder);
+    }
+
+    private String generateDependenciesGraph(EquationMap map) {
+        String graph = "";
+        for (Equation pi : map.values()) {
+            String dependencies = createGraphDependencies(pi);
+            if (StringUtils.isNotBlank(dependencies)) {
+                graph += (graph.length() == 0 ? "" : "\n");
+                graph += dependencies;
+            }
+        }
+        return graph;
+    }
+
+    private List<String> findExecutionOrder(String graph) throws ProductCompositionException, IOException {
+        if (StringUtils.isBlank(graph)) {
+            return new ArrayList<String>();
+        }
+
+        TopologicalSorting sorter = new TopologicalSorting();
+        List<String> executionOrder = sorter.findDAG(new StringReader(graph));
+
+        if (executionOrder == null) {
+            throw new ProductCompositionException(TOPOLOGICAL_SORTING, true);
+        }
+        Collections.reverse(executionOrder);
+        return executionOrder;
+    }
+
+    private void executeFormulas(EquationMap map, List<String> executionOrder) throws ProductCompositionException {
+        String formula = "";
+        String variable = "";
+        try {
+            for(String var : executionOrder) {
+                variable = var;
+                Equation equation = map.find(variable);
+                formula = equation.getFormula();
+                List<String> variables = extractVariables(formula);
+                double result = executeFormula(formula, variables, map);
+                equation.setResult(result);
+            }
+        } catch (NotFoundException ex) {
+            throw new ProductCompositionException(NO_FOUND_VARIABLE, variable, ex);
+        } catch (Exception ex) {
+            throw new ProductCompositionException(TOPOLOGICAL_SORTING, formula, ex);
+        }
+    }
+
+    private String createGraphDependencies(Equation pi) {
+        List<String> dependencies = extractVariables(pi.getFormula());
+        if (dependencies.size() == 0) {
+            return null;
+        }
+
+        String result = "";
+        String root = pi.getVariable();
+        for(String dependency : dependencies) {
+            result += (result.length() == 0 ? "" : "\n");
+            result += root + " " + dependency;
+        }
+
+        return result;
+    }
+
+    private double executeFormula(String formula, List<String> variables, EquationMap map) throws UnknownFunctionException, UnparsableExpressionException, NotFoundException {
+        ExpressionBuilder expr = new ExpressionBuilder(formula);
+        expr.withVariableNames(variables.toArray(new String[]{}));
+        Calculable calc = expr.build();
+
+        for(String var : variables) {
+            Equation eq = map.find(var);
+            calc.setVariable(var, eq.getResult());
+        }
+
+        return calc.calculate();
+    }
+
+    private List<String> extractVariables(String formula) {
+        List<String> result = new ArrayList<String>();
+        Matcher matcher = variablePattern.matcher(formula);
+        while(matcher.find()) {
+            result.add(matcher.group());
+        }
+        return result;
+    }
+
+    class EquationMap extends HashMap<String, Equation> {
+
+        public void addProductionIngredient(ProductionIngredient productionIngredient) {
+            Equation equation = new ProductionIngredientEquation(productionIngredient);
+            add(equation);
+        }
+
+        public void add(Equation equation) {
+            put(equation.getVariable(), equation);
+        }
+
+        public void addProductionIngredient(List<ProductionIngredient> productionIngredientList) {
+            for(ProductionIngredient pi : productionIngredientList) {
+                addProductionIngredient(pi);
+            }
+        }
+
+        public void addLiteralEquation(String variable, double amount) {
+            Equation equation = new LiteralEquation(variable, amount);
+            add(equation);
+        }
+
+        public Equation find(String variable) throws NotFoundException {
+            Equation eq = get(variable);
+            if (eq == null) {
+                throw new NotFoundException();
+            }
+            return eq;
+        }
+
+        public Collection<Equation> values() {
+            return super.values();
+        }
+    }
+
+    class NotFoundException extends Exception {
+        public NotFoundException() {
+        }
+    }
+
+    interface Equation {
+        public String getVariable();
+        public String getFormula();
+        public void setResult(double result);
+        public double getResult();
+    }
+
+    class ProductionIngredientEquation implements Equation {
+        private ProductionIngredient pi;
+
+        public ProductionIngredientEquation(ProductionIngredient pi) {
+            this.pi  = pi;
+        }
+
+        public String getVariable() { return "ING" + pi.getMetaProduct().getId(); }
+        public String getFormula() { return pi.getMathematicalFormula(); }
+        public void setResult(double result) { pi.setAmount(result); }
+        public double getResult() { return pi.getAmount(); }
+    }
+
+    class LiteralEquation implements Equation {
+        private double value;
+        private String variable;
+
+        LiteralEquation(String variable, double value) {
+            this.value = value;
+            this.variable = variable;
+        }
+
+        public String getVariable() { return variable; }
+        public String getFormula() { return Double.toString(value); }
+        public void setResult(double result) { value = result; }
+        public double getResult() { return value; }
+    }
+}
