@@ -1,13 +1,13 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.ConcurrencyException;
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.ReferentialIntegrityException;
-import com.encens.hp90.framework.service.DataBaseCommand;
-import com.encens.hp90.framework.service.DataBaseExecutor;
-import com.encens.hp90.model.production.CollectedRawMaterial;
-import com.encens.hp90.model.production.CollectionForm;
-import com.encens.hp90.model.production.ProductiveZone;
+import com.encens.khipus.exception.ConcurrencyException;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.ReferentialIntegrityException;
+import com.encens.khipus.framework.service.DataBaseCommand;
+import com.encens.khipus.framework.service.DataBaseExecutor;
+import com.encens.khipus.model.production.CollectedRawMaterial;
+import com.encens.khipus.model.production.CollectionForm;
+import com.encens.khipus.model.production.ProductiveZone;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;

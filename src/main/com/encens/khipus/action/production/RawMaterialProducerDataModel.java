@@ -1,8 +1,8 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.QueryDataModel;
-import com.encens.hp90.model.production.RawMaterialProducer;
-import com.encens.hp90.model.production.ProductiveZone;
+import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialProducer;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;

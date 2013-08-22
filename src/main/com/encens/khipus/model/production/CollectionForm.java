@@ -1,6 +1,7 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,25 +14,25 @@ import java.util.List;
                             "from CollectionRecord collectionRecord " +
                             "where collectionRecord.collectionForm.date = :date " +
                             "and collectionRecord.collectionForm.metaProduct = :metaProduct"),
-        @NamedQuery(name = "CollectionForm.calculateUsedAmountOnDateByMetaProduct",
+       /* @NamedQuery(name = "CollectionForm.calculateUsedAmountOnDateByMetaProduct",
                 query = "select sum(inputProductionVoucher.amount) " +
                         "from ProductionOrder productionOrder " +
                         "left join productionOrder.inputProductionVoucherList inputProductionVoucher " +
                         "where productionOrder.productionPlanning.date = :date " +
-                        "and productionOrder.productionPlanning.state <> main.com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
-                        "and inputProductionVoucher.metaProduct = :metaProduct "),
+                        "and productionOrder.productionPlanning.state <> com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
+                        "and inputProductionVoucher.metaProduct = :metaProduct "), */
         @NamedQuery(name = "CollectionForm.calculateWeightedAmountToDateByMetaProduct",
                     query = "select sum(collectionRecord.weightedAmount) " +
                             "from CollectionRecord collectionRecord " +
                             "where collectionRecord.collectionForm.date <= :date " +
                             "and collectionRecord.collectionForm.metaProduct = :metaProduct"),
-        @NamedQuery(name = "CollectionForm.calculateUsedAmountToDateByMetaProduct",
+        /*@NamedQuery(name = "CollectionForm.calculateUsedAmountToDateByMetaProduct",
                     query = "select sum(inputProductionVoucher.amount) " +
                             "from ProductionOrder productionOrder " +
                             "left join productionOrder.inputProductionVoucherList inputProductionVoucher " +
                             "where productionOrder.productionPlanning.date <= :date " +
-                            "and productionOrder.productionPlanning.state <> main.com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
-                            "and inputProductionVoucher.metaProduct = :metaProduct"),
+                            "and productionOrder.productionPlanning.state <> com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
+                            "and inputProductionVoucher.metaProduct = :metaProduct"),*/
         @NamedQuery(name = "CollectionForm.calculateCollectedAmountOnDateByMetaProduct",
                     query = "select collectedRawMaterial.rawMaterialCollectionSession.productiveZone.id, sum(collectedRawMaterial.amount) " +
                             "from CollectedRawMaterial collectedRawMaterial " +
@@ -59,7 +60,7 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectionForm_Generator")
     private Long id;
 
-    @Column(name = "FECHA", nullable = false)
+    @Column(name = "FECHA",columnDefinition = "DATE", nullable = false)
     private Date date;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -5,12 +5,11 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:app="http://encens.com/products/hp90/facelets"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
-
     <ui:define name="pageTitle">#{messages['RawMaterialRejectionNote.list']}</ui:define>
-    <ui:param name="bodyWidth" value="100%"/>
 
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="rawMaterialRejectionNoteSearch">
             <rich:simpleTogglePanel label="#{messages['RawMaterialRejectionNote.search']}" switchType="client">
@@ -67,7 +66,9 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialRejectionNoteAction.startNew}"  styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}" />
+                          propagation="none"
+                          rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"
+                />
             </div>
             <rich:dataTable value="#{rawMaterialRejectionNoteDataModel}" var="rawMaterialRejectionNoteItem" id="rawMaterialRejectionNoteList"
                             rows="#{sessionUser.rowsPerPage}"
@@ -149,7 +150,9 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialRejectionNoteAction.startNew}" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"/>
+                          propagation="none"
+                          rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"
+                 />
             </div>
 
         </h:form>

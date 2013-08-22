@@ -1,9 +1,9 @@
-package main.com.encens.khipus.service.warehouse;
+package com.encens.khipus.service.warehouse;
 
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.MetaProduct;
-import com.encens.hp90.model.warehouse.ProductionTransferLog;
-import com.encens.hp90.model.warehouse.WarehouseSlot;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.warehouse.ProductionTransferLog;
+import com.encens.khipus.model.warehouse.WarehouseSlot;
 
 import javax.ejb.Local;
 import java.util.List;

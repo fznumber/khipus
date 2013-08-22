@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model;
+package com.encens.khipus.model;
 
 public enum State {
     DRAFT,

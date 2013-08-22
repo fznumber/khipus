@@ -1,6 +1,6 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.model.production.ProcessedProduct;
+import com.encens.khipus.model.production.ProcessedProduct;
 
 import javax.ejb.Local;
 

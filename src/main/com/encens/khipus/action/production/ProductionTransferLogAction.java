@@ -1,23 +1,20 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.MetaProduct;
-import com.encens.hp90.model.production.OutputProductionVoucher;
-import com.encens.hp90.model.production.ProductionOrder;
-import com.encens.hp90.model.warehouse.*;
-import com.encens.hp90.service.warehouse.ProductionTransferLogService;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.production.OutputProductionVoucher;
+import com.encens.khipus.model.warehouse.*;
+import com.encens.khipus.service.warehouse.ProductionTransferLogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.international.StatusMessage;
 
 import java.util.Calendar;
 import java.util.List;
 
-import static com.encens.hp90.model.warehouse.ProductionTransferLogState.DELIVERED;
-import static com.encens.hp90.model.warehouse.ProductionTransferLogState.RECEIVED;
+import static com.encens.khipus.model.warehouse.ProductionTransferLogState.DELIVERED;
+import static com.encens.khipus.model.warehouse.ProductionTransferLogState.RECEIVED;
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 import static org.jboss.seam.international.StatusMessage.Severity.INFO;
 

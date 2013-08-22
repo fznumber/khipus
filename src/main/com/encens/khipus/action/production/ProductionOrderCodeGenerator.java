@@ -1,10 +1,9 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
 
-import com.encens.hp90.service.production.ProductionOrderCodeGeneratorService;
+import com.encens.khipus.service.production.ProductionOrderCodeGeneratorService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 
 import java.util.Calendar;
 

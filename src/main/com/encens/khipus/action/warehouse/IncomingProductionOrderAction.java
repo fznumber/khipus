@@ -1,15 +1,14 @@
-package main.com.encens.khipus.action.warehouse;
+package com.encens.khipus.action.warehouse;
 
-import com.encens.hp90.exception.ConcurrencyException;
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.model.production.ProductionOrder;
-import com.encens.hp90.model.warehouse.FinishedGoodsInventory;
-import com.encens.hp90.model.warehouse.FinishedGoodsWarehouse;
-import com.encens.hp90.model.warehouse.IncomingProductionOrder;
-import com.encens.hp90.model.warehouse.WarehouseSlot;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.warehouse.FinishedGoodsInventory;
+import com.encens.khipus.model.warehouse.FinishedGoodsWarehouse;
+import com.encens.khipus.model.warehouse.IncomingProductionOrder;
+import com.encens.khipus.model.warehouse.WarehouseSlot;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 

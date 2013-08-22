@@ -1,7 +1,7 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.model.production.ProductionOrder;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.model.production.ProductionOrder;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;

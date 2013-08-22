@@ -1,16 +1,14 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.CollectionForm;
-import com.encens.hp90.model.production.CollectionRecord;
-import com.encens.hp90.service.production.CollectionFormService;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.CollectionForm;
+import com.encens.khipus.model.production.CollectionRecord;
+import com.encens.khipus.service.production.CollectionFormService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.log.Log;
-
 
 import javax.faces.event.ActionEvent;
 

@@ -1,10 +1,7 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.ConcurrencyException;
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.ReferentialIntegrityException;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.ProductionPlanning;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.ProductionPlanning;
 
 import javax.ejb.Local;
 

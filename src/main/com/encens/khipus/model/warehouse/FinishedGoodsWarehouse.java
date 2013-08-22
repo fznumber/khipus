@@ -1,8 +1,8 @@
-package main.com.encens.khipus.model.warehouse;
+package com.encens.khipus.model.warehouse;
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.NotNull;
@@ -19,13 +19,13 @@ import java.util.List;
         allocationSize = 10)
 
 @Entity
-@Table(name = "DEPOSITOPRODUCTOTERMINADO", uniqueConstraints = @UniqueConstraint(columnNames = {"CODIGO", "ID_COMPANIA"}))
+@Table(name = "DEPOSITOPRODUCTOTERMINADO", uniqueConstraints = @UniqueConstraint(columnNames = {"CODIGO", "IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
 public class FinishedGoodsWarehouse implements BaseModel {
 
     @Id
-    @Column(name = "ID_DEPOSITO_PRODUCTO_TERMINADO", nullable = false)
+    @Column(name = "IDDEPOSITOPRODUCTOTERMINADO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "FinishedGoodsWarehouse_Generator")
     private Long id;
 
@@ -43,7 +43,7 @@ public class FinishedGoodsWarehouse implements BaseModel {
     private long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 

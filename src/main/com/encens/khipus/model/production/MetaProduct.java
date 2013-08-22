@@ -1,5 +1,8 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Type;
 
@@ -25,11 +28,11 @@ import java.io.Serializable;
 @DiscriminatorColumn(name = "TIPO", discriminatorType = DiscriminatorType.STRING, length = 20)
 @javax.persistence.Entity
 @Filter(name = "companyFilter")
-@EntityListeners(com.encens.khipus.model.CompanyListener.class)
-public class MetaProduct implements Serializable, com.encens.khipus.model.BaseModel {
+@EntityListeners(CompanyListener.class)
+public class MetaProduct implements Serializable, BaseModel {
 
     @Id
-    @Column(name = "IDMETAPRODUCTOPRODUCCION", nullable = false)
+    @Column(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)" ,nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "MetaProduct_Generator")
     private Long id;
 
@@ -51,27 +54,27 @@ public class MetaProduct implements Serializable, com.encens.khipus.model.BaseMo
     private long version;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDUNIDADMEDIDA", nullable = true, updatable = true, insertable = true)
-    private main.com.encens.khipus.model.production.MeasureUnit measureUnit;
+    @JoinColumn(name = "IDUNIDADMEDIDAPRODUCCION", columnDefinition = "NUMBER(24,0)" ,nullable = true, updatable = true, insertable = true)
+    private MeasureUnitProduction measureUnitProduction;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.admin.Company company;
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    private Company company;
 
-    public com.encens.khipus.model.admin.Company getCompany() {
+    public Company getCompany() {
         return company;
     }
 
-    public void setCompany(com.encens.khipus.model.admin.Company company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 
-    public MeasureUnit getMeasureUnit() {
-        return measureUnit;
+    public MeasureUnitProduction getMeasureUnitProduction() {
+        return measureUnitProduction;
     }
 
-    public void setMeasureUnit(MeasureUnit measureUnit) {
-        this.measureUnit = measureUnit;
+    public void setMeasureUnitProduction(MeasureUnitProduction measureUnitProduction) {
+        this.measureUnitProduction = measureUnitProduction;
     }
 
     public Long getId() {
@@ -132,7 +135,7 @@ public class MetaProduct implements Serializable, com.encens.khipus.model.BaseMo
         if (getCode() == null || getName() == null) {
             return "";
         } else {
-            return "[" + getCode() + "] " + getName() + printMeasureUnit();
+            return "[" + getCode() + "] " + getName() + printMeasureUnitProduction();
         }
     }
 
@@ -140,11 +143,11 @@ public class MetaProduct implements Serializable, com.encens.khipus.model.BaseMo
 
     }
 
-    private String printMeasureUnit() {
-        if (measureUnit == null)
+    private String printMeasureUnitProduction() {
+        if (measureUnitProduction == null)
             return "";
         else
-            return " , " + measureUnit.getName();
+            return " , " + measureUnitProduction.getName();
     }
 
     public Boolean getCollectable() {

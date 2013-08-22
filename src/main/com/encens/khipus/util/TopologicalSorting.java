@@ -1,4 +1,4 @@
-package main.com.encens.khipus.util;
+package com.encens.khipus.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -1,9 +1,9 @@
-package main.com.encens.khipus.action.contacts;
+package com.encens.khipus.action.contacts;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.model.contacts.Extension;
-import com.encens.hp90.model.contacts.Person;
-import com.encens.hp90.service.customers.ExtensionService;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.model.contacts.Extension;
+import com.encens.khipus.model.contacts.Person;
+import com.encens.khipus.service.customers.ExtensionService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
@@ -36,7 +36,7 @@ public class PersonAction extends GenericAction<Person> {
     }
 
     @Override
-    @Begin(ifOutcome = com.encens.hp90.framework.action.Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    @Begin(ifOutcome = com.encens.khipus.framework.action.Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String select(Person instance) {
         String outCome = super.select(instance);
         updateShowExtension();

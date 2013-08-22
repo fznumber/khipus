@@ -1,21 +1,18 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.exception.production.ProductCompositionException;
-import com.encens.hp90.framework.action.*;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.*;
-import com.encens.hp90.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.hp90.service.production.EvaluatorMathematicalExpressionsServiceBean;
+import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.exception.production.ProductCompositionException;
+import com.encens.khipus.framework.action.*;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.*;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
 import javax.faces.event.ActionEvent;
 
-import static com.encens.hp90.exception.production.ProductCompositionException.NO_FOUND_VARIABLE;
-import static com.encens.hp90.exception.production.ProductCompositionException.TOPOLOGICAL_SORTING;
+import static com.encens.khipus.exception.production.ProductCompositionException.NO_FOUND_VARIABLE;
+import static com.encens.khipus.exception.production.ProductCompositionException.TOPOLOGICAL_SORTING;
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 import static org.jboss.seam.international.StatusMessage.Severity.WARN;
 
@@ -28,8 +25,8 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
     private MetaProduct metaProduct;
 
     private ProductComposition backup;
-
-    @In private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
+   /*
+    @In private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;*/
     @In private GenericService extendedGenericService;
     @In("#{messages['ProductComposition.defaultFormulaMathematica']}") private String defaultMathematicalFormula;
 
@@ -43,7 +40,7 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
         return getInstance();
     }
 
-    @Override
+    //@Override
     protected Object getDisplayPropertyValue() {
         return processedProduct.getName();
     }
@@ -74,7 +71,8 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
             return;
         }
 
-        registerIngredient(defaultMathematicalFormula);
+       // registerIngredient(defaultMathematicalFormula);
+        registerIngredient(null);
     }
 
     public boolean mathematicalFormulaActionListener(ActionEvent e) {
@@ -91,7 +89,7 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
                 }
             }
 
-            evaluatorMathematicalExpressionsService.executeMathematicalFormulas(comp);
+            //evaluatorMathematicalExpressionsService.executeMathematicalFormulas(comp);
             return true;
         } catch (Exception ex1) {
             Throwable throwable = ex1;
@@ -220,7 +218,7 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
                 return Outcome.REDISPLAY;
         } catch (EntryNotFoundException e) {
             addNotFoundMessage();
-            return com.encens.hp90.framework.action.Outcome.FAIL;
+            return com.encens.khipus.framework.action.Outcome.FAIL;
         }
     }
 

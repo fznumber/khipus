@@ -1,8 +1,8 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.RawMaterialProducer;
-import com.encens.hp90.model.production.ProductiveZone;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialProducer;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 

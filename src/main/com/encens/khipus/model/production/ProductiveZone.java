@@ -1,5 +1,8 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.NotNull;
 
@@ -38,10 +41,10 @@ import java.util.List;
 @Table(name = "ZONAPRODUCTIVA", uniqueConstraints = @UniqueConstraint(columnNames = {"NUMERO", "GRUPO", "NOMBRE", "IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(com.encens.khipus.model.CompanyListener.class)
-public class ProductiveZone implements com.encens.khipus.model.BaseModel {
+public class ProductiveZone implements BaseModel {
 
     @Id
-    @Column(name = "IDZONAPRODUCTIVA", nullable = false)
+    @Column(name = "IDZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)" , nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductiveZone_Generator")
     private Long id;
 
@@ -59,18 +62,18 @@ public class ProductiveZone implements com.encens.khipus.model.BaseModel {
     private long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     @NotNull
-    private com.encens.khipus.model.admin.Company company;
+    private Company company;
 
     @OneToMany(mappedBy = "productiveZone", fetch = FetchType.LAZY)
     private List<CollectionRecord> collectionRecordList = new ArrayList<CollectionRecord>();
 
-    public com.encens.khipus.model.admin.Company getCompany() {
+    public Company getCompany() {
         return company;
     }
 
-    public void setCompany(com.encens.khipus.model.admin.Company company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 

@@ -1,17 +1,15 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
 
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.exception.production.RawMaterialPayRollException;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.RawMaterialPayRecord;
-import com.encens.hp90.model.production.RawMaterialPayRecordDetailDummy;
-import com.encens.hp90.model.production.RawMaterialPayRoll;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.exception.production.RawMaterialPayRollException;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.RawMaterialPayRecord;
+import com.encens.khipus.model.production.RawMaterialPayRecordDetailDummy;
+import com.encens.khipus.model.production.RawMaterialPayRoll;
 
 import javax.ejb.Local;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.util.List;
 
 @Local

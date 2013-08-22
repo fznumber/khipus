@@ -1,23 +1,22 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.*;
-import com.encens.hp90.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.hp90.service.production.ProcessedProductService;
-import com.encens.hp90.service.production.ProductionPlanningService;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.*;
+import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
+import com.encens.khipus.service.production.ProcessedProductService;
+import com.encens.khipus.service.production.ProductionPlanningService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.international.Messages;
-import org.jboss.seam.international.StatusMessage;
 
 import javax.faces.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.encens.hp90.model.production.ProductionPlanningState.EXECUTED;
-import static com.encens.hp90.model.production.ProductionPlanningState.FINALIZED;
-import static com.encens.hp90.model.production.ProductionPlanningState.PENDING;
+import static com.encens.khipus.model.production.ProductionPlanningState.*;
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
 

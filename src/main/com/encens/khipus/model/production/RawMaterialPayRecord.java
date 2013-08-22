@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
 import org.hibernate.annotations.*;
@@ -36,22 +36,22 @@ public class RawMaterialPayRecord {
     @JoinColumn(name = "IDPLANILLAPAGOMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
     private RawMaterialPayRoll rawMaterialPayRoll;
 
-    @Column(name = "CANTIDADTOTAL", nullable = false)
+    @Column(name = "CANTIDADTOTAL", columnDefinition = "NUMBER(24,0)" ,nullable = false)
     private double totalAmount = 0.0;
 
-    @Column(name = "AJUSTEZONAPRODUCTIVA", nullable = false)
+    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)", nullable = false)
     private double productiveZoneAdjustment = 0.0;
 
     @Column(name = "LICENCIAIMPUESTOS", nullable = true, length = 200)
     private String taxLicense;
 
-    @Column(name = "FECHAEXPIRALICENCIAIMPUESTOS", nullable = true)
+    @Column(name = "FECHAEXPIRALICENCIAIMPUESTO",columnDefinition = "DATE" ,nullable = true)
     private Date expirationDateTaxLicence;
 
-    @Column(name = "FECHAINICIALICENCIAIMPUESTOS", nullable = true)
+    @Column(name = "FECHAINICIALICENCIAIMPUESTO",columnDefinition = "DATE" ,nullable = true)
     private Date startDateTaxLicence;
 
-    @Column(name = "TOTALGANADO", nullable = false)
+    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(24,0)", nullable = false)
     private double earnedMoney;
 
     @Version

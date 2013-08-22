@@ -1,30 +1,24 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.production.ProductCompositionException;
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.*;
-import com.encens.hp90.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.hp90.util.TopologicalSorting;
+import com.encens.khipus.exception.production.ProductCompositionException;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.*;
+import com.encens.khipus.util.TopologicalSorting;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import de.congrace.exp4j.UnknownFunctionException;
 import de.congrace.exp4j.UnparsableExpressionException;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.log.Log;
 
-import javax.ejb.ApplicationException;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.encens.hp90.exception.production.ProductCompositionException.NO_FOUND_VARIABLE;
-import static com.encens.hp90.exception.production.ProductCompositionException.TOPOLOGICAL_SORTING;
+import static com.encens.khipus.exception.production.ProductCompositionException.NO_FOUND_VARIABLE;
+import static com.encens.khipus.exception.production.ProductCompositionException.TOPOLOGICAL_SORTING;
 
 @Name("evaluatorMathematicalExpressionsService")
 @AutoCreate

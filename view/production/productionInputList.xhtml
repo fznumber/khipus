@@ -16,7 +16,7 @@
             display:none;
         }
     </style>
-
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="productionInputSearch">
             <rich:simpleTogglePanel label="#{messages['ProductionInput.search']}" switchType="client">
@@ -77,7 +77,7 @@
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                                #{messages['ProductionInput.measureUnit']}
+                            #{messages['ProductionInput.measureUnit']}
                         </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}

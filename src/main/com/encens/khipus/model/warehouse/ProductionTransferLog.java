@@ -1,9 +1,9 @@
-package main.com.encens.khipus.model.warehouse;
+package com.encens.khipus.model.warehouse;
 
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -18,28 +18,28 @@ import java.util.List;
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
-        pkColumnValue = "REGISTROTRANSFERENCIAPRODUCTOS",
+        pkColumnValue = "REGISTROTRANSFERENCIAPRODUCT",
         allocationSize = 10)
 
 @Entity
-@Table(name = "REGISTROTRANSFERENCIAPRODUCTOS")
+@Table(name = "REGISTROTRANSFERENCIAPRODUCT")
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
 public class ProductionTransferLog implements BaseModel {
 
     @Id
-    @Column(name = "ID_REGISTRO_TRANSFERENCIA_PRODUCTOS", nullable = false)
+    @Column(name = "IDREGISTROTRANSFERENCIAPRODUCT", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionTransferLog_Generator")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
-    @Column(name = "FECHA_ENTREGA", nullable = false)
+    @Column(name = "FECHAENTREGA", nullable = false, columnDefinition = "DATE")
     private Date deliveredDate;
 
-    @Column(name = "FECHA_RECEPCION", nullable = true)
+    @Column(name = "FECHARECEPCION", nullable = true, columnDefinition = "DATE")
     private Date receivedDate;
 
     @Column(name = "ESTADO", nullable = false, length = 50)

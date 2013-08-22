@@ -1,15 +1,13 @@
-package main.com.encens.khipus.action.warehouse;
+package com.encens.khipus.action.warehouse;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.MetaProduct;
-import com.encens.hp90.model.warehouse.FinishedGoodsWarehouse;
-import com.encens.hp90.model.warehouse.WarehouseSlot;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.warehouse.FinishedGoodsWarehouse;
+import com.encens.khipus.model.warehouse.WarehouseSlot;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.international.StatusMessage;
 
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 

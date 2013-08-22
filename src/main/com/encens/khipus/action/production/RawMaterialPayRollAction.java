@@ -1,23 +1,20 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.production.RawMaterialPayRollException;
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.RawMaterialPayRoll;
-import com.encens.hp90.model.production.ProductiveZone;
-import com.encens.hp90.service.production.RawMaterialPayRollService;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.production.RawMaterialPayRollException;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.international.StatusMessage;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.CROSS_WITH_ANOTHER_PAYROLL;
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.MINIMUM_START_DATE;
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.NO_COLLECTION_ON_DATE;
+import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 import static org.jboss.seam.international.StatusMessage.Severity.WARN;

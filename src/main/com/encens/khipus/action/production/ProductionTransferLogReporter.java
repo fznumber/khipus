@@ -1,14 +1,13 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.warehouse.ProductionTransferLog;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.warehouse.ProductionTransferLog;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.faces.FacesMessages;
-import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;

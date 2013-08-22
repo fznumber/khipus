@@ -1,4 +1,4 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
 import javax.ejb.Local;
 

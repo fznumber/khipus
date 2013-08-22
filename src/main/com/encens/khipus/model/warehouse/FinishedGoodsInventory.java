@@ -1,8 +1,8 @@
-package main.com.encens.khipus.model.warehouse;
+package com.encens.khipus.model.warehouse;
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
@@ -21,22 +21,22 @@ import java.util.Date;
 @EntityListeners(CompanyListener.class)
 public class FinishedGoodsInventory implements BaseModel {
     @Id
-    @Column(name = "ID_INVENTARIO_PRODUCTO_TERMINADO", nullable = false)
+    @Column(name = "IDINVENTARIOPRODUCTOTERMINADO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "FinishedGoodsInventory_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false)
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double amount;
 
-    @Column(name = "FECHA", nullable = false)
+    @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
     private Date date;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "ID_AMBIENTE_DEPOSITO", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDAMBIENTEDEPOSITO", nullable = false, updatable = false, insertable = true)
     private WarehouseSlot warehouseSlot;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Long getId() {

@@ -20,19 +20,19 @@
         </c:choose>
     </ui:define>
     <ui:param name="bodyWidth" value="50%"/>
-
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="finishedGoodsWarehouseForm">
             <div class="buttons">
                 <h:commandButton action="#{finishedGoodsWarehouseAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','CREATE')}" id="createButtonId">
+                                 styleClass="button" rendered="#{!finishedGoodsWarehouseAction.managed }" id="createButtonId">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{finishedGoodsWarehouseAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','UPDATE')}"/>
+                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed }"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','DELETE')}">
+                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed }">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -114,11 +114,11 @@
 
             <div class="buttons">
                 <h:commandButton action="#{finishedGoodsWarehouseAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','CREATE')}"/>
+                                 styleClass="button" rendered="#{!finishedGoodsWarehouseAction.managed }"/>
                 <h:commandButton action="#{finishedGoodsWarehouseAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','UPDATE')}"/>
+                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed }"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed and s:hasPermission('FINISHEDGOODSWAREHOUSE','DELETE')}">
+                                 styleClass="button" rendered="#{finishedGoodsWarehouseAction.managed }">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

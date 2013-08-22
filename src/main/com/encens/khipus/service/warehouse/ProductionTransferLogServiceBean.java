@@ -1,16 +1,15 @@
-package main.com.encens.khipus.service.warehouse;
+package com.encens.khipus.service.warehouse;
 
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.MetaProduct;
-import com.encens.hp90.model.production.ProcessedProduct;
-import com.encens.hp90.model.warehouse.*;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.warehouse.*;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import java.util.List;
 
-import static com.encens.hp90.model.warehouse.ProductionTransferLogState.RECEIVED;
+import static com.encens.khipus.model.warehouse.ProductionTransferLogState.RECEIVED;
 
 @Name("productionTransferLogService")
 @Stateless

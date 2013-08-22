@@ -10,7 +10,7 @@ import org.hibernate.validator.NotNull;
 import javax.persistence.*;
 
 /**
- * MeasureUnit
+ * MeasureUnitProduction
  *
  * @author
  * @version 2.0

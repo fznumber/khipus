@@ -1,9 +1,9 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
@@ -21,19 +21,19 @@ import javax.persistence.*;
 @EntityListeners(CompanyListener.class)
 public class InputProductionVoucher implements BaseModel {
     @Id
-    @Column(name = "ID_VALE_INSUMOS_REQUERIDOS", nullable = false)
+    @Column(name = "IDVALEINSUMOSREQUERIDOS",columnDefinition = "NUMBER(24,0)" , nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "InputProductionVoucher_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false)
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double amount;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "ID_META_PRODUCTO_PRODUCCION", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "ID_ORDEN_PRODUCCION", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @Version
@@ -41,7 +41,7 @@ public class InputProductionVoucher implements BaseModel {
     private Long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Long getId() {

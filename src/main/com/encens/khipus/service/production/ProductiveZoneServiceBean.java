@@ -1,6 +1,6 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.model.production.ProductiveZone;
+import com.encens.khipus.model.production.ProductiveZone;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -27,7 +27,8 @@ public class ProductiveZoneServiceBean implements ProductiveZoneService {
 
     @Override
     public List<ProductiveZone> findAll() {
-        return em.createNamedQuery("ProductiveZone.findAll").getResultList();
+        List<ProductiveZone> aux = em.createNamedQuery("ProductiveZone.findAll").getResultList();
+        return aux;
     }
 
     @Override

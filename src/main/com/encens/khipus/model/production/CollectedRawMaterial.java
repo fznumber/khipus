@@ -22,17 +22,16 @@ public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectedRawMaterial_Generator")
     private Long id;
 
-
-    @Column(name = "CANTIDAD", nullable = false)
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(15,2)")
     private Double amount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
-    private main.com.encens.khipus.model.production.RawMaterialProducer rawMaterialProducer;
+    private com.encens.khipus.model.production.RawMaterialProducer rawMaterialProducer;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDSESIONACOPIO", nullable = false, updatable = false, insertable = true)
-    private main.com.encens.khipus.model.production.RawMaterialCollectionSession rawMaterialCollectionSession;
+    private com.encens.khipus.model.production.RawMaterialCollectionSession rawMaterialCollectionSession;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)

@@ -7,7 +7,7 @@
 
 
     <factory name="measureUnitProductionList" value="#{measureUnitProductionQuery}"/>
-    <framework:entity-query name="measureUnitProductionQuery" ejbql="select mu from MeasureUnit mu"/>
+    <framework:entity-query name="measureUnitProductionQuery" ejbql="select mu from MeasureUnitProduction mu"/>
 
     <factory name="inputAndMaterialForProductionList" value="#{inputAndMaterialProductionQuery}" />
     <framework:entity-query name="inputAndMaterialProductionQuery"

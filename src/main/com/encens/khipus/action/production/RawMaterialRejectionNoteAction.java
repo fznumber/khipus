@@ -1,10 +1,10 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.RawMaterialProducer;
-import com.encens.hp90.model.production.RawMaterialRejectionNote;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.model.production.RawMaterialRejectionNote;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
@@ -29,7 +29,7 @@ public class RawMaterialRejectionNoteAction extends GenericAction<RawMaterialRej
         return getInstance();
     }
 
-    @Override
+    //@Override
     protected Object getDisplayPropertyValue() {
         RawMaterialRejectionNote rawMaterialRejectionNote = getInstance();
         String rawMaterialProducer = rawMaterialRejectionNote.getRawMaterialProducer().getFullName();

@@ -5,18 +5,17 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:app="http://encens.com/products/hp90/facelets"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
 
     <ui:define name="pageTitle">#{messages['ProductiveZone.list']}</ui:define>
-    <ui:param name="bodyWidth" value="100%"/>
-
     <style type="text/css">
         .special tr[id]{
             display:none;
         }
     </style>
 
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="productiveZoneSearch">
             <rich:simpleTogglePanel label="#{messages['ProductiveZone.search']}" switchType="client">
@@ -50,7 +49,8 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/productiveZone.xhtml" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
+                          propagation="none"
+                          rendered="#{s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
             </div>
             <rich:dataTable value="#{productiveZoneDataModel}" var="productiveZoneItem" id="productiveZoneList"
                             rows="#{sessionUser.rowsPerPage}"
@@ -107,7 +107,8 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/productiveZone.xhtml" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
+                          propagation="none"
+                          rendered="#{s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
             </div>
 
         </h:form>

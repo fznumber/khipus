@@ -10,7 +10,7 @@
 
 <ui:define name="pageTitle">
     <c:choose>
-        <c:when test="#{measureUnitAction.managed}">
+        <c:when test="#{measureUnitProductionAction.managed}">
             #{messages['MeasureUnitProduction.edit']}
         </c:when>
         <c:otherwise>
@@ -19,27 +19,27 @@
     </c:choose>
 </ui:define>
 <ui:param name="bodyWidth" value="50%"/>
-
+<ui:param name="selectedTab" value="products"/>
 <ui:define name="body">
-<h:form id="measureUnitForm">
+<h:form id="measureUnitProductionForm">
     <div class="buttons">
-        <h:commandButton action="#{measureUnitAction.create}" value="#{messages['Common.save']}"
-                         styleClass="button" rendered="#{!measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}"/>
-        <h:commandButton action="#{measureUnitAction.update}" value="#{messages['Common.save']}"
+        <h:commandButton action="#{measureUnitProductionAction.create}" value="#{messages['Common.save']}"
+                         styleClass="button" rendered="#{!measureUnitProductionAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}"/>
+        <h:commandButton action="#{measureUnitProductionAction.update}" value="#{messages['Common.save']}"
                          styleClass="button" rendered="#{measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','UPDATE')}"/>
         <h:commandButton value="#{messages['Common.delete']}"
-                         styleClass="button" rendered="#{measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','DELETE')}">
+                         styleClass="button" rendered="#{measureUnitProductionAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','DELETE')}">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                    operation="show"/>
         </h:commandButton>
-        <h:commandButton action="#{measureUnitAction.cancel}" value="#{messages['Common.cancel']}"
+        <h:commandButton action="#{measureUnitProductionAction.cancel}" value="#{messages['Common.cancel']}"
                          styleClass="button" immediate="true"/>
     </div>
 
     <rich:panel id="formPanel">
         <f:facet name="header">
             <c:choose>
-                <c:when test="#{measureUnitAction.managed}">
+                <c:when test="#{measureUnitProductionAction.managed}">
                     #{messages['MeasureUnitProduction.edit']}
                 </c:when>
                 <c:otherwise>
@@ -50,7 +50,7 @@
 
         <s:decorate id="nameField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['MeasureUnitProduction.name']}</ui:define>
-            <h:inputText id="name" value="#{measureUnit.name}" styleClass="input" required="true"
+            <h:inputText id="name" value="#{measureUnitProduction.name}" styleClass="input" required="true"
                          maxlength="150" tabindex="1">
                 <a4j:support event="onblur" reRender="nameField"/>
             </h:inputText>
@@ -58,7 +58,7 @@
 
         <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['MeasureUnitProduction.description']}</ui:define>
-            <h:inputText id="description" value="#{measureUnit.description}" styleClass="input" required="false"
+            <h:inputText id="description" value="#{measureUnitProduction.description}" styleClass="input" required="false"
                          maxlength="150" tabindex="1">
                 <a4j:support event="onblur" reRender="descriptionField"/>
             </h:inputText>
@@ -66,32 +66,32 @@
     </rich:panel>
 
     <div class="buttons">
-        <h:commandButton action="#{measureUnitAction.create}" value="#{messages['Common.save']}"
-                         styleClass="button" rendered="#{!measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}"/>
-        <h:commandButton action="#{measureUnitAction.update}" value="#{messages['Common.save']}"
-                         styleClass="button" rendered="#{measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','UPDATE')}"/>
+        <h:commandButton action="#{measureUnitProductionAction.create}" value="#{messages['Common.save']}"
+                         styleClass="button" rendered="#{!measureUnitProductionAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}"/>
+        <h:commandButton action="#{measureUnitProductionAction.update}" value="#{messages['Common.save']}"
+                         styleClass="button" rendered="#{measureUnitProductionAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','UPDATE')}"/>
         <h:commandButton value="#{messages['Common.delete']}"
-                         styleClass="button" rendered="#{measureUnitAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','DELETE')}">
+                         styleClass="button" rendered="#{measureUnitProductionAction.managed and s:hasPermission('MEASUREUNITPRODUCTION','DELETE')}">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                    operation="show"/>
         </h:commandButton>
-        <h:commandButton action="#{measureUnitAction.cancel}" value="#{messages['Common.cancel']}"
+        <h:commandButton action="#{measureUnitProductionAction.cancel}" value="#{messages['Common.cancel']}"
                          styleClass="button" immediate="true"/>
     </div>
 </h:form>
 
-<s:decorate template="/include/modalDialog.xhtml" rendered="#{measureUnitAction.managed}">
+<s:decorate template="/include/modalDialog.xhtml" rendered="#{measureUnitProductionAction.managed}">
     <ui:param name="dialogId" value="deleteConfirmation"/>
     <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
     <ui:define name="dialogContent">
         <p>
             <h:outputFormat value="#{messages['MeasureUnitProduction.delete.confirmation']}">
-                <f:param value="#{measureUnit.name}"/>
+                <f:param value="#{measureUnitProduction.name}"/>
             </h:outputFormat>
         </p>
     </ui:define>
     <ui:define name="dialogOption">
-        <a4j:commandButton action="#{measureUnitAction.delete}"
+        <a4j:commandButton action="#{measureUnitProductionAction.delete}"
                            value="#{messages['Common.delete']}" immediate="true"
                            styleClass="button"/>
     </ui:define>

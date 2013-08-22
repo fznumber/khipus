@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
 import org.hibernate.annotations.Filter;
@@ -39,22 +39,22 @@ public class CollectionRecord implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectionRecord_Generator")
     private Long id;
 
-    @Column(name = "CANTIDADRECIBIDA", nullable = false)
+    @Column(name = "CANTIDADRECIBIDA", columnDefinition = "NUMBER(24,0)",nullable = false)
     private Double receivedAmount;
 
-    @Column(name = "CANTIDADPESADA", nullable = false)
+    @Column(name = "CANTIDADPESADA", columnDefinition = "NUMBER(24,0)",nullable = false)
     private Double weightedAmount;
 
-    @Column(name = "CANTIDADRECHAZADA", nullable = false)
+    @Column(name = "CANTIDADRECHAZADA",columnDefinition = "NUMBER(24,0)", nullable = false)
     private Double rejectedAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false, updatable = false, insertable = true)
-    private main.com.encens.khipus.model.production.ProductiveZone productiveZone;
+    private com.encens.khipus.model.production.ProductiveZone productiveZone;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "IDPLANILLAACOPIO", nullable = false, updatable = false, insertable = true)
-    private main.com.encens.khipus.model.production.CollectionForm collectionForm;
+    private com.encens.khipus.model.production.CollectionForm collectionForm;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)

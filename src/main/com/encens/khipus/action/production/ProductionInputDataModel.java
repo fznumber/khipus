@@ -1,7 +1,7 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.QueryDataModel;
-import com.encens.hp90.model.production.ProductionInput;
+import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.ProductionInput;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -36,7 +36,7 @@ public class ProductionInputDataModel extends QueryDataModel<Long, ProductionInp
     public String getEjbql() {
         return "select productionInput " +
                 "from ProductionInput productionInput " +
-                "left join fetch productionInput.measureUnit";
+                "left join fetch productionInput.measureUnitProduction";
     }
 
     @Override

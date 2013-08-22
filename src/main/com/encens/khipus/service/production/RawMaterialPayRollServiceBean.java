@@ -1,10 +1,10 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.exception.production.RawMaterialPayRollException;
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.*;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.exception.production.RawMaterialPayRollException;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.*;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -16,9 +16,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.PersistenceException;
 import java.util.*;
 
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.CROSS_WITH_ANOTHER_PAYROLL;
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.MINIMUM_START_DATE;
-import static com.encens.hp90.exception.production.RawMaterialPayRollException.NO_COLLECTION_ON_DATE;
+import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 @Name("rawMaterialPayRollService")

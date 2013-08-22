@@ -1,18 +1,17 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.production.ProductCompositionException;
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.*;
+import com.encens.khipus.exception.production.ProductCompositionException;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.*;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceException;
-
 import java.io.IOException;
 
-import static com.encens.hp90.model.production.ProductionPlanningState.EXECUTED;
+import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
 
 
 @Stateless

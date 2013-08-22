@@ -1,14 +1,14 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.CollectedRawMaterial;
-import com.encens.hp90.model.production.RawMaterialCollectionSession;
-import com.encens.hp90.model.production.RawMaterialProducer;
-import com.encens.hp90.model.production.ProductiveZone;
-import com.encens.hp90.service.production.RawMaterialCollectionSessionService;
-import com.encens.hp90.service.production.RawMaterialProducerService;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.CollectedRawMaterial;
+import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialCollectionSession;
+import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.service.production.RawMaterialCollectionSessionService;
+import com.encens.khipus.service.production.RawMaterialProducerService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 

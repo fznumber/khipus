@@ -1,9 +1,9 @@
-package main.com.encens.khipus.model.warehouse;
+package com.encens.khipus.model.warehouse;
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
-import com.encens.hp90.model.production.MetaProduct;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.production.MetaProduct;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
@@ -28,13 +28,13 @@ import javax.persistence.*;
         allocationSize = 10)
 
 @Entity
-@Table(name = "AMBIENTEDEPOSITO", uniqueConstraints = @UniqueConstraint(columnNames = {"CODIGO", "ID_COMPANIA"}))
+@Table(name = "AMBIENTEDEPOSITO", uniqueConstraints = @UniqueConstraint(columnNames = {"CODIGO", "IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
 public class WarehouseSlot implements BaseModel {
 
     @Id
-    @Column(name = "ID_AMBIENTE_DEPOSITO", nullable = false)
+    @Column(name = "IDAMBIENTEDEPOSITO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "WarehouseSlot_Generator")
     private Long id;
 
@@ -42,15 +42,15 @@ public class WarehouseSlot implements BaseModel {
     private String code;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_DEPOSITO_PRODUCTO_TERMINADO", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDDEPOSITOPRODUCTOTERMINADO", nullable = false, updatable = false, insertable = true)
     private FinishedGoodsWarehouse finishedGoodsWarehouse;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_META_PRODUCTO_PRODUCCION", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @Version

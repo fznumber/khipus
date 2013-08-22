@@ -1,12 +1,12 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.exception.ConcurrencyException;
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.framework.action.Outcome;
-import com.encens.hp90.model.production.CollectedRawMaterial;
-import com.encens.hp90.model.production.ProductiveZone;
-import com.encens.hp90.service.production.CollectedRawMaterialService;
-import com.encens.hp90.service.production.ProductiveZoneService;
+import com.encens.khipus.exception.ConcurrencyException;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.production.CollectedRawMaterial;
+import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.service.production.CollectedRawMaterialService;
+import com.encens.khipus.service.production.ProductiveZoneService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.faces.FacesMessages;

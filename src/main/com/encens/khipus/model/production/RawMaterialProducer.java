@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.contacts.*;
 import org.hibernate.annotations.Type;
@@ -25,16 +25,16 @@ import java.util.List;
 @Table(name = "PRODUCTORMATERIAPRIMA")
 @DiscriminatorValue("PRODUCTORMATERIAPRIMA")
 @PrimaryKeyJoinColumns(value = {
-        @PrimaryKeyJoinColumn(name = "IDPRODUCTORMATERIAPRIMA", referencedColumnName = "ID_PERSONA")})
+        @PrimaryKeyJoinColumn(name = "IDPRODUCTORMATERIAPRIMA", referencedColumnName = "IDPERSONA")})
 public class RawMaterialProducer extends Person {
 
     @Column(name = "LICENCIAIMPUESTOS", length = 200, nullable = true)
     private String codeTaxLicence;
 
-    @Column(name = "FECHAEXPIRALICENCIAIMPUESTOS", nullable = true)
+    @Column(name = "FECHAEXPIRALICENCIAIMPUESTO", columnDefinition = "DATE", nullable = true)
     private Date expirationDateTaxLicence;
 
-    @Column(name = "FECHAINICIALICENCIAIMPUESTOS", nullable = true)
+    @Column(name = "FECHAINICIALICENCIAIMPUESTO", columnDefinition = "DATE",nullable = true)
     private Date startDateTaxLicence;
 
     @Column(name = "ESRESPONSABLE", nullable = false)

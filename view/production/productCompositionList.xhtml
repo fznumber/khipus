@@ -5,7 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:app="http://encens.com/products/hp90/facelets"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
 
     <ui:define name="pageTitle">#{messages['ProductComposition.list']}</ui:define>
@@ -16,7 +16,7 @@
             display:none;
         }
     </style>
-
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="productCompositionSearch">
             <rich:simpleTogglePanel label="#{messages['ProductComposition.search']}" switchType="client">

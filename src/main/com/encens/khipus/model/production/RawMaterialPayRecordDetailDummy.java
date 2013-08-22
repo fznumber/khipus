@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
 import java.util.Date;

@@ -1,16 +1,12 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
-import com.encens.hp90.model.BaseModel;
-import com.encens.hp90.model.CompanyListener;
-import com.encens.hp90.model.admin.Company;
-import org.hibernate.annotations.*;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +39,7 @@ import java.util.List;
         allocationSize = 10)
 
 @Entity
-@Table(name = "PLANIFICACIONPRODUCCION", uniqueConstraints = @UniqueConstraint(columnNames = {"FECHA", "ID_COMPANIA"}))
+@Table(name = "PLANIFICACIONPRODUCCION", uniqueConstraints = @UniqueConstraint(columnNames = {"FECHA", "IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
 public class ProductionPlanning implements BaseModel {
@@ -52,11 +48,11 @@ public class ProductionPlanning implements BaseModel {
     public static final String UNIQUE_DATE = "UNIQUE_DATE";
 
     @Id
-    @Column(name = "ID_PLANIFICACION_PRODUCCION", nullable = false)
+    @Column(name = "IDPLANIFICACIONPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionPlanning_Generator")
     private Long id;
 
-    @Column(name = "FECHA", nullable = false)
+    @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
     private Date date;
 
     @Version
@@ -72,7 +68,7 @@ public class ProductionPlanning implements BaseModel {
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_COMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @OneToMany(mappedBy = "productionPlanning", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

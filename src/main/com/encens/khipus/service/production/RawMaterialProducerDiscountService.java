@@ -1,9 +1,9 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.EntryNotFoundException;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.RawMaterialProducer;
-import com.encens.hp90.model.production.RawMaterialProducerDiscount;
+import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.model.production.RawMaterialProducerDiscount;
 
 import javax.ejb.Local;
 

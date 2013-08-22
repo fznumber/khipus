@@ -1,10 +1,10 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
 
-import com.encens.hp90.framework.service.ExtendedGenericServiceBean;
-import com.encens.hp90.model.production.CollectionForm;
-import com.encens.hp90.model.production.CollectionRecord;
-import com.encens.hp90.model.production.ProductiveZone;
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.CollectionForm;
+import com.encens.khipus.model.production.CollectionRecord;
+import com.encens.khipus.model.production.ProductiveZone;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;

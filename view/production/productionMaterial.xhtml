@@ -19,6 +19,7 @@
         </c:choose>
     </ui:define>
     <ui:param name="bodyWidth" value="50%"/>
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
 
         <h:form id="productionMaterialForm">
@@ -101,15 +102,15 @@
                     </h:inputText>
                 </s:decorate>
 
-                <s:decorate id="measureUnitField" template="/include/inputField.xhtml" styleClass="formRow">
+                <s:decorate id="measureUnitProductionField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionMaterial.measureUnit']}</ui:define>
-                    <h:selectOneMenu id="measureUnit"
-                                     value="#{productionMaterial.measureUnit}"
+                    <h:selectOneMenu id="measureUnitProduction"
+                                     value="#{productionMaterial.measureUnitProduction}"
                                      styleClass="input"
                                      required="true"
                                      tabindex="6">
-                        <s:selectItems value="#{measureUnitProductionList}" var="measureUnit"
-                                       label="#{measureUnit.name}"
+                        <s:selectItems value="#{measureUnitProductionList}" var="measureUnitProduction"
+                                       label="#{measureUnitProduction.name}"
                                        noSelectionLabel=""
                                        hideNoSelectionLabel="false"/>
                         <s:convertEntity/>

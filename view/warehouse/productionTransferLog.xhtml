@@ -19,6 +19,7 @@
     </c:choose>
 </ui:define>
 <ui:param name="bodyWidth" value="100%"/>
+<ui:param name="selectedTab" value="products"/>
 <ui:define name="body">
 <style type="text/css" >
     .messageStyle {
@@ -33,7 +34,7 @@
     <div class="buttons">
         <h:commandButton action="#{productionTransferLogAction.update}" value="#{messages['ProductionTransferLog.buttons.makeReceiveing']}"
                          styleClass="button"
-                         rendered="#{productionTransferLogAction.managed and s:hasPermission('RECEIVEPRODUCTIONTRANSFERLOG','UPDATE')
+                         rendered="#{productionTransferLogAction.managed
                                              and (productionTransferLog.state eq 'DELIVERED')}"
                          tabindex="2"/>
         <h:commandButton action="#{productionTransferLogAction.cancel}" value="#{messages['Common.cancel']}"
@@ -187,7 +188,7 @@
     <div class="buttons">
         <h:commandButton action="#{productionTransferLogAction.update}" value="#{messages['ProductionTransferLog.buttons.makeReceiveing']}"
                          styleClass="button"
-                         rendered="#{productionTransferLogAction.managed and s:hasPermission('RECEIVEPRODUCTIONTRANSFERLOG','UPDATE')
+                         rendered="#{productionTransferLogAction.managed
                                              and (productionTransferLog.state eq 'DELIVERED')}"
                          tabindex="2"/>
 

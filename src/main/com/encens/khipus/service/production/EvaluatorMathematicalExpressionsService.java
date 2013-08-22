@@ -1,9 +1,8 @@
-package main.com.encens.khipus.service.production;
+package com.encens.khipus.service.production;
 
-import com.encens.hp90.exception.production.ProductCompositionException;
-import com.encens.hp90.framework.service.GenericService;
-import com.encens.hp90.model.production.ProductComposition;
-import com.encens.hp90.model.production.ProductionOrder;
+import com.encens.khipus.exception.production.ProductCompositionException;
+import com.encens.khipus.model.production.ProductComposition;
+import com.encens.khipus.model.production.ProductionOrder;
 
 import javax.ejb.Local;
 import java.io.IOException;

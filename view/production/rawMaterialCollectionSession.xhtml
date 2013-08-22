@@ -18,23 +18,21 @@
             </c:otherwise>
         </c:choose>
     </ui:define>
-    <ui:param name="bodyWidth" value="80%"/>
+
+    <ui:param name="selectedTab" value="products"/>
 
     <ui:define name="body">
-        <style type="text/css">
-            .single-error {
-                color: brown;
-                font-style: italic;
-            }
-        </style>
         <h:form id="rawMaterialCollectionSessionForm">
             <div class="buttons">
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -139,11 +137,14 @@
 
             <div class="buttons">
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

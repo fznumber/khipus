@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import org.hibernate.annotations.Filter;
 
@@ -22,10 +22,10 @@ public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseMod
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialRejectionNote_Generator")
     private Long id;
 
-    @Column(name = "FECHA", nullable = false)
+    @Column(name = "FECHA",columnDefinition = "DATE" , nullable = false)
     private Date date;
 
-    @Column(name = "CANTIDADRECHAZADA", nullable = false, length = 1000)
+    @Column(name = "CANTIDADRECHAZADA", columnDefinition = "NUMBER(15,0)", nullable = false, length = 1000)
     private Double rejectedAmount;
 
     @Column(name = "ACIDA", nullable = true, length = 1000)

@@ -1,7 +1,7 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.QueryDataModel;
-import com.encens.hp90.model.production.ProductionPlanning;
+import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.ProductionPlanning;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;

@@ -1,8 +1,9 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
-import main.com.encens.khipus.model.State;
+import com.encens.khipus.model.State;
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -74,16 +75,16 @@ public class RawMaterialPayRoll implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialPayRoll_Generator")
     private Long id;
 
-    @Column(name = "FECHAINICIO", nullable = false)
+    @Column(name = "FECHAINICIO", columnDefinition = "DATE" ,nullable = false)
     private Date startDate;
 
-    @Column(name = "FECHAFIN", nullable = false)
+    @Column(name = "FECHAFIN", columnDefinition = "DATE" , nullable = false)
     private Date endDate;
 
-    @Column(name = "PRECIOUNITARIO", nullable = false)
+    @Column(name = "PRECIOUNITARIO",columnDefinition = "NUMBER(9,2)", nullable = false)
     private double unitPrice;
 
-    @Column(name = "TASAIMPUESTO", nullable = false)
+    @Column(name = "TASAIMPUESTO",columnDefinition = "NUMBER(3,2)",nullable = false)
     private double taxRate;
 
     @Column(name = "ESTADO", nullable = false, length = 50)

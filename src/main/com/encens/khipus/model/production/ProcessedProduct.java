@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class ProcessedProduct extends MetaProduct {
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     @OneToMany(mappedBy = "processedProduct", fetch = FetchType.LAZY)

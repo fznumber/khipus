@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.warehouse;
+package com.encens.khipus.model.warehouse;
 
 public enum ProductionTransferLogState {
     DRAFT,

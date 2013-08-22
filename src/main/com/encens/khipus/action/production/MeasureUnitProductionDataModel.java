@@ -1,7 +1,7 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.QueryDataModel;
-import com.encens.hp90.model.production.MeasureUnit;
+import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.MeasureUnitProduction;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -17,24 +17,24 @@ import java.util.List;
  * Time: 12:36 PM
  * To change this template use File | Settings | File Templates.
  */
-@Name("measureUnitDataModel")
+@Name("measureUnitProductionDataModel")
 @Scope(ScopeType.PAGE)
-public class MeasureUnitProductionDataModel extends QueryDataModel<Long, MeasureUnit> {
+public class MeasureUnitProductionDataModel extends QueryDataModel<Long, MeasureUnitProduction> {
 
     private static final String[] RESTRICTIONS = {
-            "lower(measureUnit.name) like concat(#{measureUnitDataModel.criteria.name}, '%')",
-            "lower(measureUnit.description) like concat(#{measureUnitDataModel.criteria.description}, '%')"
+            "lower(measureUnit.name) like concat(#{measureUnitProductionDataModel.criteria.name}, '%')",
+            "lower(measureUnit.description) like concat(#{measureUnitProductionDataModel.criteria.description}, '%')"
     };
 
     @Create
     public void init() {
-        sortProperty = "measureUnit.name";
+        sortProperty = "measureUnitProduction.name";
     }
 
     @Override
     public String getEjbql() {
-        String query =  "select measureUnit " +
-                        "from MeasureUnit measureUnit ";
+        String query =  "select measureUnitProduction " +
+                        "from MeasureUnitProduction measureUnitProduction ";
         return query;
     }
 

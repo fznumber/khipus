@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import org.hibernate.annotations.Filter;
 
@@ -34,40 +34,40 @@ import javax.persistence.*;
 public class RawMaterialProducerDiscount implements com.encens.khipus.model.BaseModel {
 
     @Id
-    @Column(name = "IDDESCUENTPRODUCTMATERIAPRIMA", nullable = false)
+    @Column(name = "IDDESCUENTPRODUCTMATERIAPRIMA",nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialProducerDiscount_Generator")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
-    private main.com.encens.khipus.model.production.RawMaterialProducer rawMaterialProducer;
+    private com.encens.khipus.model.production.RawMaterialProducer rawMaterialProducer;
 
     @Column(name = "CODIGO", nullable = false)
     private long code;
 
-    @Column(name = "YOGURT", nullable = false)
+    @Column(name = "YOGURT",columnDefinition = "NUMBER(15,2)", nullable = false)
     private double yogurt = 0.0;
 
-    @Column(name = "VETERINARIO", nullable = false)
+    @Column(name = "VETERINARIO",columnDefinition = "NUMBER(15,2)", nullable = false)
     private double veterinary = 0.0;
 
-    @Column(name = "CREDITO", nullable = false)
+    @Column(name = "CREDITO",columnDefinition = "NUMBER(15,2)" , nullable = false)
     private double credit = 0.0;
 
-    @Column(name = "TACHOS", nullable = false)
+    @Column(name = "TACHOS",columnDefinition = "NUMBER(15,2)" ,nullable = false)
     private double cans = 0.0;
 
-    @Column(name = "OTROSDESCUENTOS", nullable = false)
+    @Column(name = "OTROSDESCUENTOS", nullable = false ,columnDefinition = "NUMBER(15,2)")
     private double otherDiscount = 0.0;
 
-    @Column(name = "OTROSINGRESOS", nullable = false)
+    @Column(name = "OTROSINGRESOS", nullable = false,columnDefinition = "NUMBER(15,2)")
     private double otherIncoming = 0.0;
 
-    @Column(name = "RETENCION", nullable = false)
+    @Column(name = "RETENCION", nullable = false,columnDefinition = "NUMBER(15,2)")
     private double withholdingTax = 0.0;
 
     @OneToOne(mappedBy = "rawMaterialProducerDiscount", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private main.com.encens.khipus.model.production.RawMaterialPayRecord rawMaterialPayRecord;
+    private com.encens.khipus.model.production.RawMaterialPayRecord rawMaterialPayRecord;
 
     @Version
     @Column(name = "VERSION", nullable = false)

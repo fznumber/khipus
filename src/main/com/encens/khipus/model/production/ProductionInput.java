@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import javax.persistence.*;
 
@@ -13,11 +13,11 @@ import javax.persistence.*;
 @Table(name = "INSUMOPRODUCCION")
 @DiscriminatorValue("INSUMOPRODUCCION")
 @PrimaryKeyJoinColumns(value = {
-        @PrimaryKeyJoinColumn(name = "ID_INSUMO_PRODUCCION", referencedColumnName = "IDMETAPRODUCTOPRODUCCION")})
+        @PrimaryKeyJoinColumn(name = "IDINSUMOPRODUCCION", referencedColumnName = "IDMETAPRODUCTOPRODUCCION")})
 public class ProductionInput extends MetaProduct {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     public com.encens.khipus.model.admin.Company getCompany() {

@@ -1,7 +1,8 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 
 import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -32,19 +33,19 @@ import java.util.List;
 public class RawMaterialCollectionSession implements com.encens.khipus.model.BaseModel {
 
     @Id
-    @Column(name = "IDSESIONACOPIO", nullable = false)
+    @Column(name = "IDSESIONACOPIO",columnDefinition = "NUMBER(24,0)" , nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialCollectionSession_Generator")
     private Long id;
 
-    @Column(name = "FECHA", nullable = false)
+    @Column(name = "FECHA",columnDefinition = "DATE" , nullable = false)
     private Date date;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private ProductiveZone productiveZone;
 
     @OneToMany(mappedBy = "rawMaterialCollectionSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -52,7 +53,7 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
     private List<CollectedRawMaterial> collectedRawMaterialList = new ArrayList<CollectedRawMaterial>();
 
     @OneToOne
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @Version

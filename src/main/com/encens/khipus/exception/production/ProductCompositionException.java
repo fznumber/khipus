@@ -1,4 +1,4 @@
-package main.com.encens.khipus.exception.production;
+package com.encens.khipus.exception.production;
 
 
 import javax.ejb.ApplicationException;

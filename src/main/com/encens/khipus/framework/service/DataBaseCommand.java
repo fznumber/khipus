@@ -1,4 +1,4 @@
-package main.com.encens.khipus.framework.service;
+package com.encens.khipus.framework.service;
 
 /**
  * Created with IntelliJ IDEA.

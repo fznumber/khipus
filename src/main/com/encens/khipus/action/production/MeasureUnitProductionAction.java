@@ -1,8 +1,7 @@
-package main.com.encens.khipus.action.production;
+package com.encens.khipus.action.production;
 
-import com.encens.hp90.framework.action.GenericAction;
-import com.encens.hp90.model.production.MeasureUnit;
-import com.encens.hp90.model.production.ProcessedProduct;
+import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.model.production.MeasureUnitProduction;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
@@ -15,12 +14,12 @@ import org.jboss.seam.annotations.Scope;
  * Time: 12:35 PM
  * To change this template use File | Settings | File Templates.
  */
-@Name("measureUnitAction")
+@Name("measureUnitProductionAction")
 @Scope(ScopeType.CONVERSATION)
-public class MeasureUnitProductionAction extends GenericAction<MeasureUnit> {
+public class MeasureUnitProductionAction extends GenericAction<MeasureUnitProduction> {
 
-    @Factory(value = "measureUnit", scope = ScopeType.STATELESS)
-    public MeasureUnit initMeasureUnit() {
+    @Factory(value = "measureUnitProduction", scope = ScopeType.STATELESS)
+    public MeasureUnitProduction initMeasureUnitProduction() {
         return getInstance();
     }
 

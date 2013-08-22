@@ -1,4 +1,4 @@
-package main.com.encens.khipus.model.production;
+package com.encens.khipus.model.production;
 
 import org.hibernate.annotations.*;
 
@@ -31,24 +31,24 @@ import java.util.List;
 public class ProductComposition implements com.encens.khipus.model.BaseModel {
 
     @Id
-    @Column(name = "IDCOMPOSICIONPRODUCTO", nullable = false)
+    @Column(name = "IDCOMPOSICIONPRODUCTO",columnDefinition = "NUMBER(24,0)" , nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductComposition_Generator")
     private Long id;
 
     @Column(name = "NOMBRE", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "CANTIDADPRODUCIR", nullable = false)
+    @Column(name = "CANTIDADPRODUCIR",columnDefinition = "NUMBER(24,0)" ,nullable = false)
     private Double producingAmount;
 
-    @Column(name = "PESOCONTENEDOR", nullable = false)
+    @Column(name = "PESOCONTENEDOR", columnDefinition = "NUMBER(24,0)",nullable = false)
     private Double containerWeight;
 
-    @Column(name = "TEORICOOBTENIDO", nullable = false)
+    @Column(name = "TEORICOOBTENIDO", columnDefinition = "NUMBER(24,0)",nullable = false)
     private Double supposedAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDPRODUCTOPROCESADO", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTOPROCESADO",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private ProcessedProduct processedProduct;
 
     @OneToMany(mappedBy = "productComposition", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -60,7 +60,7 @@ public class ProductComposition implements com.encens.khipus.model.BaseModel {
     private Boolean active;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     public Long getId() {

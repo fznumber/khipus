@@ -10,22 +10,22 @@
 
     <ui:define name="pageTitle">#{messages['MeasureUnitProduction.list']}</ui:define>
     <ui:param name="bodyWidth" value="100%"/>
-
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
-        <h:form id="measureUnitSearch">
+        <h:form id="measureUnitProductionSearch">
             <rich:simpleTogglePanel label="#{messages['MeasureUnitProduction.search']}" switchType="client">
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['MeasureUnitProduction.name']}</ui:define>
-                    <h:inputText id="name" value="#{measureUnitDataModel.criteria.name}"
+                    <h:inputText id="name" value="#{measureUnitProductionDataModel.criteria.name}"
                                  maxlength="100" tabindex="1" styleClass="input">
                     </h:inputText>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['MeasureUnitProduction.description']}</ui:define>
-                    <h:inputText id="description" value="#{measureUnitDataModel.criteria.description}"
+                    <h:inputText id="description" value="#{measureUnitProductionDataModel.criteria.description}"
                                  maxlength="100" tabindex="1" styleClass="input">
                     </h:inputText>
-                    <a4j:commandButton action="#{measureUnitDataModel.search}" reRender="measureUnitList, dataScroller"
+                    <a4j:commandButton action="#{measureUnitProductionDataModel.search}" reRender="measureUnitProductionList, dataScroller"
                                        styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
                                        tabindex="4">
                         <s:defaultAction/>
@@ -36,24 +36,24 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" view="/production/measureUnit.xhtml" styleClass="button"
+                <s:button value="#{messages['Common.new']}" view="/production/measureUnitProduction.xhtml" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}" />
             </div>
-            <rich:dataTable value="#{measureUnitDataModel}" var="measureUnitItem" id="measureUnitList"
+            <rich:dataTable value="#{measureUnitProductionDataModel}" var="measureUnitProductionItem" id="measureUnitProductionList"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%" columnsWidth="20%, 20%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="measureUnit.name" dataModel="#{measureUnitDataModel}"
-                                                   reRender="measureUnitList, dataScroller">
+                            <app:commandSortHeader sortProperty="measureUnitProduction.name" dataModel="#{measureUnitProductionDataModel}"
+                                                   reRender="measureUnitProductionList, dataScroller">
                                 #{messages['MeasureUnitProduction.name']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="measureUnit.description" dataModel="#{measureUnitDataModel}"
-                                                   reRender="measureUnitList, dataScroller">
+                            <app:commandSortHeader sortProperty="measureUnitProduction.description" dataModel="#{measureUnitProductionDataModel}"
+                                                   reRender="measureUnitProductionList, dataScroller">
                                 #{messages['MeasureUnitProduction.description']}
                             </app:commandSortHeader>
                         </rich:column>
@@ -64,25 +64,25 @@
                 </f:facet>
 
                 <rich:column>
-                    <h:outputText value="#{measureUnitItem.name}"/>
+                    <h:outputText value="#{measureUnitProductionItem.name}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{measureUnitItem.description}"/>
+                    <h:outputText value="#{measureUnitProductionItem.description}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
-                                   action="#{measureUnitAction.select(measureUnitItem)}">
+                                   action="#{measureUnitProductionAction.select(measureUnitProductionItem)}">
                         <s:conversationPropagation value="none"/>
                     </h:commandLink>
                 </rich:column>
             </rich:dataTable>
-            <app:dataScroller id="dataScroller" for="measureUnitList" dataModel="#{measureUnitDataModel}"/>
+            <app:dataScroller id="dataScroller" for="measureUnitProductionList" dataModel="#{measureUnitProductionDataModel}"/>
 
-            <rich:jQuery selector="#measureUnitList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
-            <rich:jQuery selector="#measureUnitList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+            <rich:jQuery selector="#measureUnitProductionList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+            <rich:jQuery selector="#measureUnitProductionList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" view="/production/measureUnit.xhtml" styleClass="button"
+                <s:button value="#{messages['Common.new']}" view="/production/measureUnitProduction.xhtml" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('MEASUREUNITPRODUCTION','CREATE')}"/>
             </div>
 

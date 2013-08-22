@@ -1,8 +1,8 @@
-package main.com.encens.khipus.framework.service;
+package com.encens.khipus.framework.service;
 
-import com.encens.hp90.exception.ConcurrencyException;
-import com.encens.hp90.exception.EntryDuplicatedException;
-import com.encens.hp90.exception.ReferentialIntegrityException;
+import com.encens.khipus.exception.ConcurrencyException;
+import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.ReferentialIntegrityException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.OptimisticLockException;
