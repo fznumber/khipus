@@ -14,25 +14,25 @@ import java.util.List;
                             "from CollectionRecord collectionRecord " +
                             "where collectionRecord.collectionForm.date = :date " +
                             "and collectionRecord.collectionForm.metaProduct = :metaProduct"),
-       /* @NamedQuery(name = "CollectionForm.calculateUsedAmountOnDateByMetaProduct",
+        @NamedQuery(name = "CollectionForm.calculateUsedAmountOnDateByMetaProduct",
                 query = "select sum(inputProductionVoucher.amount) " +
                         "from ProductionOrder productionOrder " +
                         "left join productionOrder.inputProductionVoucherList inputProductionVoucher " +
                         "where productionOrder.productionPlanning.date = :date " +
                         "and productionOrder.productionPlanning.state <> com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
-                        "and inputProductionVoucher.metaProduct = :metaProduct "), */
+                        "and inputProductionVoucher.metaProduct = :metaProduct "),
         @NamedQuery(name = "CollectionForm.calculateWeightedAmountToDateByMetaProduct",
                     query = "select sum(collectionRecord.weightedAmount) " +
                             "from CollectionRecord collectionRecord " +
                             "where collectionRecord.collectionForm.date <= :date " +
                             "and collectionRecord.collectionForm.metaProduct = :metaProduct"),
-        /*@NamedQuery(name = "CollectionForm.calculateUsedAmountToDateByMetaProduct",
+        @NamedQuery(name = "CollectionForm.calculateUsedAmountToDateByMetaProduct",
                     query = "select sum(inputProductionVoucher.amount) " +
                             "from ProductionOrder productionOrder " +
                             "left join productionOrder.inputProductionVoucherList inputProductionVoucher " +
                             "where productionOrder.productionPlanning.date <= :date " +
                             "and productionOrder.productionPlanning.state <> com.encens.khipus.model.production.ProductionPlanningState.PENDING " +
-                            "and inputProductionVoucher.metaProduct = :metaProduct"),*/
+                            "and inputProductionVoucher.metaProduct = :metaProduct"),
         @NamedQuery(name = "CollectionForm.calculateCollectedAmountOnDateByMetaProduct",
                     query = "select collectedRawMaterial.rawMaterialCollectionSession.productiveZone.id, sum(collectedRawMaterial.amount) " +
                             "from CollectedRawMaterial collectedRawMaterial " +

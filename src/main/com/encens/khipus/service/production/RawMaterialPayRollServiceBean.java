@@ -123,7 +123,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryNotFoundException, RawMaterialPayRollException {
         Map<Date, Double> totalWeight = createMapOfCollectedAmount(rawMaterialPayRoll);
         Map<Date, Long> countProducers = createMapOfTotalProducers(rawMaterialPayRoll);
-        Map<Long, Aux> map = createMapOfProducers(rawMaterialPayRoll, totalWeight, countProducers);
+        Map<Date, Double> totalWeightsByGab = createMapOfCollectedWeights(rawMaterialPayRoll);
+        Map<Date, Double> differences = createMapOfDifferencesWeights(rawMaterialPayRoll);
+        Map<Long, Aux> map = createMapOfProducers(rawMaterialPayRoll, totalWeight, countProducers,totalWeightsByGab,differences);
 
         for(Aux aux : map.values()) {
             RawMaterialPayRecord record = new RawMaterialPayRecord();
@@ -150,7 +152,91 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return rawMaterialPayRoll;
     }
 
-    private Map<Long, Aux> createMapOfProducers(RawMaterialPayRoll rawMaterialPayRoll, Map<Date, Double> totalWeight, Map<Date, Long> countProducers) throws RawMaterialPayRollException {
+    private Map<Date,Double> createMapOfCollectedWeights(RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> counts = findTotalCollection("RawMaterialPayRoll.totalCollectedGabBetweenDates", rawMaterialPayRoll);
+        Map<Date, Double> countProducers = new HashMap<Date, Double>();
+
+        for(Object[] obj : counts) {
+            Date date = (Date)obj[0];
+            Double count = (Double)obj[1];
+
+            countProducers.put(date, count);
+        }
+
+        return countProducers;
+    }
+
+    private Map<Date,Double> createMapOfDifferencesWeights(RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> datas = findDifferencesWeights("RawMaterialPayRoll.differenceRawMaterialBetweenDates", rawMaterialPayRoll);
+
+        System.out.println("Tamaño: "+datas.size());
+
+        Map<Date,Double> differences = new HashMap<Date, Double>();
+
+        for(Object[] obj : datas){
+            Date date = (Date)obj[0];
+            Double receivedAmount = (Double)obj[1];
+            Double weightedAmount = (Double)obj[2];
+            Double diffs = (receivedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice()) - (weightedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice());
+            differences.put(date,diffs);
+        }
+        return differences;
+    }
+
+    private List<Object[]> findDifferencesWeights(String namedQuery, RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> result = null;
+
+        try{
+            result = getEntityManager().createNamedQuery("RawMaterialPayRoll.differenceRawMaterialBetweenDates")
+                    .setParameter("startDate", rawMaterialPayRoll.getStartDate())
+                    .setParameter("endDate", rawMaterialPayRoll.getEndDate())
+                    .setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                    .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
+                    .getResultList();
+        }catch(Exception e)
+        {
+
+        }
+        return result;
+    }
+
+    private List<Object[]> findTotalCollection(String namedQuery, RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> result = null;
+        try{
+            result = getEntityManager().createNamedQuery(namedQuery)
+                    .setParameter("startDate", rawMaterialPayRoll.getStartDate())
+                    .setParameter("endDate", rawMaterialPayRoll.getEndDate())
+                    .setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                    .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
+                    .getResultList();
+        }catch (Exception e)
+        {
+
+        }
+
+        return result;
+    }
+
+
+    /*
+    private double generateDelta(RawMaterialPayRoll rawMaterialPayRoll, Object obj)
+    {
+        double delta;
+
+        List<Object[]> differences = find("RawMaterialPayRoll.findDifferenceRawMaterialBetweenDates",rawMaterialPayRoll);
+
+        List<Object[]> totalWeights = find("RawMaterialPayRoll.findTotalCollectedRawMaterialBetweenDates",rawMaterialPayRoll);
+
+
+
+        return delta;
+    }
+    */
+    private Map<Long, Aux> createMapOfProducers(RawMaterialPayRoll rawMaterialPayRoll, Map<Date, Double> totalWeight, Map<Date, Long> countProducers, Map<Date, Double> totalWeightsByGab,Map<Date, Double> differences) throws RawMaterialPayRollException {
         double taxRate = rawMaterialPayRoll.getTaxRate() / 100;
         List<Object[]> collectedProducers = find("RawMaterialPayRoll.findCollectedAmountByMetaProductBetweenDates", rawMaterialPayRoll);
         Map<Long, Aux> map = new HashMap<Long, Aux>();
@@ -166,18 +252,88 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 map.put(rawMaterialProducer.getId(), aux);
             }
 
-            Double delta = find(totalWeight, date);
+            //Double delta = find(totalWeight, date);
+
             Long count = find(countProducers, date);
-            Double adjustment = delta / count;
-            Double earned = (amount + adjustment) * rawMaterialPayRoll.getUnitPrice();
+            //Double adjustment = delta / count;
+            //Double earned = (amount + adjustment) * rawMaterialPayRoll.getUnitPrice();
+            Double earned = amount  * rawMaterialPayRoll.getUnitPrice();
             Double withholding = (hasLicense(rawMaterialProducer, date) ? 0.0 : earned * taxRate);
 
             aux.collectedAmount += amount;
-            aux.adjustmentAmount += delta/count;
+            //aux.adjustmentAmount += delta/count;
             aux.earnedMoney += earned;
             aux.withholdingTax += withholding;
         }
+        addProration(map,rawMaterialPayRoll,totalWeightsByGab,differences);
         return map;
+    }
+
+    private void addProration(Map<Long, Aux> map, RawMaterialPayRoll rawMaterialPayRoll, Map<Date, Double> totalWeightsByGab,Map<Date, Double> differences) throws RawMaterialPayRollException
+    {
+        Iterator collections = map.entrySet().iterator();
+        while(collections.hasNext()){
+
+            Map.Entry thisEntry = (Map.Entry) collections.next();
+            Aux aux = (Aux)thisEntry.getValue();
+            Map<Date,Double> rawMaterialCollected = getRawMaterialCollected(aux.producer, rawMaterialPayRoll);
+            Double proration = calculateDelta(rawMaterialCollected, differences, totalWeightsByGab);
+            ((Aux) thisEntry.getValue()).adjustmentAmount = proration;
+            ((Aux) thisEntry.getValue()).earnedMoney = ((Aux) thisEntry.getValue()).earnedMoney - proration;
+        }
+    }
+
+    private Double calculateDelta(Map<Date, Double> rawMaterialCollected, Map<Date, Double> differences, Map<Date, Double> totalWeightsByGab) throws RawMaterialPayRollException
+    {
+        Iterator collections = rawMaterialCollected.entrySet().iterator();
+        Double total =0.0d;
+        Double aux =0.0d;
+        while(collections.hasNext()){
+            Map.Entry thisEntry = (Map.Entry) collections.next();
+            Double mountCollected = (Double)thisEntry.getValue();
+            Date date = (Date)thisEntry.getKey();
+            Double diff = find(differences,date);
+            Double totalWeight = find(totalWeightsByGab,date);
+
+            aux = mountCollected * (diff/totalWeight);
+            differences.put(date,diff - aux);
+            totalWeightsByGab.put(date,totalWeight - mountCollected);
+            total += aux;
+        }
+
+
+        return total;
+    }
+
+    private Map<Date, Double> getRawMaterialCollected(RawMaterialProducer rawMaterialProducer, RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> datas = findRawMawterilCollected(rawMaterialProducer, rawMaterialPayRoll);
+        Map<Date, Double> result = new HashMap<Date, Double>();
+        for(Object[] obj : datas) {
+            Date date = (Date)obj[0];
+            Double count = (Double)obj[1];
+
+            result.put(date, count);
+        }
+        return result;
+    }
+
+    private List<Object[]> findRawMawterilCollected(RawMaterialProducer rawMaterialProducer, RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> result = null;
+
+        try{
+            result = getEntityManager().createNamedQuery("RawMaterialPayRoll.getRawMaterialCollentionByProductor")
+                    .setParameter("startDate", rawMaterialPayRoll.getStartDate())
+                    .setParameter("endDate", rawMaterialPayRoll.getEndDate())
+                    .setParameter("rawMaterialProducer", rawMaterialProducer)
+                    .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
+                    .getResultList();
+        }catch(Exception e)
+        {
+
+        }
+        return result;
     }
 
     private <T> T find(Map<Date, T> map, Date date) throws RawMaterialPayRollException {
@@ -243,13 +399,39 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
 
     private List<Object[]> find(String namedQuery, RawMaterialPayRoll rawMaterialPayRoll) {
-        return getEntityManager().createNamedQuery(namedQuery)
-                                  .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
-                                  .setParameter("startDate", rawMaterialPayRoll.getStartDate())
-                                  .setParameter("endDate", rawMaterialPayRoll.getEndDate())
-                                  .setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
-                                  .getResultList();
+        List<Object[]> result = null;
+        try{
+            result = getEntityManager().createNamedQuery(namedQuery)
+                    .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
+                    .setParameter("startDate", rawMaterialPayRoll.getStartDate())
+                    .setParameter("endDate", rawMaterialPayRoll.getEndDate())
+                    .setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                    .getResultList();
+        }catch (Exception e)
+        {
+
+        }
+        return result;
     }
+    /*
+    public List<GeneratedPayroll> findValidGeneratedPayrollsByGestionAndMount(Gestion gestion, Month month) {
+        try {
+            userTransaction.begin();
+            List<GeneratedPayroll> resultList = em.createNamedQuery("GeneratedPayroll.findGeneratedPayrollsByGestionAndType")
+                    .setParameter("gestion", gestion)
+                    .setParameter("month", month).setParameter("generatedPayrollType", GeneratedPayrollType.OFFICIAL).getResultList();
+            userTransaction.commit();
+            return resultList;
+        } catch (Exception e) {
+            try {
+                userTransaction.rollback();
+            } catch (SystemException e1) {
+                log.debug("Rollback failed", e1);
+            }
+        }
+        return new ArrayList<GeneratedPayroll>();
+    }
+    */
 
     class Aux {
         public RawMaterialProducer producer;

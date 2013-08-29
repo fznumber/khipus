@@ -233,19 +233,19 @@
         </navigation>
     </page>
 
-    <page view-id="/production/measureUnitList.xhtml">
+    <page view-id="/production/measureUnitProductionList.xhtml">
         <end-conversation/>
-        <navigation from-action="#{measureUnitAction.select(measureUnitItem)}">
+        <navigation from-action="#{measureUnitProductionAction.select(measureUnitProductionItem)}">
             <rule if-outcome="Success">
-                <redirect view-id="/production/measureUnit.xhtml"/>
+                <redirect view-id="/production/measureUnitProduction.xhtml"/>
             </rule>
         </navigation>
     </page>
 
-    <page view-id="/production/measureUnit.xhtml" no-conversation-view-id="/production/measureUnitList.xhtml">
+    <page view-id="/production/measureUnitProduction.xhtml" no-conversation-view-id="/production/measureUnitProductionList.xhtml">
         <navigation>
             <rule>
-                <redirect view-id="/production/measureUnitList.xhtml"/>
+                <redirect view-id="/production/measureUnitProducionList.xhtml"/>
             </rule>
         </navigation>
     </page>
