@@ -1,10 +1,17 @@
 package com.encens.khipus.model.production;
 
 
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.Cascade;
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +34,9 @@ import java.util.List;
         allocationSize = 10)
 
 @Entity
-@Table(name = "SESIONACOPIO", uniqueConstraints = @UniqueConstraint(columnNames = {"FECHA", "IDCOMPANIA", "IDZONAPRODUCTIVA"}))
+@Table(name = "SESIONACOPIO", uniqueConstraints = @UniqueConstraint(columnNames = {"FECHA"}))
 @Filter(name = "companyFilter")
-@EntityListeners(com.encens.khipus.model.CompanyListener.class)
+@EntityListeners(CompanyListener.class)
 public class RawMaterialCollectionSession implements com.encens.khipus.model.BaseModel {
 
     @Id

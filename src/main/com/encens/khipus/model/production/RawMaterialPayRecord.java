@@ -36,10 +36,10 @@ public class RawMaterialPayRecord {
     @JoinColumn(name = "IDPLANILLAPAGOMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
     private RawMaterialPayRoll rawMaterialPayRoll;
 
-    @Column(name = "CANTIDADTOTAL", columnDefinition = "NUMBER(24,0)" ,nullable = false)
+    @Column(name = "CANTIDADTOTAL", columnDefinition = "NUMBER(24,2)" ,nullable = false)
     private double totalAmount = 0.0;
 
-    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(24,2)", nullable = false)
     private double productiveZoneAdjustment = 0.0;
 
     @Column(name = "LICENCIAIMPUESTOS", nullable = true, length = 200)
@@ -51,7 +51,7 @@ public class RawMaterialPayRecord {
     @Column(name = "FECHAINICIALICENCIAIMPUESTO",columnDefinition = "DATE" ,nullable = true)
     private Date startDateTaxLicence;
 
-    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(24,2)", nullable = false)
     private double earnedMoney;
 
     @Version
