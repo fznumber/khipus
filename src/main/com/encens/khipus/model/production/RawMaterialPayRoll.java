@@ -1,11 +1,18 @@
 package com.encens.khipus.model.production;
 
 
+import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.State;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.Cascade;
+import com.encens.khipus.model.admin.Company;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +47,7 @@ import java.util.List;
                             "where rawMaterialCollectionSession.metaProduct = :metaProduct " +
                             "and productiveZone = :productiveZone " +
                             "and rawMaterialCollectionSession.date between :startDate and :endDate " +
-                            "group by rawMaterialCollectionSession, productiveZone "),
+                            "group by rawMaterialCollectionSession.date, rawMaterialCollectionSession, productiveZone "),
         @NamedQuery(name = "RawMaterialPayRoll.findTotalCollectedByMetaProductBetweenDates",
                     query = "select collectionForm.date, collectionRecord.receivedAmount, collectionRecord.weightedAmount " +
                             "from CollectionForm collectionForm " +
@@ -54,7 +61,39 @@ import java.util.List;
                     query = "select max(rawMaterialPayRoll.endDate)" +
                             "from RawMaterialPayRoll rawMaterialPayRoll " +
                             "where rawMaterialPayRoll.metaProduct = :metaProduct " +
-                            "and rawMaterialPayRoll.productiveZone = :productiveZone ")
+                            "and rawMaterialPayRoll.productiveZone = :productiveZone "),
+
+        @NamedQuery(name = "RawMaterialPayRoll.totalCollectedGabBetweenDates",
+                query = "select collectedRawMaterial.rawMaterialCollectionSession.date, sum(collectedRawMaterial.amount) " +
+                        "from CollectedRawMaterial collectedRawMaterial " +
+                        "join collectedRawMaterial.rawMaterialCollectionSession " +
+                        "where collectedRawMaterial.rawMaterialCollectionSession.date between :startDate and :endDate " +
+                        "and collectedRawMaterial.rawMaterialCollectionSession.productiveZone = :productiveZone " +
+                        "and collectedRawMaterial.rawMaterialCollectionSession.metaProduct = :metaProduct " +
+                        "group by collectedRawMaterial.rawMaterialCollectionSession.date " +
+                        "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
+        ),
+
+        @NamedQuery(name = "RawMaterialPayRoll.differenceRawMaterialBetweenDates",
+                query = "select collectionRecord.collectionForm.date, collectionRecord.receivedAmount , collectionRecord.weightedAmount " +
+                        "from CollectionRecord collectionRecord " +
+                        "join collectionRecord.collectionForm " +
+                        "where collectionRecord.collectionForm.date between :startDate and :endDate " +
+                        "and collectionRecord.productiveZone = :productiveZone " +
+                        "and collectionRecord.collectionForm.metaProduct = :metaProduct " +
+                        "order by collectionRecord.collectionForm.date asc"
+        ),
+
+        @NamedQuery(name = "RawMaterialPayRoll.getRawMaterialCollentionByProductor",
+                query = "select CollectedRawMaterial.rawMaterialCollectionSession.date ,CollectedRawMaterial.amount " +
+                        "from CollectedRawMaterial collectedRawMaterial " +
+                        "join collectedRawMaterial.rawMaterialCollectionSession " +
+                        "where collectedRawMaterial.rawMaterialProducer = :rawMaterialProducer " +
+                        "and collectedRawMaterial.rawMaterialCollectionSession.metaProduct = :metaProduct " +
+                        "and collectedRawMaterial.rawMaterialCollectionSession.date between :startDate and :endDate " +
+                        "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
+
+        )
 })
 
 @TableGenerator(name = "RawMaterialPayRoll_Generator",
@@ -67,8 +106,8 @@ import java.util.List;
 @Entity
 @Table(name = "PLANILLAPAGOMATERIAPRIMA")
 @Filter(name = "companyFilter")
-@EntityListeners(com.encens.khipus.model.CompanyListener.class)
-public class RawMaterialPayRoll implements com.encens.khipus.model.BaseModel {
+@EntityListeners(CompanyListener.class)
+public class RawMaterialPayRoll implements BaseModel {
 
     @Id
     @Column(name = "IDPLANILLAPAGOMATERIAPRIMA", nullable = false)
@@ -97,7 +136,7 @@ public class RawMaterialPayRoll implements com.encens.khipus.model.BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.admin.Company company;
+    private Company company;
 
     @OneToMany(mappedBy = "rawMaterialPayRoll", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -151,11 +190,11 @@ public class RawMaterialPayRoll implements com.encens.khipus.model.BaseModel {
         this.version = version;
     }
 
-    public com.encens.khipus.model.admin.Company getCompany() {
+    public Company getCompany() {
         return company;
     }
 
-    public void setCompany(com.encens.khipus.model.admin.Company company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 

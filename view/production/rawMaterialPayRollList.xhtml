@@ -10,7 +10,7 @@
 
     <ui:define name="pageTitle">#{messages['RawMaterialPayRoll.list']}</ui:define>
     <ui:param name="bodyWidth" value="100%"/>
-
+    <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <h:form id="rawMaterialPayRollSearch">
             <rich:simpleTogglePanel label="#{messages['RawMaterialPayRoll.search']}" switchType="client">
@@ -37,6 +37,9 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}" />
+               <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
+                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
+                          -->
             </div>
 
             <rich:dataTable value="#{rawMaterialPayRollDataModel}" var="rawMaterialPayRollItem" id="rawMaterialPayRollList"
@@ -83,6 +86,9 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
                           rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+                <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
+                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
+                          -->
             </div>
 
         </h:form>

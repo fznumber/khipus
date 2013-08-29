@@ -41,7 +41,7 @@ public class RawMaterialProducer extends Person {
     @Type(type = "IntegerBoolean")
     private Boolean responsible;
 
-    @ManyToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = true, updatable = true, insertable = true)
     private ProductiveZone productiveZone;
 
