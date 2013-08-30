@@ -522,7 +522,7 @@ input.button {
 }
 
 .active-tab {
-    color: #FFFFFF;
+    color: #000000;
     font-weight: bold;
     border: 1px solid white;
     height: 25px;
@@ -899,7 +899,7 @@ input.button {
 }
 
 .rich-table-headercell a {
-    color: #FFF;
+    color: #000;
 }
 
 .rich-table-column-Disabled {

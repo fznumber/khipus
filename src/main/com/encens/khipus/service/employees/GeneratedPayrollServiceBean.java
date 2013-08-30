@@ -2343,6 +2343,11 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
 
     public OrganizationalUnit findFather(OrganizationalUnit organizationalUnit, OrganizationalLevel organizationalLevel) {
         if (organizationalUnit != null && organizationalUnit.getOrganizationalUnitRoot() != null) {
+            System.out.println("organizationalLevel.getName() --> " + organizationalLevel.getName());
+            System.out.println("organizationalUnit.getName() --> " + organizationalUnit.getName());
+            System.out.println("organizationalUnit.getOrganizationalUnitRoot().getName() --> " + organizationalUnit.getOrganizationalUnitRoot().getName());
+            System.out.println("organizationalUnit.getOrganizationalUnitRoot().getOrganizationalLevel().getName() --> " + organizationalUnit.getOrganizationalUnitRoot().getOrganizationalLevel().getName());
+
             if (organizationalUnit.getOrganizationalUnitRoot().getOrganizationalLevel().getName().equals(organizationalLevel.getName())) {
                 return organizationalUnit.getOrganizationalUnitRoot();
             } else {
