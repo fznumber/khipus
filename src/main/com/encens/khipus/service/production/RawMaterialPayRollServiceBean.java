@@ -5,15 +5,18 @@ import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
+import oracle.jdbc.driver.OracleDriver;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.joda.time.DateTime;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.PersistenceException;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
@@ -167,11 +170,77 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return countProducers;
     }
 
+    public Discounts getDiscounts(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
+    {
+        Discounts discounts = new Discounts();
+        /*String query = "select " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.yogurt) as yogurt, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.cans) as recip, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.withholdingTax) as retention, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.veterinary) as veterinary, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.credit) as credit, " +
+                " rawMaterialPayRecord.rawMaterialPayRoll.unitPrice as unitPrice " +
+                "from RawMaterialPayRecord rawMaterialPayRecord " +
+                "join rawMaterialPayRecord.rawMaterialPayRoll " +
+                "join rawMaterialPayRecord.rawMaterialProducerDiscount " +
+                //"where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
+                //"and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
+                " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice";*/
+        DateTime dateTimeIni = new DateTime(dateIni);
+        DateTime dateTimeEnd = new DateTime(dateEnd);
+
+        String querySql = "select sum(dpm.yogurt) " +
+                       "     ,sum(dpm.tachos) " +
+                       "     ,sum(dpm.retencion) " +
+                       "     ,sum(dpm.veterinario) " +
+                       "     ,sum(dpm.credito)" +
+                       "     ,ppm.preciounitario " +
+                       " from registropagomateriaprima  rpm " +
+                       " inner join planillapagomateriaprima ppm " +
+                       " on rpm.idplanillapagomateriaprima = ppm.idplanillapagomateriaprima" +
+                       " inner join descuentproductmateriaprima dpm " +
+                       " on rpm.iddescuentproductmateriaprima = dpm.iddescuentproductmateriaprima " +
+                       " where ppm.fechainicio = to_date('"+dateTimeIni.getDayOfMonth()+"/"+dateTimeIni.getMonthOfYear()+"/"+dateTimeIni.getYear()+"','dd/mm/yyyy') " +
+                       " and ppm.fechafin = to_date('"+dateTimeEnd.getDayOfMonth()+"/"+dateTimeEnd.getMonthOfYear()+"/"+dateTimeEnd.getYear()+"','dd/mm/yyyy') " +
+                       //" and ppm.idzonaproductiva = 36 " +
+                       " group by ppm.preciounitario " ;
+        // List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getDiscounts")
+        List<Object[]> datas = getEntityManager().createNativeQuery(querySql)
+                        //.setParameter("startDate", dateIni)
+                        //.setParameter("endDate", dateEnd)
+                        //.setParameter("productiveZone", zone)
+                        //.setParameter("metaProduct", metaProduct)
+                        .getResultList();
+        //(annualBudgetBigDecimal != null) ? annualBudgetBigDecimal.doubleValue() : 0.0;
+        discounts.yogurt = ((BigDecimal)datas.get(0)[0] !=null) ? ((BigDecimal)datas.get(0)[0]).doubleValue() : 0.0 ;
+        discounts.recip = ((BigDecimal)datas.get(0)[1] !=null) ? ((BigDecimal)datas.get(0)[1]).doubleValue() : 0.0 ;
+        discounts.retention = ((BigDecimal)datas.get(0)[2] !=null) ? ((BigDecimal)datas.get(0)[2]).doubleValue() : 0.0 ;
+        discounts.veterinary = ((BigDecimal)datas.get(0)[3] !=null) ? ((BigDecimal)datas.get(0)[3]).doubleValue() : 0.0 ;
+        discounts.credit = ((BigDecimal)datas.get(0)[4] !=null) ? ((BigDecimal)datas.get(0)[4]).doubleValue() : 0.0 ;
+        discounts.unitPrice = ((BigDecimal)datas.get(0)[5] !=null) ? ((BigDecimal)datas.get(0)[5]).doubleValue() : 0.0 ;
+
+        return discounts;
+    }
+
+    public SummaryTotal getSumaryTotal(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
+    {
+        SummaryTotal summaryTotal = new SummaryTotal();
+
+        List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getSumaryTotal")
+                            .setParameter("startDate", dateIni)
+                            .setParameter("endDate", dateEnd)
+                            //.setParameter("productiveZone", zone)
+                            //.setParameter("metaProduct", metaProduct)
+                            .getResultList();
+        summaryTotal.differencesTotal = ((Double)datas.get(0)[0] !=null) ? (Double)datas.get(0)[0] : 0.0 ;
+        summaryTotal.balanceWeightTotal = ((Double)datas.get(0)[1] !=null) ? (Double)datas.get(0)[1] : 0.0 ;
+        summaryTotal.collectedTotal = ((Double)datas.get(0)[2] !=null) ? (Double)datas.get(0)[2] : 0.0 ;
+        return summaryTotal;
+    }
+
     private Map<Date,Double> createMapOfDifferencesWeights(RawMaterialPayRoll rawMaterialPayRoll)
     {
         List<Object[]> datas = findDifferencesWeights("RawMaterialPayRoll.differenceRawMaterialBetweenDates", rawMaterialPayRoll);
-
-        System.out.println("Tamaño: "+datas.size());
 
         Map<Date,Double> differences = new HashMap<Date, Double>();
 
@@ -439,6 +508,22 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         public Double adjustmentAmount = 0.0;
         public Double earnedMoney = 0.0;
         public Double withholdingTax = 0.0;
+    }
+
+    public class Discounts {
+        public Double unitPrice;
+        public Double yogurt;
+        public Double veterinary;
+        public Double credit;
+        public Double recip;
+        public Double retention;
+    }
+
+    public class SummaryTotal{
+        public Double collectedTotal;
+        public Double collectedTotalMoney;
+        public Double differencesTotal;
+        public Double balanceWeightTotal;
     }
 
     @Override

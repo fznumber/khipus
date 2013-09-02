@@ -978,7 +978,8 @@
         <rich:dropDownMenu value="#{messages['menu.production.supplierPayments']}"
                            rendered="#{
         s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','VIEW') or
-        s:hasPermission('RAWMATERIALPAYROLL','VIEW') }">
+        s:hasPermission('RAWMATERIALPAYROLL','VIEW')
+         }">
 
             <rich:menuItem submitMode="none"
                            styleClass="main-menu-item"
@@ -994,6 +995,20 @@
                         value="#{messages['menu.production.supplierPayments.rawMaterialPayRoll']}"
                         propagation="none" />
             </rich:menuItem>
+
+
+            <rich:menuGroup value = "#{messages['menu.production.supplierPayments.reports']}"
+                               >
+                <rich:menuItem submitMode="none"
+                               styleClass="main-menu-item"
+                               >
+                    <s:link view="/production/reports/rawMaterialPaySummaryReport.xhtml"
+                            value="#{messages['menu.production.supplierPayments.reports.summary']}"
+                            propagation="begin"/>
+                </rich:menuItem>
+
+            </rich:menuGroup>
+
         </rich:dropDownMenu>
 
         <rich:dropDownMenu value="#{messages['menu.production.planification']}"
