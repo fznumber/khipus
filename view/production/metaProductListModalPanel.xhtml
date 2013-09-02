@@ -10,8 +10,7 @@
                  xmlns:app="http://encens.com/products/khipus/facelets"
                  id="#{dialogId}" onshow="focusFirstElement();">
 
-    <f:facet name="header">
-        <h:outputText value="#{listTitle}"/>
+    <f:facet name="header"> <h:outputText value="#{listTitle}"/>
     </f:facet>
     <f:facet name="controls">
         <h:graphicImage value="/img/close.png" style="cursor:pointer" id="closeLink"/>
@@ -74,7 +73,7 @@
                 <h:outputText value="#{dataItem.name}"/>
             </rich:column>
             <rich:column rendered="#{showMeasureUnit}">
-                <h:outputText value="#{dataItem.measureUnit.name}"/>
+                <h:outputText value="#{dataItem.measureUnitProduction.name}"/>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{dataItem.code}"/>

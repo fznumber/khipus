@@ -997,11 +997,13 @@
             </rich:menuItem>
 
 
-            <rich:menuGroup value = "#{messages['menu.production.supplierPayments.reports']}"
-                               >
+            <rich:menuGroup value = "#{messages['menu.production.supplierPayments.reports.summary']}"
+                            rendered="#{
+            s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
                 <rich:menuItem submitMode="none"
                                styleClass="main-menu-item"
-                               >
+                               rendered="#{s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
+
                     <s:link view="/production/reports/rawMaterialPaySummaryReport.xhtml"
                             value="#{messages['menu.production.supplierPayments.reports.summary']}"
                             propagation="begin"/>

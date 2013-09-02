@@ -35,7 +35,7 @@ public class MeasureUnitDataModel extends QueryDataModel<MeasureUnitPk, MeasureU
 
     @Override
     public String getEjbql() {
-        return "select measureUnit from MeasureUnitProduction measureUnit";
+        return "select measureUnit from MeasureUnit measureUnit";
     }
 
     @Override
