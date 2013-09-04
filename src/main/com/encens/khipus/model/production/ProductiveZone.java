@@ -38,7 +38,7 @@ import java.util.List;
         allocationSize = 10)
 
 @Entity
-@Table(name = "ZONAPRODUCTIVA", uniqueConstraints = @UniqueConstraint(columnNames = {"GRUPO", "NOMBRE", "IDCOMPANIA"}))
+@Table(name = "ZONAPRODUCTIVA", uniqueConstraints = @UniqueConstraint(columnNames = {"NOMBRE", "IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(com.encens.khipus.model.CompanyListener.class)
 public class ProductiveZone implements BaseModel {

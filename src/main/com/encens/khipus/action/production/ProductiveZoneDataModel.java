@@ -20,8 +20,8 @@ import java.util.List;
 public class ProductiveZoneDataModel extends QueryDataModel<Long, ProductiveZone> {
 
     private static final String[] RESTRICTIONS = {
-            "lower(productiveZone.name) like concat(#{productiveZoneDataModel.criteria.name}, '%')",
-            "lower(productiveZone.number) like concat(#{productiveZoneDataModel.criteria.number}, '%')",
+            "lower(productiveZone.name) like concat('%', concat(lower(#{productiveZoneDataModel.criteria.name}), '%'))",
+            "lower(productiveZone.number) like concat('%',#{productiveZoneDataModel.criteria.number}, '%')",
             "lower(productiveZone.group) like concat(#{productiveZoneDataModel.criteria.group}, '%')"
             };
 

@@ -23,12 +23,15 @@ import java.util.List;
 public class RawMaterialProducerDataModel extends QueryDataModel<Long, RawMaterialProducer> {
 
     private static final String[] RESTRICTIONS = {
-        "lower(rawMaterialProducer.firstName) like concat(#{rawMaterialProducerDataModel.criteria.firstName}, '%')",
+        //"lower(rawMaterialProducer.firstName) like concat(#{rawMaterialProducerDataModel.criteria.firstName}, '%')",
+        "lower(rawMaterialProducer.firstName) like concat('%',concat(#{rawMaterialProducerDataModel.criteria.firstName}, '%'))",
+        //"lower(rawMaterialProducer.lastName) like concat(#{rawMaterialProducerDataModel.criteria.lastName}, '%')",
         "lower(rawMaterialProducer.lastName) like concat(#{rawMaterialProducerDataModel.criteria.lastName}, '%')",
+        //"lower(rawMaterialProducer.maidenName) like concat(#{rawMaterialProducerDataModel.criteria.maidenName}, '%')",
         "lower(rawMaterialProducer.maidenName) like concat(#{rawMaterialProducerDataModel.criteria.maidenName}, '%')",
-        "lower(rawMaterialProducer.productiveZone.group) like concat(#{rawMaterialProducerDataModel.criteria.productiveZone.group}, '%')",
-        "lower(rawMaterialProducer.productiveZone.name) like concat(#{rawMaterialProducerDataModel.criteria.productiveZone.name}, '%')",
-        "lower(rawMaterialProducer.productiveZone.number) like concat(#{rawMaterialProducerDataModel.criteria.productiveZone.number}, '%')"
+        "lower(rawMaterialProducer.productiveZone.name) like concat('%', concat(lower(#{rawMaterialProducerDataModel.criteria.productiveZone.name}), '%'))",
+        "lower(rawMaterialProducer.productiveZone.number) like concat('%',#{rawMaterialProducerDataModel.criteria.productiveZone.number}, '%')",
+        "lower(rawMaterialProducer.productiveZone.group) like concat(#{rawMaterialProducerDataModel.criteria.productiveZone.group}, '%')"
     };
 
     @Create
