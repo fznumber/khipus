@@ -212,12 +212,21 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                         //.setParameter("metaProduct", metaProduct)
                         .getResultList();
         //(annualBudgetBigDecimal != null) ? annualBudgetBigDecimal.doubleValue() : 0.0;
-        discounts.yogurt = ((BigDecimal)datas.get(0)[0] !=null) ? ((BigDecimal)datas.get(0)[0]).doubleValue() : 0.0 ;
-        discounts.recip = ((BigDecimal)datas.get(0)[1] !=null) ? ((BigDecimal)datas.get(0)[1]).doubleValue() : 0.0 ;
-        discounts.retention = ((BigDecimal)datas.get(0)[2] !=null) ? ((BigDecimal)datas.get(0)[2]).doubleValue() : 0.0 ;
-        discounts.veterinary = ((BigDecimal)datas.get(0)[3] !=null) ? ((BigDecimal)datas.get(0)[3]).doubleValue() : 0.0 ;
-        discounts.credit = ((BigDecimal)datas.get(0)[4] !=null) ? ((BigDecimal)datas.get(0)[4]).doubleValue() : 0.0 ;
-        discounts.unitPrice = ((BigDecimal)datas.get(0)[5] !=null) ? ((BigDecimal)datas.get(0)[5]).doubleValue() : 0.0 ;
+        if(datas.size() > 0){
+            discounts.yogurt = ((BigDecimal)datas.get(0)[0] !=null) ? ((BigDecimal)datas.get(0)[0]).doubleValue() : 0.0 ;
+            discounts.recip = ((BigDecimal)datas.get(0)[1] !=null) ? ((BigDecimal)datas.get(0)[1]).doubleValue() : 0.0 ;
+            discounts.retention = ((BigDecimal)datas.get(0)[2] !=null) ? ((BigDecimal)datas.get(0)[2]).doubleValue() : 0.0 ;
+            discounts.veterinary = ((BigDecimal)datas.get(0)[3] !=null) ? ((BigDecimal)datas.get(0)[3]).doubleValue() : 0.0 ;
+            discounts.credit = ((BigDecimal)datas.get(0)[4] !=null) ? ((BigDecimal)datas.get(0)[4]).doubleValue() : 0.0 ;
+            discounts.unitPrice = ((BigDecimal)datas.get(0)[5] !=null) ? ((BigDecimal)datas.get(0)[5]).doubleValue() : 0.0 ;
+        }else{
+            discounts.yogurt = 0.0 ;
+            discounts.recip = 0.0 ;
+            discounts.retention = 0.0 ;
+            discounts.veterinary = 0.0 ;
+            discounts.credit = 0.0 ;
+            discounts.unitPrice = 0.0;
+        }
 
         return discounts;
     }
