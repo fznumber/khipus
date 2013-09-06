@@ -4,6 +4,35 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
+	<field name="productiveZone.name" class="java.lang.String"/>
+	<field name="productiveZone.group" class="java.lang.String"/>
+	<field name="productionOrder.code" class="java.lang.String"/>
+	<field name="prueba" class="java.lang.String"/>
+	<group name="prueba">
+		<groupExpression><![CDATA[$F{productiveZone.name}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<staticText>
+					<reportElement x="49" y="15" width="100" height="20"/>
+					<textElement/>
+					<text><![CDATA[code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="221" y="15" width="49" height="20"/>
+					<textElement/>
+					<text><![CDATA[valor:]]></text>
+				</staticText>
+				<textField evaluationTime="Auto">
+					<reportElement x="309" y="15" width="100" height="20"/>
+					<textElement/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{prueba}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
 	<title>
 		<band height="80" splitType="Stretch">
 			<image scaleImage="RetainShape" onErrorType="Icon">
@@ -22,7 +51,13 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="12" splitType="Stretch"/>
+		<band height="59" splitType="Stretch">
+			<textField>
+				<reportElement x="49" y="26" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{productionOrder.code}]]></textFieldExpression>
+			</textField>
+		</band>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>

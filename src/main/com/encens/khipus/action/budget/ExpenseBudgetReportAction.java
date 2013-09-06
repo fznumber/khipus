@@ -49,7 +49,8 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
     }
 
     protected String getEjbql() {
-        return "SELECT  businessUnit.executorUnitCode, " +
+        String sql = "select productionOrder.code from ProductionOrder productionOrder";
+        /*return "SELECT  businessUnit.executorUnitCode, " +
                 "       organization.name, " +
                 "       organization.id, " +
                 "       costCenter.id, " +
@@ -76,14 +77,15 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
                 "       LEFT JOIN expenseBudget.budgetActivity budgetActivity " +
                 "       LEFT JOIN budgetActivity.budgetProgram budgetProgram" +
                 "       LEFT JOIN expenseBudget.businessUnit businessUnit " +
-                "       LEFT JOIN businessUnit.organization organization";
-        /*return "select productiveZone.number, productiveZone.group, productiveZone.name from ProductiveZone productiveZone";*/
+                "       LEFT JOIN businessUnit.organization organization";*/
+        return sql;
     }
 
     public void generateReport() {
         log.debug("generating expenseBudgetReport......................................");
 
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
+        reportParameters.put("prueba","valor");
         reportParameters.put("reportGestion", getGestion().getYear());
         super.generateReport(
                 "expenseBudgetReport",
