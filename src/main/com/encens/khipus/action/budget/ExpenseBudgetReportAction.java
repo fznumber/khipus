@@ -33,7 +33,7 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
 
     @Create
     public void init() {
-        restrictions = new String[]{"expenseBudget.company=#{currentCompany}",
+        /*restrictions = new String[]{"expenseBudget.company=#{currentCompany}",
                 "expenseBudget.state=#{enumerationUtil.getEnumValue('com.encens.khipus.model.budget.BudgetState','APPROVED')}",
                 "businessUnit=#{expenseBudgetReportAction.businessUnit}",
                 "costCenter=#{expenseBudgetReportAction.costCenter}",
@@ -45,7 +45,7 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
                 "budgetProgram.id, " +
                 "budgetActivity.id, " +
                 "gestion.year," +
-                "expenseBudget.creationDate";
+                "expenseBudget.creationDate";*/
     }
 
     protected String getEjbql() {
@@ -77,6 +77,7 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
                 "       LEFT JOIN budgetActivity.budgetProgram budgetProgram" +
                 "       LEFT JOIN expenseBudget.businessUnit businessUnit " +
                 "       LEFT JOIN businessUnit.organization organization";
+        /*return "select productiveZone.number, productiveZone.group, productiveZone.name from ProductiveZone productiveZone";*/
     }
 
     public void generateReport() {

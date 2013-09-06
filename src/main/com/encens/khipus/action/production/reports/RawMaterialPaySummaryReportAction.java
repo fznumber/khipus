@@ -3,6 +3,7 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
+import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
@@ -13,8 +14,17 @@ import com.encens.khipus.service.employees.PayrollSummaryReportService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.JSFUtil;
 import com.encens.khipus.util.MessageUtils;
+import com.jatun.titus.reportgenerator.TemplateReportGenerator;
+import com.jatun.titus.reportgenerator.util.ReportConfigParams;
+import com.jatun.titus.reportgenerator.util.ReportData;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.base.JRBaseStyle;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -22,6 +32,12 @@ import org.jboss.seam.annotations.security.Restrict;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
 import java.util.*;
 
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
@@ -73,8 +89,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         //add seam properties as filter, summary only to OFFICIAL payroll
         //setGeneratedPayrollType(GeneratedPayrollType.OFFICIAL);
 
-
-
+/*
         Map params = new HashMap();
         //params.put("TITLE_PARAM", "PRUEBA");
         //params.put("GESTION_PARAM", 2013);
@@ -98,6 +113,123 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
         super.generateReport("RawMaterialPaySummaryReportAction", "/production/reports/rawMaterialPaySummaryReport.jrxml",
                 PageFormat.LETTER, PageOrientation.PORTRAIT, "prueba", params);
+*/
+        /*log.debug("Generate GeneralPayrollReportAction......");
+        //set filter properties
+
+        Map params = new HashMap();
+        params.putAll(getPayrollHeaderInfoMap(generatedPayroll.getId()));
+
+        setReportFormat(ReportFormat.PDF);
+        super.generateReportFromNativeSql("rawMaterialPaySummaryReport", "/production/reports/generalPayrollReport.jrxml", MessageUtils.getMessage("Reports.generalPayroll.fileName"), params);*/
+        //Report("payrollReport", "/employees/reports/generalPayrollReport.jrxml", MessageUtils.getMessage("Reports.generalPayroll.fileName"), params);
+
+        /*Map params = new HashMap();
+
+        super.generateReport("rawMaterialPaySummaryReport",
+                "/production/reports/rawMaterialPaySummaryReport.jrxml",PageFormat.LETTER,PageOrientation.PORTRAIT, "prueba", params);*/
+
+        /*Map parameters = new HashMap();
+        super.generateSqlReport("debtByStudentReport", "/production/reports/rawMaterialPaySummaryReport.jrxml", PageFormat.LETTER, PageOrientation.PORTRAIT, MessageUtils.getMessage("Reports.debtByStudent.title"), parameters);*/
+
+        /*try {
+            Map params = new HashMap();
+            JasperReport jasperReport = JasperCompileManager.compileReport("/production/reports/rawMaterialPaySummaryReport.jrxml");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, c);
+
+            HttpServletResponse httpServletResponse=(HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+            httpServletResponse.addHeader("Content-disposition", "attachment; filename=report.pdf");
+            ServletOutputStream servletOutputStream= null;
+
+            servletOutputStream = httpServletResponse.getOutputStream();
+
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }*/
+
+        /*try {
+            Map parameters = new HashMap();
+
+            //JasperReport report = JasperCompileManager.compileReport("rawMaterialPaySummaryReport.jrxml");
+            //JasperPrint print = JasperFillManager.fillReport(report, parameters, (Connection)this.em);
+            // Exporta el informe a PDF
+            *//*HttpServletResponse resp = (HttpServletResponse) ext.getResponse();
+            resp.setContentType("application/pdf");
+            String filename = new StringBuffer(attachmentName).append(".pdf").toString();
+            resp.addHeader("Content-Disposition", "inline; filename=" + filename);
+
+            JasperExportManager.exportReportToPdfStream(jasperPrint, resp.getOutputStream());  *//*
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        TemplateReportGenerator templateReportGenerator;
+        TypedReportData typedReportData;
+        templateReportGenerator = new TemplateReportGenerator();
+        typedReportData = new TypedReportData();
+        ReportConfigParams reportConfigParams = new ReportConfigParams();
+        reportConfigParams.setReportId("rawMaterilPaySummaryReport");
+        reportConfigParams.setResourceBundle("message_app");
+        reportConfigParams.setReportPageSize("2");
+        reportConfigParams.setReportPageOrientation("1");
+        reportConfigParams.setOnlyCompile(false);
+        reportConfigParams.setEntityManager(this.em);
+        reportConfigParams.setReportLocale(java.util.Locale.getDefault());
+        reportConfigParams.setReportFormat("pdf");
+        reportConfigParams.setReportFileName("prueba");
+        reportConfigParams.setJPQLQuery("");
+        ///////
+        ReportData reportData = new ReportData();
+        JasperDesign jasperDesign = new JasperDesign();
+        jasperDesign.setName("rawMaterilPaySummaryReport");
+        jasperDesign.setLanguage("java");
+        jasperDesign.setColumnCount(1);
+        reportData.setJasperDesign(jasperDesign);
+        JasperPrint jasperPrint = new JasperPrint();
+        jasperPrint.setPageWidth(612);
+        jasperPrint.setPageHeight(792);
+        jasperPrint.setName("rawMaterilPaySummaryReport");
+        jasperPrint.setTopMargin(30);
+        jasperPrint.setLeftMargin(30);
+        jasperPrint.setBottomMargin(30);
+        jasperPrint.setRightMargin(20);
+        jasperPrint.getOrientationValue();
+        jasperPrint.setDefaultStyle(new JRBaseStyle());
+        jasperPrint.setLocaleCode("es");
+        jasperPrint.setTimeZoneId("America/La_Paz");
+        reportData.setJasperPrint(jasperPrint);
+       // JasperReport jasperReport = new JasperReport(new JRReport(),);
+        //reportConfigParams.setReportTempDirectory("c:\\User\\Diego\\AppData\\Local\\Temp\\");
+        //typedReportData.setReportConfigParams();
+
+        String fileName = "d:\\Projectos\\khipus\\view\\production\\reports\\rawMaterialPaySummaryReport.jrxml";
+        String outFileName = "d:\\borrar\\test.pdf";
+        HashMap hm = new HashMap();
+        try
+        {
+            System.out.println(new File(fileName).getAbsolutePath());
+
+            JasperPrint print = JasperFillManager.fillReport(JSFUtil.getResourceAsStream("/production/reports/rawMaterialPaySummaryReport.jrxml"),hm,new JREmptyDataSource());
+            //JSFUtil.getResourceAsStream(reportTemplatePath);
+            JRExporter exporter =new net.sf.jasperreports.engine.export.JRPdfExporter();
+            exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME,outFileName);
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT,print);
+            exporter.exportReport();
+
+            System.out.println("Created file: " + outFileName);
+        }
+        catch (JRException e)
+        {
+            e.printStackTrace();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -133,10 +265,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         return "";
     }
 
-    @Create
-    public void init() {
-        restrictions = new String[]{};
-    }
+
 
     /**
      * Add the sub report in main report
