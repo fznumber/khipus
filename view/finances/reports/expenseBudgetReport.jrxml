@@ -4,48 +4,6 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
-	<field name="costCenter.id" class="com.encens.khipus.model.finances.CostCenterPk">
-		<fieldDescription><![CDATA[COLUMN_4]]></fieldDescription>
-	</field>
-	<field name="costCenter.code" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_5]]></fieldDescription>
-	</field>
-	<field name="costCenter.description" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_6]]></fieldDescription>
-	</field>
-	<field name="budgetProgram.id" class="java.lang.Long">
-		<fieldDescription><![CDATA[COLUMN_7]]></fieldDescription>
-	</field>
-	<field name="budgetProgram.code" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_8]]></fieldDescription>
-	</field>
-	<field name="budgetProgram.description" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_9]]></fieldDescription>
-	</field>
-	<field name="budgetActivity.id" class="java.lang.Long">
-		<fieldDescription><![CDATA[COLUMN_10]]></fieldDescription>
-	</field>
-	<field name="budgetActivity.code" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_11]]></fieldDescription>
-	</field>
-	<field name="budgetActivity.name" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_12]]></fieldDescription>
-	</field>
-	<field name="expenseBudget.id" class="java.lang.Long">
-		<fieldDescription><![CDATA[COLUMN_13]]></fieldDescription>
-	</field>
-	<field name="expenseBudget.amount" class="java.math.BigDecimal">
-		<fieldDescription><![CDATA[COLUMN_14]]></fieldDescription>
-	</field>
-	<field name="classifier.id" class="java.lang.Long">
-		<fieldDescription><![CDATA[COLUMN_15]]></fieldDescription>
-	</field>
-	<field name="classifier.name" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_16]]></fieldDescription>
-	</field>
-	<field name="classifier.code" class="java.lang.String">
-		<fieldDescription><![CDATA[COLUMN_17]]></fieldDescription>
-	</field>
 	<title>
 		<band height="80" splitType="Stretch">
 			<image scaleImage="RetainShape" onErrorType="Icon">
