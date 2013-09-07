@@ -7,8 +7,10 @@ import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.employees.PayrollSummaryReportService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
@@ -47,6 +49,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     private Month month;
     private Periodo periodo;
     private ProductiveZone zone;
+    private MetaProduct metaProduct;
     private double unitPrice;
     private double mountCollection;
     private double totalCollectionXUnitPrice;
@@ -101,8 +104,8 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         Double totalMoney = (summaryTotal.collectedTotal * discounts.unitPrice) - summaryTotal.differencesTotal;
         params.put("total_collected", summaryTotal.collectedTotal.toString());
         params.put("price_unit", discounts.unitPrice.toString());
-        params.put("difference_money", ((Double)(summaryTotal.differencesTotal * unitPrice)).toString());
-        params.put("total_collected_money", ((Double)(summaryTotal.collectedTotal * discounts.unitPrice)).toString());
+        params.put("difference_money", ((Double) (summaryTotal.differencesTotal * unitPrice)).toString());
+        params.put("total_collected_money", ((Double) (summaryTotal.collectedTotal * discounts.unitPrice)).toString());
         params.put("total_money", totalMoney.toString());
         params.put("weight_balance_total", (summaryTotal.balanceWeightTotal).toString());
 
@@ -218,6 +221,14 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     public void setGeneratedPayrollType(GeneratedPayrollType generatedPayrollType) {
         this.generatedPayrollType = generatedPayrollType;
+    }
+
+    public MetaProduct getMetaProduct() {
+        return metaProduct;
+    }
+
+    public void setMetaProduct(MetaProduct metaProduct) {
+        this.metaProduct = metaProduct;
     }
 
 }
