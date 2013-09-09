@@ -33,7 +33,7 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
 
     @Create
     public void init() {
-        /*restrictions = new String[]{"expenseBudget.company=#{currentCompany}",
+        restrictions = new String[]{"expenseBudget.company=#{currentCompany}",
                 "expenseBudget.state=#{enumerationUtil.getEnumValue('com.encens.khipus.model.budget.BudgetState','APPROVED')}",
                 "businessUnit=#{expenseBudgetReportAction.businessUnit}",
                 "costCenter=#{expenseBudgetReportAction.costCenter}",
@@ -45,12 +45,11 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
                 "budgetProgram.id, " +
                 "budgetActivity.id, " +
                 "gestion.year," +
-                "expenseBudget.creationDate";*/
+                "expenseBudget.creationDate";
     }
 
     protected String getEjbql() {
-        String sql = "select productionOrder.code from ProductionOrder productionOrder";
-        /*return "SELECT  businessUnit.executorUnitCode, " +
+        return "SELECT  businessUnit.executorUnitCode, " +
                 "       organization.name, " +
                 "       organization.id, " +
                 "       costCenter.id, " +
@@ -77,15 +76,13 @@ public class ExpenseBudgetReportAction extends GenericReportAction {
                 "       LEFT JOIN expenseBudget.budgetActivity budgetActivity " +
                 "       LEFT JOIN budgetActivity.budgetProgram budgetProgram" +
                 "       LEFT JOIN expenseBudget.businessUnit businessUnit " +
-                "       LEFT JOIN businessUnit.organization organization";*/
-        return sql;
+                "       LEFT JOIN businessUnit.organization organization";
     }
 
     public void generateReport() {
         log.debug("generating expenseBudgetReport......................................");
 
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
-        reportParameters.put("prueba","valor");
         reportParameters.put("reportGestion", getGestion().getYear());
         super.generateReport(
                 "expenseBudgetReport",
