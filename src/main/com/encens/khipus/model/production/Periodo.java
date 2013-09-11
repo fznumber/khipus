@@ -2,6 +2,8 @@ package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.employees.Month;
 
+import java.util.Date;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Diego
@@ -15,6 +17,8 @@ public enum Periodo {
 
     private int initDay;
     private int endDay;
+    private Date initDate;
+    private Date endDate;
     private String resourceKey;
 
     private Periodo(String resourceKey,int initDay, int endDay) {

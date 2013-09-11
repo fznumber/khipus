@@ -3,6 +3,7 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
+import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
@@ -10,23 +11,14 @@ import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialPayRoll;
-import com.encens.khipus.service.employees.PayrollSummaryReportService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
-import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.MessageUtils;
-import com.jatun.titus.reportgenerator.util.TypedReportData;
-import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.annotations.security.Restrict;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
-import java.util.*;
-
-import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Encens S.R.L.
@@ -74,8 +66,6 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     public void generateReport() {
 
-
-
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
         dateIni = Calendar.getInstance();
@@ -87,11 +77,11 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         log.debug("generating expenseBudgetReport......................................");
 
         super.generateReport(
-                "rawMaterilPaySummaryReportAction",
+                "rawMaterialPaySummaryReportAction",
                 "/production/reports/rawMaterialPaySummaryReport.jrxml",
                 PageFormat.LETTER,
                 PageOrientation.PORTRAIT,
-                messages.get("ExpenseBudget.report.expenseBudgetReport"),
+                messages.get("Report.rawMaterialPaySummaryReportAction"),
                 reportParameters);
     }
 

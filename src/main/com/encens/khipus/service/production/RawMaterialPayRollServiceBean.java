@@ -5,6 +5,7 @@ import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.util.RoundUtil;
 import oracle.jdbc.driver.OracleDriver;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.seam.annotations.AutoCreate;
@@ -135,7 +136,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             record.setTotalAmount(aux.collectedAmount);
             record.setProductiveZoneAdjustment(aux.adjustmentAmount);
             record.setEarnedMoney(aux.earnedMoney);
-
+            record.setTotalPayCollected(rawMaterialPayRoll.getUnitPrice() * aux.collectedAmount);
             if (isValidLicence(aux.producer.getCodeTaxLicence(), aux.producer.getStartDateTaxLicence(), aux.producer.getExpirationDateTaxLicence())) {
                 record.setTaxLicense(aux.producer.getCodeTaxLicence());
                 record.setExpirationDateTaxLicence(aux.producer.getExpirationDateTaxLicence());
@@ -143,7 +144,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             }
 
             RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
-            discount.setWithholdingTax(aux.withholdingTax);
+            discount.setWithholdingTax(RoundUtil.getRoundValue(aux.withholdingTax,2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setRawMaterialPayRecord(record);
             record.setRawMaterialProducerDiscount(discount);
 
@@ -173,19 +174,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     public Discounts getDiscounts(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
     {
         Discounts discounts = new Discounts();
-        /*String query = "select " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.yogurt) as yogurt, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.cans) as recip, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.withholdingTax) as retention, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.veterinary) as veterinary, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.credit) as credit, " +
-                " rawMaterialPayRecord.rawMaterialPayRoll.unitPrice as unitPrice " +
-                "from RawMaterialPayRecord rawMaterialPayRecord " +
-                "join rawMaterialPayRecord.rawMaterialPayRoll " +
-                "join rawMaterialPayRecord.rawMaterialProducerDiscount " +
-                //"where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
-                //"and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
-                " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice";*/
+
         DateTime dateTimeIni = new DateTime(dateIni);
         DateTime dateTimeEnd = new DateTime(dateEnd);
 
@@ -202,16 +191,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                        " on rpm.iddescuentproductmateriaprima = dpm.iddescuentproductmateriaprima " +
                        " where ppm.fechainicio = to_date('"+dateTimeIni.getDayOfMonth()+"/"+dateTimeIni.getMonthOfYear()+"/"+dateTimeIni.getYear()+"','dd/mm/yyyy') " +
                        " and ppm.fechafin = to_date('"+dateTimeEnd.getDayOfMonth()+"/"+dateTimeEnd.getMonthOfYear()+"/"+dateTimeEnd.getYear()+"','dd/mm/yyyy') " +
-                       //" and ppm.idzonaproductiva = 36 " +
                        " group by ppm.preciounitario " ;
-        // List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getDiscounts")
         List<Object[]> datas = getEntityManager().createNativeQuery(querySql)
-                        //.setParameter("startDate", dateIni)
-                        //.setParameter("endDate", dateEnd)
-                        //.setParameter("productiveZone", zone)
-                        //.setParameter("metaProduct", metaProduct)
+
                         .getResultList();
-        //(annualBudgetBigDecimal != null) ? annualBudgetBigDecimal.doubleValue() : 0.0;
         if(datas.size() > 0){
             discounts.yogurt = ((BigDecimal)datas.get(0)[0] !=null) ? ((BigDecimal)datas.get(0)[0]).doubleValue() : 0.0 ;
             discounts.recip = ((BigDecimal)datas.get(0)[1] !=null) ? ((BigDecimal)datas.get(0)[1]).doubleValue() : 0.0 ;
@@ -230,7 +213,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
         return discounts;
     }
-
+    //todo:el resumen debe ser por zona productiva y producto acopiable
     public SummaryTotal getSumaryTotal(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
     {
         SummaryTotal summaryTotal = new SummaryTotal();
@@ -257,7 +240,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Date date = (Date)obj[0];
             Double receivedAmount = (Double)obj[1];
             Double weightedAmount = (Double)obj[2];
-            Double diffs = (receivedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice()) - (weightedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice());
+            //todo: (revisar) si se redondea entonces se pierden decimales que pueden influir en el resultado
+            Double diffs =  RoundUtil.getRoundValue((receivedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice()),2, RoundUtil.RoundMode.SYMMETRIC) -
+                            RoundUtil.getRoundValue((weightedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice()),2, RoundUtil.RoundMode.SYMMETRIC);
+            //Double diffs = (receivedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice()) - (weightedAmount.doubleValue() * rawMaterialPayRoll.getUnitPrice());
             differences.put(date,diffs);
         }
         return differences;
@@ -299,21 +285,6 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return result;
     }
 
-
-    /*
-    private double generateDelta(RawMaterialPayRoll rawMaterialPayRoll, Object obj)
-    {
-        double delta;
-
-        List<Object[]> differences = find("RawMaterialPayRoll.findDifferenceRawMaterialBetweenDates",rawMaterialPayRoll);
-
-        List<Object[]> totalWeights = find("RawMaterialPayRoll.findTotalCollectedRawMaterialBetweenDates",rawMaterialPayRoll);
-
-
-
-        return delta;
-    }
-    */
     private Map<Long, Aux> createMapOfProducers(RawMaterialPayRoll rawMaterialPayRoll, Map<Date, Double> totalWeight, Map<Date, Long> countProducers, Map<Date, Double> totalWeightsByGab,Map<Date, Double> differences) throws RawMaterialPayRollException {
         double taxRate = rawMaterialPayRoll.getTaxRate() / 100;
         List<Object[]> collectedProducers = find("RawMaterialPayRoll.findCollectedAmountByMetaProductBetweenDates", rawMaterialPayRoll);
@@ -366,6 +337,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         Iterator collections = rawMaterialCollected.entrySet().iterator();
         Double total =0.0d;
         Double aux =0.0d;
+        Double differ= 0.0d;
+        Double totalBayGab= 0.0d;
         while(collections.hasNext()){
             Map.Entry thisEntry = (Map.Entry) collections.next();
             Double mountCollected = (Double)thisEntry.getValue();
@@ -373,12 +346,14 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Double diff = find(differences,date);
             Double totalWeight = find(totalWeightsByGab,date);
 
-            aux = mountCollected * (diff/totalWeight);
-            differences.put(date,diff - aux);
-            totalWeightsByGab.put(date,totalWeight - mountCollected);
+            aux = RoundUtil.getRoundValue((mountCollected * (diff/totalWeight)),2, RoundUtil.RoundMode.SYMMETRIC);
+            differ = RoundUtil.getRoundValue((diff - aux),2, RoundUtil.RoundMode.SYMMETRIC);
+            totalBayGab = RoundUtil.getRoundValue((totalWeight - mountCollected),2, RoundUtil.RoundMode.SYMMETRIC);
+            differences.put(date,differ);
+            totalWeightsByGab.put(date,totalBayGab);
             total += aux;
+            total = RoundUtil.getRoundValue(total,2, RoundUtil.RoundMode.SYMMETRIC);
         }
-
 
         return total;
     }
@@ -548,7 +523,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             totalDiscount += discount.getOtherDiscount();
 
             double liquidPayable = record.getEarnedMoney() - totalDiscount + discount.getOtherIncoming();
-            record.setLiquidPayable(liquidPayable);
+            record.setLiquidPayable(RoundUtil.getRoundValue(liquidPayable,2, RoundUtil.RoundMode.SYMMETRIC));
         }
     }
 

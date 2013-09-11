@@ -141,9 +141,9 @@
                             #{messages['RawMaterialPayRoll.amounts']}
                         </rich:column>
                         <rich:column rowspan="2">
-                            #{messages['RawMaterialPayRoll.unitPrice']}
+                            #{messages['RawMaterialPayRecordDetails.totalMoneyCollected']}
                         </rich:column>
-                        <rich:column colspan="6">
+                        <rich:column colspan="7">
                             #{messages['RawMaterialPayRoll.discounts']}
                         </rich:column>
                         <rich:column rowspan="2">
@@ -159,7 +159,7 @@
                             #{messages['RawMaterialPayRoll.receivedAmount']}
                         </rich:column>
                         <rich:column>
-                            #{messages['RawMaterialPayRoll.productiveZoneAdjustment']}
+                            #{messages['RawMaterialPayRoll.unitPrice']}
                         </rich:column>
                         <rich:column>
                             #{messages['RawMaterialProducerDiscount.withholdingTax']}
@@ -179,6 +179,9 @@
                         <rich:column>
                             #{messages['RawMaterialProducerDiscount.otherDiscounts']}
                         </rich:column>
+                        <rich:column>
+                            #{messages['RawMaterialPayRoll.productiveZoneAdjustment']}
+                        </rich:column>
                     </rich:columnGroup>
                 </f:facet>
 
@@ -189,10 +192,10 @@
                     <h:outputText value="#{rawMaterialPayRecordItem.totalAmount}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}"/>
+                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}"/>
+                    <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}"/>
@@ -213,6 +216,9 @@
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherDiscount}"/>
                 </rich:column>
                 <rich:column>
+                    <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}"/>
+                </rich:column>
+                <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherIncoming}"/>
                 </rich:column>
                 <rich:column>
@@ -220,6 +226,8 @@
                 </rich:column>
                 <rich:column rendered="#{rawMaterialPayRollAction.managed}">
                     <h:commandLink value="#{messages['Common.select']}" action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}" />
+                    <rich:spacer/>
+                    <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />
                 </rich:column>
             </rich:dataTable>
 

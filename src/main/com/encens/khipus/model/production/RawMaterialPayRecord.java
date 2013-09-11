@@ -54,6 +54,9 @@ public class RawMaterialPayRecord {
     @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(24,2)", nullable = false)
     private double earnedMoney;
 
+    @Column(name = "TOTALPAGOACOPIO", columnDefinition = "NUMBER(24,2)", nullable = false)
+    private double totalPayCollected = 0.0;
+
     @Version
     @Column(name = "VERSION", nullable = false)
     private long version;
@@ -64,6 +67,14 @@ public class RawMaterialPayRecord {
 
     @Transient
     private double liquidPayable;
+
+    public double getTotalPayCollected() {
+        return totalPayCollected;
+    }
+
+    public void setTotalPayCollected(double totalPayCollected) {
+        this.totalPayCollected = totalPayCollected;
+    }
 
     public Long getId() {
         return id;

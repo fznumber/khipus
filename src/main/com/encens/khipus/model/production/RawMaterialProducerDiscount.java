@@ -66,6 +66,12 @@ public class RawMaterialProducerDiscount implements com.encens.khipus.model.Base
     @Column(name = "RETENCION", nullable = false,columnDefinition = "NUMBER(15,2)")
     private double withholdingTax = 0.0;
 
+    @Column(name = "ALCOHOL", nullable = false,columnDefinition = "NUMBER(24,2)")
+    private double alcohol = 0.0;
+
+    @Column(name = "CONCENTRADOS", nullable = false,columnDefinition = "NUMBER(24,2)")
+    private double concentrated = 0.0;
+
     @OneToOne(mappedBy = "rawMaterialProducerDiscount", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private com.encens.khipus.model.production.RawMaterialPayRecord rawMaterialPayRecord;
 
@@ -91,6 +97,22 @@ public class RawMaterialProducerDiscount implements com.encens.khipus.model.Base
 
     public void setRawMaterialProducer(RawMaterialProducer rawMaterialProducer) {
         this.rawMaterialProducer = rawMaterialProducer;
+    }
+
+    public double getAlcohol() {
+        return alcohol;
+    }
+
+    public void setAlcohol(double alcohol) {
+        this.alcohol = alcohol;
+    }
+
+    public double getConcentrated() {
+        return concentrated;
+    }
+
+    public void setConcentrated(double concentrated) {
+        this.concentrated = concentrated;
     }
 
     public long getCode() {
