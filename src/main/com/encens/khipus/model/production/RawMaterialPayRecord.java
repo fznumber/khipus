@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @TableGenerator(name = "rawMaterialPayRecord_Generator",
@@ -39,7 +40,7 @@ public class RawMaterialPayRecord {
     @Column(name = "CANTIDADTOTAL", columnDefinition = "NUMBER(24,2)" ,nullable = false)
     private double totalAmount = 0.0;
 
-    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(16,2)", nullable = false)
     private double productiveZoneAdjustment = 0.0;
 
     @Column(name = "LICENCIAIMPUESTOS", nullable = true, length = 200)
@@ -51,11 +52,14 @@ public class RawMaterialPayRecord {
     @Column(name = "FECHAINICIALICENCIAIMPUESTO",columnDefinition = "DATE" ,nullable = true)
     private Date startDateTaxLicence;
 
-    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double earnedMoney;
 
-    @Column(name = "TOTALPAGOACOPIO", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALPAGOACOPIO", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalPayCollected = 0.0;
+
+    @Column(name = "LIQUIDOPAGABLE", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double liquidPayable = 0.0;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -64,9 +68,6 @@ public class RawMaterialPayRecord {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
-
-    @Transient
-    private double liquidPayable;
 
     public double getTotalPayCollected() {
         return totalPayCollected;

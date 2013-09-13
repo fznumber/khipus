@@ -176,37 +176,46 @@ public class RawMaterialPayRoll implements BaseModel {
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
-    @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalCollectedByGAB = 0.0;
 
-    @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalMountCollectdByGAB = 0.0;
 
-    @Column(name = "TOTALRETENCIONESXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALRETENCIONESXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalRetentionGAB = 0.0;
 
-    @Column(name = "TOTALCREDITOXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALCREDITOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalCreditByGAB = 0.0;
 
-    @Column(name = "TOTALVETERINARIOXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALVETERINARIOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalVeterinaryByGAB = 0.0;
 
-    @Column(name = "TOTALYOGURDXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALALCOHOLXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalAlcoholByGAB = 0.0;
+
+    @Column(name = "TOTALCONCENTRADOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalConcentratedByGAB = 0.0;
+
+    @Column(name = "TOTALYOGURDXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalYogourdByGAB = 0.0;
 
-    @Column(name = "TOTALTACHOSXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALTACHOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalRecipByGAB = 0.0;
 
-    @Column(name = "TOTALOTROSDECUENTOSXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTADESCUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalDiscountByGAB = 0.0;
 
-    @Column(name = "TOTALAJUSTEXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALOTROSDECUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalOtherDiscountByGAB = 0.0;
+
+    @Column(name = "TOTALAJUSTEXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalAdjustmentByGAB = 0.0;
 
-    @Column(name = "TOTALOTROSINGRESOSXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALOTROSINGRESOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalOtherIncomeByGAB = 0.0;
 
-    @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "NUMBER(24,2)", nullable = false)
+    @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalLiquidByGAB = 0.0;
 
     public Long getId() {
@@ -392,5 +401,29 @@ public class RawMaterialPayRoll implements BaseModel {
 
     public void setTotalLiquidByGAB(double totalLiquidByGAB) {
         this.totalLiquidByGAB = totalLiquidByGAB;
+    }
+
+    public double getTotalOtherDiscountByGAB() {
+        return totalOtherDiscountByGAB;
+    }
+
+    public void setTotalOtherDiscountByGAB(double totalOtherDiscountByGAB) {
+        this.totalOtherDiscountByGAB = totalOtherDiscountByGAB;
+    }
+
+    public double getTotalAlcoholByGAB() {
+        return totalAlcoholByGAB;
+    }
+
+    public void setTotalAlcoholByGAB(double totalAlcoholByGAB) {
+        this.totalAlcoholByGAB = totalAlcoholByGAB;
+    }
+
+    public double getTotalConcentratedByGAB() {
+        return totalConcentratedByGAB;
+    }
+
+    public void setTotalConcentratedByGAB(double totalConcentratedByGAB) {
+        this.totalConcentratedByGAB = totalConcentratedByGAB;
     }
 }

@@ -22,7 +22,7 @@ public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectedRawMaterial_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(15,2)")
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(16,2)")
     private Double amount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

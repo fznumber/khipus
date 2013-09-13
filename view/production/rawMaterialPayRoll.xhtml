@@ -143,7 +143,7 @@
                         <rich:column rowspan="2">
                             #{messages['RawMaterialPayRecordDetails.totalMoneyCollected']}
                         </rich:column>
-                        <rich:column colspan="7">
+                        <rich:column colspan="9">
                             #{messages['RawMaterialPayRoll.discounts']}
                         </rich:column>
                         <rich:column rowspan="2">
@@ -163,6 +163,12 @@
                         </rich:column>
                         <rich:column>
                             #{messages['RawMaterialProducerDiscount.withholdingTax']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['RawMaterialProducerDiscount.alcohol']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['RawMaterialProducerDiscount.concentrated']}
                         </rich:column>
                         <rich:column>
                             #{messages['RawMaterialProducerDiscount.credit']}
@@ -198,6 +204,12 @@
                     <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}"/>
                 </rich:column>
                 <rich:column>
+                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}"/>
+                </rich:column>
+                <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}"/>
                 </rich:column>
                 <rich:column>
@@ -229,6 +241,84 @@
                     <rich:spacer/>
                     <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />
                 </rich:column>
+
+                <f:facet name="footer">
+
+                    <rich:columnGroup>
+                        <rich:column>#{messages['Common.totals']}</rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.totalCollectedByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalMountCollectdByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalAlcoholByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalConcentratedByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalRetentionGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalCreditByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalVeterinaryByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalYogourdByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalRetentionGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalOtherDiscountByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalAdjustmentByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalOtherIncomeByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{rawMaterialPayRoll.totalLiquidByGAB}">
+
+                            </h:outputText>
+                        </rich:column>
+                    </rich:columnGroup>
+                </f:facet>
+
             </rich:dataTable>
 
             <div class="buttons">

@@ -77,6 +77,21 @@
 
     <fieldset class="fieldset-border">
         <legend class="fieldset-title">#{messages['RawMaterialProducerDiscount.fieldsetDiscounts']}</legend>
+
+        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['RawMaterialProducerDiscount.alcohol']}</ui:define>
+            <h:inputText value="#{rawMaterialProducerDiscount.alcohol}" styleClass="input" required="true"
+                         maxlength="150" tabindex="1">
+            </h:inputText>
+        </s:decorate>
+
+        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['RawMaterialProducerDiscount.concentrated']}</ui:define>
+            <h:inputText value="#{rawMaterialProducerDiscount.concentrated}" styleClass="input" required="true"
+                         maxlength="150" tabindex="1">
+            </h:inputText>
+        </s:decorate>
+
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialProducerDiscount.yogurt']}</ui:define>
             <h:inputText value="#{rawMaterialProducerDiscount.yogurt}" styleClass="input" required="true"
