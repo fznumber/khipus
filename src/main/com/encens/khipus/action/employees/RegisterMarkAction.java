@@ -16,7 +16,7 @@ import java.util.List;
  * Time: 21:05
  * To change this template use File | Settings | File Templates.
  */
-@Name("rHMarkActionAction")
+@Name("registerMarkActionAction")
 @Scope(ScopeType.CONVERSATION)
 public class RegisterMarkAction {
 

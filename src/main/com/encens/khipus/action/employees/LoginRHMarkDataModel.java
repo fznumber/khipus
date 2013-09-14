@@ -44,7 +44,7 @@ public class LoginRHMarkDataModel extends QueryDataModel<Long, RHMark> {
 
     @Override
     public String getEjbql() {
-        return "select rHMark from RHMark rHMark";
+        return "select rHMark from RegisterMarkAction rHMark";
     }
 
     @Override

@@ -119,6 +119,27 @@ import java.util.List;
                 "where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
                 "and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
                 " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice"
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getTotalsRawMaterialPayRoll",
+                    query = "select " +
+                            "rawMaterialPayRoll.totalCollectedByGAB, " +
+                            "rawMaterialPayRoll.totalMountCollectdByGAB, " +
+                            "rawMaterialPayRoll.totalRetentionGAB, " +
+                            "rawMaterialPayRoll.totalCreditByGAB, " +
+                            "rawMaterialPayRoll.totalVeterinaryByGAB, " +
+                            "rawMaterialPayRoll.totalAlcoholByGAB, " +
+                            "rawMaterialPayRoll.totalConcentratedByGAB, " +
+                            "rawMaterialPayRoll.totalYogourdByGAB, " +
+                            "rawMaterialPayRoll.totalRecipByGAB, " +
+                            "rawMaterialPayRoll.totalDiscountByGAB," +
+                            "rawMaterialPayRoll.totalAdjustmentByGAB," +
+                            "rawMaterialPayRoll.totalOtherIncomeByGAB," +
+                            "rawMaterialPayRoll.totalLiquidByGAB "+
+                            "from RawMaterialPayRoll rawMaterialPayRoll " +
+                            "where rawMaterialPayRoll.startDate = :startDate " +
+                            "and rawMaterialPayRoll.endDate = :endDate " +
+                            "and rawMaterialPayRoll.productiveZone = :productiveZone " +
+                            "and rawMaterialPayRoll.metaProduct = :metaProduct "
         )
 })
 

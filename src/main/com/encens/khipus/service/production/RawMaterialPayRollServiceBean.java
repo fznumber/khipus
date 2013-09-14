@@ -17,7 +17,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
@@ -580,4 +582,67 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         rawMaterialPayRoll.setTotalLiquidByGAB(RoundUtil.getRoundValue(totalLiquidPay,2, RoundUtil.RoundMode.SYMMETRIC));
     }
 
+    public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
+    {
+
+        String query = createQuery(productiveZone,metaProduct);
+        RawMaterialPayRoll rawMaterialPayRoll = new RawMaterialPayRoll();
+        Query queryObj = getEntityManager().createQuery(query);
+        //queryObj.setParameter("startDate", dateIni);
+        //queryObj.setParameter("endDate", dateEnd);
+        if(productiveZone != null)
+            queryObj.setParameter("productiveZone", productiveZone);
+        if(metaProduct != metaProduct)
+            queryObj.setParameter("metaProduct",metaProduct);
+
+        try {
+            /*List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getTotalsRawMaterialPayRoll")
+                                                      .setParameter("startDate", dateIni)
+                                                      .setParameter("endDate", dateEnd)
+                                                      .setParameter("productiveZone", productiveZone)
+                                                      //.setParameter("metaProduct",metaProduct)
+                                                      .getResultList();*/
+            List<Object[]> datas= queryObj.getResultList();
+                    rawMaterialPayRoll.setTotalCollectedByGAB((Double) (datas.get(0)[0]));
+                    rawMaterialPayRoll.setTotalMountCollectdByGAB((Double) (datas.get(0)[1]));
+                    rawMaterialPayRoll.setTotalRetentionGAB((Double) (datas.get(0)[2]));
+                    rawMaterialPayRoll.setTotalCreditByGAB((Double) (datas.get(0)[3]));
+                    rawMaterialPayRoll.setTotalVeterinaryByGAB((Double) (datas.get(0)[4]));
+                    rawMaterialPayRoll.setTotalAlcoholByGAB((Double) (datas.get(0)[5]));
+                    rawMaterialPayRoll.setTotalConcentratedByGAB((Double) (datas.get(0)[6]));
+                    rawMaterialPayRoll.setTotalYogourdByGAB((Double) (datas.get(0)[7]));
+                    rawMaterialPayRoll.setTotalRecipByGAB((Double) (datas.get(0)[8]));
+                    rawMaterialPayRoll.setTotalDiscountByGAB((Double) (datas.get(0)[9]));
+                    rawMaterialPayRoll.setTotalAdjustmentByGAB((Double) (datas.get(0)[10]));
+                    rawMaterialPayRoll.setTotalOtherIncomeByGAB((Double) (datas.get(0)[11]));
+                    rawMaterialPayRoll.setTotalLiquidByGAB((Double) (datas.get(0)[12]));
+
+        }catch (Exception e) {
+            log.debug("Not found totals RawMaterialPayRoll...." + e);
+        }
+
+        return rawMaterialPayRoll;
+    }
+
+    private String createQuery(ProductiveZone productiveZone, MetaProduct metaProduct) {
+        String restricZone = (productiveZone == null)? "": " and rawMaterialPayRoll.productiveZone = :productiveZone ";
+        String restricMeta = (metaProduct == null)? "": " and rawMaterialPayRoll.metaProduct = :metaProduct ";
+        return  "select " +
+                "rawMaterialPayRoll.totalCollectedByGAB, " +
+                "rawMaterialPayRoll.totalMountCollectdByGAB, " +
+                "rawMaterialPayRoll.totalRetentionGAB, " +
+                "rawMaterialPayRoll.totalCreditByGAB, " +
+                "rawMaterialPayRoll.totalVeterinaryByGAB, " +
+                "rawMaterialPayRoll.totalAlcoholByGAB, " +
+                "rawMaterialPayRoll.totalConcentratedByGAB, " +
+                "rawMaterialPayRoll.totalYogourdByGAB, " +
+                "rawMaterialPayRoll.totalRecipByGAB, " +
+                "rawMaterialPayRoll.totalDiscountByGAB," +
+                "rawMaterialPayRoll.totalAdjustmentByGAB," +
+                "rawMaterialPayRoll.totalOtherIncomeByGAB," +
+                "rawMaterialPayRoll.totalLiquidByGAB "+
+                "from RawMaterialPayRoll rawMaterialPayRoll ";// +
+                //"where rawMaterialPayRoll.startDate = :startDate "; //+
+                //"and rawMaterialPayRoll.endDate <= :endDate " + restricZone + restricMeta;
+    }
 }

@@ -108,5 +108,4 @@ public class GenerationReportData implements Serializable {
         httpServletResponse.flushBuffer();
         JSFUtil.getFacesContext().responseComplete();
     }
-
 }

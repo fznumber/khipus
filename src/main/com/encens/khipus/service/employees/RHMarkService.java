@@ -26,4 +26,6 @@ public interface RHMarkService {
     Map<Date, List<Date>> getRHMarkDateTimeMapByDateRange(Employee employee, Date initDate, Date endDate);
 
     List<RHMark> findRHMarkByInitDateByEndDate(Date initDate, Date endDate);
+
+    boolean verificateIdPerson(int idPerson);
 }

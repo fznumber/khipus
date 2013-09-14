@@ -16,6 +16,7 @@ import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -67,12 +68,13 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     public void generateReport() {
 
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
-
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
         dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
-
+        sdf.format(dateIni);
+        sdf.format(dateEnd);
         addSummaryTotal(reportParameters);
         log.debug("generating expenseBudgetReport......................................");
 

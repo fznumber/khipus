@@ -5,6 +5,7 @@ import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
+import org.jboss.seam.annotations.Name;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,12 +13,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Entity for RHMark
+ * Entity for RegisterMarkAction
  *
  * @author
  */
 
-@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "RHMark.tableGenerator",
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "RegisterMarkAction.tableGenerator",
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
@@ -38,6 +39,7 @@ import java.util.List;
 
 )
 @Entity
+@Name("rhmark")
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
 @Table(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "rhmarcado")
@@ -45,7 +47,7 @@ public class RHMark implements BaseModel, Comparable {
 
     @Id
     @Column(name = "idrhmarcado", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "RHMark.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "RegisterMarkAction.tableGenerator")
     private Long id;
 
     @OneToMany(mappedBy = "rHMark", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -84,10 +86,13 @@ public class RHMark implements BaseModel, Comparable {
     @Column(name = "control", nullable = true)
     private Integer control;
 
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "idcompania", nullable = false, updatable = false, insertable = true)
     private Company company;
+
+    @Column(name = "descripcion", nullable = true)
+    @Lob
+    private String description;
 
     public Integer getControl() {
         return control;
@@ -122,6 +127,11 @@ public class RHMark implements BaseModel, Comparable {
     }
 
     public Date getMarTime() {
+        Date date = new Date();
+        if (null == marTime) {
+            marTime = new Date();
+            return marTime;
+        }
         return marTime;
     }
 
@@ -203,5 +213,13 @@ public class RHMark implements BaseModel, Comparable {
 
     public void setEndMarDate(Date endMarDate) {
         this.endMarDate = endMarDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

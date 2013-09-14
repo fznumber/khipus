@@ -10,12 +10,14 @@ import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -68,8 +70,47 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     public void generateReport() {
         log.debug("Generate RotatoryFundReportAction........");
 
-        Map params = new HashMap();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        dateIni = Calendar.getInstance();
+        dateEnd = Calendar.getInstance();
+        dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
+        sdf.setCalendar(dateIni);
+        sdf.setCalendar(dateEnd);
 
+        //RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni.getTime(),dateEnd.getTime(),null,metaProduct);
+        //RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(null,null,null,metaProduct);
+        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni.getTime(),dateEnd.getTime(),null,null);
+
+
+        Map params = new HashMap();
+        params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
+        params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
+        params.put("totalRetentionGAB",rawMaterialPayRoll.getTotalRetentionGAB());
+        params.put("totalCreditByGAB",rawMaterialPayRoll.getTotalCreditByGAB());
+        params.put("totalVeterinaryByGAB",rawMaterialPayRoll.getTotalVeterinaryByGAB());
+        params.put("totalAlcoholByGAB",rawMaterialPayRoll.getTotalAlcoholByGAB());
+        params.put("totalConcentratedByGAB",rawMaterialPayRoll.getTotalConcentratedByGAB());
+        params.put("totalYogourdByGAB",rawMaterialPayRoll.getTotalYogourdByGAB());
+        params.put("totalRecipByGAB",rawMaterialPayRoll.getTotalRecipByGAB());
+        params.put("totalDiscountByGAB",rawMaterialPayRoll.getTotalDiscountByGAB());
+        params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
+        params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
+        params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
+         /*
+        "rawMaterialPayRoll.totalCollectedByGAB, " +
+        "rawMaterialPayRoll.totalMountCollectdByGAB, " +
+        "rawMaterialPayRoll.totalRetentionGAB, " +
+        "rawMaterialPayRoll.totalCreditByGAB, " +
+        "rawMaterialPayRoll.totalVeterinaryByGAB, " +
+        "rawMaterialPayRoll.totalAlcoholByGAB, " +
+        "rawMaterialPayRoll.totalConcentratedByGAB, " +
+        "rawMaterialPayRoll.totalYogourdByGAB, " +
+        "rawMaterialPayRoll.totalRecipByGAB, " +
+        "rawMaterialPayRoll.totalDiscountByGAB," +
+        "rawMaterialPayRoll.totalAdjustmentByGAB," +
+        "rawMaterialPayRoll.totalOtherIncomeByGAB," +
+        "rawMaterialPayRoll.totalLiquidByGAB "+*/
         //add sub reports
 
         super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
@@ -106,6 +147,10 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     @Create
     public void init() {
 
+    }
+    private void getTotal(RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        //rawMaterialPayRoll.
     }
 
     public RawMaterialPayRollService getRawMaterialPayRollService() {
