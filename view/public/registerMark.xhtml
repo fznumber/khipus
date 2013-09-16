@@ -12,6 +12,11 @@
     <ui:param name="bodyWidth" value="90%"/>
     <ui:param name="bodyAlign" value="center"/>
     <ui:param name="showPowered" value="true"/>
+    <ui:define name="head">
+        <a4j:loadScript src="/scripts/date_hour.js"/>
+    </ui:define>
+
+    <!--<body onload="mueveReloj()">-->
     <ui:define name="body">
         <h:form id="markRegister">
 
@@ -19,6 +24,7 @@
 
                 <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
                                  styleClass="button"
+                                 tabindex="3"
                                  >
 
                     <s:defaultAction/>
@@ -29,11 +35,11 @@
                 <f:facet name="header">
                     #{messages['RHMark.new']}
                 </f:facet>
-                <h:panelGrid columns="3" width="100%" columnClasses="top-aligned">
+                <h:panelGrid columns="2" width="70%" columnClasses="top-aligned">
                     <s:div>
                         <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
-                            <h:inputText id="marRefCard"
+                                <h:inputText id="marRefCard"
                                          value="#{rHMark.marPerId}"
                                          styleClass="input"
                                          maxlength="200"
@@ -47,7 +53,7 @@
                             <ui:define name="label">#{messages['InventoryManagement.description']}</ui:define>
                             <h:inputTextarea id="description"
                                              value="#{rHMark.description}"
-                                             style="margin: 0px; width: 482px; height: 100px;"
+                                             style="margin: 0px; width: 400px; height: 100px;"
                                              styleClass="input textarea"
                                              tabindex="2"
                                     />
@@ -55,35 +61,13 @@
                     </s:div>
                     <s:div>
                         <s:decorate id="marDateField" template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['RHMark.marDate']}</ui:define>
-                            <h:inputText id="marDate"
-                                         value="#{rHMark.marDate}"
-                                         styleClass="input"
-                                         maxlength="150"
-                                         readonly="true"
-                                         tabindex="2">
-                                <f:convertDateTime pattern="#{messages['patterns.date']}"/>
-                                <a4j:support event="onblur" reRender="marDateField"/>
-                            </h:inputText>
+                            <h:inputHidden id="marDate" value="#{rHMark.marDate}"/>
                         </s:decorate>
 
-                       <!-- <script type="text/javascript">
-                            var d = new Date();
-                            document.write(d.getDate());
-                        </script>-->
+                        <span id="liveclock" style="position:absolute;left:610px;top:25px;"></span>
 
                         <s:decorate id="marTimeField" template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['RHMark.marTime']}</ui:define>
-                            <h:inputText id="marTime"
-                                         value="#{rHMark.marTime}"
-                                         styleClass="input"
-                                         maxlength="150"
-                                         readonly="true"
-                                         tabindex="3">
-                                <s:convertDateTime pattern="#{messages['patterns.time']}" timeZone="#{sessionUser.timeZone}"
-                                                   type="time"/>
-                                <a4j:support event="onblur" reRender="marTimeField"/>
-                            </h:inputText>
+                            <h:inputHidden id="marTime" value="#{rHMark.marTime}" />
                         </s:decorate>
                     </s:div>
                 </h:panelGrid>
@@ -92,8 +76,7 @@
             <div class="buttons">
 
                 <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
-                                 styleClass="button"
-                                 >
+                                 styleClass="button" tabindex="3">
 
                     <s:defaultAction/>
                 </h:commandButton>
@@ -145,4 +128,5 @@
         </a4j:outputPanel>
         <rich:jQuery selector="#marRefCard" query="focus()" timing="onload"/>
     </ui:define>
+    <!--</body>-->
 </ui:composition>

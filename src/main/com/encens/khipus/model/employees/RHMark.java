@@ -7,6 +7,7 @@ import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 import org.jboss.seam.annotations.Name;
 
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;

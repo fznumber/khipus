@@ -17,6 +17,8 @@ import org.jboss.seam.util.Reflections;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -53,22 +55,28 @@ public class RHMarkAction extends GenericAction<RHMark> {
         try {
             RHMark rhMark = getInstance();
 
-            List<Object[]> result = em.createQuery("select p from Person p where p.idNumber = :idPersona")
+            List<Object[]> result = em.createQuery("select p.firstName, p.maidenName ,p.lastName from Person p where p.idNumber = :idPersona")
                     .setParameter("idPersona", rhMark.getMarPerId().toString()).getResultList();
+
             if(result.size()==0)
             {
-                addNoFoundCIMessage();
+                addNoFoundCIMessage(rhMark);
+                clearForm(rhMark);
                 return Outcome.REDISPLAY;
             }
             rhMark.setCompany(new Company(Constants.defaultCompanyId, Constants.defaultCompanyName));
             rhMark.setSeat("Cochabamba");
             rhMark.setMarRefCard("referencia");
             rhMark.setMarIpPc("ip");
+            rhMark.setMarTime(rhMark.getStartMarDate());
             getService().create(rhMark);
-            addCreatedMessage();
+            addCreateRegisterMessage(rhMark,(String)result.get(0)[0] +" "+(String)result.get(0)[1]+" "+(String)result.get(0)[2]);
+            //clearForm(rhMark);
+            //rhMark = null;
+            rhMark = createInstance();
             return Outcome.SUCCESS;
         } catch (NoResultException e) {
-            addNoFoundCIMessage();
+            //addNoFoundCIMessage();
             return Outcome.REDISPLAY;
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -76,9 +84,22 @@ public class RHMarkAction extends GenericAction<RHMark> {
         }
     }
 
-    protected void addNoFoundCIMessage() {
+    private void clearForm(RHMark rhMark)
+    {
+        rhMark.setDescription("");
+        rhMark.setMarPerId(0);
+    }
+
+    protected void addNoFoundCIMessage(RHMark rhMark) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "Common.message.idPerson", getDisplayPropertyValueMarak());
+                "Common.message.idPerson", rhMark.getMarPerId().toString());
+    }
+
+    protected void addCreateRegisterMessage(RHMark rhMark,String name) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date myDate = fmt.parse(rhMark.getMarTime());
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Common.message.register", name, dateFormat.format(rhMark.getMarTime().getTime()));
     }
 
     public Date getDateRegister() {
