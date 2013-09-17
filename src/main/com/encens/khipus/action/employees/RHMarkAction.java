@@ -61,7 +61,7 @@ public class RHMarkAction extends GenericAction<RHMark> {
             if(result.size()==0)
             {
                 addNoFoundCIMessage(rhMark);
-                clearForm(rhMark);
+                rhMark = createInstance();
                 return Outcome.REDISPLAY;
             }
             rhMark.setCompany(new Company(Constants.defaultCompanyId, Constants.defaultCompanyName));
