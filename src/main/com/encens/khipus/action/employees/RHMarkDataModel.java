@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Data model for RHMark
+ * Data model for RegisterMarkAction
  *
  * @author
  */
@@ -37,7 +37,7 @@ public class RHMarkDataModel extends QueryDataModel<Long, RHMark> {
 
     @Override
     public String getEjbql() {
-        return "select rHMark from RHMark rHMark";
+        return "select rHMark from RegisterMarkAction rHMark";
     }
 
     @Override

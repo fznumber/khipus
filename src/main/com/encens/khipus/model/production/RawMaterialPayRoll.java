@@ -119,6 +119,27 @@ import java.util.List;
                 "where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
                 "and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
                 " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice"
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getTotalsRawMaterialPayRoll",
+                    query = "select " +
+                            "rawMaterialPayRoll.totalCollectedByGAB, " +
+                            "rawMaterialPayRoll.totalMountCollectdByGAB, " +
+                            "rawMaterialPayRoll.totalRetentionGAB, " +
+                            "rawMaterialPayRoll.totalCreditByGAB, " +
+                            "rawMaterialPayRoll.totalVeterinaryByGAB, " +
+                            "rawMaterialPayRoll.totalAlcoholByGAB, " +
+                            "rawMaterialPayRoll.totalConcentratedByGAB, " +
+                            "rawMaterialPayRoll.totalYogourdByGAB, " +
+                            "rawMaterialPayRoll.totalRecipByGAB, " +
+                            "rawMaterialPayRoll.totalDiscountByGAB," +
+                            "rawMaterialPayRoll.totalAdjustmentByGAB," +
+                            "rawMaterialPayRoll.totalOtherIncomeByGAB," +
+                            "rawMaterialPayRoll.totalLiquidByGAB "+
+                            "from RawMaterialPayRoll rawMaterialPayRoll " +
+                            "where rawMaterialPayRoll.startDate = :startDate " +
+                            "and rawMaterialPayRoll.endDate = :endDate " +
+                            "and rawMaterialPayRoll.productiveZone = :productiveZone " +
+                            "and rawMaterialPayRoll.metaProduct = :metaProduct "
         )
 })
 
@@ -175,6 +196,48 @@ public class RawMaterialPayRoll implements BaseModel {
     @OneToOne
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
+
+    @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalCollectedByGAB = 0.0;
+
+    @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalMountCollectdByGAB = 0.0;
+
+    @Column(name = "TOTALRETENCIONESXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalRetentionGAB = 0.0;
+
+    @Column(name = "TOTALCREDITOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalCreditByGAB = 0.0;
+
+    @Column(name = "TOTALVETERINARIOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalVeterinaryByGAB = 0.0;
+
+    @Column(name = "TOTALALCOHOLXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalAlcoholByGAB = 0.0;
+
+    @Column(name = "TOTALCONCENTRADOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalConcentratedByGAB = 0.0;
+
+    @Column(name = "TOTALYOGURDXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalYogourdByGAB = 0.0;
+
+    @Column(name = "TOTALTACHOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalRecipByGAB = 0.0;
+
+    @Column(name = "TOTADESCUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalDiscountByGAB = 0.0;
+
+    @Column(name = "TOTALOTROSDECUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalOtherDiscountByGAB = 0.0;
+
+    @Column(name = "TOTALAJUSTEXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalAdjustmentByGAB = 0.0;
+
+    @Column(name = "TOTALOTROSINGRESOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalOtherIncomeByGAB = 0.0;
+
+    @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalLiquidByGAB = 0.0;
 
     public Long getId() {
         return id;
@@ -271,5 +334,117 @@ public class RawMaterialPayRoll implements BaseModel {
 
     public void setTaxRate(double taxRate) {
         this.taxRate = taxRate;
+    }
+
+    public double getTotalCollectedByGAB() {
+        return totalCollectedByGAB;
+    }
+
+    public void setTotalCollectedByGAB(double totalCollectedByGAB) {
+        this.totalCollectedByGAB = totalCollectedByGAB;
+    }
+
+    public double getTotalMountCollectdByGAB() {
+        return totalMountCollectdByGAB;
+    }
+
+    public void setTotalMountCollectdByGAB(double totalMountCollectdByGAB) {
+        this.totalMountCollectdByGAB = totalMountCollectdByGAB;
+    }
+
+    public double getTotalRetentionGAB() {
+        return totalRetentionGAB;
+    }
+
+    public void setTotalRetentionGAB(double totalRetentionGAB) {
+        this.totalRetentionGAB = totalRetentionGAB;
+    }
+
+    public double getTotalCreditByGAB() {
+        return totalCreditByGAB;
+    }
+
+    public void setTotalCreditByGAB(double totalCreditByGAB) {
+        this.totalCreditByGAB = totalCreditByGAB;
+    }
+
+    public double getTotalVeterinaryByGAB() {
+        return totalVeterinaryByGAB;
+    }
+
+    public void setTotalVeterinaryByGAB(double totalVeterinaryByGAB) {
+        this.totalVeterinaryByGAB = totalVeterinaryByGAB;
+    }
+
+    public double getTotalYogourdByGAB() {
+        return totalYogourdByGAB;
+    }
+
+    public void setTotalYogourdByGAB(double totalYogourdByGAB) {
+        this.totalYogourdByGAB = totalYogourdByGAB;
+    }
+
+    public double getTotalRecipByGAB() {
+        return totalRecipByGAB;
+    }
+
+    public void setTotalRecipByGAB(double totalRecipByGAB) {
+        this.totalRecipByGAB = totalRecipByGAB;
+    }
+
+    public double getTotalDiscountByGAB() {
+        return totalDiscountByGAB;
+    }
+
+    public void setTotalDiscountByGAB(double totalDiscountByGAB) {
+        this.totalDiscountByGAB = totalDiscountByGAB;
+    }
+
+    public double getTotalAdjustmentByGAB() {
+        return totalAdjustmentByGAB;
+    }
+
+    public void setTotalAdjustmentByGAB(double totalAdjustmentByGAB) {
+        this.totalAdjustmentByGAB = totalAdjustmentByGAB;
+    }
+
+    public double getTotalOtherIncomeByGAB() {
+        return totalOtherIncomeByGAB;
+    }
+
+    public void setTotalOtherIncomeByGAB(double totalOtherIncomeByGAB) {
+        this.totalOtherIncomeByGAB = totalOtherIncomeByGAB;
+    }
+
+    public double getTotalLiquidByGAB() {
+        return totalLiquidByGAB;
+    }
+
+    public void setTotalLiquidByGAB(double totalLiquidByGAB) {
+        this.totalLiquidByGAB = totalLiquidByGAB;
+    }
+
+    public double getTotalOtherDiscountByGAB() {
+        return totalOtherDiscountByGAB;
+    }
+
+    public void setTotalOtherDiscountByGAB(double totalOtherDiscountByGAB) {
+        this.totalOtherDiscountByGAB = totalOtherDiscountByGAB;
+    }
+
+    public double getTotalAlcoholByGAB() {
+        return totalAlcoholByGAB;
+    }
+
+    public void setTotalAlcoholByGAB(double totalAlcoholByGAB) {
+        this.totalAlcoholByGAB = totalAlcoholByGAB;
+    }
+
+    public double getTotalConcentratedByGAB() {
+        return totalConcentratedByGAB;
+    }
+
+    public void setTotalConcentratedByGAB(double totalConcentratedByGAB) {
+        this.totalConcentratedByGAB = totalConcentratedByGAB;
     }
 }

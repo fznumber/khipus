@@ -40,7 +40,7 @@
 
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.rawMaterial']}</ui:define>
-                        <h:selectOneMenu id="metaProduct" value="#{rawMaterialPaySummaryReportAction.metaProduct}"
+                        <h:selectOneMenu id="metaProduct" value="#{rawMaterialPayRollReportAction.metaProduct}"
                                          styleClass="input" required="true" tabindex="2">
                             <s:selectItems value="#{collectableProductList}"
                                            var="product"
@@ -53,7 +53,7 @@
                     <s:decorate id="gestionField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['Gestion.gestion']}</ui:define>
                         <h:selectOneMenu id="gestion"
-                                         value="#{rawMaterialPaySummaryReportAction.gestion}"
+                                         value="#{rawMaterialPayRollReportAction.gestion}"
                                          styleClass="input"
                                          required="true"
                                          tabindex="3">
@@ -62,7 +62,7 @@
                                            noSelectionLabel=""
                                            hideNoSelectionLabel="false"/>
                             <a4j:support event="onchange"
-                                         action="#{rawMaterialPaySummaryReportAction.cleanGestionList}"
+                                         action="#{rawMaterialPayRollReportAction.cleanGestionList}"
                                          reRender="gestionField, gestionPayrollListField" ajaxSingle="true"/>
                             <s:convertEntity/>
                         </h:selectOneMenu>
@@ -74,7 +74,7 @@
                     <s:decorate id="monthField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['Month.month']}</ui:define>
                         <h:selectOneMenu id="month"
-                                         value="#{rawMaterialPaySummaryReportAction.month}"
+                                         value="#{rawMaterialPayRollReportAction.month}"
                                          styleClass="input" required="true">
 
                             <s:selectItems value="#{monthEnum}" var="month"
@@ -87,10 +87,10 @@
                     <s:decorate id="periodoField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['Reports.controlReport.period']}</ui:define>
                         <h:selectOneMenu id="periodo"
-                                         value="#{rawMaterialPaySummaryReportAction.periodo}"
+                                         value="#{rawMaterialPayRollReportAction.periodo}"
                                          styleClass="input" required="true">
 
-                            <s:selectItems value="#{periodos}" var="periodos"
+                            <s:selectItems value="#{periodosPayRoll}" var="periodos"
                                            label="#{messages[periodos.resourceKey]}"
                                            noSelectionLabel="" hideNoSelectionLabel="false"/>
                             <s:convertEnum/>
@@ -102,11 +102,11 @@
 
         </rich:simpleTogglePanel>
 
-        <app:reportDefaultOptions reportAction="#{rawMaterialPaySummaryReportAction}" showPageFormat="false"
+        <app:reportDefaultOptions reportAction="#{rawMaterialPayRollReportAction}" showPageFormat="false"
                                   showReportTitle="false"/>
 
         <div class="buttons">
-            <h:commandButton action="#{rawMaterialPaySummaryReportAction.generateReport}"
+            <h:commandButton action="#{rawMaterialPayRollReportAction.generateReport}"
                              styleClass="button"
                              value="#{messages['Common.generate']}" id="searchButtonId" tabindex="2">
                 <s:defaultAction/>
@@ -124,7 +124,7 @@
         <ui:define name="assignButton">
             <a4j:commandButton id="assignButton"
                                title="#{messages['Common.choose']}"
-                               action="#{rawMaterialPaySummaryReportAction.setZone(productiveZoneItem)}"
+                               action="#{rawMaterialPayRollReportAction.setZone(productiveZoneItem)}"
                                image="/img/active.gif" styleClass="select-image-middle"
                                ajaxSingle="true" reRender="productiveZoneField,collectedRawMaterialList"
                                oncomplete="Richfaces.hideModalPanel('productiveZoneModalPanel');"

@@ -22,6 +22,8 @@ public interface RawMaterialPayRollService extends GenericService {
 
     void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException;
 
+    RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
+
     RawMaterialPayRollServiceBean.Discounts getDiscounts(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct);
 
     RawMaterialPayRollServiceBean.SummaryTotal getSumaryTotal(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct);

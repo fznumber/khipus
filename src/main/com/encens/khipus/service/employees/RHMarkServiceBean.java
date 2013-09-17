@@ -8,6 +8,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.log.Log;
+import org.omg.PortableServer.POAPackage.AdapterAlreadyExistsHelper;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -51,6 +52,21 @@ public class RHMarkServiceBean implements RHMarkService {
         } catch (NoResultException e) {
             return new ArrayList<RHMark>(0);
         }
+    }
+
+    @Override
+    public boolean verificateIdPerson(int idPerson) {
+        try{
+            List<Object[]> result = em.createQuery("select p from Person p where p.idNumber = :idPersona")
+              .setParameter("idPersona", idPerson).getResultList();
+            if(result.size() > 0)
+                return true;
+
+        } catch (NoResultException r)
+        {
+            return false;
+        }
+        return true;
     }
 
     public Map<Date, List<Date>> getRHMarkDateTimeMapByDateRange(Employee employee, Date initDate, Date endDate) {

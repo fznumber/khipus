@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:app="http://encens.com/products/khipus/facelets"
+                template="/layout/template.xhtml">
+    <ui:define name="pageTitle">#{messages['RHMark.search']}</ui:define>
+    <ui:param name="bodyWidth" value="90%"/>
+    <ui:param name="bodyAlign" value="center"/>
+    <ui:param name="showPowered" value="true"/>
+    <ui:define name="head">
+        <a4j:loadScript src="/scripts/date_hour.js"/>
+    </ui:define>
+
+    <!--<body onload="mueveReloj()">-->
+    <ui:define name="body">
+        <h:form id="markRegister">
+
+            <div class="buttons">
+
+                <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
+                                 styleClass="button"
+                                 tabindex="3"
+                                 >
+
+                    <s:defaultAction/>
+                </h:commandButton>
+            </div>
+
+            <rich:panel id="formPanel">
+                <f:facet name="header">
+                    #{messages['RHMark.new']}
+                </f:facet>
+                <h:panelGrid columns="2" width="70%" columnClasses="top-aligned">
+                    <s:div>
+                        <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
+                                <h:inputText id="marRefCard"
+                                         value="#{rHMark.marPerId}"
+                                         styleClass="input"
+                                         maxlength="200"
+                                         required="true"
+                                         tabindex="1">
+
+                            </h:inputText>
+                        </s:decorate>
+
+                        <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['InventoryManagement.description']}</ui:define>
+                            <h:inputTextarea id="description"
+                                             value="#{rHMark.description}"
+                                             style="margin: 0px; width: 400px; height: 100px;"
+                                             styleClass="input textarea"
+                                             tabindex="2"
+                                    />
+                        </s:decorate>
+                    </s:div>
+                    <s:div>
+                        <s:decorate id="marDateField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <h:inputHidden id="marDate" value="#{rHMark.marDate}"/>
+                        </s:decorate>
+
+                        <span id="liveclock" style="position:absolute;left:610px;top:25px;"></span>
+
+                        <s:decorate id="marTimeField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <h:inputHidden id="marTime" value="#{rHMark.marTime}" />
+                        </s:decorate>
+                    </s:div>
+                </h:panelGrid>
+            </rich:panel>
+
+            <div class="buttons">
+
+                <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
+                                 styleClass="button" tabindex="3">
+
+                    <s:defaultAction/>
+                </h:commandButton>
+            </div>
+
+            <!--<rich:dataTable value="#{rhmark}" var="markItem" id="markList"
+
+                            width="100%" columnsWidth="15%, 20%, 20%, 20%, 15%, 10%">
+                <f:facet name="header">
+                    <rich:columnGroup>
+                        <rich:column>
+                            #{messages['RHMark.marRefCard']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['RHMark.marDate']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['RHMark.marTime']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['RHMark.state']}
+                        </rich:column>
+                    </rich:columnGroup>
+                </f:facet>
+                <rich:column>
+                    <h:outputText value="#{markItem.marPerId}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{markItem.marDate}">
+                        <s:convertDateTime pattern="#{messages['patterns.date']}"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{markItem.marTime}">
+                        <s:convertDateTime pattern="#{messages['patterns.time']}"/>
+                    </h:outputText>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{markItem.marIpPc}"/>
+                </rich:column>
+
+            </rich:dataTable>-->
+
+            <!--<app:dataScroller id="dataScroller" for="markList" dataModel="#{markDataModel}"/>-->
+
+        </h:form>
+        <a4j:outputPanel ajaxRendered="true">
+            <s:decorate id="rhMarkHelpModalPanelContainer" template="/employees/rHMarkHelpModalPanel.xhtml"/>
+        </a4j:outputPanel>
+        <rich:jQuery selector="#marRefCard" query="focus()" timing="onload"/>
+    </ui:define>
+    <!--</body>-->
+</ui:composition>
