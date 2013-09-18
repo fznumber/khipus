@@ -221,6 +221,11 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         this.zone = zone;
     }
 
+    @Factory(value = "monthEnumPayRoll")
+    public Month[] getMonthEnum() {
+        return Month.values();
+    }
+
     @Factory(value = "periodosPayRoll", scope = ScopeType.STATELESS)
     public Periodo[] getPeriodos() {
         return Periodo.values();
