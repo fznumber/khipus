@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:s="http://jboss.com/products/seam/taglib"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -7,7 +8,7 @@
                 xmlns:c="http://java.sun.com/jstl/core"
                 xmlns:rich="http://richfaces.org/rich"
                 xmlns:app="http://encens.com/products/khipus/facelets"
-                template="/layout/template.xhtml">
+                template="/layout/templateRegisterMark.xhtml">
     <ui:define name="pageTitle">#{messages['RHMark.search']}</ui:define>
     <ui:param name="bodyWidth" value="90%"/>
     <ui:param name="bodyAlign" value="center"/>
@@ -16,26 +17,16 @@
         <a4j:loadScript src="/scripts/date_hour.js"/>
     </ui:define>
 
-    <!--<body onload="mueveReloj()">-->
     <ui:define name="body">
+
         <h:form id="markRegister">
-
-            <div class="buttons">
-
-                <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
-                                 styleClass="button"
-                                 tabindex="3"
-                                 >
-
-                    <s:defaultAction/>
-                </h:commandButton>
-            </div>
 
             <rich:panel id="formPanel">
                 <f:facet name="header">
                     #{messages['RHMark.new']}
                 </f:facet>
-                <h:panelGrid columns="2" width="70%" columnClasses="top-aligned">
+                <h:panelGrid columns="1" width="70%" columnClasses="top-aligned">
+                    <span id="date_server" style="position:absolute;left:690px;top:25px; font-size: 16px;"></span>
                     <s:div>
                         <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
@@ -50,7 +41,7 @@
                         </s:decorate>
 
                         <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['InventoryManagement.description']}</ui:define>
+                            <ui:define name="label">#{messages['RegisterMarck.description']}</ui:define>
                             <h:inputTextarea id="description"
                                              value="#{rHMark.description}"
                                              style="margin: 0px; width: 400px; height: 100px;"
@@ -58,69 +49,31 @@
                                              tabindex="2"
                                     />
                         </s:decorate>
-                    </s:div>
-                    <s:div>
-                        <s:decorate id="marDateField" template="/include/inputField.xhtml" styleClass="formRow">
-                            <h:inputHidden id="marDate" value="#{rHMark.marDate}"/>
-                        </s:decorate>
+                        <s:decorate id="createField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
+                                             styleClass="button" tabindex="3" style="font-size: 20px;">
 
-                        <span id="liveclock" style="position:absolute;left:610px;top:25px;"></span>
-
-                        <s:decorate id="marTimeField" template="/include/inputField.xhtml" styleClass="formRow">
-                            <h:inputHidden id="marTime" value="#{rHMark.marTime}" />
+                                <s:defaultAction/>
+                            </h:commandButton>
+                        </s:decorate>
+                        <s:decorate id="timeField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <span id="time_server" style="font-size: 17px;"></span>
                         </s:decorate>
                     </s:div>
+
+                            <h:inputHidden id="marDate" value="#{rHMark.marDate}">
+                                <f:convertDateTime pattern="#{messages['patterns.mark.date']}"/>
+                                    </h:inputHidden>
+                            <h:inputHidden id="marTime" value="#{rHMark.marTime}" >
+                            <s:convertDateTime pattern="#{messages['patterns.time']}" timeZone="#{sessionUser.timeZone}"
+                                               type="time"/>
+                            </h:inputHidden>
+
+
+
                 </h:panelGrid>
             </rich:panel>
 
-            <div class="buttons">
-
-                <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
-                                 styleClass="button" tabindex="3">
-
-                    <s:defaultAction/>
-                </h:commandButton>
-            </div>
-
-            <!--<rich:dataTable value="#{rhmark}" var="markItem" id="markList"
-
-                            width="100%" columnsWidth="15%, 20%, 20%, 20%, 15%, 10%">
-                <f:facet name="header">
-                    <rich:columnGroup>
-                        <rich:column>
-                            #{messages['RHMark.marRefCard']}
-                        </rich:column>
-                        <rich:column>
-                            #{messages['RHMark.marDate']}
-                        </rich:column>
-                        <rich:column>
-                            #{messages['RHMark.marTime']}
-                        </rich:column>
-                        <rich:column>
-                            #{messages['RHMark.state']}
-                        </rich:column>
-                    </rich:columnGroup>
-                </f:facet>
-                <rich:column>
-                    <h:outputText value="#{markItem.marPerId}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{markItem.marDate}">
-                        <s:convertDateTime pattern="#{messages['patterns.date']}"/>
-                    </h:outputText>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{markItem.marTime}">
-                        <s:convertDateTime pattern="#{messages['patterns.time']}"/>
-                    </h:outputText>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{markItem.marIpPc}"/>
-                </rich:column>
-
-            </rich:dataTable>-->
-
-            <!--<app:dataScroller id="dataScroller" for="markList" dataModel="#{markDataModel}"/>-->
 
         </h:form>
         <a4j:outputPanel ajaxRendered="true">
