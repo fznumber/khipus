@@ -25,7 +25,7 @@
                 <f:facet name="header">
                     #{messages['RHMark.new']}
                 </f:facet>
-                <h:panelGrid columns="3" width="70%" columnClasses="top-aligned">
+                <h:panelGrid columns="1" width="70%" columnClasses="top-aligned">
                     <span id="date_server" style="position:absolute;left:690px;top:25px; font-size: 16px;"></span>
                     <s:div>
                         <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -49,6 +49,16 @@
                                              tabindex="2"
                                     />
                         </s:decorate>
+                        <s:decorate id="createField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
+                                             styleClass="button" tabindex="3" style="font-size: 20px;">
+
+                                <s:defaultAction/>
+                            </h:commandButton>
+                        </s:decorate>
+                        <s:decorate id="timeField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <span id="time_server" style="font-size: 17px;"></span>
+                        </s:decorate>
                     </s:div>
 
                             <h:inputHidden id="marDate" value="#{rHMark.marDate}">
@@ -59,17 +69,7 @@
                                                type="time"/>
                             </h:inputHidden>
 
-                    <s:div>
-                        <span id="time_server" style="font-size: 17px;"></span>
-                    </s:div>
 
-                    <s:div>
-                            <h:commandButton action="#{rHMarkAction.create}" value="#{messages['Common.register']}"
-                                             styleClass="button" tabindex="3" style="font-size: 20px;">
-
-                                <s:defaultAction/>
-                            </h:commandButton>
-                    </s:div>
 
                 </h:panelGrid>
             </rich:panel>

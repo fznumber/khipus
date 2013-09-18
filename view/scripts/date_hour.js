@@ -60,8 +60,8 @@ function show5(hours,minutes,seconds,day,month,year){
     if (seconds<=9)
         seconds="0"+seconds
 
-    fecha_servidor="<font face='Arial' ><b><font size='3'>Fecha Servidor: </font>"+day+"/"+month+"/"+year+"</b></font>"
-    hora_servidor="<font face='Arial' ><b><font size='3'>Fecha Hora: </font>"+hours+":"+minutes+":"+seconds+"</b></font>"
+    fecha_servidor="<font face='Arial' ><b><font size='3'>Fecha del Servidor: </font>"+day+"/"+month+"/"+year+"</b></font>"
+    hora_servidor="<font face='Arial' ><b><font size='3'></font>"+hours+":"+minutes+":"+seconds+"</b></font>"
 
     if (document.layers){
         document.layers.time_server.document.write(hora_servidor)
