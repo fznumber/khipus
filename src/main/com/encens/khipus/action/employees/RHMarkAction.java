@@ -55,7 +55,7 @@ public class RHMarkAction extends GenericAction<RHMark> {
         try {
             RHMark rhMark = getInstance();
 
-            List<Object[]> result = em.createQuery("select p.firstName, p.maidenName ,p.lastName from Person p where p.idNumber = :idPersona")
+            List<Object[]> result = em.createQuery("select p.firstName, p.maidenName ,p.lastName from Employee p where p.idNumber = :idPersona")
                     .setParameter("idPersona", rhMark.getMarPerId().toString()).getResultList();
 
             if(result.size()==0)
