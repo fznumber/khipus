@@ -593,7 +593,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         Query queryObj = getEntityManager().createQuery(query);
         if(productiveZone != null)
             queryObj.setParameter("productiveZone", productiveZone);
-        if(metaProduct != metaProduct)
+        if(metaProduct != null)
             queryObj.setParameter("metaProduct",metaProduct);
 
         try {

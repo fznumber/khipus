@@ -3,6 +3,7 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
+import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
@@ -14,11 +15,14 @@ import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
 /**
  * Encens S.R.L.
@@ -75,7 +79,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
-        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,null,null);
+        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
 
 
         Map params = new HashMap();
@@ -141,8 +145,10 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
     @Create
     public void init() {
-
+        restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
+                                    "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
     }
+
     private void getTotal(RawMaterialPayRoll rawMaterialPayRoll)
     {
         //rawMaterialPayRoll.
@@ -268,4 +274,27 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     public void setDateEnd(Calendar dateEnd) {
         this.dateEnd = dateEnd;
     }
+
+    public String getFullNameOfProductiveZone() {
+        return (zone == null ? "" : zone.getFullName());
+    }
+
+    public void setFullNameOfProductiveZone(String fullName) {
+
+    }
+
+    protected GenericService getService() {
+        return rawMaterialPayRollService;
+    }
+
+    public void selectProductiveZone(ProductiveZone productiveZone) {
+        try {
+            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
+            setZone(productiveZone);
+        } catch (Exception ex) {
+            log.error("Caught Error", ex);
+        }
+    }
+
+
 }
