@@ -18,10 +18,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Encens S.R.L.
@@ -78,9 +75,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
-        //RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni.getTime(),dateEnd.getTime(),null,metaProduct);
-        //RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(null,null,null,metaProduct);
-        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni.getTime(),dateEnd.getTime(),null,null);
+        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,null,null);
 
 
         Map params = new HashMap();
@@ -258,4 +253,19 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         this.metaProduct = metaProduct;
     }
 
+    public Calendar getDateIni() {
+        return dateIni;
+    }
+
+    public void setDateIni(Calendar dateIni) {
+        this.dateIni = dateIni;
+    }
+
+    public Calendar getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Calendar dateEnd) {
+        this.dateEnd = dateEnd;
+    }
 }

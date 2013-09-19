@@ -5,6 +5,7 @@ import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.RoundUtil;
 import oracle.jdbc.driver.OracleDriver;
 import org.apache.commons.lang.StringUtils;
@@ -19,8 +20,10 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -582,26 +585,18 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         rawMaterialPayRoll.setTotalLiquidByGAB(RoundUtil.getRoundValue(totalLiquidPay,2, RoundUtil.RoundMode.SYMMETRIC));
     }
 
-    public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
+    public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
     {
 
-        String query = createQuery(productiveZone,metaProduct);
+        String query = createQuery(productiveZone,metaProduct, dateIni,dateEnd);
         RawMaterialPayRoll rawMaterialPayRoll = new RawMaterialPayRoll();
         Query queryObj = getEntityManager().createQuery(query);
-        //queryObj.setParameter("startDate", dateIni);
-        //queryObj.setParameter("endDate", dateEnd);
         if(productiveZone != null)
             queryObj.setParameter("productiveZone", productiveZone);
         if(metaProduct != metaProduct)
             queryObj.setParameter("metaProduct",metaProduct);
 
         try {
-            /*List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getTotalsRawMaterialPayRoll")
-                                                      .setParameter("startDate", dateIni)
-                                                      .setParameter("endDate", dateEnd)
-                                                      .setParameter("productiveZone", productiveZone)
-                                                      //.setParameter("metaProduct",metaProduct)
-                                                      .getResultList();*/
             List<Object[]> datas= queryObj.getResultList();
                     rawMaterialPayRoll.setTotalCollectedByGAB((Double) (datas.get(0)[0]));
                     rawMaterialPayRoll.setTotalMountCollectdByGAB((Double) (datas.get(0)[1]));
@@ -624,9 +619,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return rawMaterialPayRoll;
     }
 
-    private String createQuery(ProductiveZone productiveZone, MetaProduct metaProduct) {
+    private String createQuery(ProductiveZone productiveZone, MetaProduct metaProduct, Calendar dateIni, Calendar dateEnd) {
         String restricZone = (productiveZone == null)? "": " and rawMaterialPayRoll.productiveZone = :productiveZone ";
         String restricMeta = (metaProduct == null)? "": " and rawMaterialPayRoll.metaProduct = :metaProduct ";
+
         return  "select " +
                 "rawMaterialPayRoll.totalCollectedByGAB, " +
                 "rawMaterialPayRoll.totalMountCollectdByGAB, " +
@@ -641,8 +637,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 "rawMaterialPayRoll.totalAdjustmentByGAB," +
                 "rawMaterialPayRoll.totalOtherIncomeByGAB," +
                 "rawMaterialPayRoll.totalLiquidByGAB "+
-                "from RawMaterialPayRoll rawMaterialPayRoll ";// +
-                //"where rawMaterialPayRoll.startDate = :startDate "; //+
-                //"and rawMaterialPayRoll.endDate <= :endDate " + restricZone + restricMeta;
+                "from RawMaterialPayRoll rawMaterialPayRoll " +
+                "where rawMaterialPayRoll.startDate = to_date('"+dateIni.get(Calendar.DAY_OF_MONTH)+"/"+(dateIni.get(Calendar.MONTH)+1)+"/"+dateIni.get(Calendar.YEAR)+"','dd/mm/yyyy') " +
+                "and rawMaterialPayRoll.endDate <= to_date('"+dateEnd.get(Calendar.DAY_OF_MONTH)+"/"+(dateEnd.get(Calendar.MONTH)+1)+"/"+dateEnd.get(Calendar.YEAR)+"','dd/mm/yyyy') "
+                +restricZone+restricMeta;
     }
 }
