@@ -363,19 +363,23 @@ public class GenericReportAction implements Serializable {
         }
 
         TypedReportData typedReportData = null;
-
+        GenerationReportData generationReportData = GenerationReportData.getInstance("messages_app",
+                (SessionUser) Component.getInstance("sessionUser"),
+                params);
+        String reportFormat = getReportFormat().getFormat();
+        String typeReport = pageFormat.getType();
+        String pageOrient = pageOrientation.getType();
+        String sql = "";
         try {
             genericReportService.generateSqlReport(
-                    GenerationReportData.getInstance("messages_app",
-                            (SessionUser) Component.getInstance("sessionUser"),
-                            params),
+                    generationReportData,
                     reportId,
                     JSFUtil.getResourceAsStream(reportTemplatePath),
-                    getReportFormat().getFormat(),
+                    reportFormat,
                     pageFormat.getType(),
                     pageOrientation.getType(),
                     defaultReportTitle,
-                    getNativeSql(),
+                    sql,
                     reportTitleString).exportReport();
         } catch (IOException e) {
             log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());

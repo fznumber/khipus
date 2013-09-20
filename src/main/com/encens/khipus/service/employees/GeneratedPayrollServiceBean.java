@@ -2518,7 +2518,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
     }
 
     /*
-    Returns RHMark list only if the employee has marked at least one time to in and one time to out his horaryBand.
+    Returns RegisterMarkAction list only if the employee has marked at least one time to in and one time to out his horaryBand.
      the list is a list of two elements, the employee first and last mark for the horaryBand.
    @param dateRhMarkList a list of marks of an employee given an especific date
    @param dayHoraryBand a HoraryBand of a especific day that matches with the day of the date of the dateRhMarkList
@@ -2594,7 +2594,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
 
 
     /*
-    Returns RHMark list only if the employee has marked at least one time to in and one time to out his horaryBand.
+    Returns RegisterMarkAction list only if the employee has marked at least one time to in and one time to out his horaryBand.
      the list is a list of two elements, the employee first and last mark for the horaryBand.
    @param dateRhMarkList a list of marks of an employee given an especific date
    @param dayHoraryBand a HoraryBand of a especific day that matches with the day of the date of the dateRhMarkList
@@ -2632,7 +2632,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
 
 
             for (Date rhMarkDateTime : dateRhMarkList) {
-                //RHMark rhMark = dateRhMarkList.get(i);
+                //RegisterMarkAction rhMark = dateRhMarkList.get(i);
                 Calendar employeeMark = Calendar.getInstance();
                 Date employeeMarkD = new Date((dayOfMonthCalendar.get(Calendar.YEAR) - 1900), dayOfMonthCalendar.get(Calendar.MONTH), dayOfMonthCalendar.get(Calendar.DAY_OF_MONTH),
                         rhMarkDateTime.getHours(), rhMarkDateTime.getMinutes(), rhMarkDateTime.getSeconds());

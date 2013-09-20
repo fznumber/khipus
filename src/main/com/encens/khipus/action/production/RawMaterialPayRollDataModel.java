@@ -30,7 +30,7 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     @Override
     public String getEjbql() {
         String query = "select rawMaterialPayRoll " +
-                       "from RawMaterialPayRoll rawMaterialPayRoll ";
+                "from RawMaterialPayRoll rawMaterialPayRoll ";
         return query;
     }
 

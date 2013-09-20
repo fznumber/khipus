@@ -3,28 +3,24 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
+import com.encens.khipus.action.reports.ReportFormat;
+import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.service.employees.PayrollSummaryReportService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
-import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.MessageUtils;
-import com.jatun.titus.reportgenerator.util.TypedReportData;
-import org.jboss.seam.Component;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.annotations.security.Restrict;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
-import java.util.*;
-
-import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Encens S.R.L.
@@ -47,6 +43,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     private Month month;
     private Periodo periodo;
     private ProductiveZone zone;
+    private MetaProduct metaProduct;
     private double unitPrice;
     private double mountCollection;
     private double totalCollectionXUnitPrice;
@@ -70,61 +67,54 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
 
     public void generateReport() {
-        //add seam properties as filter, summary only to OFFICIAL payroll
-        //setGeneratedPayrollType(GeneratedPayrollType.OFFICIAL);
 
+        HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
-
-        Map params = new HashMap();
-        //params.put("TITLE_PARAM", "PRUEBA");
-        //params.put("GESTION_PARAM", 2013);
-
-        //add summary by sede sub report
-        //addSummaryBySedeSubReport(params);
-        //add summary by currency sub report
-        //addSummaryByCurrencySubReport(params);
-
-        //params.put("SECTORTITLE_PARAM", (sector != null) ? sector.getName() : "");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
         dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
+        sdf.setCalendar(dateIni);
+        sdf.setCalendar(dateEnd);
 
-        addSummaryTotal(params);
 
+        addSummaryTotal(reportParameters);
+        log.debug("generating expenseBudgetReport......................................");
 
-
-        summaryReportTitle = "Titulo de prueba";
-
-        super.generateReport("RawMaterialPaySummaryReportAction", "/production/reports/rawMaterialPaySummaryReport.jrxml",
-                PageFormat.LETTER, PageOrientation.PORTRAIT, "prueba", params);
-
+        super.generateReport(
+                "rawMaterialPaySummaryReportAction",
+                "/production/reports/rawMaterialPaySummaryReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                messages.get("Report.rawMaterialPaySummaryReportAction"),
+                reportParameters);
     }
 
 
 
-    private void addSummaryTotal(Map params) {
+    private void addSummaryTotal(HashMap<String, Object> params) {
         discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
 
         summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni.getTime(),dateEnd.getTime(),null,null);
         Double totalMoney = (summaryTotal.collectedTotal * discounts.unitPrice) - summaryTotal.differencesTotal;
-        params.put("total_collected", summaryTotal.collectedTotal);
-        params.put("price_unit", discounts.unitPrice);
-        params.put("difference_money", summaryTotal.differencesTotal * unitPrice);
-        params.put("total_collected_money", summaryTotal.collectedTotal * discounts.unitPrice);
-        params.put("total_money", totalMoney);
-        params.put("weight_balance_total", summaryTotal.balanceWeightTotal);
+        params.put("total_collected", summaryTotal.collectedTotal.toString());
+        params.put("price_unit", discounts.unitPrice.toString());
+        params.put("difference_money", ((Double) (summaryTotal.differencesTotal * unitPrice)).toString());
+        params.put("total_collected_money", ((Double) (summaryTotal.collectedTotal * discounts.unitPrice)).toString());
+        params.put("total_money", totalMoney.toString());
+        params.put("weight_balance_total", (summaryTotal.balanceWeightTotal).toString());
 
         //discounts
         Double totalDifferences = discounts.yogurt + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention;
         Double liquidPay = totalMoney - totalDifferences;
-        params.put("yogurt", discounts.yogurt);
-        params.put("veterinary", discounts.veterinary);
-        params.put("credit", discounts.credit);
-        params.put("recip", discounts.recip);
-        params.put("retention", discounts.retention);
-        params.put("total_differences", totalDifferences);
-        params.put("liquid_pay", liquidPay);
+        params.put("yogurt", discounts.yogurt.toString());
+        params.put("veterinary", discounts.veterinary.toString());
+        params.put("credit", discounts.credit.toString());
+        params.put("recip", discounts.recip.toString());
+        params.put("retention", discounts.retention.toString());
+        params.put("total_differences", totalDifferences.toString());
+        params.put("liquid_pay", liquidPay.toString());
 
     }
 
@@ -135,112 +125,6 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     @Create
     public void init() {
-        restrictions = new String[]{};
-    }
-
-    /**
-     * Add the sub report in main report
-     * summary payment method by sede
-     *
-     * @param mainReportParams main report params
-     */
-    private void addSummaryBySedeSubReport(Map mainReportParams) {
-        log.debug("Generating addSummaryBySedeSubReport.............................");
-        String subReportKey = "SUMMARYBYSEDESUBREPORT";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("SUMMARYSERVICE_PARAM", (PayrollSummaryReportService) Component.getInstance("payrollSummaryReportService"));
-
-        String gestionPayrollConditions = composeWhereGestionPayrollConditions("generatedPayroll.gestionPayroll.id");
-
-        String ejbql = "SELECT " +
-                "generatedPayroll.id," +
-                "generatedPayroll.gestionPayroll.businessUnit.publicity," +
-                "generatedPayroll.name," +
-                "generatedPayroll.gestionPayroll.jobCategory.sector.id," +
-                "generatedPayroll.gestionPayroll.jobCategory.id," +
-                "generatedPayroll.gestionPayroll.exchangeRate.rate" +
-                " FROM GeneratedPayroll generatedPayroll" +
-                (gestionPayrollConditions != null ? " WHERE " + gestionPayrollConditions : "");
-
-        String[] restrictions = new String[]{"generatedPayroll.generatedPayrollType=#{summaryPayrollByPaymentMethodReportAction.generatedPayrollType}"};
-        String pollByCareerOrder = "generatedPayroll.id";
-
-        //generate the sub report
-        TypedReportData subReportData = super.generateSubReport(
-                subReportKey,
-                "/employees/reports/payrollSummaryBySedeSubReport.jrxml",
-                PageFormat.LETTER,
-                PageOrientation.PORTRAIT,
-                createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), pollByCareerOrder),
-                params);
-
-        //add in main report params
-        mainReportParams.putAll(subReportData.getReportParams());
-        mainReportParams.put(subReportKey, subReportData.getJasperReport());
-    }
-
-    /**
-     * Add the sub report in main report
-     * summary by currency
-     *
-     * @param mainReportParams main report params
-     */
-    private void addSummaryByCurrencySubReport(Map mainReportParams) {
-        log.debug("Generating addSummaryByCurrencySubReport.............................");
-        String subReportKey = "SUMMARYBYCURRENCYSUBREPORT";
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("SUMMARYSERVICE_PARAM", (PayrollSummaryReportService) Component.getInstance("payrollSummaryReportService"));
-
-        String gestionPayrollConditions = composeWhereGestionPayrollConditions("generatedPayroll.gestionPayroll.id");
-        String ejbql = "SELECT " +
-                "generatedPayroll.id," +
-                "generatedPayroll.gestionPayroll.businessUnit.publicity," +
-                "generatedPayroll.gestionPayroll.jobCategory.sector.id," +
-                "generatedPayroll.gestionPayroll.jobCategory.id," +
-                "generatedPayroll.gestionPayroll.exchangeRate.rate" +
-                " FROM GeneratedPayroll generatedPayroll" +
-                (gestionPayrollConditions != null ? " WHERE " + gestionPayrollConditions : "");
-
-        String[] restrictions = new String[]{"generatedPayroll.generatedPayrollType=#{summaryPayrollByPaymentMethodReportAction.generatedPayrollType}"};
-        String pollByCareerOrder = "generatedPayroll.id";
-
-        //generate the sub report
-        TypedReportData subReportData = super.generateSubReport(
-                subReportKey,
-                "/employees/reports/payrollSummaryByCurrencySubReport.jrxml",
-                PageFormat.LETTER,
-                PageOrientation.PORTRAIT,
-                createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), pollByCareerOrder),
-                params);
-
-        //add in main report params
-        mainReportParams.putAll(subReportData.getReportParams());
-        mainReportParams.put(subReportKey, subReportData.getJasperReport());
-    }
-
-    /**
-     * Compose where conditions from gestion payroll list
-     *
-     * @param gestionPayrollIdProperty property to condition
-     * @return String
-     */
-    private String composeWhereGestionPayrollConditions(String gestionPayrollIdProperty) {
-        String conditions = null;
-        if (gestionPayrollList != null) {
-            for (GestionPayroll gestionPayroll : gestionPayrollList) {
-                if (conditions == null) {
-                    conditions = gestionPayrollIdProperty + "=" + gestionPayroll.getId();
-                } else {
-                    conditions = conditions + " OR " + gestionPayrollIdProperty + "=" + gestionPayroll.getId();
-                }
-            }
-            if (conditions != null) {
-                conditions = "(" + conditions + ")";
-            }
-        }
-        return conditions;
     }
 
     public RawMaterialPayRollService getRawMaterialPayRollService() {
@@ -315,17 +199,6 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     public Periodo[] getPeriodos() {
         return Periodo.values();
     }
-    /*
-    public void selectProductiveZone(ProductiveZone productiveZone) {
-        try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
-            getInstance().setProductiveZone(productiveZone);
-        } catch (Exception ex) {
-            log.error("Caught Error", ex);
-            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
-        }
-    }
-    */
 
     public GeneratedPayrollType getGeneratedPayrollType() {
         return generatedPayrollType;
@@ -333,6 +206,35 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     public void setGeneratedPayrollType(GeneratedPayrollType generatedPayrollType) {
         this.generatedPayrollType = generatedPayrollType;
+    }
+
+    public MetaProduct getMetaProduct() {
+        return metaProduct;
+    }
+
+    public void setMetaProduct(MetaProduct metaProduct) {
+        this.metaProduct = metaProduct;
+    }
+
+    public void selectProductiveZone(ProductiveZone productiveZone) {
+        try {
+            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
+            setZone(productiveZone);
+        } catch (Exception ex) {
+            log.error("Caught Error", ex);
+        }
+    }
+
+    public String getFullNameOfProductiveZone() {
+        return (zone == null ? "" : zone.getFullName());
+    }
+
+    public void setFullNameOfProductiveZone(String fullName) {
+
+    }
+
+    protected GenericService getService() {
+        return rawMaterialPayRollService;
     }
 
 }
