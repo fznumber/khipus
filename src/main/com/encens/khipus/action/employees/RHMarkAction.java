@@ -55,8 +55,8 @@ public class RHMarkAction extends GenericAction<RHMark> {
         try {
             RHMark rhMark = getInstance();
 
-            List<Object[]> result = em.createQuery("select p.firstName, p.lastName , p.maidenName from Employee p where p.idNumber = :idPersona")
-                    .setParameter("idPersona", rhMark.getMarPerId().toString()).getResultList();
+            List<Object[]> result = em.createQuery("select p.markCode,p.firstName, p.lastName , p.maidenName from Employee p where p.markCode = :markCode")
+                    .setParameter("markCode", rhMark.getMarPerId().toString()).getResultList();
 
             if(result.size()==0)
             {
@@ -65,18 +65,17 @@ public class RHMarkAction extends GenericAction<RHMark> {
                 return Outcome.REDISPLAY;
             }
             rhMark.setCompany(new Company(Constants.defaultCompanyId, Constants.defaultCompanyName));
-            rhMark.setSeat("Cochabamba");
-            rhMark.setMarRefCard("referencia");
-            rhMark.setMarIpPc("ip");
+            rhMark.setSeat("1");
+            rhMark.setMarRefCard((String)result.get(0)[0]);
+            rhMark.setMarIpPc("10.0.0.201");
+            rhMark.setControl(1);
+            rhMark.setMarState("ACTIVO");
             rhMark.setMarTime(rhMark.getStartMarDate());
             getService().create(rhMark);
-            addCreateRegisterMessage(rhMark,(String)result.get(0)[0] +" "+(String)result.get(0)[1]+" "+(String)result.get(0)[2]);
-            //clearForm(rhMark);
-            //rhMark = null;
+            addCreateRegisterMessage(rhMark,(String)result.get(0)[1] +" "+(String)result.get(0)[2]+" "+(String)result.get(0)[3]);
             rhMark = createInstance();
             return Outcome.SUCCESS;
         } catch (NoResultException e) {
-            //addNoFoundCIMessage();
             return Outcome.REDISPLAY;
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
