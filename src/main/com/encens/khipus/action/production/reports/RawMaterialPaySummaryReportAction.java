@@ -96,17 +96,21 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         discounts = rawMaterialPayRollService.getDiscounts(dateIni,dateEnd,zone,metaProduct);
 
         summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni,dateEnd,zone,metaProduct);
-        Double totalMoney = (summaryTotal.collectedTotal * discounts.unitPrice) - summaryTotal.differencesTotal;
-        params.put("total_collected", summaryTotal.collectedTotal.toString());
+
+        Double totalMoneyCollected = discounts.mount;
+        Double totalDifferencesMoney = (discounts.collected - summaryTotal.balanceWeightTotal) * discounts.unitPrice;
+        Double totalMoneyBalance = summaryTotal.balanceWeightTotal * discounts.unitPrice;
+
+        params.put("total_collected", discounts.collected.toString());
         params.put("price_unit", discounts.unitPrice.toString());
-        params.put("difference_money", ((Double) (summaryTotal.differencesTotal * unitPrice)).toString());
-        params.put("total_collected_money", ((Double) (summaryTotal.collectedTotal * discounts.unitPrice)).toString());
-        params.put("total_money", totalMoney.toString());
-        params.put("weight_balance_total", (summaryTotal.balanceWeightTotal).toString());
+        params.put("total_money_collected", totalMoneyCollected.toString());
+        params.put("difference_money", totalDifferencesMoney.toString());
+        params.put("total_money", totalMoneyBalance.toString());
+        params.put("weight_balance_total", summaryTotal.balanceWeightTotal.toString());
 
         //discounts
-        Double totalDifferences = discounts.yogurt + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention;
-        Double liquidPay = totalMoney - totalDifferences;
+        //Double totalDifferences = discounts.yogurt + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention;
+        //Double liquidPay = totalMoney - totalDifferences;
         params.put("alcohol", discounts.alcohol.toString());
         params.put("concentrated", discounts.concentrated.toString());
         params.put("yogurt", discounts.yogurt.toString());
@@ -114,8 +118,8 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("credit", discounts.credit.toString());
         params.put("recip", discounts.recip.toString());
         params.put("retention", discounts.retention.toString());
-        params.put("total_differences", totalDifferences.toString());
-        params.put("liquid_pay", liquidPay.toString());
+        params.put("total_differences", discounts.discount.toString());
+        params.put("liquid_pay", discounts.liquid.toString());
 
     }
 

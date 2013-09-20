@@ -137,6 +137,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         Map<Date, Double> differences = createMapOfDifferencesWeights(rawMaterialPayRoll);
         Map<Long, Aux> map = createMapOfProducers(rawMaterialPayRoll, totalWeight, countProducers,totalWeightsByGab,differences);
 
+        Double totalWeighed = 0.0;
         Double totalAmountCollected = 0.0;
         Double totalPayCollected = 0.0;
         Double totalRetention = 0.0;
@@ -180,11 +181,12 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
             rawMaterialPayRoll.getRawMaterialPayRecordList().add(record);
             record.setRawMaterialPayRoll(rawMaterialPayRoll);
-
             totalAmountCollected += auxcollectedAmount;
             totalAdjustment += auxadjustmentAmount;
             totalPayCollected += auxearnedMoney;
             totalRetention += auxwithholdingTax;
+
+
             totalCredit += RoundUtil.getRoundValue(discount.getCredit(),2, RoundUtil.RoundMode.SYMMETRIC);
             totalAlcohol += RoundUtil.getRoundValue(discount.getAlcohol(),2, RoundUtil.RoundMode.SYMMETRIC);
             totalConcentrated += RoundUtil.getRoundValue(discount.getConcentrated(),2, RoundUtil.RoundMode.SYMMETRIC);
@@ -229,29 +231,6 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     public Discounts getDiscounts(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct)
     {
         Discounts discounts = new Discounts();
-        /*
-        DateTime dateTimeIni = new DateTime(dateIni);
-        DateTime dateTimeEnd = new DateTime(dateEnd);
-
-        String querySql = "select sum(dpm.yogurt) " +
-                       "     ,sum(dpm.tachos) " +
-                       "     ,sum(dpm.retencion) " +
-                       "     ,sum(dpm.veterinario) " +
-                       "     ,sum(dpm.credito)" +
-                       "     ,ppm.preciounitario " +
-                       " from registropagomateriaprima  rpm " +
-                       " inner join planillapagomateriaprima ppm " +
-                       " on rpm.idplanillapagomateriaprima = ppm.idplanillapagomateriaprima" +
-                       " inner join descuentproductmateriaprima dpm " +
-                       " on rpm.iddescuentproductmateriaprima = dpm.iddescuentproductmateriaprima " +
-                       " where ppm.fechainicio = to_date('"+dateTimeIni.getDayOfMonth()+"/"+dateTimeIni.getMonthOfYear()+"/"+dateTimeIni.getYear()+"','dd/mm/yyyy') " +
-                       " and ppm.fechafin = to_date('"+dateTimeEnd.getDayOfMonth()+"/"+dateTimeEnd.getMonthOfYear()+"/"+dateTimeEnd.getYear()+"','dd/mm/yyyy') " +
-                       " group by ppm.preciounitario " ;*/
-
-
-
-        /*List<Object[]> datas = getEntityManager().createNativeQuery(querySql)
-                        .getResultList();*/
 
         List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getDiscounts")
                                 .setParameter("startDate", dateIni.getTime(), TemporalType.DATE)
@@ -261,15 +240,21 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                                 .getResultList();
 
         if(datas.size() > 0){
-            discounts.alcohol = ((Double)datas.get(0)[0] !=null) ? ((Double)datas.get(0)[0]).doubleValue() : 0.0 ;
-            discounts.concentrated = ((Double)datas.get(0)[1] !=null) ? ((Double)datas.get(0)[1]).doubleValue() : 0.0 ;
-            discounts.yogurt = ((Double)datas.get(0)[2] !=null) ? ((Double)datas.get(0)[2]).doubleValue() : 0.0 ;
-            discounts.recip = ((Double)datas.get(0)[3] !=null) ? ((Double)datas.get(0)[3]).doubleValue() : 0.0 ;
-            discounts.retention = ((Double)datas.get(0)[4] !=null) ? ((Double)datas.get(0)[4]).doubleValue() : 0.0 ;
-            discounts.veterinary = ((Double)datas.get(0)[5] !=null) ? ((Double)datas.get(0)[5]).doubleValue() : 0.0 ;
-            discounts.credit = ((Double)datas.get(0)[6] !=null) ? ((Double)datas.get(0)[6]).doubleValue() : 0.0 ;
-            discounts.unitPrice = ((Double)datas.get(0)[7] !=null) ? ((Double)datas.get(0)[7]).doubleValue() : 0.0 ;
+            discounts.mount = ((Double)datas.get(0)[0] !=null) ? ((Double)datas.get(0)[0]).doubleValue() : 0.0 ;
+            discounts.collected = ((Double)datas.get(0)[1] !=null) ? ((Double)datas.get(0)[1]).doubleValue() : 0.0 ;
+            discounts.alcohol = ((Double)datas.get(0)[2] !=null) ? ((Double)datas.get(0)[2]).doubleValue() : 0.0 ;
+            discounts.concentrated = ((Double)datas.get(0)[3] !=null) ? ((Double)datas.get(0)[3]).doubleValue() : 0.0 ;
+            discounts.yogurt = ((Double)datas.get(0)[4] !=null) ? ((Double)datas.get(0)[4]).doubleValue() : 0.0 ;
+            discounts.recip = ((Double)datas.get(0)[5] !=null) ? ((Double)datas.get(0)[5]).doubleValue() : 0.0 ;
+            discounts.retention = ((Double)datas.get(0)[6] !=null) ? ((Double)datas.get(0)[6]).doubleValue() : 0.0 ;
+            discounts.veterinary = ((Double)datas.get(0)[7] !=null) ? ((Double)datas.get(0)[7]).doubleValue() : 0.0 ;
+            discounts.credit = ((Double)datas.get(0)[8] !=null) ? ((Double)datas.get(0)[8]).doubleValue() : 0.0 ;
+            discounts.discount = ((Double)datas.get(0)[9] !=null) ? ((Double)datas.get(0)[9]).doubleValue() : 0.0 ;
+            discounts.liquid = ((Double)datas.get(0)[10] !=null) ? ((Double)datas.get(0)[10]).doubleValue() : 0.0 ;
+            discounts.unitPrice = ((Double)datas.get(0)[11] !=null) ? ((Double)datas.get(0)[11]).doubleValue() : 0.0 ;
         }else{
+            discounts.mount = 0.0 ;
+            discounts.collected = 0.0 ;
             discounts.alcohol = 0.0 ;
             discounts.concentrated = 0.0 ;
             discounts.yogurt = 0.0 ;
@@ -277,6 +262,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             discounts.retention = 0.0 ;
             discounts.veterinary = 0.0 ;
             discounts.credit = 0.0 ;
+            discounts.discount = 0.0 ;
+            discounts.liquid = 0.0 ;
             discounts.unitPrice = 0.0;
         }
 
@@ -293,9 +280,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                             //.setParameter("productiveZone", zone)
                             .setParameter("metaProduct", metaProduct)
                             .getResultList();
-        summaryTotal.differencesTotal = ((Double)datas.get(0)[0] !=null) ? (Double)datas.get(0)[0] : 0.0 ;
-        summaryTotal.balanceWeightTotal = ((Double)datas.get(0)[1] !=null) ? (Double)datas.get(0)[1] : 0.0 ;
-        summaryTotal.collectedTotal = ((Double)datas.get(0)[2] !=null) ? (Double)datas.get(0)[2] : 0.0 ;
+        //summaryTotal.differencesTotal = ((Double)datas.get(0)[0] !=null) ? (Double)datas.get(0)[0] : 0.0 ;
+        summaryTotal.balanceWeightTotal = ((Double)datas.get(0)[0] !=null) ? (Double)datas.get(0)[0] : 0.0 ;
+        summaryTotal.collectedTotal = ((Double)datas.get(0)[1] !=null) ? (Double)datas.get(0)[1] : 0.0 ;
         return summaryTotal;
     }
 
@@ -564,6 +551,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     }
 
     public class Discounts {
+        public Double mount;
+        public Double collected;
         public Double unitPrice;
         public Double alcohol;
         public Double concentrated;
@@ -571,6 +560,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         public Double veterinary;
         public Double credit;
         public Double recip;
+        public Double discount;
+        public Double liquid;
         public Double retention;
     }
 
@@ -607,7 +598,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
         String query = createQuery(productiveZone,metaProduct, dateIni,dateEnd);
         RawMaterialPayRoll rawMaterialPayRoll = new RawMaterialPayRoll();
-        Query queryObj = getEntityManager().createQuery(query);
+        Query queryObj = getEntityManager().createQuery(query)
+                        .setParameter("startDate", dateIni.getTime(), TemporalType.DATE)
+                        .setParameter("endDate", dateEnd.getTime(), TemporalType.DATE);
         if(productiveZone != null)
             queryObj.setParameter("productiveZone", productiveZone);
         if(metaProduct != null)
@@ -655,8 +648,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 "rawMaterialPayRoll.totalOtherIncomeByGAB," +
                 "rawMaterialPayRoll.totalLiquidByGAB "+
                 "from RawMaterialPayRoll rawMaterialPayRoll " +
-                "where rawMaterialPayRoll.startDate = to_date('"+dateIni.get(Calendar.DAY_OF_MONTH)+"/"+(dateIni.get(Calendar.MONTH)+1)+"/"+dateIni.get(Calendar.YEAR)+"','dd/mm/yyyy') " +
-                "and rawMaterialPayRoll.endDate <= to_date('"+dateEnd.get(Calendar.DAY_OF_MONTH)+"/"+(dateEnd.get(Calendar.MONTH)+1)+"/"+dateEnd.get(Calendar.YEAR)+"','dd/mm/yyyy') "
+                "where rawMaterialPayRoll.startDate = :startDate " +
+                "and rawMaterialPayRoll.endDate <=  :endDate"
                 +restricZone+restricMeta;
     }
 }

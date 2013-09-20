@@ -96,7 +96,8 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getSumaryTotal",
                 query = "select " +
-                        " sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
+                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
+                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
                         " sum(RawMaterialPayRoll.totalWeighedByGAB) as balanceWeight, " +
                         " sum(RawMaterialPayRoll.totalCollectedByGAB) as collected " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
@@ -106,6 +107,8 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getDiscounts",
                 query = "select " +
+                        " sum(rawMaterialPayRoll.totalMountCollectdByGAB) as mount, " +
+                        " sum(rawMaterialPayRoll.totalCollectedByGAB) as collected, " +
                         " sum(rawMaterialPayRoll.totalAlcoholByGAB) as alcohol, " +
                         " sum(rawMaterialPayRoll.totalConcentratedByGAB) as concentrated, " +
                         " sum(rawMaterialPayRoll.totalYogourdByGAB) as yogurt, " +
@@ -113,6 +116,8 @@ import java.util.List;
                         " sum(rawMaterialPayRoll.totalRetentionGAB) as retention, " +
                         " sum(rawMaterialPayRoll.totalVeterinaryByGAB) as veterinary, " +
                         " sum(rawMaterialPayRoll.totalCreditByGAB) as credit, " +
+                        " sum(rawMaterialPayRoll.totalLiquidByGAB ) as totalLiquid, " +
+                        " sum(rawMaterialPayRoll.totalDiscountByGAB) as totalDiscount, " +
                         " rawMaterialPayRoll.unitPrice as unitPrice " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
                         "where rawMaterialPayRoll.startDate = :startDate " +

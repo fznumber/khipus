@@ -96,22 +96,6 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
         params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
-         /*
-        "rawMaterialPayRoll.totalCollectedByGAB, " +
-        "rawMaterialPayRoll.totalMountCollectdByGAB, " +
-        "rawMaterialPayRoll.totalRetentionGAB, " +
-        "rawMaterialPayRoll.totalCreditByGAB, " +
-        "rawMaterialPayRoll.totalVeterinaryByGAB, " +
-        "rawMaterialPayRoll.totalAlcoholByGAB, " +
-        "rawMaterialPayRoll.totalConcentratedByGAB, " +
-        "rawMaterialPayRoll.totalYogourdByGAB, " +
-        "rawMaterialPayRoll.totalRecipByGAB, " +
-        "rawMaterialPayRoll.totalDiscountByGAB," +
-        "rawMaterialPayRoll.totalAdjustmentByGAB," +
-        "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-        "rawMaterialPayRoll.totalLiquidByGAB "+*/
-        //add sub reports
-
         super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
     }
 
