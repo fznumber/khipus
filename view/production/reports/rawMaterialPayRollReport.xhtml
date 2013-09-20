@@ -28,7 +28,7 @@
                     <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
                         <h:inputText id="productiveZone" value="#{rawMaterialPayRollReportAction.fullNameOfProductiveZone}" styleClass="input"
-                                     maxlength="150" tabindex="1" required="true" readonly="true" >
+                                     maxlength="150" tabindex="1" disabled="true" readonly="true" >
                         </h:inputText>
                         <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="1"
                                          title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"

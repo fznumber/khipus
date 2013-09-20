@@ -15,6 +15,7 @@ import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -96,22 +97,9 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
         params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
-         /*
-        "rawMaterialPayRoll.totalCollectedByGAB, " +
-        "rawMaterialPayRoll.totalMountCollectdByGAB, " +
-        "rawMaterialPayRoll.totalRetentionGAB, " +
-        "rawMaterialPayRoll.totalCreditByGAB, " +
-        "rawMaterialPayRoll.totalVeterinaryByGAB, " +
-        "rawMaterialPayRoll.totalAlcoholByGAB, " +
-        "rawMaterialPayRoll.totalConcentratedByGAB, " +
-        "rawMaterialPayRoll.totalYogourdByGAB, " +
-        "rawMaterialPayRoll.totalRecipByGAB, " +
-        "rawMaterialPayRoll.totalDiscountByGAB," +
-        "rawMaterialPayRoll.totalAdjustmentByGAB," +
-        "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-        "rawMaterialPayRoll.totalLiquidByGAB "+*/
-        //add sub reports
-
+        params.put("cod_productive_zone","GAB - " +(rawMaterialPayRoll.getProductiveZone() == null ? "" : rawMaterialPayRoll.getProductiveZone().getNumber()));
+        params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
         super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
     }
 
