@@ -91,12 +91,11 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
                 reportParameters);
     }
 
-
-
     private void addSummaryTotal(HashMap<String, Object> params) {
-        discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
+        //discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
+        discounts = rawMaterialPayRollService.getDiscounts(dateIni,dateEnd,zone,metaProduct);
 
-        summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni.getTime(),dateEnd.getTime(),null,null);
+        summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni,dateEnd,zone,metaProduct);
         Double totalMoney = (summaryTotal.collectedTotal * discounts.unitPrice) - summaryTotal.differencesTotal;
         params.put("total_collected", summaryTotal.collectedTotal.toString());
         params.put("price_unit", discounts.unitPrice.toString());
@@ -108,6 +107,8 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         //discounts
         Double totalDifferences = discounts.yogurt + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention;
         Double liquidPay = totalMoney - totalDifferences;
+        params.put("alcohol", discounts.alcohol.toString());
+        params.put("concentrated", discounts.concentrated.toString());
         params.put("yogurt", discounts.yogurt.toString());
         params.put("veterinary", discounts.veterinary.toString());
         params.put("credit", discounts.credit.toString());
