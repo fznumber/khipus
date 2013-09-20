@@ -621,6 +621,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                     rawMaterialPayRoll.setTotalAdjustmentByGAB((Double) (datas.get(0)[10]));
                     rawMaterialPayRoll.setTotalOtherIncomeByGAB((Double) (datas.get(0)[11]));
                     rawMaterialPayRoll.setTotalLiquidByGAB((Double) (datas.get(0)[12]));
+                    rawMaterialPayRoll.setProductiveZone((ProductiveZone) (datas.get(0)[13]));
 
         }catch (Exception e) {
             log.debug("Not found totals RawMaterialPayRoll...." + e);
@@ -646,7 +647,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 "rawMaterialPayRoll.totalDiscountByGAB," +
                 "rawMaterialPayRoll.totalAdjustmentByGAB," +
                 "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-                "rawMaterialPayRoll.totalLiquidByGAB "+
+                "rawMaterialPayRoll.totalLiquidByGAB, " +
+                "rawMaterialPayRoll.productiveZone " +
                 "from RawMaterialPayRoll rawMaterialPayRoll " +
                 "where rawMaterialPayRoll.startDate = :startDate " +
                 "and rawMaterialPayRoll.endDate <=  :endDate"
