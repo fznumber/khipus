@@ -49,6 +49,9 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 @AutoCreate
 public class WarehouseServiceBean extends GenericServiceBean implements WarehouseService {
 
+    @In(value = "#{entityManager}")
+    private EntityManager em;
+
     @In
     private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
 
@@ -410,7 +413,7 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
         //work with stored warehouseVoucher object, because it maybe have changed
         WarehouseVoucher actualWarehouseVoucher = getEntityManager().find(WarehouseVoucher.class, warehouseVoucher.getId());
         getEntityManager().refresh(actualWarehouseVoucher);
-
+        System.out.println(" 000> " + warehouseVoucher.getWarehouse());
         if (warehouseVoucher.isConsumption()
                 || warehouseVoucher.isOutput()
                 || warehouseVoucher.isTransfer()
@@ -853,5 +856,12 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
 
         return gloss;
 
+    }
+
+    public Warehouse findWarehouseByCode(String warehouseCode){
+        Warehouse warehouse = (Warehouse) em.createNamedQuery("Warehouse.findByCode")
+                .setParameter("warehouseCode", warehouseCode)
+                .getSingleResult();
+        return warehouse;
     }
 }

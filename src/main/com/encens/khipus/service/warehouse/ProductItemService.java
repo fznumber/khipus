@@ -47,4 +47,7 @@ public interface ProductItemService extends GenericService {
      */
     @SuppressWarnings(value = "unchecked")
     List<ProductItem> findInProductItemList(List<ProductItem> productItemList);
+
+    @SuppressWarnings(value = "unchecked")
+    public ProductItem findProductItemByCode(String productItemCode);
 }
