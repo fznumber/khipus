@@ -41,9 +41,12 @@
                 </h:commandButton>
             </div>
 
-            <rich:dataTable value="#{collectionFormDataModel}" var="collectionFormItem" id="collectionFormList"
+            <rich:dataTable id="collectionFormList"
+                            value="#{collectionFormDataModel}"
+                            var="collectionFormItem"
                             rows="#{sessionUser.rowsPerPage}"
-                            width="100%">
+                            width="100%"
+                            columnsWidth="15%, 12%, 12%, 12%, 12%, 12%, 10%, 15%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
@@ -71,6 +74,9 @@
                         <rich:column>
                             #{messages['CollectionForm.remainingAmount']}
                         </rich:column>
+                        <rich:column>
+                            #{messages['CollectionForm.state']}
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -94,6 +100,9 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{collectedRawMaterialCalculator.calculateRemainingAmount()}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{messages[collectionFormItem.state.resourceKey]}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
