@@ -13,4 +13,6 @@ public interface CollectionFormService extends GenericService {
     public void populateWithTotalsOfCollectedAmount(CollectionForm collectionForm);
 
     public void populateWithTotalsOfRejectedAmount(CollectionForm collectionForm);
+
+    public void updateProductiveZone(CollectionForm collectionForm);
 }

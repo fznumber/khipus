@@ -1,5 +1,6 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -32,6 +33,25 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
     @Factory(value = "collectionForm", scope = ScopeType.STATELESS)
     public CollectionForm initCollectionForm() {
         return getInstance();
+    }
+
+    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    @Override
+    public String select(CollectionForm instance) {
+
+        try {
+            collectionFormService.updateProductiveZone(getService().findById(getEntityClass(), getId(instance)));
+            setOp(OP_UPDATE);
+            //define the unmanaged instance as current instance
+            this.setInstance(instance);
+            //Ensure the instance exists in the database, find it
+            setInstance(getService().findById(getEntityClass(), getId(instance)));
+            return Outcome.SUCCESS;
+
+        } catch (EntryNotFoundException e) {
+            addNotFoundMessage();
+            return Outcome.FAIL;
+        }
     }
 
     @Override
