@@ -97,9 +97,9 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
         params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
-        params.put("cod_productive_zone","GAB - " +(rawMaterialPayRoll.getProductiveZone() == null ? "" : rawMaterialPayRoll.getProductiveZone().getNumber()));
-        params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
-        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+        //params.put("cod_productive_zone","GAB - " +(rawMaterialPayRoll.getProductiveZone() == null ? " " : rawMaterialPayRoll.getProductiveZone().getNumber().toString()));
+        /*params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));*/
         super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
     }
 

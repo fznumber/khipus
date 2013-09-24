@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="1370" pageHeight="612" whenNoDataType="AllSectionsNoDetail" columnWidth="1320" leftMargin="30" rightMargin="20" topMargin="30" bottomMargin="30">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="1"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
 	<parameter name="totalCollectedByGAB" class="java.lang.Double"/>
@@ -71,9 +71,6 @@
 	<field name="rawMaterialProducer.maidenName" class="java.lang.String">
 		<fieldDescription><![CDATA[COLUMN_18]]></fieldDescription>
 	</field>
-	<field name="cod_productive_zone" class="java.lang.String"/>
-	<field name="dateStart" class="java.util.Date"/>
-	<field name="dateEnd" class="java.util.Date"/>
 	<title>
 		<band height="80" splitType="Stretch">
 			<image scaleImage="RetainShape" onErrorType="Icon">
@@ -97,7 +94,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitleParam} +" "+ $P{dateStart}+ " "+ $P{dateEnd}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitleParam} ]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -374,14 +371,6 @@
 				<textElement textAlignment="Center"/>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.credit}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="33" height="12"/>
-				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{cod_productive_zone}]]></textFieldExpression>
-			</textField>
 		</band>
 	</detail>
 	<columnFooter>
@@ -488,7 +477,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalCollectedByGAB}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="33" y="0" width="90" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
