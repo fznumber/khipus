@@ -8,6 +8,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.*;
 
 import javax.ejb.Local;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface RawMaterialPayRollService extends GenericService {
 
     void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException;
 
-    RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
+    RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
 
     RawMaterialPayRollServiceBean.Discounts getDiscounts(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct);
 

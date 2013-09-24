@@ -5,10 +5,6 @@ import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.CollectionForm;
 import com.encens.khipus.model.production.CollectionRecord;
 import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.warehouse.WarehouseDocumentType;
-import com.encens.khipus.model.warehouse.WarehouseVoucherType;
-import com.encens.khipus.util.Constants;
-import com.encens.khipus.util.ValidatorUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -93,19 +89,5 @@ public class CollectionFormServiceBean extends ExtendedGenericServiceBean implem
     private void updateTotalsForCollectedAndRejectedRawMaterial(CollectionForm form) {
         populateWithTotalsOfCollectedAmount(form);
         populateWithTotalsOfRejectedAmount(form);
-    }
-
-    @SuppressWarnings(value = "unchecked")
-    public WarehouseDocumentType getFirstReceptionType() {
-        List<WarehouseDocumentType> warehouseDocumentTypeList = getEntityManager()
-                .createNamedQuery("WarehouseDocumentType.findByType")
-                .setParameter("companyNumber", Constants.defaultCompanyNumber)
-                .setParameter("warehouseVoucherType", WarehouseVoucherType.R).getResultList();
-
-        if (!ValidatorUtil.isEmptyOrNull(warehouseDocumentTypeList)) {
-            return warehouseDocumentTypeList.get(0);
-        }
-
-        return null;
     }
 }

@@ -113,6 +113,4 @@ public interface WarehouseService extends GenericService {
             WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException;
 
     boolean isWarehouseVoucherPendant(WarehouseVoucherPK id);
-
-    public Warehouse findWarehouseByCode(String warehouseCode);
 }

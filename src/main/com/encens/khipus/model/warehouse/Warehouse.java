@@ -16,9 +16,6 @@ import javax.persistence.*;
  * @author
  * @version 2.0
  */
-@NamedQueries({
-        @NamedQuery(name = "Warehouse.findByCode", query = "select w from Warehouse w where w.warehouseCode =:warehouseCode")
-})
 @Entity
 @Table(name = "INV_ALMACENES", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})

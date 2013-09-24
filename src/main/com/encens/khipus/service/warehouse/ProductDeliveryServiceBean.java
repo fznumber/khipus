@@ -25,7 +25,9 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author
@@ -109,20 +111,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 warehouseDescription,
                 soldProducts);
 
-        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
-        Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
-        List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
-
-        /*for (SoldProduct soldProduct : soldProducts) {
-            ProductItem productItem = getEntityManager().find(ProductItem.class, soldProduct.getProductItem().getId());
-            movementDetailUnderMinimalStockMap.put(movementDetailTemp, productItem.getMinimalStock());
-            movementDetailOverMaximumStockMap.put(movementDetailTemp, productItem.getMaximumStock());
-            movementDetailWithoutWarnings.add(movementDetailTemp);
-        }*/
-
         try {
-            //approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(), getGlossMessage(warehouseVoucher, warehouseDescription), null, null, null);
-            approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(), getGlossMessage(warehouseVoucher, warehouseDescription), movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
+            approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(), getGlossMessage(warehouseVoucher, warehouseDescription), null, null, null);
         } catch (WarehouseVoucherApprovedException e) {
             log.debug("This exception never happen because I create a pending WarehouseVoucher.");
         } catch (WarehouseVoucherNotFoundException e) {
@@ -177,7 +167,6 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                     .find(ProductItem.class, soldProduct.getProductItem().getId());
 
             MovementDetail movementDetailTemp = new MovementDetail();
-            movementDetailTemp.setWarehouse(warehouse); //revisar
             movementDetailTemp.setProductItem(productItem);
             movementDetailTemp.setProductItemAccount(productItem.getProductItemAccount());
             movementDetailTemp.setQuantity(soldProduct.getQuantity());
@@ -187,20 +176,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             movementDetailTemp.setCostCenterCode(publicCostCenter.getId().getCode());
             movementDetailTemp.setMeasureUnit(productItem.getUsageMeasureUnit());
 
-            /* revisar */
-            Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
-            movementDetailUnderMinimalStockMap.put(movementDetailTemp, productItem.getMinimalStock());
-
-            Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
-            movementDetailOverMaximumStockMap.put(movementDetailTemp, productItem.getMaximumStock());
-
-            List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
-            movementDetailWithoutWarnings.add(movementDetailTemp);
-            /* revisar */
-
             try {
-                //warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, null, null, null); // revisar
-                warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
+                warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, null, null, null);
             } catch (WarehouseVoucherApprovedException e) {
                 log.debug("This exception never happen because I just created a new WarehouseVoucher" +
                         " and his state is pending");

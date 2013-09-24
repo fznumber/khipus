@@ -29,8 +29,7 @@ import java.util.List;
                         "where movementDetail.inventoryMovement.warehouseVoucher=:warehouseVoucher "),
         @NamedQuery(name = "ProductItem.findInProductItemList",
                 query = "select productItem from ProductItem productItem " +
-                        "where productItem in (:productItemList) "),
-        @NamedQuery(name = "ProductItem.findByCode", query = "select p from ProductItem p where p.productItemCode=:productItemCode")
+                        "where productItem in (:productItemList) ")
 
 })
 

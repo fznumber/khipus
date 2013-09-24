@@ -19,8 +19,6 @@ import java.math.BigDecimal;
 public interface WarehouseAccountEntryService extends GenericService {
     void createAccountEntry(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
 
-    void createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
-
     void createAdvancePaymentAccountEntry(PurchaseOrderPayment purchaseOrderPayment) throws CompanyConfigurationNotFoundException;
 
     void createEntryAccountForLiquidatedPurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
