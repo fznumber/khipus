@@ -58,6 +58,37 @@ public class CollectionFormServiceBean extends ExtendedGenericServiceBean implem
         }
     }
 
+    public void updateProductiveZone(CollectionForm collectionForm)
+    {
+
+            List<ProductiveZone> datas = getEntityManager().createQuery("SELECT productiveZone " +
+                    "from ProductiveZone productiveZone")
+                    .getResultList();
+
+            if(datas.size() > collectionForm.getCollectionRecordList().size())
+            {
+                for(CollectionRecord collectionRecord :collectionForm.getCollectionRecordList())
+                {
+                    datas.remove(collectionRecord.getProductiveZone());
+                }
+                for(ProductiveZone productiveZone: datas)
+                {
+                    CollectionRecord aux = collectionForm.getCollectionRecordList().get(0);
+                    CollectionRecord collectionRecord = new CollectionRecord();
+                    collectionRecord.setCompany(aux.getCompany());
+                    collectionRecord.setReceivedAmount(0.0);
+                    collectionRecord.setWeightedAmount(0.0);
+                    collectionRecord.setRejectedAmount(0.0);
+                    collectionRecord.setCollectionForm(aux.getCollectionForm());
+                    collectionRecord.setProductiveZone(productiveZone);
+                    getEntityManager().persist(collectionRecord);
+                }
+
+                getEntityManager().flush();
+                getEntityManager().refresh(collectionForm);
+            }
+    }
+
     @Override
     public void populateWithTotalsOfRejectedAmount(CollectionForm collectionForm) {
 
