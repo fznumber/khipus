@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportTemplate" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="582" leftMargin="15" rightMargin="15" topMargin="30" bottomMargin="30">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
+	<field name="total_collected" class="java.lang.Double"/>
+	<field name="price_unit" class="java.lang.Double"/>
+	<field name="total_differences" class="java.lang.Double"/>
+	<field name="difference_money" class="java.lang.Double"/>
+	<field name="weight_balance_total" class="java.lang.Double"/>
+	<field name="yogurt" class="java.lang.Double"/>
+	<field name="veterinary" class="java.lang.Double"/>
+	<field name="credit" class="java.lang.Double"/>
+	<field name="recip" class="java.lang.Double"/>
+	<field name="total_money" class="java.lang.Double"/>
+	<field name="liquid_pay" class="java.lang.Double"/>
+	<field name="alcohol" class="java.lang.Double"/>
+	<field name="concentrated" class="java.lang.Double"/>
+	<group name="rowGroup">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band height="52">
+				<image scaleImage="RetainShape" onErrorType="Icon">
+					<reportElement key="COMPANY_LOGO_ELEMENT" x="10" y="10" width="56" height="39" isRemoveLineWhenBlank="true"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/img/logoIlva.png")]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="date_text" style="titleStyle" positionType="Float" x="82" y="10" width="450" height="39"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitleParam}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="resumen_principal">
+		<groupExpression><![CDATA[$V{PAGE_NUMBER}]]></groupExpression>
+		<groupHeader>
+			<band height="302">
+				<staticText>
+					<reportElement x="297" y="8" width="100" height="20"/>
+					<textElement/>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<frame>
+					<reportElement positionType="Float" x="82" y="0" width="390" height="298"/>
+					<box leftPadding="0" rightPadding="0">
+						<pen lineWidth="1.0"/>
+						<topPen lineWidth="1.0"/>
+						<leftPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textField>
+						<reportElement x="210" y="277" width="119" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{liquid_pay}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="2" y="32" width="100" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{total_collected}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="125" y="33" width="56" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{price_unit}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="206" y="32" width="132" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{total_money_collected}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="2" y="53" width="115" height="15"/>
+						<textElement/>
+						<text><![CDATA[- Diferencias]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="206" y="53" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$P{difference_money}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="201" y="87" width="137" height="15"/>
+						<textElement/>
+						<textFieldExpression><![CDATA[$P{total_money}]]></textFieldExpression>
+					</textField>
+					<line>
+						<reportElement x="197" y="72" width="137" height="1"/>
+					</line>
+					<staticText>
+						<reportElement x="2" y="70" width="115" height="15"/>
+						<textElement/>
+						<text><![CDATA[Peso en balanza]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="2" y="88" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{weight_balance_total}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="2" y="105" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[- Descuentos]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="167" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Yogurt]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="187" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Veterinario]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="207" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Credito]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="17" y="227" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Tachos Bs.]]></text>
+					</staticText>
+					<line>
+						<reportElement x="198" y="247" width="137" height="1"/>
+					</line>
+					<textField>
+						<reportElement x="206" y="248" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{total_differences}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="17" y="248" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Total Descuentos]]></text>
+					</staticText>
+					<line>
+						<reportElement x="198" y="273" width="137" height="1"/>
+					</line>
+					<staticText>
+						<reportElement x="17" y="272" width="106" height="15"/>
+						<textElement/>
+						<text><![CDATA[Liquido Pagable]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="206" y="187" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{veterinary}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="206" y="167" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{yogurt}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="206" y="207" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{credit}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="206" y="227" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{recip}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="12" y="6" width="43" height="22"/>
+						<textElement/>
+						<text><![CDATA[Acopio]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="88" y="6" width="93" height="22"/>
+						<textElement/>
+						<text><![CDATA[Precio Unitario]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="16" y="128" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[ALcohol]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="16" y="148" width="100" height="15"/>
+						<textElement/>
+						<text><![CDATA[Concentrados]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="205" y="148" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{concentrated}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="205" y="128" width="123" height="15"/>
+						<textElement/>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{alcohol}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+</jasperReport>

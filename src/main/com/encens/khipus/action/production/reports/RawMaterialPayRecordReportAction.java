@@ -79,8 +79,8 @@ public class RawMaterialPayRecordReportAction extends GenericReportAction {
                 rawMaterialPayRecord.getRawMaterialProducerDiscount().getWithholdingTax()+
                 rawMaterialPayRecord.getRawMaterialProducerDiscount().getOtherDiscount();
         Double totalIncomePay = rawMaterialPayRecord.getRawMaterialProducerDiscount().getOtherIncoming() + totalPay;
-        reportParameters.put("alcohol", "falta");
-        reportParameters.put("concentrated","falta");
+        reportParameters.put("alcohol", ((Double)(rawMaterialPayRecord.getRawMaterialProducerDiscount().getAlcohol())).toString());
+        reportParameters.put("concentrated",((Double)(rawMaterialPayRecord.getRawMaterialProducerDiscount().getConcentrated())).toString());
         reportParameters.put("yogurt",((Double)(rawMaterialPayRecord.getRawMaterialProducerDiscount().getYogurt())).toString());
         reportParameters.put("veterinary",((Double)(rawMaterialPayRecord.getRawMaterialProducerDiscount().getVeterinary())).toString());
         reportParameters.put("credit",((Double)(rawMaterialPayRecord.getRawMaterialProducerDiscount().getCredit())).toString());
