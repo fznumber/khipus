@@ -175,6 +175,19 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void redefine() {
         getInstance().getRawMaterialPayRecordList().clear();
+        getInstance().setTotalLiquidByGAB(0.0);
+        getInstance().setTotalAdjustmentByGAB(0.0);
+        getInstance().setTotalCollectedByGAB(0.0);
+        getInstance().setTotalConcentratedByGAB(0.0);
+        getInstance().setTotalAlcoholByGAB(0.0);
+        getInstance().setTotalYogourdByGAB(0.0);
+        getInstance().setTotalCreditByGAB(0.0);
+        getInstance().setTotalDiscountByGAB(0.0);
+        getInstance().setTotalMountCollectdByGAB(0.0);
+        getInstance().setTotalOtherDiscountByGAB(0.0);
+        getInstance().setTotalVeterinaryByGAB(0.0);
+        getInstance().setTotalRetentionGAB(0.0);
+        getInstance().setTotalRecipByGAB(0.0);
         readonly = false;
     }
 }
