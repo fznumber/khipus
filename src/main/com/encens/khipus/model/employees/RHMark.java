@@ -120,8 +120,7 @@ public class RHMark implements BaseModel, Comparable {
     }
 
     public Date getMarDate() {
-        this.marDate = new Date();
-        return  this.marDate;
+        return marDate;
     }
 
     public void setMarDate(Date marDate) {
@@ -129,12 +128,11 @@ public class RHMark implements BaseModel, Comparable {
     }
 
     public Date getMarTime() {
-       /* Date date = new Date();
+        Date date = new Date();
         if (null == marTime) {
             marTime = new Date();
             return marTime;
-        }*/
-        this.marTime = new Date();
+        }
         return marTime;
     }
 

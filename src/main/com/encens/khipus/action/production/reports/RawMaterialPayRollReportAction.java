@@ -247,42 +247,4 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         this.metaProduct = metaProduct;
     }
 
-    public Calendar getDateIni() {
-        return dateIni;
-    }
-
-    public void setDateIni(Calendar dateIni) {
-        this.dateIni = dateIni;
-    }
-
-    public Calendar getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Calendar dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public String getFullNameOfProductiveZone() {
-        return (zone == null ? "" : zone.getFullName());
-    }
-
-    public void setFullNameOfProductiveZone(String fullName) {
-
-    }
-
-    protected GenericService getService() {
-        return rawMaterialPayRollService;
-    }
-
-    public void selectProductiveZone(ProductiveZone productiveZone) {
-        try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
-            setZone(productiveZone);
-        } catch (Exception ex) {
-            log.error("Caught Error", ex);
-        }
-    }
-
-
 }

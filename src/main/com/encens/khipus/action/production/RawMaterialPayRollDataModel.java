@@ -29,8 +29,9 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
 
     @Override
     public String getEjbql() {
-        String query = "select rawMaterialPayRoll " +
-                "from RawMaterialPayRoll rawMaterialPayRoll ";
+        String query = "select rawMaterialPayRoll.startDate,rawMaterialPayRoll.endDate" +
+                       "from RawMaterialPayRoll rawMaterialPayRoll " +
+                       "left join rawMaterialPayRoll.productiveZone productiveZone";
         return query;
     }
 

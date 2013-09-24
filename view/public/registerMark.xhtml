@@ -27,10 +27,6 @@
                 </f:facet>
                 <h:panelGrid columns="1" width="70%" columnClasses="top-aligned">
                     <span id="date_server" style="position:absolute;left:690px;top:25px; font-size: 16px;"></span>
-                    <!--<h:inputHidden id="marDate" value="#{rHMark.marDate}">
-                        <f:convertDateTime pattern="#{messages['patterns.date']}"/>
-                    </h:inputHidden>-->
-
                     <s:div>
                         <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
@@ -39,15 +35,10 @@
                                          styleClass="input"
                                          maxlength="200"
                                          required="true"
-                                         tabindex="1"
-                                        autocomplete="off">
+                                         tabindex="1">
 
                             </h:inputText>
                         </s:decorate>
-
-                       <!-- <s:decorate id="marDate" template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{rHMark.marDate}</ui:define>
-                        </s:decorate>-->
 
                         <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RegisterMarck.description']}</ui:define>
@@ -71,6 +62,7 @@
                     </s:div>
 
                             <h:inputHidden id="marDate" value="#{rHMark.marDate}">
+                                <f:convertDateTime pattern="#{messages['patterns.mark.date']}"/>
                                     </h:inputHidden>
                             <h:inputHidden id="marTime" value="#{rHMark.marTime}" >
                             <s:convertDateTime pattern="#{messages['patterns.time']}" timeZone="#{sessionUser.timeZone}"

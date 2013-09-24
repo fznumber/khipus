@@ -146,6 +146,18 @@ public class CompanyConfiguration {
     })
     private CashAccount warehouseNationalCurrencyTransientAccount;
 
+    @Column(name = "CTATRANSALM1MN", length = 20, nullable = false)
+    @Length(max = 20)
+    @NotNull
+    private String warehouseNationalCurrencyTransientAccount1Code;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
+            @JoinColumn(name = "CTATRANSALM1MN", referencedColumnName = "CUENTA", nullable = false, updatable = false, insertable = false)
+    })
+    private CashAccount warehouseNationalCurrencyTransientAccount1;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
@@ -931,6 +943,22 @@ public class CompanyConfiguration {
 
     public void setDepositInTransitNationalCurrencyAccountCode(String depositInTransitNationalCurrencyAccountCode) {
         this.depositInTransitNationalCurrencyAccountCode = depositInTransitNationalCurrencyAccountCode;
+    }
+
+    public String getWarehouseNationalCurrencyTransientAccount1Code() {
+        return warehouseNationalCurrencyTransientAccount1Code;
+    }
+
+    public void setWarehouseNationalCurrencyTransientAccount1Code(String warehouseNationalCurrencyTransientAccount1Code) {
+        this.warehouseNationalCurrencyTransientAccount1Code = warehouseNationalCurrencyTransientAccount1Code;
+    }
+
+    public CashAccount getWarehouseNationalCurrencyTransientAccount1() {
+        return warehouseNationalCurrencyTransientAccount1;
+    }
+
+    public void setWarehouseNationalCurrencyTransientAccount1(CashAccount warehouseNationalCurrencyTransientAccount1) {
+        this.warehouseNationalCurrencyTransientAccount1 = warehouseNationalCurrencyTransientAccount1;
     }
 
     @Override

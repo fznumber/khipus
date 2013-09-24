@@ -4,7 +4,6 @@ import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
-import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
@@ -69,16 +68,13 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     public void generateReport() {
 
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
         dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
-        sdf.setCalendar(dateIni);
-        sdf.setCalendar(dateEnd);
-
-
+        sdf.format(dateIni);
+        sdf.format(dateEnd);
         addSummaryTotal(reportParameters);
         log.debug("generating expenseBudgetReport......................................");
 
@@ -204,6 +200,17 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
     public Periodo[] getPeriodos() {
         return Periodo.values();
     }
+    /*
+    public void selectProductiveZone(ProductiveZone productiveZone) {
+        try {
+            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
+            getInstance().setProductiveZone(productiveZone);
+        } catch (Exception ex) {
+            log.error("Caught Error", ex);
+            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+        }
+    }
+    */
 
     public GeneratedPayrollType getGeneratedPayrollType() {
         return generatedPayrollType;
@@ -219,27 +226,6 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     public void setMetaProduct(MetaProduct metaProduct) {
         this.metaProduct = metaProduct;
-    }
-
-    public void selectProductiveZone(ProductiveZone productiveZone) {
-        try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
-            setZone(productiveZone);
-        } catch (Exception ex) {
-            log.error("Caught Error", ex);
-        }
-    }
-
-    public String getFullNameOfProductiveZone() {
-        return (zone == null ? "" : zone.getFullName());
-    }
-
-    public void setFullNameOfProductiveZone(String fullName) {
-
-    }
-
-    protected GenericService getService() {
-        return rawMaterialPayRollService;
     }
 
 }

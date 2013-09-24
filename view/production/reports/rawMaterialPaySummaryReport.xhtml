@@ -25,20 +25,18 @@
                          border="0">
                 <h:panelGroup>
 
-<!--
-                    <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <!--<s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
-                        <h:inputText id="productiveZone" value="#{rawMaterialPaySummaryReportAction.fullNameOfProductiveZone}" styleClass="input"
-                                     maxlength="150" tabindex="1" required="true" readonly="true" >
+                        <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
+                                     maxlength="150" tabindex="1" required="true" readonly="#{rawMaterialPayRollAction.readonly}" >
                         </h:inputText>
-                        <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="1"
+                        <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                                          title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
                                          onclick="Richfaces.showModalPanel('productiveZoneModalPanel');"
-                                >
+                                         rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}">
                             <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
                         </a4j:commandLink>
-                    </s:decorate>
--->
+                    </s:decorate>-->
 
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.rawMaterial']}</ui:define>
@@ -59,9 +57,9 @@
                                          styleClass="input"
                                          required="true"
                                          tabindex="3">
-                            <s:selectItems value="#{gestionList}"
-                                           var="gestion"
+                            <s:selectItems value="#{gestionList}" var="gestion"
                                            label="#{gestion.year}"
+                                           noSelectionLabel=""
                                            hideNoSelectionLabel="false"/>
                             <a4j:support event="onchange"
                                          action="#{rawMaterialPaySummaryReportAction.cleanGestionList}"
@@ -81,7 +79,7 @@
 
                             <s:selectItems value="#{monthEnum}" var="month"
                                            label="#{messages[month.resourceKey]}"
-                                           hideNoSelectionLabel="false"/>
+                                           noSelectionLabel="" hideNoSelectionLabel="false"/>
                             <s:convertEnum/>
                         </h:selectOneMenu>
                     </s:decorate>
@@ -94,7 +92,7 @@
 
                             <s:selectItems value="#{periodos}" var="periodos"
                                            label="#{messages[periodos.resourceKey]}"
-                                           hideNoSelectionLabel="false"/>
+                                           noSelectionLabel="" hideNoSelectionLabel="false"/>
                             <s:convertEnum/>
                         </h:selectOneMenu>
                     </s:decorate>
@@ -126,11 +124,12 @@
         <ui:define name="assignButton">
             <a4j:commandButton id="assignButton"
                                title="#{messages['Common.choose']}"
-                               action="#{rawMaterialPaySummaryReportAction.selectProductiveZone(productiveZoneItem)}"
+                               action="#{rawMaterialPaySummaryReportAction.setZone(productiveZoneItem)}"
                                image="/img/active.gif" styleClass="select-image-middle"
-                               ajaxSingle="true" reRender="productiveZoneField"
+                               ajaxSingle="true" reRender="productiveZoneField,collectedRawMaterialList"
                                oncomplete="Richfaces.hideModalPanel('productiveZoneModalPanel');"
                                style="width:0.8em"/>
+
         </ui:define>
     </s:decorate>
 
