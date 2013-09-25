@@ -13,6 +13,7 @@ import org.jboss.seam.annotations.*;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -26,6 +27,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     private Date month;
     private int fortnight;
     private boolean readonly;
+    private List<RawMaterialPayRoll> rawMaterialPayRollList;
 
     @In
     private RawMaterialPayRollService rawMaterialPayRollService;
@@ -154,16 +156,20 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void generate() {
         try {
-            RawMaterialPayRoll rawMaterialPayRoll = getInstance();
-            if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
-                facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
-                return;
+            for(int i= 0;i<=3;i++)
+            {
+                RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+                if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
+                    facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
+                    return;
+                }
+
+                rawMaterialPayRollService.validate(rawMaterialPayRoll);
+
+                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+                this.rawMaterialPayRollList.add(rawMaterialPayRoll);
             }
-
-            rawMaterialPayRollService.validate(rawMaterialPayRoll);
-
-            rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-            rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
             readonly = true;
         } catch (RawMaterialPayRollException ex) {
             print(ex);
@@ -189,5 +195,13 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         getInstance().setTotalRetentionGAB(0.0);
         getInstance().setTotalRecipByGAB(0.0);
         readonly = false;
+    }
+
+    public List<RawMaterialPayRoll> getRawMaterialPayRollList() {
+        return rawMaterialPayRollList;
+    }
+
+    public void setRawMaterialPayRollList(List<RawMaterialPayRoll> rawMaterialPayRollList) {
+        this.rawMaterialPayRollList = rawMaterialPayRollList;
     }
 }

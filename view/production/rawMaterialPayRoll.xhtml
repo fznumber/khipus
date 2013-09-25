@@ -126,7 +126,8 @@
 
 
 
-            <rich:dataTable id="collectedRawMaterialList" value="#{rawMaterialPayRoll.rawMaterialPayRecordList}"
+            <!--<rich:dataTable id="collectedRawMaterialList" value="#{rawMaterialPayRoll.rawMaterialPayRecordList}"-->
+            <rich:dataTable id="collectedRawMaterialList" value="#{rawMaterialPayRoll.rawMaterialPayRollList}"
                             var="rawMaterialPayRecordItem" width="100%" columnsWidth="15%,7%,7%,7%,7%,7%,7%,7%,7%,7%" >
                 <f:facet name="header">
                     <rich:columnGroup>
@@ -187,6 +188,9 @@
                     </rich:columnGroup>
                 </f:facet>
 
+                <rich:column colspan="5">
+                    <h:outputText value="Zona Productiva" />
+                </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.rawMaterialProducer.fullName}"/>
                 </rich:column>
