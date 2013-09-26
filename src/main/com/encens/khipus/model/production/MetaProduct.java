@@ -3,8 +3,10 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -49,9 +51,23 @@ public class MetaProduct implements Serializable, BaseModel {
     @Type(type = "IntegerBoolean")
     private Boolean collectable = false;
 
+    @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
+    private String productItemCode;
+
+    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = false)
+    @Length(max = 2)
+    private String companyNumber;
+
     @Version
     @Column(name = "VERSION", nullable = false)
     private long version;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
+            @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART")
+    })
+    private ProductItem productItem;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDUNIDADMEDIDAPRODUCCION", columnDefinition = "NUMBER(24,0)" ,nullable = true, updatable = true, insertable = true)
@@ -156,5 +172,29 @@ public class MetaProduct implements Serializable, BaseModel {
 
     public void setCollectable(Boolean collectable) {
         this.collectable = collectable;
+    }
+
+    public ProductItem getProductItem() {
+        return productItem;
+    }
+
+    public void setProductItem(ProductItem productItem) {
+        this.productItem = productItem;
+    }
+
+    public String getProductItemCode() {
+        return productItemCode;
+    }
+
+    public void setProductItemCode(String productItemCode) {
+        this.productItemCode = productItemCode;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
     }
 }

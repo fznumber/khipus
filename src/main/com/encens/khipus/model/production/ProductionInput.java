@@ -9,6 +9,11 @@ import javax.persistence.*;
  * Time: 2:30 PM
  * To change this template use File | Settings | File Templates.
  */
+@NamedQueries({
+        @NamedQuery(name = "ProductionInput.findByCode",
+                query = "SELECT p FROM ProductionInput p WHERE p.code =:code")
+})
+
 @Entity
 @Table(name = "INSUMOPRODUCCION")
 @DiscriminatorValue("INSUMOPRODUCCION")

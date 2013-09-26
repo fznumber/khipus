@@ -1,5 +1,7 @@
 package com.encens.khipus.model.production;
 
+import com.encens.khipus.model.warehouse.ProductItem;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,9 @@ import java.util.List;
                 query = "select processedProduct " +
                         "from ProcessedProduct processedProduct " +
                         "left join fetch processedProduct.productCompositionList " +
-                        "where processedProduct.id = :id")
+                        "where processedProduct.id = :id"),
+    @NamedQuery(name = "ProcessedProduct.findByCode",
+                query = "SELECT p FROM ProcessedProduct p WHERE p.code =:code")
 })
 
 @Entity

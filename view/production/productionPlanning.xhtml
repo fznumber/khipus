@@ -174,7 +174,7 @@
                                                 <h:outputText value="#{productionIngredientItem.metaProduct.name}"/>
                                             </rich:column>
                                             <rich:column>
-                                                <h:outputText value="#{productionIngredientItem.metaProduct.measureUnit.name}"/>
+                                                <h:outputText value="#{productionIngredientItem.metaProduct.productItem.usageMeasureCode}"/>
                                             </rich:column>
                                             <rich:column>
                                                 <h:outputText value="#{productionIngredientItem.amount}"/>
@@ -217,7 +217,7 @@
                                 </h:inputText>
                             </s:decorate>
                             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                                <ui:define name="label">#{messages['ProductionOrder.producingAmount']}</ui:define>
+                                <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
                                 <h:inputText value="#{productionOrderForPlanning.producingAmount}"
                                              required="false" readonly="true" maxlength="500" styleClass="input" tabindex="5">
                                 </h:inputText>
@@ -323,7 +323,7 @@
                                 #{messages['ProductionOrder.formula']}
                             </rich:column>
                             <rich:column>
-                                #{messages['ProductionOrder.producingAmount']}
+                                #{messages['ProductionOrder.expectedAmount']}
                             </rich:column>
                             <!--<rich:column>
                                 #{messages['ProductionOrder.producedAmount']}
@@ -393,7 +393,7 @@
                         <h:outputText value="#{consolidatedItem.product.name}"/>
                     </rich:column>
                     <rich:column>
-                        <h:outputText value="#{consolidatedItem.product.measureUnit.name}"/>
+                        <h:outputText value="#{consolidatedItem.product.productItem.usageMeasureCode}"/>
                     </rich:column>
                     <rich:column>
                         <h:outputText value="#{consolidatedItem.product.code}"/>
