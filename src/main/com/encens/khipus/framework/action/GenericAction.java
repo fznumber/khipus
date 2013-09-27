@@ -313,7 +313,7 @@ public class GenericAction<T> implements Serializable {
         this.entityClass = entityClass;
     }
 
-    private Object getDisplayPropertyValue() {
+    protected Object getDisplayPropertyValue() {
         Object entity = getInstance();
         if (entity != null && getDisplayNameProperty() != null) {
             Method entityDisplayPropertyGetter = Reflections.getGetterMethod(entity.getClass(), getDisplayNameProperty());

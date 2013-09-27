@@ -29,7 +29,7 @@ public class RawMaterialRejectionNoteAction extends GenericAction<RawMaterialRej
         return getInstance();
     }
 
-    //@Override
+    @Override
     protected Object getDisplayPropertyValue() {
         RawMaterialRejectionNote rawMaterialRejectionNote = getInstance();
         String rawMaterialProducer = rawMaterialRejectionNote.getRawMaterialProducer().getFullName();

@@ -52,6 +52,12 @@
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
+                            <app:commandSortHeader sortProperty="productComposition.name" dataModel="#{productCompositionDataModel}"
+                                                   reRender="productCompositionList, dataScroller">
+                                #{messages['ProductComposition.name']}
+                            </app:commandSortHeader>
+                        </rich:column>
+                        <rich:column>
                             <app:commandSortHeader sortProperty="productComposition.processedProduct.name" dataModel="#{productCompositionDataModel}"
                                                    reRender="productCompositionList, dataScroller">
                                 #{messages['ProductComposition.processedProduct.name']}
@@ -64,12 +70,6 @@
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productComposition.name" dataModel="#{productCompositionDataModel}"
-                                                   reRender="productCompositionList, dataScroller">
-                                #{messages['ProductComposition.name']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
                             #{messages['ProductComposition.rawMaterialAmount']}
                         </rich:column>
                         <rich:column styleClass="center">
@@ -79,13 +79,13 @@
                 </f:facet>
 
                 <rich:column>
+                    <h:outputText value="#{productCompositionItem.name}"/>
+                </rich:column>
+                <rich:column>
                     <h:outputText value="#{productCompositionItem.processedProduct.name}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{productCompositionItem.processedProduct.code}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{productCompositionItem.name}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{productCompositionItem.producingAmount}"/>
