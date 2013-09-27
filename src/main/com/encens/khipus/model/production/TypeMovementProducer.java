@@ -7,10 +7,6 @@ package com.encens.khipus.model.production;
  * Time: 20:15
  * To change this template use File | Settings | File Templates.
  */
-<<<<<<< HEAD
-public class TypeMovementProducer {
-}
-=======
 import com.encens.khipus.model.admin.Company;
 import org.apache.poi.hssf.record.formula.functions.True;
 import org.hibernate.annotations.Filter;
@@ -88,4 +84,3 @@ public class TypeMovementProducer implements com.encens.khipus.model.BaseModel {
         this.money = money;
     }
 }
->>>>>>> refs/heads/verificar_calculos_resultados_acopio
