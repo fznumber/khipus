@@ -19,49 +19,50 @@ import java.util.List;
 
 @NamedQueries({
         @NamedQuery(name = "RawMaterialPayRoll.findRawMaterialProducersWithTotalCollectedAmountByMetaProductAndProductiveZoneBetweenDates",
-                    query = "select rawMaterialProducer, sum(collectedRawMaterial.amount) " +
-                            "from RawMaterialProducer rawMaterialProducer " +
-                            "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
-                            "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
-                            "where rawMaterialCollectionSession.productiveZone = :productiveZone " +
-                            "and rawMaterialCollectionSession.metaProduct = :metaProduct " +
-                            "and rawMaterialCollectionSession.date between :startDate and :endDate " +
-                            "group by rawMaterialProducer"),
+                query = "select rawMaterialProducer, sum(collectedRawMaterial.amount) " +
+                        "from RawMaterialProducer rawMaterialProducer " +
+                        "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
+                        "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
+                        "where rawMaterialCollectionSession.productiveZone = :productiveZone " +
+                        "and rawMaterialCollectionSession.metaProduct = :metaProduct " +
+                        "and rawMaterialCollectionSession.date between :startDate and :endDate " +
+                        "group by rawMaterialProducer"),
 
         @NamedQuery(name = "RawMaterialPayRoll.findCollectedAmountByMetaProductBetweenDates",
-                    query = "select rawMaterialCollectionSession.date, rawMaterialProducer, collectedRawMaterial.amount " +
-                            "from RawMaterialProducer rawMaterialproducer " +
-                            "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
-                            "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
-                            "join rawMaterialCollectionSession.productiveZone productiveZone " +
-                            "where rawMaterialCollectionSession.metaProduct = :metaProduct " +
-                            "and productiveZone = :productiveZone " +
-                            "and rawMaterialCollectionSession.date between :startDate and :endDate " +
-                            "order by rawMaterialCollectionSession.date "),
+                query = "select rawMaterialCollectionSession.date, rawMaterialProducer, collectedRawMaterial.amount " +
+                        "from RawMaterialProducer rawMaterialproducer " +
+                        "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
+                        "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
+                        "join rawMaterialCollectionSession.productiveZone productiveZone " +
+                        "where rawMaterialCollectionSession.metaProduct = :metaProduct " +
+                        "and productiveZone = :productiveZone " +
+                        "and rawMaterialCollectionSession.date between :startDate and :endDate " +
+                        "order by rawMaterialCollectionSession.date "),
         @NamedQuery(name = "RawMaterialPayRoll.totalCountProducersByMetaProductBetweenDates",
-                    query = "select rawMaterialCollectionSession.date, count(rawMaterialproducer) " +
-                            "from RawMaterialProducer rawMaterialproducer " +
-                            "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
-                            "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
-                            "join rawMaterialCollectionSession.productiveZone productiveZone " +
-                            "where rawMaterialCollectionSession.metaProduct = :metaProduct " +
-                            "and productiveZone = :productiveZone " +
-                            "and rawMaterialCollectionSession.date between :startDate and :endDate " +
-                            "group by rawMaterialCollectionSession.date, rawMaterialCollectionSession, productiveZone "),
+                query = "select rawMaterialCollectionSession.date, count(rawMaterialproducer) " +
+                        "from RawMaterialProducer rawMaterialproducer " +
+                        "join rawMaterialProducer.collectedRawMaterialList collectedRawMaterial " +
+                        "join collectedRawMaterial.rawMaterialCollectionSession rawMaterialCollectionSession " +
+                        "join rawMaterialCollectionSession.productiveZone productiveZone " +
+                        "where rawMaterialCollectionSession.metaProduct = :metaProduct " +
+                        "and productiveZone = :productiveZone " +
+                        "and rawMaterialCollectionSession.date between :startDate and :endDate " +
+                        "group by rawMaterialCollectionSession.date, rawMaterialCollectionSession, productiveZone "),
+
         @NamedQuery(name = "RawMaterialPayRoll.findTotalCollectedByMetaProductBetweenDates",
-                    query = "select collectionForm.date, collectionRecord.receivedAmount, collectionRecord.weightedAmount " +
-                            "from CollectionForm collectionForm " +
-                            "join collectionForm.collectionRecordList collectionRecord " +
-                            "join collectionRecord.productiveZone productiveZone " +
-                            "where collectionForm.metaProduct = :metaProduct " +
-                            "and productiveZone = :productiveZone " +
-                            "and collectionForm.date between :startDate and :endDate"),
+                query = "select collectionForm.date, collectionRecord.receivedAmount, collectionRecord.weightedAmount " +
+                        "from CollectionForm collectionForm " +
+                        "join collectionForm.collectionRecordList collectionRecord " +
+                        "join collectionRecord.productiveZone productiveZone " +
+                        "where collectionForm.metaProduct = :metaProduct " +
+                        "and productiveZone = :productiveZone " +
+                        "and collectionForm.date between :startDate and :endDate"),
 
         @NamedQuery(name = "RawMaterialPayRoll.findLasEndDateByMetaProductAndProductiveZone",
-                    query = "select max(rawMaterialPayRoll.endDate)" +
-                            "from RawMaterialPayRoll rawMaterialPayRoll " +
-                            "where rawMaterialPayRoll.metaProduct = :metaProduct " +
-                            "and rawMaterialPayRoll.productiveZone = :productiveZone "),
+                query = "select max(rawMaterialPayRoll.endDate)" +
+                        "from RawMaterialPayRoll rawMaterialPayRoll " +
+                        "where rawMaterialPayRoll.metaProduct = :metaProduct " +
+                        "and rawMaterialPayRoll.productiveZone = :productiveZone "),
 
         @NamedQuery(name = "RawMaterialPayRoll.totalCollectedGabBetweenDates",
                 query = "select collectedRawMaterial.rawMaterialCollectionSession.date, sum(collectedRawMaterial.amount) " +
@@ -72,6 +73,16 @@ import java.util.List;
                         "and collectedRawMaterial.rawMaterialCollectionSession.metaProduct = :metaProduct " +
                         "group by collectedRawMaterial.rawMaterialCollectionSession.date " +
                         "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
+        ),
+
+        @NamedQuery(name = "RawMaterialPayRoll.totalBalanceGabBetweenDates",
+                query = " select " +
+                        " collectionForm.date , collectionRecordList.weightedAmount" +
+                        " from CollectionForm collectionForm " +
+                        " join CollectionForm.collectionRecordList collectionRecordList" +
+                        " where collectionForm.date between :startDate and :endDate " +
+                        " and collectionRecordList.productiveZone = :productiveZone" +
+                        " and collectionForm.metaProduct = :metaProduct "
         ),
 
         @NamedQuery(name = "RawMaterialPayRoll.differenceRawMaterialBetweenDates",
@@ -94,52 +105,58 @@ import java.util.List;
                         "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
 
         ),
-        //TODO: JUNTAR CON EN PRODUCTO ACOPIABLE (METAPRODUCT)
         @NamedQuery(name = "RawMaterialPayRoll.getSumaryTotal",
                 query = "select " +
-                        " sum(CollectionRecord.weightedAmount) - sum(CollectionRecord.receivedAmount) as differences, " +
-                        " sum(CollectionRecord.weightedAmount) as balanceWeight, " +
-                        " sum(CollectionRecord.receivedAmount) as collected " +
-                        "from CollectionRecord collectionRecord " +
-                        "join collectionRecord.collectionForm " +
-                        "where collectionRecord.collectionForm.date  between :startDate and :endDate "
+                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
+                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
+                        " round(sum(RawMaterialPayRoll.totalWeighedByGAB)) as balanceWeight, " +
+                        " round(sum(RawMaterialPayRoll.totalCollectedByGAB)) as collected " +
+                        "from RawMaterialPayRoll rawMaterialPayRoll " +
+                        "where rawMaterialPayRoll.startDate = :startDate " +
+                        "and rawMaterialPayRoll.endDate <= :endDate " +
+                        "and rawMaterialPayRoll.metaProduct = :metaProduct"
         ),
-        //TODO: JUNTAR CON EN PRODUCTO ACOPIABLE (METAPRODUCT)
         @NamedQuery(name = "RawMaterialPayRoll.getDiscounts",
-        query = "select " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.yogurt) as yogurt, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.cans) as recip, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.withholdingTax) as retention, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.veterinary) as veterinary, " +
-                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.credit) as credit, " +
-                " rawMaterialPayRecord.rawMaterialPayRoll.unitPrice as unitPrice " +
-                "from RawMaterialPayRecord rawMaterialPayRecord " +
-                "join rawMaterialPayRecord.rawMaterialPayRoll rawMaterialPayRoll " +
-                "join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
-                "where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
-                "and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
-                " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice"
+                query = "select " +
+                        " round(sum(rawMaterialPayRoll.totalMountCollectdByGAB)) as mount, " +
+                        " round(sum(rawMaterialPayRoll.totalCollectedByGAB)) as collected, " +
+                        " round(sum(rawMaterialPayRoll.totalAlcoholByGAB)) as alcohol, " +
+                        " round(sum(rawMaterialPayRoll.totalConcentratedByGAB)) as concentrated, " +
+                        " round(sum(rawMaterialPayRoll.totalYogourdByGAB)) as yogurt, " +
+                        " round(sum(rawMaterialPayRoll.totalRecipByGAB)) as recip, " +
+                        " round(sum(rawMaterialPayRoll.totalRetentionGAB)) as retention, " +
+                        " round(sum(rawMaterialPayRoll.totalVeterinaryByGAB)) as veterinary, " +
+                        " round(sum(rawMaterialPayRoll.totalCreditByGAB)) as credit, " +
+                        " round(sum(rawMaterialPayRoll.totalLiquidByGAB )) as totalLiquid, " +
+                        " round(sum(rawMaterialPayRoll.totalDiscountByGAB)) as totalDiscount, " +
+                        " rawMaterialPayRoll.unitPrice as unitPrice " +
+                        "from RawMaterialPayRoll rawMaterialPayRoll " +
+                        "where rawMaterialPayRoll.startDate = :startDate " +
+                        "and rawMaterialPayRoll.endDate <= :endDate " +
+                        "and rawMaterialPayRoll.metaProduct = :metaProduct " +
+                        " GROUP BY rawMaterialPayRoll.unitPrice"
         ),
+
         @NamedQuery(name = "RawMaterialPayRoll.getTotalsRawMaterialPayRoll",
-                    query = "select " +
-                            "rawMaterialPayRoll.totalCollectedByGAB, " +
-                            "rawMaterialPayRoll.totalMountCollectdByGAB, " +
-                            "rawMaterialPayRoll.totalRetentionGAB, " +
-                            "rawMaterialPayRoll.totalCreditByGAB, " +
-                            "rawMaterialPayRoll.totalVeterinaryByGAB, " +
-                            "rawMaterialPayRoll.totalAlcoholByGAB, " +
-                            "rawMaterialPayRoll.totalConcentratedByGAB, " +
-                            "rawMaterialPayRoll.totalYogourdByGAB, " +
-                            "rawMaterialPayRoll.totalRecipByGAB, " +
-                            "rawMaterialPayRoll.totalDiscountByGAB," +
-                            "rawMaterialPayRoll.totalAdjustmentByGAB," +
-                            "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-                            "rawMaterialPayRoll.totalLiquidByGAB "+
-                            "from RawMaterialPayRoll rawMaterialPayRoll " +
-                            "where rawMaterialPayRoll.startDate = :startDate " +
-                            "and rawMaterialPayRoll.endDate = :endDate " +
-                            "and rawMaterialPayRoll.productiveZone = :productiveZone " +
-                            "and rawMaterialPayRoll.metaProduct = :metaProduct "
+                query = "select " +
+                        "rawMaterialPayRoll.totalCollectedByGAB, " +
+                        "rawMaterialPayRoll.totalMountCollectdByGAB, " +
+                        "rawMaterialPayRoll.totalRetentionGAB, " +
+                        "rawMaterialPayRoll.totalCreditByGAB, " +
+                        "rawMaterialPayRoll.totalVeterinaryByGAB, " +
+                        "rawMaterialPayRoll.totalAlcoholByGAB, " +
+                        "rawMaterialPayRoll.totalConcentratedByGAB, " +
+                        "rawMaterialPayRoll.totalYogourdByGAB, " +
+                        "rawMaterialPayRoll.totalRecipByGAB, " +
+                        "rawMaterialPayRoll.totalDiscountByGAB," +
+                        "rawMaterialPayRoll.totalAdjustmentByGAB," +
+                        "rawMaterialPayRoll.totalOtherIncomeByGAB," +
+                        "rawMaterialPayRoll.totalLiquidByGAB "+
+                        "from RawMaterialPayRoll rawMaterialPayRoll " +
+                        "where rawMaterialPayRoll.startDate = :startDate " +
+                        "and rawMaterialPayRoll.endDate = :endDate " +
+                        "and rawMaterialPayRoll.productiveZone = :productiveZone " +
+                        "and rawMaterialPayRoll.metaProduct = :metaProduct "
         )
 })
 
@@ -198,6 +215,9 @@ public class RawMaterialPayRoll implements BaseModel {
     private MetaProduct metaProduct;
 
     @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double totalWeighedByGAB = 0.0;
+
+    @Column(name = "TOTALPESADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalCollectedByGAB = 0.0;
 
     @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)

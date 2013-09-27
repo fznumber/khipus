@@ -1,5 +1,59 @@
 --Khipus MRP PROD-34:
 --Crear la tabla
+insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
+values (1,'CONCENTRADOS','BS','RESTAR',1);
+insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
+values (2,'YOGURT','BS','RESTAR',1);
+insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
+values (3,'VETERINARIO','BS','RESTAR',1);
+insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
+values (4,'TACHOS','BS','RESTAR',1);
+insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
+values (5,'OTROS EGRESOSO','BS','RESTAR',1);
+-----
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(1,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(2,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(3,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(4,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),3,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(5,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(6,343,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+-----
+-----
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(7,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(8,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(9,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(10,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),3,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(11,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),3,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(12,344,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+-----
+-----
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(13,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(14,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(15,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),1,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(16,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),3,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(17,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),3,1);
+insert into movimientosalarioproductor(IDMOVIMIENTOSALARIOPRODUCTOR,IDPRODUCTORMATERIAPRIMA,DESCRIPCION,VALOR,FECHA,IDTIPOMOVIMIENTOPRODUCTOR,IDCOMPANIA)
+values(18,360,'glosa',100.0,TO_DATE('26/09/13', 'DD/MM/RR'),2,1);
+-----
+
+select * from productormateriaprima where idzonaproductiva = 72;
 Create table MOVIMIENTOSALARIOPRODUCTOR (
   IDMOVIMIENTOSALARIOPRODUCTOR NUMBER(24,0) NOT NULL ,
 	IDPRODUCTORMATERIAPRIMA NUMBER(24,0) NOT NULL ,
@@ -26,16 +80,6 @@ Create table TIPOMOVIMIENTOPRODUCTOR (
  CONSTRAINT pk_TIPOMOVIMIENTOPRODUCTOR primary key (IDTIPOMOVIMIENTOPRODUCTOR) 
 );
 --drop table tipomovimientoproductor
-insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
-values (1,'CONCENTRADOS','BS','RESTAR',1);
-insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
-values (2,'YOGURT','BS','RESTAR',1);
-insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
-values (3,'VETERINARIO','BS','RESTAR',1);
-insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
-values (4,'TACHOS','BS','RESTAR',1);
-insert into tipomovimientoproductor(idtipomovimientoproductor, nombre, moneda,tipomovimiento,idcompania)
-values (5,'OTROS EGRESOSO','BS','RESTAR',1);
 
 --drop table TIPOMOVIMIENTOPRODUCTOR
 Create table TIPOMOVIMIENTOGAB (

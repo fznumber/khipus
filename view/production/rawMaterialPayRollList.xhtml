@@ -37,9 +37,9 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}" />
-               <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
-                          -->
+                <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
+                           propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
+                           -->
             </div>
 
             <rich:dataTable value="#{rawMaterialPayRollDataModel}" var="rawMaterialPayRollItem" id="rawMaterialPayRollList"
@@ -48,6 +48,12 @@
 
                 <f:facet name="header">
                     <rich:columnGroup>
+                        <rich:column>
+                            <app:commandSortHeader dataModel="#{rawMaterialPayRollDataModel}"
+                                                   reRender="rawMaterialPayRollList, dataScroller">
+                                #{messages['RawMaterialPayRoll.productiveZone.fullName']}
+                            </app:commandSortHeader>
+                        </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="rawMaterialPayRoll.startDate" dataModel="#{rawMaterialPayRollDataModel}"
                                                    reRender="rawMaterialPayRollList, dataScroller">
@@ -66,6 +72,9 @@
                     </rich:columnGroup>
                 </f:facet>
 
+                <rich:column>
+                    <h:outputText value="#{rawMaterialPayRollItem.productiveZone.getFullName()}"/>
+                </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRollItem.startDate}"/>
                 </rich:column>
