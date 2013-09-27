@@ -40,6 +40,9 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
     private Date date;
 
+    @Column(name = "VALOR",columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double valor;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
@@ -90,5 +93,13 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 }

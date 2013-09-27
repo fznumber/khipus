@@ -38,9 +38,6 @@ public class TypeMovementProducer implements com.encens.khipus.model.BaseModel {
     @Column(name = "NOMBRE", nullable = false)
     private String name;
 
-    @Column(name = "VALOR",columnDefinition = "NUMBER(16,2)", nullable = false)
-    private double valor;
-
     @Column(name = "MONEDA", nullable = false)
     private String money;
 
@@ -66,14 +63,6 @@ public class TypeMovementProducer implements com.encens.khipus.model.BaseModel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
     }
 
     public String getMoney() {
