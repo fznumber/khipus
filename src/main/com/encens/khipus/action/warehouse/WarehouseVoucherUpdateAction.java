@@ -173,6 +173,66 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     }
 
     @BusinessUnitRestriction(value = "#{warehouseVoucherUpdateAction.warehouseVoucher}")
+    @End
+    @Restrict("#{s:hasPermission('WAREHOUSEVOUCHERAPPROVAL','VIEW')}")
+    public String approveFromCollection() {
+        resetValidateQuantityMappings();
+        try {
+            for (MovementDetail movementDetail : inventoryMovement.getMovementDetailList()) {
+                buildValidateQuantityMappings(movementDetail);
+            }
+            approvalWarehouseVoucherService.approveWarehouseVoucherFromCollection(warehouseVoucher.getId(), getGlossMessage(),
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+            addWarehouseVoucherApproveMessage();
+            showMovementDetailWarningMessages();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return Outcome.REDISPLAY;
+        } catch (WarehouseVoucherApprovedException e) {
+            addWarehouseVoucherApprovedMessage();
+            return APPROVED_OUTCOME;
+        } catch (WarehouseVoucherEmptyException e) {
+            addWarehouseVoucherEmptyException();
+            return Outcome.REDISPLAY;
+        } catch (WarehouseVoucherNotFoundException e) {
+            addNotFoundMessage();
+            return Outcome.FAIL;
+        } catch (ProductItemAmountException e) {
+            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            return Outcome.FAIL;
+        } catch (InventoryUnitaryBalanceException e) {
+            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            return Outcome.FAIL;
+        } catch (InventoryProductItemNotFoundException e) {
+            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                    e.getProductItem(), e.getWarehouse());
+            return Outcome.FAIL;
+        } catch (CompanyConfigurationNotFoundException e) {
+            addCompanyConfigurationNotFoundErrorMessage();
+            return Outcome.FAIL;
+        } catch (FinancesExchangeRateNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.FAIL;
+        } catch (FinancesCurrencyNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.FAIL;
+        } catch (ConcurrencyException e) {
+            addUpdateConcurrencyMessage();
+            return Outcome.FAIL;
+        } catch (ReferentialIntegrityException e) {
+            addDeleteReferentialIntegrityMessage();
+            return Outcome.FAIL;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return Outcome.FAIL;
+        }
+
+        return Outcome.SUCCESS;
+    }
+
+    @BusinessUnitRestriction(value = "#{warehouseVoucherUpdateAction.warehouseVoucher}")
     @Override
     @End
     @Restrict("#{s:hasPermission('WAREHOUSEVOUCHER','DELETE')}")
@@ -193,7 +253,7 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     }
 
 
-    private void readWarehouseVoucher(WarehouseVoucherPK id) throws WarehouseVoucherNotFoundException {
+    public void readWarehouseVoucher(WarehouseVoucherPK id) throws WarehouseVoucherNotFoundException {
         setWarehouseVoucher(warehouseService.findWarehouseVoucher(id));
 
         InventoryMovementPK inventoryMovementPK =

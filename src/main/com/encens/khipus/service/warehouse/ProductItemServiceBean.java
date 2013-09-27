@@ -15,6 +15,7 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 @Name("productItemService")
 @AutoCreate
 public class ProductItemServiceBean extends GenericServiceBean implements ProductItemService {
+
+    @In(value = "#{entityManager}")
+    private EntityManager em;
 
     @In
     private SequenceGeneratorService sequenceGeneratorService;
@@ -117,6 +121,13 @@ public class ProductItemServiceBean extends GenericServiceBean implements Produc
             resultProductItemList = resultList;
         }
         return resultProductItemList;
+    }
+
+    public ProductItem findProductItemByCode(String productItemCode) {
+        ProductItem productItem = (ProductItem) em.createNamedQuery("ProductItem.findByCode")
+                .setParameter("productItemCode", productItemCode)
+                .getSingleResult();
+        return productItem;
     }
 
 }

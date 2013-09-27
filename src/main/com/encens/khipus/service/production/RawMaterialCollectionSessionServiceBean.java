@@ -8,7 +8,6 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
-import java.util.List;
 
 @Name("rawMaterialCollectionSessionService")
 @Stateless
@@ -71,36 +70,5 @@ public class RawMaterialCollectionSessionServiceBean extends ExtendedGenericServ
             total += rawMaterial.getAmount();
         }
         return total;
-    }
-
-    public void updateRawMaterialProducer(RawMaterialCollectionSession rawMaterialCollectionSession)
-    {
-
-        List<RawMaterialProducer> datas = getEntityManager().createQuery("SELECT rawMaterialProducer " +
-                "from RawMaterialProducer rawMaterialProducer where rawMaterialProducer.productiveZone = :productiveZone")
-                .setParameter("productiveZone", rawMaterialCollectionSession.getProductiveZone())
-                .getResultList();
-
-        if(datas.size() > rawMaterialCollectionSession.getCollectedRawMaterialList().size())
-        {
-            for(CollectedRawMaterial collectedRawMaterial : rawMaterialCollectionSession.getCollectedRawMaterialList())
-            {
-                datas.remove(collectedRawMaterial.getRawMaterialProducer());
-            }
-            for(RawMaterialProducer rawMaterialProducer: datas)
-            {
-                CollectedRawMaterial aux = rawMaterialCollectionSession.getCollectedRawMaterialList().get(0);
-                CollectedRawMaterial collectedRawMaterial = new CollectedRawMaterial();
-                collectedRawMaterial.setAmount(0.0);
-                collectedRawMaterial.setCompany(aux.getCompany());
-                collectedRawMaterial.setRawMaterialCollectionSession(aux.getRawMaterialCollectionSession());
-                collectedRawMaterial.setRawMaterialProducer(rawMaterialProducer);
-                collectedRawMaterial.setVersion(aux.getVersion());
-                getEntityManager().persist(collectedRawMaterial);
-            }
-
-            getEntityManager().flush();
-            getEntityManager().refresh(rawMaterialCollectionSession);
-        }
     }
 }

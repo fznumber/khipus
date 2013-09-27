@@ -34,7 +34,7 @@ import java.util.List;
         allocationSize = 10)
 
 @Entity
-@Table(name = "SESIONACOPIO")
+@Table(name = "SESIONACOPIO", uniqueConstraints = @UniqueConstraint(columnNames = {"FECHA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
 public class RawMaterialCollectionSession implements com.encens.khipus.model.BaseModel {

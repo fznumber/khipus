@@ -1,16 +1,12 @@
 package com.encens.khipus.service.production;
 
-import com.encens.khipus.model.production.CollectedRawMaterial;
 import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialCollectionSession;
-import com.encens.khipus.model.production.RawMaterialProducer;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
 
@@ -46,5 +42,4 @@ public class ProductiveZoneServiceBean implements ProductiveZoneService {
     public ProductiveZone find(long id) {
         return em.find(ProductiveZone.class, id);
     }
-
 }
