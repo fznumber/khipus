@@ -10,7 +10,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
 
-@Name("rawMaterialProducerDiscountAction")
+@Name("salaryMovementProducerAction")
 @Scope(ScopeType.CONVERSATION)
 public class SalaryMovementProducerAction extends GenericAction<RawMaterialProducerDiscount> {
 
@@ -22,12 +22,12 @@ public class SalaryMovementProducerAction extends GenericAction<RawMaterialProdu
         return rawMaterialProducerDiscountService;
     }
 
-    @Factory(value = "rawMaterialProducerDiscount", scope = ScopeType.STATELESS)
+    @Factory(value = "salaryMovementProducer", scope = ScopeType.STATELESS)
     public RawMaterialProducerDiscount initRawMaterialProducerDiscount() {
         return getInstance();
     }
 
-    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    /*@Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String select(RawMaterialProducer rawMaterialProducer) {
         try {
             RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(rawMaterialProducer);
@@ -38,5 +38,5 @@ public class SalaryMovementProducerAction extends GenericAction<RawMaterialProdu
             facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "Common.globalError.description");
             return Outcome.REDISPLAY;
         }
-    }
+    }*/
 }
