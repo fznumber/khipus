@@ -11,16 +11,27 @@
                  id="#{dialogId}" onshow="focusFirstElement();">
 
     <f:facet name="header">
+<<<<<<< HEAD
         <h:outputText value="#{messages['Employee.list']}"/>
+=======
+        <h:outputText value="#{messages['RawMaterialProducer.list']}"/>
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
     </f:facet>
     <f:facet name="controls">
         <h:graphicImage value="/img/close.png" style="cursor:pointer" id="closeLink"/>
     </f:facet>
     <c:if test="#{empty dataModel}">
+<<<<<<< HEAD
         <c:set var="dataModel" value="#{generalEmployeeDataModel}"/>
     </c:if>
     <h:form id="#{dialogId}_generalEmployeeListForm">
         <rich:simpleTogglePanel label="#{messages['Employee.search']}" switchType="client">
+=======
+        <c:set var="dataModel" value="#{rawMaterialProducerDataModel}"/>
+    </c:if>
+    <h:form id="#{dialogId}_rawMaterialProducerList">
+        <rich:simpleTogglePanel label="#{messages['RawMaterialProducer.search']}" switchType="client">
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
             <h:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" border="0"
                          columnClasses="width50percent,width50percent">
                 <ui:insert name="searchOptions"/>
@@ -64,47 +75,71 @@
             </h:panelGrid>
         </rich:simpleTogglePanel>
         <br/>
+<<<<<<< HEAD
         <rich:dataTable value="#{dataModel}" var="employeeItem" id="generalEmployeeList"
+=======
+        <rich:dataTable value="#{dataModel}" var="rawMaterialProducerItem" id="generalEmployeeList"
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                         rows="#{sessionUser.rowsPerPage}" width="100%" columnsWidth="20%, 20%, 20%, 30%, 10%">
             <f:facet name="header">
                 <rich:columnGroup>
                     <rich:column>
+<<<<<<< HEAD
                         <app:commandSortHeader sortProperty="employee.idNumber"
+=======
+                        <app:commandSortHeader sortProperty="rawMaterialProducer.idNumber"
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                                                dataModel="#{dataModel}"
                                                reRender="generalEmployeeList, dataScroller">
                             #{messages['Person.idNumber']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column>
+<<<<<<< HEAD
                         <app:commandSortHeader sortProperty="employee.lastName"
+=======
+                        <app:commandSortHeader sortProperty="rawMaterialProducer.lastName"
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                                                dataModel="#{dataModel}"
                                                reRender="generalEmployeeList, dataScroller">
                             #{messages['Person.lastName']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column>
+<<<<<<< HEAD
                         <app:commandSortHeader sortProperty="employee.maidenName"
+=======
+                        <app:commandSortHeader sortProperty="rawMaterialProducer.maidenName"
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                                                dataModel="#{dataModel}"
                                                reRender="generalEmployeeList, dataScroller">
                             #{messages['Person.maidenName']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column>
+<<<<<<< HEAD
                         <app:commandSortHeader sortProperty="employee.firstName"
+=======
+                        <app:commandSortHeader sortProperty="rawMaterialProducer.firstName"
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                                                dataModel="#{dataModel}"
                                                reRender="generalEmployeeList, dataScroller">
                             #{messages['Person.firstName']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column styleClass="center">
+<<<<<<< HEAD
                         #{messages['Employee.type']}
                     </rich:column>
                     <rich:column styleClass="center">
+=======
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
                         #{messages['Common.select']}
                     </rich:column>
                 </rich:columnGroup>
             </f:facet>
             <rich:column>
+<<<<<<< HEAD
                 <h:outputText value="#{employeeItem.idNumber}"/>
             </rich:column>
             <rich:column>
@@ -118,6 +153,18 @@
             </rich:column>
             <rich:column>
                 <h:outputText value="#{employeeAction.getJobCategory(employeeItem)}"/>
+=======
+                <h:outputText value="#{rawMaterialProducerItem.idNumber}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{rawMaterialProducerItem.lastName}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{rawMaterialProducerItem.maidenName}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{rawMaterialProducerItem.firstName}"/>
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio
             </rich:column>
             <rich:column styleClass="center">
                 <ui:insert name="assignButton"/>
@@ -134,4 +181,7 @@
     </script>
 
 </rich:modalPanel>
+<<<<<<< HEAD
 
+=======
+>>>>>>> refs/heads/verificar_calculos_resultados_acopio

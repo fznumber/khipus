@@ -128,6 +128,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         }
         return result;
     }
+     //region borrar
 
     /*@Override
     public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryNotFoundException, RawMaterialPayRollException {
@@ -213,7 +214,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         rawMaterialPayRoll.setTotalOtherIncomeByGAB(totalIncome);
         return rawMaterialPayRoll;
     }*/
-
+    //endregion
     @Override
     public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryNotFoundException, RawMaterialPayRollException {
         Map<Date, Double> totalWeight = createMapOfCollectedAmount(rawMaterialPayRoll);
