@@ -30,6 +30,10 @@
             <div class="buttons">
                 <h:commandButton action="#{rawMaterialPayRollAction.create}" value="#{messages['Common.save']}"
                                  styleClass="button" rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+                <!--
+                <h:commandButton action="#{rawMaterialPayRollAction.update}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','UPDATE')}"/>
+                -->
                 <h:commandButton value="#{messages['Common.delete']}"
                                  styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
@@ -204,13 +208,13 @@
                     <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}"/>
-                </rich:column>
-                <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.credit}"/>
@@ -327,6 +331,10 @@
             <div class="buttons">
                 <h:commandButton action="#{rawMaterialPayRollAction.create}" value="#{messages['Common.save']}"
                                  styleClass="button" rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+                <!--
+                <h:commandButton action="#{rawMaterialPayRollAction.update}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','UPDATE')}"/>
+                -->
                 <h:commandButton value="#{messages['Common.delete']}"
                                  styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"

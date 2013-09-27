@@ -63,6 +63,10 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
     @Column(name = "FECHA",columnDefinition = "DATE", nullable = false)
     private Date date;
 
+    @Column(name = "ESTADO", nullable = true, length = 3)
+    @Enumerated(EnumType.STRING)
+    private CollectionFormState state = CollectionFormState.PEN;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
@@ -125,5 +129,13 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
 
     public void setMetaProduct(MetaProduct metaProduct) {
         this.metaProduct = metaProduct;
+    }
+
+    public CollectionFormState getState() {
+        return state;
+    }
+
+    public void setState(CollectionFormState state) {
+        this.state = state;
     }
 }

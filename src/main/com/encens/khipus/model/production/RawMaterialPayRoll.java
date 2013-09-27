@@ -48,7 +48,6 @@ import java.util.List;
                             "and productiveZone = :productiveZone " +
                             "and rawMaterialCollectionSession.date between :startDate and :endDate " +
                             "group by rawMaterialCollectionSession.date, rawMaterialCollectionSession, productiveZone "),
-
         @NamedQuery(name = "RawMaterialPayRoll.findTotalCollectedByMetaProductBetweenDates",
                     query = "select collectionForm.date, collectionRecord.receivedAmount, collectionRecord.weightedAmount " +
                             "from CollectionForm collectionForm " +
@@ -75,16 +74,6 @@ import java.util.List;
                         "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
         ),
 
-        @NamedQuery(name = "RawMaterialPayRoll.totalBalanceGabBetweenDates",
-                query = " select " +
-                        " collectionForm.date , collectionRecordList.weightedAmount" +
-                        " from CollectionForm collectionForm " +
-                        " join CollectionForm.collectionRecordList collectionRecordList" +
-                        " where collectionForm.date between :startDate and :endDate " +
-                        " and collectionRecordList.productiveZone = :productiveZone" +
-                        " and collectionForm.metaProduct = :metaProduct "
-        ),
-
         @NamedQuery(name = "RawMaterialPayRoll.differenceRawMaterialBetweenDates",
                 query = "select collectionRecord.collectionForm.date, collectionRecord.receivedAmount , collectionRecord.weightedAmount " +
                         "from CollectionRecord collectionRecord " +
@@ -105,38 +94,32 @@ import java.util.List;
                         "order by collectedRawMaterial.rawMaterialCollectionSession.date asc"
 
         ),
+        //TODO: JUNTAR CON EN PRODUCTO ACOPIABLE (METAPRODUCT)
         @NamedQuery(name = "RawMaterialPayRoll.getSumaryTotal",
                 query = "select " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
-                        " round(sum(RawMaterialPayRoll.totalWeighedByGAB)) as balanceWeight, " +
-                        " round(sum(RawMaterialPayRoll.totalCollectedByGAB)) as collected " +
-                        "from RawMaterialPayRoll rawMaterialPayRoll " +
-                        "where rawMaterialPayRoll.startDate = :startDate " +
-                        "and rawMaterialPayRoll.endDate <= :endDate " +
-                        "and rawMaterialPayRoll.metaProduct = :metaProduct"
+                        " sum(CollectionRecord.weightedAmount) - sum(CollectionRecord.receivedAmount) as differences, " +
+                        " sum(CollectionRecord.weightedAmount) as balanceWeight, " +
+                        " sum(CollectionRecord.receivedAmount) as collected " +
+                        "from CollectionRecord collectionRecord " +
+                        "join collectionRecord.collectionForm " +
+                        "where collectionRecord.collectionForm.date  between :startDate and :endDate "
         ),
+        //TODO: JUNTAR CON EN PRODUCTO ACOPIABLE (METAPRODUCT)
         @NamedQuery(name = "RawMaterialPayRoll.getDiscounts",
-                query = "select " +
-                        " round(sum(rawMaterialPayRoll.totalMountCollectdByGAB)) as mount, " +
-                        " round(sum(rawMaterialPayRoll.totalCollectedByGAB)) as collected, " +
-                        " round(sum(rawMaterialPayRoll.totalAlcoholByGAB)) as alcohol, " +
-                        " round(sum(rawMaterialPayRoll.totalConcentratedByGAB)) as concentrated, " +
-                        " round(sum(rawMaterialPayRoll.totalYogourdByGAB)) as yogurt, " +
-                        " round(sum(rawMaterialPayRoll.totalRecipByGAB)) as recip, " +
-                        " round(sum(rawMaterialPayRoll.totalRetentionGAB)) as retention, " +
-                        " round(sum(rawMaterialPayRoll.totalVeterinaryByGAB)) as veterinary, " +
-                        " round(sum(rawMaterialPayRoll.totalCreditByGAB)) as credit, " +
-                        " round(sum(rawMaterialPayRoll.totalLiquidByGAB )) as totalLiquid, " +
-                        " round(sum(rawMaterialPayRoll.totalDiscountByGAB)) as totalDiscount, " +
-                        " rawMaterialPayRoll.unitPrice as unitPrice " +
-                        "from RawMaterialPayRoll rawMaterialPayRoll " +
-                        "where rawMaterialPayRoll.startDate = :startDate " +
-                        "and rawMaterialPayRoll.endDate <= :endDate " +
-                        "and rawMaterialPayRoll.metaProduct = :metaProduct " +
-                        " GROUP BY rawMaterialPayRoll.unitPrice"
+        query = "select " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.yogurt) as yogurt, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.cans) as recip, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.withholdingTax) as retention, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.veterinary) as veterinary, " +
+                " sum(rawMaterialPayRecord.rawMaterialProducerDiscount.credit) as credit, " +
+                " rawMaterialPayRecord.rawMaterialPayRoll.unitPrice as unitPrice " +
+                "from RawMaterialPayRecord rawMaterialPayRecord " +
+                "join rawMaterialPayRecord.rawMaterialPayRoll rawMaterialPayRoll " +
+                "join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
+                "where rawMaterialPayRecord.rawMaterialPayRoll.startDate = :startDate " +
+                "and rawMaterialPayRecord.rawMaterialPayRoll.endDate = :endDate " +
+                " GROUP BY rawMaterialPayRecord.rawMaterialPayRoll.unitPrice"
         ),
-
         @NamedQuery(name = "RawMaterialPayRoll.getTotalsRawMaterialPayRoll",
                     query = "select " +
                             "rawMaterialPayRoll.totalCollectedByGAB, " +
@@ -215,9 +198,6 @@ public class RawMaterialPayRoll implements BaseModel {
     private MetaProduct metaProduct;
 
     @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
-    private double totalWeighedByGAB = 0.0;
-
-    @Column(name = "TOTALPESADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalCollectedByGAB = 0.0;
 
     @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)

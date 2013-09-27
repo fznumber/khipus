@@ -2,6 +2,7 @@ package com.encens.khipus.action.warehouse;
 
 import com.encens.khipus.action.SessionUser;
 import com.encens.khipus.action.common.FunctionAction;
+import com.encens.khipus.action.production.ProcessedProductAction;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
@@ -10,11 +11,16 @@ import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.finances.CashAccount;
+import com.encens.khipus.model.finances.CompanyConfiguration;
+import com.encens.khipus.model.production.ProcessedProduct;
+import com.encens.khipus.model.production.ProductionInput;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemState;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.model.warehouse.SubGroupState;
 import com.encens.khipus.service.common.SequenceGeneratorService;
+import com.encens.khipus.service.production.ProcessedProductService;
+import com.encens.khipus.service.production.ProductionInputService;
 import com.encens.khipus.service.warehouse.ProductItemService;
 import com.encens.khipus.service.warehouse.WarehouseCatalogService;
 import com.encens.khipus.util.Constants;
@@ -48,6 +54,12 @@ public class ProductItemAction extends GenericAction<ProductItem> {
 
     @In
     private ProductItemService productItemService;
+
+    @In
+    private ProcessedProductService processedProductService;
+
+    @In
+    private ProductionInputService productionInputService;
 
     @In
     private SessionUser sessionUser;
@@ -91,6 +103,7 @@ public class ProductItemAction extends GenericAction<ProductItem> {
         }
         try {
             productItemService.createProductItem(getInstance());
+            createProductionItem(getInstance());
             addCreatedMessage();
             return Outcome.SUCCESS;
         } catch (EntryDuplicatedException e) {
@@ -102,6 +115,26 @@ public class ProductItemAction extends GenericAction<ProductItem> {
         }
     }
 
+    private void createProductionItem(ProductItem productItem){
+
+        if(productItem.getSubGroup().getGroup().getName().equals("PRODUCTOS LACTEOS")){
+            processedProductService.createProductionProduct(getInstance());
+        }
+        if(productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")){
+            productionInputService.createProductionInput(getInstance());
+        }
+    }
+
+    private void updateProductionItem(ProductItem productItem){
+
+        if(productItem.getSubGroup().getGroup().getName().equals("PRODUCTOS LACTEOS")){
+            processedProductService.updateProductionProduct(productItem);
+        }
+        if(productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")){
+            productionInputService.updateProductionInput(getInstance());
+        }
+    }
+
     @Override
     @Restrict("#{s:hasPermission('PRODUCTITEM','CREATE')}")
     public void createAndNew() {
@@ -109,6 +142,7 @@ public class ProductItemAction extends GenericAction<ProductItem> {
         if (Outcome.SUCCESS.equals(validationOutcome)) {
             try {
                 productItemService.createProductItem(getInstance());
+                createProductionItem(getInstance());
                 addCreatedMessage();
                 createInstance();
                 if (!functionAction.getHasSeverityErrorMessages()) {
@@ -134,6 +168,7 @@ public class ProductItemAction extends GenericAction<ProductItem> {
         Long currentVersion = (Long) getVersion(getInstance());
         try {
             productItemService.updateProductItem(getInstance());
+            updateProductionItem(getInstance());
             addUpdatedMessage();
             return Outcome.SUCCESS;
         } catch (EntryDuplicatedException e) {

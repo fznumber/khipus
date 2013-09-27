@@ -89,12 +89,8 @@
                 <ui:insert name="assignButton"/>
             </rich:column>
         </rich:dataTable>
-        <app:dataScroller id="dataScroller" for="productiveZoneList" dataModel="#{productiveZoneDataModel}"/>
+        <app:dataScroller id="dataScroller" for="productiveZoneList" productiveZoneDataModel="#{productiveZoneDataModel}"/>
         <rich:componentControl for="#{dialogId}" attachTo="closeLink" operation="hide" event="onclick"/>
-
-       <!-- <app:dataScroller id="dataScroller" for="generalEmployeeList" dataModel="#{dataModel}"/>
-        <rich:componentControl for="#{dialogId}" attachTo="closeLink" operation="hide" event="onclick"/>-->
-
     </h:form>
 
     <rich:jQuery selector="#productiveZoneList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>

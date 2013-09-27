@@ -314,53 +314,6 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return rawMaterialPayRoll;
     }
 
-    private Map<Date, Double> createMapOfBalance(RawMaterialPayRoll rawMaterialPayRoll) {
-        List<Object[]> counts = findTotalCollection("RawMaterialPayRoll.totalBalanceGabBetweenDates", rawMaterialPayRoll);
-        Map<Date, Double> countProducers = new HashMap<Date, Double>();
-
-        for(Object[] obj : counts) {
-            Date date = (Date)obj[0];
-            Double count = (Double)obj[1];
-
-            countProducers.put(date, count);
-        }
-
-        return countProducers;
-    }
-
-    private Double getTotalBalance(Map<Date, Double> map) {
-        Double total = 0.0;
-        for(Double aux : map.values()) {
-            total += aux;
-        }
-        return total;
-    }
-
-    private Double getTotalMoneyCollected(Map<Long, Aux> map) {
-        Double total = 0.0;
-        for(Aux aux : map.values()) {
-            total += aux.earnedMoney;
-        }
-        return total;
-    }
-
-    public Double getDiffMoneyCollectedAndBalance(Map<Date, Double> totalWeightsByGab, Double unitPrice, Double totalEarnedmoney)
-    {
-        Double diffMoneyCollectedAndBalance = 0.0;
-        Double totalBalnceByGab = 0.0;
-        Double totalMoneyBanlance = 0.0;
-        Iterator collections = totalWeightsByGab.entrySet().iterator();
-
-        while(collections.hasNext()){
-            Map.Entry thisEntry = (Map.Entry) collections.next();
-            totalBalnceByGab += (Double)thisEntry.getValue();
-        }
-
-        totalMoneyBanlance = totalBalnceByGab * unitPrice;
-        diffMoneyCollectedAndBalance = totalMoneyBanlance - totalEarnedmoney;
-        return diffMoneyCollectedAndBalance;
-    }
-
     private Map<Date,Double> createMapOfCollectedWeights(RawMaterialPayRoll rawMaterialPayRoll)
     {
         List<Object[]> counts = findTotalCollection("RawMaterialPayRoll.totalCollectedGabBetweenDates", rawMaterialPayRoll);
@@ -800,6 +753,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
         rawMaterialPayRoll.setTotalLiquidByGAB(RoundUtil.getRoundValue(totalLiquidPay,2, RoundUtil.RoundMode.SYMMETRIC));
     }
+
         public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
     {
 
@@ -814,6 +768,12 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             queryObj.setParameter("metaProduct",metaProduct);
 
         try {
+            /*List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getTotalsRawMaterialPayRoll")
+                                                      .setParameter("startDate", dateIni)
+                                                      .setParameter("endDate", dateEnd)
+                                                      .setParameter("productiveZone", productiveZone)
+                                                      //.setParameter("metaProduct",metaProduct)
+                                                      .getResultList();*/
             List<Object[]> datas= queryObj.getResultList();
                     rawMaterialPayRoll.setTotalCollectedByGAB((Double) (datas.get(0)[0]));
                     rawMaterialPayRoll.setTotalMountCollectdByGAB((Double) (datas.get(0)[1]));
