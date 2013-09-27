@@ -21,12 +21,18 @@ import java.util.List;
 @Name("rawMaterialProducerDataModel")
 @Scope(ScopeType.PAGE)
 public class RawMaterialProducerDataModel extends QueryDataModel<Long, RawMaterialProducer> {
-    private RawMaterialProducer rawMaterialProducer;
-    private static final String[] RESTRICTIONS =
-            {"lower(rawMaterialProducer.lastName) like concat('%', concat(lower(#{rawMaterialProducerListModelPanel.criteria.lastName}), '%'))",
-                    "lower(rawMaterialProducer.maidenName) like concat('%', concat(lower(#{rawMaterialProducerListModelPanel.criteria.maidenName}), '%'))",
-                    "lower(rawMaterialProducer.firstName) like concat('%', concat(lower(#{rawMaterialProducerListModelPanel.criteria.firstName}), '%'))",
-                    "rawMaterialProducer.idNumber like concat(#{rawMaterialProducerListModelPanel.criteria.idNumber}, '%')"};
+
+    private static final String[] RESTRICTIONS = {
+            //"lower(rawMaterialProducer.firstName) like concat(#{rawMaterialProducerDataModel.criteria.firstName}, '%')",
+            "lower(rawMaterialProducer.firstName) like concat('%',concat(#{rawMaterialProducerDataModel.criteria.firstName}, '%'))",
+            //"lower(rawMaterialProducer.lastName) like concat(#{rawMaterialProducerDataModel.criteria.lastName}, '%')",
+            "lower(rawMaterialProducer.lastName) like concat(#{rawMaterialProducerDataModel.criteria.lastName}, '%')",
+            //"lower(rawMaterialProducer.maidenName) like concat(#{rawMaterialProducerDataModel.criteria.maidenName}, '%')",
+            "lower(rawMaterialProducer.maidenName) like concat(#{rawMaterialProducerDataModel.criteria.maidenName}, '%')",
+            "lower(rawMaterialProducer.productiveZone.name) like concat('%', concat(lower(#{rawMaterialProducerDataModel.criteria.productiveZone.name}), '%'))",
+            "lower(rawMaterialProducer.productiveZone.number) like concat('%',#{rawMaterialProducerDataModel.criteria.productiveZone.number}, '%')",
+            "lower(rawMaterialProducer.productiveZone.group) like concat(#{rawMaterialProducerDataModel.criteria.productiveZone.group}, '%')"
+    };
 
     @Create
     public void init() {
@@ -35,7 +41,10 @@ public class RawMaterialProducerDataModel extends QueryDataModel<Long, RawMateri
 
     @Override
     public String getEjbql() {
-        return "select rawMaterialProducer from RawMaterialProducer rawMaterialProducer";
+        String query = "select rawMaterialProducer " +
+                "from RawMaterialProducer rawMaterialProducer " +
+                "left join fetch rawMaterialProducer.productiveZone ";
+        return query;
     }
 
     @Override
@@ -43,11 +52,12 @@ public class RawMaterialProducerDataModel extends QueryDataModel<Long, RawMateri
         return Arrays.asList(RESTRICTIONS);
     }
 
-    public RawMaterialProducer getRawMaterialProducer() {
+    @Override
+    public RawMaterialProducer createInstance() {
+        RawMaterialProducer rawMaterialProducer = super.createInstance();
+        if (rawMaterialProducer.getProductiveZone() == null) {
+            rawMaterialProducer.setProductiveZone(new ProductiveZone());
+        }
         return rawMaterialProducer;
-    }
-
-    public void setRawMaterialProducer(RawMaterialProducer rawMaterialProducer) {
-        this.rawMaterialProducer = rawMaterialProducer;
     }
 }
