@@ -154,16 +154,20 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void generate() {
         try {
-            RawMaterialPayRoll rawMaterialPayRoll = getInstance();
-            if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
-                facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
-                return;
-            }
+            /*for(int i= 0;i<=3;i++)
+            {*/
+                RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+                if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
+                    facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
+                    return;
+                }
 
-            rawMaterialPayRollService.validate(rawMaterialPayRoll);
+                rawMaterialPayRollService.validate(rawMaterialPayRoll);
 
-            rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-            rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+             /*   this.rawMaterialPayRollList.add(rawMaterialPayRoll);*/
+           // }
             readonly = true;
         } catch (RawMaterialPayRollException ex) {
             print(ex);
