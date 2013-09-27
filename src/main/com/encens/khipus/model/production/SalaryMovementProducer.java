@@ -5,23 +5,7 @@ import org.hibernate.annotations.Filter;
 import javax.persistence.*;
 import java.util.Date;
 
-/*
-@NamedQueries({
-        @NamedQuery(name = "RawMaterialProducerDiscount.findWithGreatestCodeByRawMaterialProducer",
-                    query = "select rawMaterialProducerDiscount " +
-                            "from RawMaterialProducerDiscount rawMaterialProducerDiscount " +
-                            "left join fetch rawMaterialProducerDiscount.rawMaterialPayRecord " +
-                            "where rawMaterialProducerDiscount.rawMaterialProducer = :rawMaterialProducer and " +
-                            "rawMaterialProducerDiscount.code >= (" +
-                            "   select discount.code " +
-                            "   from RawMaterialProducerDiscount discount " +
-                            "   where discount.rawMaterialProducer = :rawMaterialProducer)"),
-        @NamedQuery(name = "RawMaterialProducerDiscount.findOpenByRawMaterialProducer",
-                    query = "select rawMaterialProducerDiscount " +
-                            "from RawMaterialProducerDiscount rawMaterialProducerDiscount " +
-                            "where rawMaterialProducerDiscount.rawMaterialProducer = :rawMaterialProducer and rawMaterialProducerDiscount.rawMaterialPayRecord is NULL")
-})
-*/
+
 
 @TableGenerator(name = "SalaryMovementProducer_Generator",
         table = "SECUENCIA",
