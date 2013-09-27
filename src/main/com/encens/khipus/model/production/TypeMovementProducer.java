@@ -38,8 +38,11 @@ public class TypeMovementProducer implements com.encens.khipus.model.BaseModel {
     @Column(name = "NOMBRE", nullable = false)
     private String name;
 
-    @Column(name = "MONEDA", nullable = false)
+    @Column(name = "MONEDA", nullable = true)
     private String money;
+
+    @Column(name = "TIPOMOVIMIENTO", nullable = false)
+    private String typeMovement;
 
     public Long getId() {
         return id;
@@ -71,5 +74,13 @@ public class TypeMovementProducer implements com.encens.khipus.model.BaseModel {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getTypeMovement() {
+        return typeMovement;
+    }
+
+    public void setTypeMovement(String typeMovement) {
+        this.typeMovement = typeMovement;
     }
 }
