@@ -23,7 +23,7 @@ public class ProductiveZoneDataModel extends QueryDataModel<Long, ProductiveZone
             "lower(productiveZone.name) like concat('%', concat(lower(#{productiveZoneDataModel.criteria.name}), '%'))",
             "lower(productiveZone.number) like concat('%',#{productiveZoneDataModel.criteria.number}, '%')",
             "lower(productiveZone.group) like concat(#{productiveZoneDataModel.criteria.group}, '%')"
-            };
+    };
 
     @Create
     public void init() {
