@@ -35,5 +35,6 @@
     </framework:entity-query>
 
     <framework:entity-query name="typeMovementProducerList" ejbql="select typeMovementProducer from TypeMovementProducer typeMovementProducer "/>
+    <framework:entity-query name="typeMovementGABList" ejbql="select typeMovementGAB from TypeMovementGAB typeMovementGAB "/>
 
 </components>

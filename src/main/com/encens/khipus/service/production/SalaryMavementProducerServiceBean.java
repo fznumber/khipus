@@ -32,7 +32,7 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
 
         RawMaterialProducerDiscount rawMaterialProducerDiscount = new RawMaterialProducerDiscount();
 
-
+        rawMaterialProducerDiscount.setRawMaterialProducer(rawMaterialProducer);
         rawMaterialProducerDiscount.setConcentrated(0.0);
         rawMaterialProducerDiscount.setYogurt(0.0);
         rawMaterialProducerDiscount.setVeterinary(0.0);
