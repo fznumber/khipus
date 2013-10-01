@@ -15,8 +15,9 @@
         <h:form id="salaryMovementProducerSearch">
             <rich:simpleTogglePanel label="#{messages['SalaryMovementProducer.search']}" switchType="client">
                 <h:panelGrid columns="1" width="100%">
+<!--
                     <s:div>
-                        <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
                             <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.name}"
                                          maxlength="100" tabindex="1" styleClass="input">
@@ -38,8 +39,9 @@
                                                tabindex="4">
                                 <s:defaultAction/>
                             </a4j:commandButton>
-                        </s:decorate>-->
+                        </s:decorate>
                     </s:div>
+-->
                 </h:panelGrid>
                 <rich:jQuery selector="#group" query="focus()" timing="onload"/>
             </rich:simpleTogglePanel>
@@ -48,7 +50,7 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
-                          propagation="none" action="#{salaryMovementProducerAction.startCreate}"/>
+                          propagation="none"/>
             </div>
 
             <rich:dataTable value="#{salaryMovementProducerDataModel}" var="salaryMovementProducerItem" id="salaryMovementProducerList"
@@ -58,10 +60,7 @@
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
                                 #{messages['SalaryMovementProducer.rawMaterialProducer']}
-                            </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="salaryMovementProducer.date" dataModel="#{salaryMovementProducerDataModel}"
@@ -70,10 +69,7 @@
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
                                 #{messages['SalaryMovementProducer.description']}
-                            </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="salaryMovementProducer.valor" dataModel="#{salaryMovementProducerDataModel}"
@@ -118,7 +114,7 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
-                          propagation="none"  />
+                          propagation="none" />
             </div>
 
             <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{rawMaterialProducerDataModel}"/>
