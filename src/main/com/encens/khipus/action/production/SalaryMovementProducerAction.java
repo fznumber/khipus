@@ -31,7 +31,7 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
     }
-    @End
+  /*  @End
     @Override
     public String create() {
         try {
@@ -42,7 +42,7 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
             addDuplicatedMessage();
             return Outcome.REDISPLAY;
         }
-    }
+    }*/
 
     @SuppressWarnings({"NullableProblems"})
     public void clearRawMaterialProducer() {
@@ -62,7 +62,7 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
         }
     }*/
 
-    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+/*    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String select(SalaryMovementProducer salaryMovementProducer) {
         try {
             setOp(OP_UPDATE);
@@ -76,7 +76,7 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
             addNotFoundMessage();
             return Outcome.FAIL;
         }
-    }
+    }*/
 
     public boolean isReadonly() {
         return readonly;

@@ -344,4 +344,21 @@
         </navigation>
     </page>
 
+    <page view-id="/production/salaryMovementProducerList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{salaryMovementProducerAction.select(salaryMovementProducerItem)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/salaryMovementProducer.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
+    <page view-id="/production/salaryMovementProducer.xhtml" no-conversation-view-id="/production/salaryMovementProducerList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/production/salaryMovementProducerList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
 </pages>
