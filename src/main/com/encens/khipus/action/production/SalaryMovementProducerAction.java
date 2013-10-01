@@ -1,42 +1,58 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
-import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.RawMaterialProducer;
-import com.encens.khipus.model.production.RawMaterialProducerDiscount;
-import com.encens.khipus.service.production.RawMaterialProducerDiscountService;
+import com.encens.khipus.model.production.SalaryMovementProducer;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
-import org.jboss.seam.international.StatusMessage;
+
+import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
 @Name("salaryMovementProducerAction")
 @Scope(ScopeType.CONVERSATION)
-public class SalaryMovementProducerAction extends GenericAction<RawMaterialProducerDiscount> {
+public class SalaryMovementProducerAction extends GenericAction<SalaryMovementProducer> {
 
-    @In
-    private RawMaterialProducerDiscountService rawMaterialProducerDiscountService;
-
-    @Override
-    protected GenericService getService() {
-        return rawMaterialProducerDiscountService;
-    }
+    private boolean readonly;
 
     @Factory(value = "salaryMovementProducer", scope = ScopeType.STATELESS)
-    public RawMaterialProducerDiscount initRawMaterialProducerDiscount() {
+    public SalaryMovementProducer initSalaryMovementProducer() {
         return getInstance();
     }
 
-    /*@Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
-    public String select(RawMaterialProducer rawMaterialProducer) {
+    public void selectRawMaterialProducer(RawMaterialProducer rawMaterialProducer) {
         try {
-            RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(rawMaterialProducer);
-            setOp(OP_UPDATE);
-            setInstance(discount);
-            return Outcome.SUCCESS;
+            rawMaterialProducer = getService().findById(RawMaterialProducer.class, rawMaterialProducer.getId());
+            getInstance().setRawMaterialProducer(rawMaterialProducer);
         } catch (Exception ex) {
-            facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "Common.globalError.description");
+            log.error("Exception caught", ex);
+            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+        }
+    }
+    @End
+    @Override
+    public String create() {
+        try {
+            getService().create(getInstance());
+            addCreatedMessage();
+            return Outcome.SUCCESS;
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
             return Outcome.REDISPLAY;
         }
-    }*/
+    }
+
+    @SuppressWarnings({"NullableProblems"})
+    public void clearRawMaterialProducer() {
+        getInstance().setRawMaterialProducer(null);
+    }
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
 }
