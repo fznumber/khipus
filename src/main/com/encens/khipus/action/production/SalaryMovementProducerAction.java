@@ -1,6 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.production.RawMaterialProducer;
@@ -46,6 +47,35 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
     @SuppressWarnings({"NullableProblems"})
     public void clearRawMaterialProducer() {
         getInstance().setRawMaterialProducer(null);
+    }
+
+    /*@Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    public String select(SalaryMovementProducer salaryMovementProducer) {
+        try {
+            SalaryMovementProducer discount = rawMaterialProducerDiscountService.prepareDiscount(rawMaterialProducer);
+            setOp(OP_UPDATE);
+            setInstance(discount);
+            return Outcome.SUCCESS;
+        } catch (Exception ex) {
+            facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "Common.globalError.description");
+            return Outcome.REDISPLAY;
+        }
+    }*/
+
+    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    public String select(SalaryMovementProducer salaryMovementProducer) {
+        try {
+            setOp(OP_UPDATE);
+            //define the unmanaged instance as current instance
+            setInstance(salaryMovementProducer);
+            //Ensure the instance exists in the database, find it
+            setInstance(getService().findById(getEntityClass(), getId(salaryMovementProducer)));
+            return Outcome.SUCCESS;
+
+        } catch (EntryNotFoundException e) {
+            addNotFoundMessage();
+            return Outcome.FAIL;
+        }
     }
 
     public boolean isReadonly() {

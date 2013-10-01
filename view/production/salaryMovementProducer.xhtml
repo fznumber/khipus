@@ -84,7 +84,8 @@
                                    datePattern="#{messages['patterns.date']}"
                                    styleClass="input"
                                    enableManualInput="true"
-                                   tabindex="4">
+                                   tabindex="4"
+                                   required="true">
                         <f:convertDateTime pattern="#{messages['patterns.date']}" timeZone="#{sessionUser.timeZone}"
                                            type="date"/>
                     </rich:calendar>

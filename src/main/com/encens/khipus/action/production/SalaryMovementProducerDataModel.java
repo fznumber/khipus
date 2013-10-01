@@ -23,7 +23,11 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class SalaryMovementProducerDataModel extends QueryDataModel<Long, SalaryMovementProducer> {
 
-    private static final String[] RESTRICTIONS = {};
+    private static final String[] RESTRICTIONS = {
+            "lower(salaryMovementProducer.rawMaterialProducer.firstName) like concat('%',concat(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.name}, '%'))",
+            "lower(salaryMovementProducer.rawMaterialProducer.lastName) like concat(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName}, '%')",
+            "lower(salaryMovementProducer.rawMaterialProducer.maidenName) like concat(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName}, '%')"
+    };
 
     @Create
     public void init() {
@@ -32,8 +36,9 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
 
     @Override
     public String getEjbql() {
-        String query = "select salaryMovementProducer " +
-                       "from SalaryMovementProducer salaryMovementProducer ";
+        String query = " select salaryMovementProducer " +
+                       " from SalaryMovementProducer salaryMovementProducer " +
+                       " join salaryMovementProducer.rawMaterialProducer ";
         return query;
     }
 

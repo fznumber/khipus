@@ -12,63 +12,43 @@
     <ui:param name="bodyWidth" value="100%"/>
     <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
-        <h:form id="rawMaterialProducerSearch">
-            <!--<rich:simpleTogglePanel label="#{messages['SalaryMovementProducer.search']}" switchType="client">
-                <h:panelGrid columns="2" width="100%">
+        <h:form id="salaryMovementProducerSearch">
+            <rich:simpleTogglePanel label="#{messages['SalaryMovementProducer.search']}" switchType="client">
+                <h:panelGrid columns="1" width="100%">
                     <s:div>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.number']}</ui:define>
-                            <h:inputText id="group" value="#{rawMaterialProducerDataModel.criteria.productiveZone.number}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
-                            <h:inputText id="group" value="#{rawMaterialProducerDataModel.criteria.productiveZone.group}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
-                            <h:inputText id="name" value="#{rawMaterialProducerDataModel.criteria.productiveZone.name}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                    </s:div>
-                    <s:div>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
-                            <h:inputText id="firstName" value="#{rawMaterialProducerDataModel.criteria.firstName}"
+                            <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.name}"
                                          maxlength="100" tabindex="1" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.lastName']}</ui:define>
-                            <h:inputText id="lastName" value="#{rawMaterialProducerDataModel.criteria.lastName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                            <h:inputText id="lastName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName}"
+                                         maxlength="100" tabindex="2" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
-                            <h:inputText id="maidenName" value="#{rawMaterialProducerDataModel.criteria.maidenName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                            <h:inputText id="maidenName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName}"
+                                         maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
-                            <a4j:commandButton action="#{rawMaterialProducerDataModel.search}" reRender="rawMaterialProducerList, dataScroller"
+                            <a4j:commandButton action="#{salaryMovementProducerDataModel.search}" reRender="salaryMovementProducerList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
                                                tabindex="4">
                                 <s:defaultAction/>
                             </a4j:commandButton>
-                        </s:decorate>
+                        </s:decorate>-->
                     </s:div>
                 </h:panelGrid>
                 <rich:jQuery selector="#group" query="focus()" timing="onload"/>
-            </rich:simpleTogglePanel>-->
+            </rich:simpleTogglePanel>
 
             <rich:spacer height="15"/>
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
-                          propagation="none" />
+                          propagation="none" action="#{salaryMovementProducerAction.startCreate}"/>
             </div>
 
             <rich:dataTable value="#{salaryMovementProducerDataModel}" var="salaryMovementProducerItem" id="salaryMovementProducerList"
@@ -130,7 +110,7 @@
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
-                                   action="#{rawMaterialProducerDiscountAction.select(salaryMovementProducerItem)}">
+                                   action="#{salaryMovementProducerAction.select(salaryMovementProducerItem)}">
                         <s:conversationPropagation value="none"/>
                     </h:commandLink>
                 </rich:column>
