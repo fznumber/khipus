@@ -48,21 +48,6 @@
                 </f:facet>
 
 
-                    <!--<s:decorate id="rawMaterialProducerField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['RawMaterialRejectionNote.rawMaterialProducer']}</ui:define>
-                        <h:inputText id="rawMaterialProducer" value="#{salaryMovementProducer.rawMaterialProducer.fullName}" styleClass="input"
-                                     maxlength="150" tabindex="1" required="true"
-                                     readonly="false">
-                            &lt;!&ndash;<a4j:support event="onblur" reRender="rawMaterialProducerField"/>&ndash;&gt;
-                        </h:inputText>
-                        <a4j:commandLink id = "selectRawMaterialProducer" ajaxSingle="true" immediate="true" tabindex="2"
-                                         title="#{messages['RawMaterialCollectionSession.selectProductiveZone']}"
-                                         onclick="Richfaces.showModalPanel('rawMaterialProducerModalPanel');"
-                                         rendered="#{!salaryMovementProducerAction.managed}">
-                            <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
-                        </a4j:commandLink>
-                    </s:decorate>-->
-
                 <s:decorate id="rawMaterialProducerField" template="/include/viewField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['RawMaterialRejectionNote.rawMaterialProducer']}</ui:define>
                     <app:selectPopUp id="rawMaterialProducer"
@@ -90,8 +75,6 @@
                                        noSelectionLabel=""/>
                         <s:convertEntity/>
                     </h:selectOneMenu>
-                    <h:outputText value="#{salaryMovementProducer.typeMovementProducer.name}"
-                                  />
                 </s:decorate>
 
                 <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -143,22 +126,6 @@
 
         <rich:jQuery selector="#name" query="focus()" timing="onload"/>
 
-        <!--<s:decorate id="rawMaterialProdecerModalPanelContainer" template="/production/searchRawMaterialProducerModalPanel.xhtml">
-            <ui:param name="listTitle" value="#{messages['RawMaterialRejectionNote.titleRawMaterialProducer']}" />
-            <ui:param name="searchPanelTitle" value="#{messages['RawMaterialRejectionNote.searchRawMaterialProducer']}" />
-            <ui:param name="dialogId" value="rawMaterialProducerModalPanel"/>
-            <ui:define name="assignButton">
-                <a4j:commandButton id="assignButton"
-                                   title="#{messages['Common.choose']}"
-                                   action="#{salaryMovementProducerAction.selectRawMaterialProducer(rawMaterialProducerItem)}"
-                                   image="/img/active.gif" styleClass="select-image-middle"
-                                   ajaxSingle="true" reRender="rawMaterialProducerField"
-                                   oncomplete="Richfaces.hideModalPanel('rawMaterialProducerModalPanel');"
-                                   style="width:0.8em"/>
-
-            </ui:define>
-        </s:decorate>-->
-
         <s:decorate id="rawMaterialProdecerModalPanelContainer"
                     template="/production/searchRawMaterialProducerModalPanel.xhtml"
                     rendered="#{not salaryMovementProducerAction.managed}">
@@ -171,7 +138,7 @@
                                    styleClass="select-image-middle"
                                    ajaxSingle="true"
                                    reRender="rawMaterialProducerField"
-                                   oncomplete="Richfaces.hideModalPanel('rawMaterialProducerModalPanel');"/>
+                                   oncomplete="Richfaces.hideModalPanel('rawMaterialProducerListModalPanel');"/>
             </ui:define>
         </s:decorate>
 
