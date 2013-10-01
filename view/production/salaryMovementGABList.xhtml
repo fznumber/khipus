@@ -18,20 +18,20 @@
                     <s:div>
 
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['Person.firstName']}</ui:define>
-                            <h:inputText id="firstName" value="#{salaryMovementGABDataModel.privateCriteria.productiveZone.number}"
+                            <ui:define name="label">#{messages['ProductiveZone.number']}</ui:define>
+                            <h:inputText id="firstName" value="#{salaryMovementGABDataModel.criteria.productiveZone.number}"
                                          maxlength="100" tabindex="1" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['Person.lastName']}</ui:define>
-                            <h:inputText id="lastName" value="#{salaryMovementGABDataModel.privateCriteria.productiveZone.group}"
+                            <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
+                            <h:inputText id="lastName" value="#{salaryMovementGABDataModel.criteria.productiveZone.group}"
                                          maxlength="100" tabindex="2" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
-                            <h:inputText id="maidenName" value="#{salaryMovementGABDataModel.privateCriteria.productiveZone.name}"
+                            <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
+                            <h:inputText id="maidenName" value="#{salaryMovementGABDataModel.criteria.productiveZone.name}"
                                          maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{salaryMovementGABDataModel.search}" reRender="salaryMovementGABList, dataScroller"
