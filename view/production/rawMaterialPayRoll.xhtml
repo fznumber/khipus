@@ -51,6 +51,7 @@
         </c:choose>
     </f:facet>
     <h:panelGrid columns="3" width="100%">
+
         <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
             <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
@@ -63,6 +64,7 @@
                 <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
             </a4j:commandLink>
         </s:decorate>
+
         <s:decorate id="unitPriceField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialPayRoll.unitPrice']}</ui:define>
             <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" readonly="#{rawMaterialPayRollAction.readonly}" />

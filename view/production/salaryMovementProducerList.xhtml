@@ -12,59 +12,44 @@
     <ui:param name="bodyWidth" value="100%"/>
     <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
-        <h:form id="rawMaterialProducerSearch">
+        <h:form id="salaryMovementProducerSearch">
             <rich:simpleTogglePanel label="#{messages['SalaryMovementProducer.search']}" switchType="client">
-                <h:panelGrid columns="2" width="100%">
+                <h:panelGrid columns="1" width="100%">
                     <s:div>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.number']}</ui:define>
-                            <h:inputText id="group" value="#{rawMaterialProducerDataModel.criteria.productiveZone.number}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
-                            <h:inputText id="group" value="#{rawMaterialProducerDataModel.criteria.productiveZone.group}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
-                            <h:inputText id="name" value="#{rawMaterialProducerDataModel.criteria.productiveZone.name}"
-                                         maxlength="100" tabindex="1" styleClass="input">
-                            </h:inputText>
-                        </s:decorate>
-                    </s:div>
-                    <s:div>
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
-                            <h:inputText id="firstName" value="#{rawMaterialProducerDataModel.criteria.firstName}"
+                            <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.name}"
                                          maxlength="100" tabindex="1" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.lastName']}</ui:define>
-                            <h:inputText id="lastName" value="#{rawMaterialProducerDataModel.criteria.lastName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                            <h:inputText id="lastName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName}"
+                                         maxlength="100" tabindex="2" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
-                            <h:inputText id="maidenName" value="#{rawMaterialProducerDataModel.criteria.maidenName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                            <h:inputText id="maidenName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName}"
+                                         maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
-                            <a4j:commandButton action="#{rawMaterialProducerDataModel.search}" reRender="rawMaterialProducerList, dataScroller"
+                            <a4j:commandButton action="#{salaryMovementProducerDataModel.search}" reRender="salaryMovementProducerList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
                                                tabindex="4">
                                 <s:defaultAction/>
                             </a4j:commandButton>
-                        </s:decorate>
+                        </s:decorate>-->
                     </s:div>
                 </h:panelGrid>
                 <rich:jQuery selector="#group" query="focus()" timing="onload"/>
             </rich:simpleTogglePanel>
 
             <rich:spacer height="15"/>
+
+            <div class="buttons">
+                <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
+                          propagation="none" action="#{salaryMovementProducerAction.startCreate}"/>
+            </div>
 
             <rich:dataTable value="#{salaryMovementProducerDataModel}" var="salaryMovementProducerItem" id="salaryMovementProducerList"
                             rows="#{sessionUser.rowsPerPage}"
@@ -73,57 +58,33 @@
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
+                            <app:commandSortHeader dataModel="#{salaryMovementProducerDataModel}"
+                                                   reRender="salaryMovementProducerList, dataScroller">
+                                #{messages['SalaryMovementProducer.rawMaterialProducer']}
+                            </app:commandSortHeader>
+                        </rich:column>
+                        <rich:column>
                             <app:commandSortHeader sortProperty="salaryMovementProducer.date" dataModel="#{salaryMovementProducerDataModel}"
                                                    reRender="salaryMovementProducerList, dataScroller">
                                 #{messages['SalaryMovementProducer.date']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.yogurt" dataModel="#{salaryMovementProducerDataModel}"
+                            <app:commandSortHeader dataModel="#{salaryMovementProducerDataModel}"
                                                    reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.yogurt']}
+                                #{messages['SalaryMovementProducer.description']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.veterinary" dataModel="#{salaryMovementProducerDataModel}"
+                            <app:commandSortHeader sortProperty="salaryMovementProducer.valor" dataModel="#{salaryMovementProducerDataModel}"
                                                    reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.veterinary']}
+                                #{messages['SalaryMovementProducer.value']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.credit" dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.credit']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.cans" dataModel="#{salaryMovementProducerDataModel}"
+                            <app:commandSortHeader sortProperty="salaryMovementProducer.typeMovementProducer.name" dataModel="#{salaryMovementProducerDataModel}"
                                                    reRender="salaryMovementProducer, dataScroller">
-                                #{messages['SalaryMovementProducer.cans']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.otherDiscount" dataModel="#{rawMaterialProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.otherDiscount']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.otherIncoming" dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.otherIncoming']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.withholdingTax" dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.withholdingTax']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.concentrated" dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducerList, dataScroller">
-                                #{messages['SalaryMovementProducer.concentrated']}
+                                #{messages['SalaryMovementProducer.concept']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column styleClass="center">
@@ -133,39 +94,33 @@
                 </f:facet>
 
                 <rich:column>
+                    <h:outputText value="#{salaryMovementProducerItem.rawMaterialProducer.getFullName()}"/>
+                </rich:column>
+                <rich:column>
                     <h:outputText value="#{salaryMovementProducerItem.date}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.yogurt}"/>
+                    <h:outputText value="#{salaryMovementProducerItem.description}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.veterinary}"/>
+                    <h:outputText value="#{salaryMovementProducerItem.valor}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.credit}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.cans}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.otherDiscount}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.otherIncoming}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.withholdingTax}"/>
-                </rich:column>
-                <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.concentrated}"/>
+                    <h:outputText value="#{salaryMovementProducerItem.typeMovementProducer.name}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
-                                   action="#{rawMaterialProducerDiscountAction.select(salaryMovementProducerItem)}">
+                                   action="#{salaryMovementProducerAction.select(salaryMovementProducerItem)}">
                         <s:conversationPropagation value="none"/>
                     </h:commandLink>
                 </rich:column>
             </rich:dataTable>
+
+            <div class="buttons">
+                <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
+                          propagation="none"  />
+            </div>
+
             <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{rawMaterialProducerDataModel}"/>
 
             <rich:jQuery selector="#salaryMovementProducerList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>

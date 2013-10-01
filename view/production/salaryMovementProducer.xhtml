@@ -9,153 +9,139 @@
                 xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
 
-<ui:define name="pageTitle">
-    <c:choose>
-        <c:when test="#{rawMaterialProducerDiscountAction.managed}">
-            #{messages['ProductiveZone.edit']}
-        </c:when>
-        <c:otherwise>
-            #{messages['ProductiveZone.new']}
-        </c:otherwise>
-    </c:choose>
-</ui:define>
-<ui:param name="bodyWidth" value="50%"/>
-<ui:param name="selectedTab" value="products"/>
-<ui:define name="body">
-
-<style type="text/css">
-    .special tr[id]{
-        display:none;
-    }
-</style>
-
-<h:form id="rawMaterialProducerDiscountForm">
-<div class="buttons">
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.create}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{!rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','CREATE')}"/>
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.update}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','UPDATE')}"/>
-    <h:commandButton value="#{messages['Common.delete']}"
-                     styleClass="button" rendered="#{rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','DELETE')}">
-        <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
-                               operation="show"/>
-    </h:commandButton>
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.cancel}" value="#{messages['Common.cancel']}"
-                     styleClass="button" immediate="true"/>
-</div>
-
-<rich:panel id="formPanel">
-    <f:facet name="header">
+    <ui:define name="pageTitle">
         <c:choose>
-            <c:when test="#{rawMaterialProducerDiscountAction.managed}">
-                #{messages['RawMaterialProducerDiscount.edit']}
+            <c:when test="#{salaryMovementProducerAction.managed}">
+                #{messages['SalaryMovementProducerAction.edit']}
             </c:when>
             <c:otherwise>
-                #{messages['RawMaterialProducerDiscount.new']}
+                #{messages['SalaryMovementProducerAction.new']}
             </c:otherwise>
         </c:choose>
-    </f:facet>
+    </ui:define>
+    <ui:param name="bodyWidth" value="50%"/>
+    <ui:param name="selectedTab" value="products"/>
+    <ui:define name="body">
+        <h:form id="salaryMovementProducerForm">
+            <div class="buttons">
+                <h:commandButton action="#{salaryMovementProducerAction.create}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{!salaryMovementProducerAction.managed }" id="createButtonId">
 
-    <fieldset class="fieldset-border">
-        <legend class="fieldset-title">#{messages['RawMaterialProducerDiscount.fieldsetGeneralData']}</legend>
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.productiveZone']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.rawMaterialProducer.productiveZone.fullName}" readonly="true" styleClass="input" required="false"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
+                    <s:defaultAction/>
+                </h:commandButton>
+                <h:commandButton action="#{salaryMovementProducerAction.update}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed }"/>
+                <h:commandButton action="#{salaryMovementProducerAction.cancel}" value="#{messages['Common.cancel']}"
+                                 styleClass="button" immediate="true"/>
+            </div>
+
+            <rich:panel id="formPanel">
+                <f:facet name="header">
+                    <c:choose>
+                        <c:when test="#{salaryMovementProducerAction.managed}">
+                            #{messages['SalaryMovementProducer.edit']}
+                        </c:when>
+                        <c:otherwise>
+                            #{messages['SalaryMovementProducer.new']}
+                        </c:otherwise>
+                    </c:choose>
+                </f:facet>
+
+
+                <s:decorate id="rawMaterialProducerField" template="/include/viewField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['RawMaterialRejectionNote.rawMaterialProducer']}</ui:define>
+                    <app:selectPopUp id="rawMaterialProducer"
+                                     required="true"
+                                     textValue="#{salaryMovementProducer.rawMaterialProducer.fullName}"
+                                     value="#{salaryMovementProducer.rawMaterialProducer}"
+                                     dataModel="#{rawMaterialProducerDataModel}"
+                                     clearAction="salaryMovementProducerAction.clearRawMaterialProducer()"
+                                     searchModalPanel="rawMaterialProducerListModalPanel"
+                                     reRender="rawMaterialProducerField"
+                                     readOnly="#{salaryMovementProducerAction.managed}"
+                                     hotKeySelect="alt+2"/>
+                </s:decorate>
+
+                <s:decorate id="typeMovementProducerField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['SalaryMovementProducer.typeMovementProducer']}</ui:define>
+                    <h:selectOneMenu id="typeMovementProducer"
+                                     value="#{salaryMovementProducer.typeMovementProducer}"
+                                     styleClass="input"
+                                     tabindex="3"
+                                     required="true">
+                        <s:selectItems value="#{typeMovementProducerList}" var="typeMovementProducer"
+                                       label="#{typeMovementProducer.name}"
+                                       hideNoSelectionLabel="false"
+                                       noSelectionLabel=""/>
+                        <s:convertEntity/>
+                    </h:selectOneMenu>
+                </s:decorate>
+
+                <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['SalaryMovementProducer.date']}</ui:define>
+                    <rich:calendar value="#{salaryMovementProducer.date}"
+                                   popup="true"
+                                   datePattern="#{messages['patterns.date']}"
+                                   styleClass="input"
+                                   enableManualInput="true"
+                                   tabindex="4"
+                                   required="true">
+                        <f:convertDateTime pattern="#{messages['patterns.date']}" timeZone="#{sessionUser.timeZone}"
+                                           type="date"/>
+                    </rich:calendar>
+                </s:decorate>
+
+                <s:decorate id="valorField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['SalaryMovementProducer.valor']}</ui:define>
+                    <h:inputText id="valor" value="#{salaryMovementProducer.valor}" styleClass="input" required="true"
+                                 maxlength="100" tabindex="5">
+                        <a4j:support event="onblur" reRender="valorField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['SalaryMovementProducer.description']}</ui:define>
+                    <h:inputTextarea id="description"
+                                     value="#{salaryMovementProducer.description}"
+                                     styleClass="input textarea"
+                                     tabindex="6">
+                        <a4j:support event="onblur" reRender="valorField"/>
+                    </h:inputTextarea>
+                </s:decorate>
+
+
+            </rich:panel>
+
+            <div class="buttons">
+                <h:commandButton action="#{salaryMovementProducerAction.create}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{!salaryMovementProducerAction.managed }" >
+
+                    <s:defaultAction/>
+                </h:commandButton>
+                <h:commandButton action="#{salaryMovementProducerAction.update}" value="#{messages['Common.save']}"
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed }"/>
+                <h:commandButton action="#{salaryMovementProducerAction.cancel}" value="#{messages['Common.cancel']}"
+                                 styleClass="button" immediate="true"/>
+            </div>
+        </h:form>
+
+        <rich:jQuery selector="#name" query="focus()" timing="onload"/>
+
+        <s:decorate id="rawMaterialProdecerModalPanelContainer"
+                    template="/production/searchRawMaterialProducerModalPanel.xhtml"
+                    rendered="#{not salaryMovementProducerAction.managed}">
+            <ui:param name="dialogId" value="rawMaterialProducerListModalPanel"/>
+            <ui:param name="dataModel" value="#{rawMaterialProducerDataModel}"/>
+            <ui:define name="assignButton">
+                <a4j:commandButton id="assignButton"
+                                   action="#{salaryMovementProducerAction.selectRawMaterialProducer(rawMaterialProducerItem)}"
+                                   image="/img/active.gif"
+                                   styleClass="select-image-middle"
+                                   ajaxSingle="true"
+                                   reRender="rawMaterialProducerField"
+                                   oncomplete="Richfaces.hideModalPanel('rawMaterialProducerListModalPanel');"/>
+            </ui:define>
         </s:decorate>
 
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.rawMaterialProducer']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.rawMaterialProducer.fullName}" styleClass="input" readonly="true" required="false"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-    </fieldset>
-
-    <rich:spacer height="15" />
-
-    <fieldset class="fieldset-border">
-        <legend class="fieldset-title">#{messages['RawMaterialProducerDiscount.fieldsetDiscounts']}</legend>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.alcohol']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.alcohol}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.concentrated']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.concentrated}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.yogurt']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.yogurt}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.veterinary']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.veterinary}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.credit']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.credit}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.cans']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.cans}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.otherDiscounts']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.otherDiscount}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-    </fieldset>
-
-    <rich:spacer height="10" />
-    <fieldset class="fieldset-border">
-        <legend class="fieldset-title">#{messages['RawMaterialProducerDiscount.fieldsetIncomings']}</legend>
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['RawMaterialProducerDiscount.otherIncomings']}</ui:define>
-            <h:inputText value="#{rawMaterialProducerDiscount.otherIncoming}" styleClass="input" required="true"
-                         maxlength="150" tabindex="1">
-            </h:inputText>
-        </s:decorate>
-    </fieldset>
-
-</rich:panel>
-
-<div class="buttons">
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.create}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{!rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','CREATE')}"/>
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.update}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','UPDATE')}"/>
-    <h:commandButton value="#{messages['Common.delete']}"
-                     styleClass="button" rendered="#{rawMaterialProducerDiscountAction.managed and s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','DELETE')}">
-        <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
-                               operation="show"/>
-    </h:commandButton>
-    <h:commandButton action="#{rawMaterialProducerDiscountAction.cancel}" value="#{messages['Common.cancel']}"
-                     styleClass="button" immediate="true"/>
-</div>
-</h:form>
-
-<rich:jQuery selector="#name" query="focus()" timing="onload"/>
-</ui:define>
+    </ui:define>
 </ui:composition>
