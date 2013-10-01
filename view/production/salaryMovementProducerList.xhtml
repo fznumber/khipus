@@ -19,19 +19,19 @@
 
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
-                            <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.firstName}"
+                            <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.firstName}"
                                          maxlength="100" tabindex="1" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.lastName']}</ui:define>
-                            <h:inputText id="lastName" value="#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.lastName}"
+                            <h:inputText id="lastName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName}"
                                          maxlength="100" tabindex="2" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
-                            <h:inputText id="maidenName" value="#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.maidenName}"
+                            <h:inputText id="maidenName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName}"
                                          maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{salaryMovementProducerDataModel.search}" reRender="salaryMovementProducerList, dataScroller"

@@ -3,6 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.model.production.SalaryMovementGAB;
 import com.encens.khipus.model.production.SalaryMovementProducer;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -25,14 +26,10 @@ import java.util.List;
 public class SalaryMovementProducerDataModel extends QueryDataModel<Long, SalaryMovementProducer> {
 
     private static final String[] RESTRICTIONS = {
-            "lower(rawMaterialProducer.firstName) like concat(#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.firstName}, '%')",
-            "lower(rawMaterialProducer.lastName) like concat(#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.lastName}, '%')",
-            "lower(rawMaterialProducer.maidenName) like concat(#{salaryMovementProducerDataModel.privateCriteria.rawMaterialProducer.maidenName}, '%')",
+            "upper(rawMaterialProducer.firstName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.firstName})), '%')",
+            "upper(rawMaterialProducer.lastName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName})), '%')",
+            "upper(rawMaterialProducer.maidenName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName})), '%')"
     };
-
-
-
-    private PrivateCriteria privateCriteria;
 
     @Create
     public void init() {
@@ -43,7 +40,7 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
     public String getEjbql() {
         String query = " select salaryMovementProducer " +
                        " from SalaryMovementProducer salaryMovementProducer " +
-                       " left join salaryMovementProducer.rawMaterialProducer rawMaterialProducer";
+                       " left join fetch salaryMovementProducer.rawMaterialProducer rawMaterialProducer";
         return query;
     }
 
@@ -52,23 +49,10 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
         return Arrays.asList(RESTRICTIONS);
     }
 
-    public PrivateCriteria getPrivateCriteria() {
-        if (privateCriteria == null) {
-            privateCriteria = new PrivateCriteria();
-        }
-        return privateCriteria;
-    }
-
-    public static class PrivateCriteria {
-
-        private RawMaterialProducer rawMaterialProducer = new RawMaterialProducer();
-
-        public RawMaterialProducer getRawMaterialProducer() {
-            return rawMaterialProducer;
-        }
-
-        public void setRawMaterialProducer(RawMaterialProducer rawMaterialProducer) {
-            this.rawMaterialProducer = rawMaterialProducer;
-        }
+    @Override
+    public SalaryMovementProducer createInstance() {
+        SalaryMovementProducer salaryMovementGAB = super.createInstance();
+        salaryMovementGAB.setRawMaterialProducer(new RawMaterialProducer());
+        return salaryMovementGAB;
     }
 }
