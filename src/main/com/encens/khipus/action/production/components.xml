@@ -34,4 +34,6 @@
         </framework:restrictions>
     </framework:entity-query>
 
+    <framework:entity-query name="typeMovementProducerList" ejbql="select typeMovementProducer from TypeMovementProducer typeMovementProducer "/>
+
 </components>

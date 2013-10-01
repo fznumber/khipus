@@ -89,7 +89,7 @@
                 <ui:insert name="assignButton"/>
             </rich:column>
         </rich:dataTable>
-        <app:dataScroller id="dataScroller" for="rawMaterialProducerList" rawMaterialProducerDataModel="#{rawMaterialProducerDataModel}"/>
+        <app:dataScroller id="dataScroller" for="rawMaterialProducerList" dataModel="#{rawMaterialProducerDataModel}"/>
         <rich:componentControl for="#{dialogId}" attachTo="closeLink" operation="hide" event="onclick"/>
     </h:form>
 

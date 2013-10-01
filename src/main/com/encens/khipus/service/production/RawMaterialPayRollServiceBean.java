@@ -37,6 +37,12 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     @In
     private RawMaterialProducerDiscountService rawMaterialProducerDiscountService;
 
+    @In
+    private SalaryMovementProducerService salaryMovementProducerService;
+
+    @In
+    private SalaryMovementGABService salaryMovementGABService;
+
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void create(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException {
@@ -222,6 +228,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         Map<Date, Double> totalWeightsByGab = createMapOfCollectedWeights(rawMaterialPayRoll);
         Map<Date, Double> differences = createMapOfDifferencesWeights(rawMaterialPayRoll);
         Map<Long, Aux> map = createMapOfProducers(rawMaterialPayRoll, totalWeight, countProducers,totalWeightsByGab,differences);
+        Double alcoholByGAB = salaryMovementGABService.getAlcoholBayGAB(rawMaterialPayRoll.getProductiveZone(),rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
 
         Double totalWeighed = 0.0;
         Double totalAmountCollected = 0.0;
@@ -260,7 +267,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 record.setStartDateTaxLicence(aux.producer.getStartDateTaxLicence());
             }
 
-            RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
+            //RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
+            RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer,rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+            discount.setAlcohol(alcoholByGAB*(aux.procentaje));
             auxwithholdingTax = aux.withholdingTax;
             discount.setWithholdingTax(RoundUtil.getRoundValue(auxwithholdingTax,2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setRawMaterialPayRecord(record);
@@ -464,6 +473,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         double taxRate = rawMaterialPayRoll.getTaxRate() / 100;
         List<Object[]> collectedProducers = find("RawMaterialPayRoll.findCollectedAmountByMetaProductBetweenDates", rawMaterialPayRoll);
         Map<Long, Aux> map = new HashMap<Long, Aux>();
+        Double totalMoneyCollectedByGab = 0.0;
         for(Object[] obj : collectedProducers) {
             Date date = (Date)obj[0];
             RawMaterialProducer rawMaterialProducer = (RawMaterialProducer)obj[1];
@@ -489,12 +499,28 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             aux.earnedMoney += earned;
             aux.collectedTotalMoney += earned;
             aux.withholdingTax += withholding;
+
+            totalMoneyCollectedByGab += earned;
         }
+        addProrationAlcohol(map, rawMaterialPayRoll, totalMoneyCollectedByGab);
         addProration(map,rawMaterialPayRoll,totalWeightsByGab,differences);
         return map;
     }
+    public Double getDiffTotalMoney(Map<Date, Double> differences)
+    {
+        Iterator collections = differences.entrySet().iterator();
+        Double totaldiff = 0.0;
+        while(collections.hasNext()){
 
-    private void addProration(Map<Long, Aux> map, RawMaterialPayRoll rawMaterialPayRoll, Double totalMoneyCollected, Double differenceMoneyTotal)
+            Map.Entry thisEntry = (Map.Entry) collections.next();
+            Double valor = (Double)thisEntry.getValue();
+            totaldiff += valor;
+        }
+
+        return RoundUtil.getRoundValue(totaldiff,2, RoundUtil.RoundMode.SYMMETRIC);
+    }
+
+    private void addProrationAlcohol(Map<Long, Aux> map, RawMaterialPayRoll rawMaterialPayRoll, Double totalMoneyCollected)
     {
         Iterator collections = map.entrySet().iterator();
         while(collections.hasNext()){
@@ -502,10 +528,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Map.Entry thisEntry = (Map.Entry) collections.next();
             Aux aux = (Aux)thisEntry.getValue();
             Map<Date,Double> rawMaterialCollected = getRawMaterialCollected(aux.producer, rawMaterialPayRoll);
-            Double porcentage = (aux.earnedMoney *100)/totalMoneyCollected;
-            Double proration = RoundUtil.getRoundValue(differenceMoneyTotal * (porcentage/100),2, RoundUtil.RoundMode.SYMMETRIC);
-            ((Aux) thisEntry.getValue()).adjustmentAmount = proration;
-            ((Aux) thisEntry.getValue()).earnedMoney = ((Aux) thisEntry.getValue()).earnedMoney - proration;
+            Double porcentage =RoundUtil.getRoundValue( ((aux.earnedMoney *100)/totalMoneyCollected)/100,2, RoundUtil.RoundMode.SYMMETRIC);
+            ((Aux) thisEntry.getValue()).totaDiffMoney = totalMoneyCollected;
+            ((Aux) thisEntry.getValue()).procentaje = porcentage;
         }
     }
 
@@ -661,6 +686,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return result;
     }
 
+    //region: borrar
     /*
     public List<GeneratedPayroll> findValidGeneratedPayrollsByGestionAndMount(Gestion gestion, Month month) {
         try {
@@ -680,7 +706,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return new ArrayList<GeneratedPayroll>();
     }
     */
-
+    //endregion borrar
     class Aux {
         public RawMaterialProducer producer;
         public Double collectedAmount = 0.0;
@@ -688,6 +714,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         public Double collectedTotalMoney = 0.0;
         public Double earnedMoney = 0.0;
         public Double withholdingTax = 0.0;
+        public Double procentaje = 0.0;
+        public Double totaDiffMoney= 0.0;
+
     }
 
     public class Discounts {

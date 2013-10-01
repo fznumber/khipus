@@ -6,7 +6,16 @@ import org.hibernate.annotations.Filter;
 import javax.persistence.*;
 import java.util.Date;
 
-
+@NamedQueries(
+        {
+            @NamedQuery(name = "SalaryMovementProducer.getDiscount",
+                        query = " select salaryMovementProducer.valor, typeMovementProducer.typeMovement, typeMovementProducer.name " +
+                                " from SalaryMovementProducer salaryMovementProducer " +
+                                " join SalaryMovementProducer.typeMovementProducer typeMovementProducer" +
+                                " where salaryMovementProducer.date between :startDate and :endDate " +
+                                " and salaryMovementProducer.rawMaterialProducer = :rawMaterialProducer ")
+        }
+)
 
 @TableGenerator(name = "SalaryMovementProducer_Generator",
         table = "SECUENCIA",
