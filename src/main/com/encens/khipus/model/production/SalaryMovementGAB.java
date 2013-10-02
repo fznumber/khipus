@@ -43,7 +43,7 @@ public class SalaryMovementGAB implements com.encens.khipus.model.BaseModel {
     @JoinColumn(name = "IDTIPOMOVIMIENTOGAB", nullable = false, updatable = false, insertable = true)
     private TypeMovementGAB typeMovementGAB;
 
-    @Column(name = "DESCRIPCION",nullable = false)
+    @Column(name = "DESCRIPCION",nullable = true)
     private String description;
 
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
