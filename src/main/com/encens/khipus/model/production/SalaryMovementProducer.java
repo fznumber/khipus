@@ -43,7 +43,7 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
     @JoinColumn(name = "IDTIPOMOVIMIENTOPRODUCTOR", nullable = false, updatable = false, insertable = true)
     private TypeMovementProducer typeMovementProducer;
 
-    @Column(name = "DESCRIPCION",nullable = false)
+    @Column(name = "DESCRIPCION",nullable = true)
     private String description;
 
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")

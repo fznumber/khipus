@@ -123,8 +123,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " rawMaterialProducerDiscount.otherIncoming, " +
                 " rawMaterialPayRecord.liquidPayable, " +
                 " rawMaterialProducer.lastName, " +
-                " rawMaterialProducer.maidenName, " +
-                " rawMaterialPayRoll.productiveZone.number " +
+                " rawMaterialProducer.maidenName " +
+                //" rawMaterialPayRoll.productiveZone.number " +
                 " FROM RawMaterialPayRoll rawMaterialPayRoll " +
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
