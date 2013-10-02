@@ -1,7 +1,6 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
-import com.encens.khipus.model.production.ProcessedProduct;
 import com.encens.khipus.model.production.ProductionInput;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.jboss.seam.annotations.AutoCreate;
@@ -28,12 +27,17 @@ public class ProductionInputServiceBean extends GenericServiceBean implements Pr
 
     @Override
     public void createProductionInput(ProductItem productItem) {
+
         ProductionInput productionInput = new ProductionInput();
         productionInput.setName(productItem.getName());
         productionInput.setCode(productItem.getId().getProductItemCode());
         productionInput.setCollectable(false);
         productionInput.setDescription(productItem.getName() + " - " + productionInput.getCode());
+        productionInput.setProductItemCode(productItem.getProductItemCode());
+        productionInput.setCompanyNumber(productItem.getCompanyNumber());
+        productionInput.setProductItem(productItem);
         em.persist(productionInput);
+
     }
 
     @Override
@@ -42,13 +46,14 @@ public class ProductionInputServiceBean extends GenericServiceBean implements Pr
         ProductionInput productionInput = findByCode(productItem.getId().getProductItemCode());
         productionInput.setName(productItem.getName());
         productionInput.setDescription(productItem.getName() + " - " + productionInput.getCode());
-        try{
+        try {
             super.update(productionInput);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     public ProductionInput findByCode(String code) {
-        return (ProductionInput)em.createNamedQuery("ProductionInput.findByCode")
+        return (ProductionInput) em.createNamedQuery("ProductionInput.findByCode")
                 .setParameter("code", code)
                 .getSingleResult();
     }

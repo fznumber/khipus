@@ -31,10 +31,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private FormulaState formulaState = FormulaState.NONE;
 
-    @In private ProductionPlanningService productionPlanningService;
-    @In private ProcessedProductService processedProductService;
-    @In private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
-    @In private ProductionOrderCodeGenerator productionOrderCodeGenerator;
+    @In
+    private ProductionPlanningService productionPlanningService;
+    @In
+    private ProcessedProductService processedProductService;
+    @In
+    private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
+    @In
+    private ProductionOrderCodeGenerator productionOrderCodeGenerator;
 
     @Override
     protected GenericService getService() {
@@ -70,7 +74,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return processedProduct;
     }
 
-    @Begin(ifOutcome =  Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String createNew() {
         return Outcome.SUCCESS;
     }
@@ -99,10 +103,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public List<Consolidated> getConsolidatedInputs() {
         try {
             ProductionPlanning productionPlanning = getInstance();
-            Map<Long, Consolidated> consolidated =  new HashMap<Long, Consolidated>();
-            for(ProductionOrder order : productionPlanning.getProductionOrderList()) {
+            Map<Long, Consolidated> consolidated = new HashMap<Long, Consolidated>();
+            for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
                 evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
-                for(ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
+                for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
                     Consolidated aux = consolidated.get(ingredient.getMetaProduct().getId());
                     if (aux == null) {
                         aux = new Consolidated();
@@ -125,7 +129,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionOrder.getProductComposition() == null) return 0.0;
 
         double total = 0.0;
-        for(ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
+        for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
             total += ingredient.getAmount();
         }
         return total;
@@ -170,7 +174,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
-        for(ProductionOrder po : productionPlanning.getProductionOrderList()) {
+        for (ProductionOrder po : productionPlanning.getProductionOrderList()) {
             if (po.getCode().equals(productionOrder.getCode())) {
                 productionPlanning.getProductionOrderList().remove(po);
                 clearFormulation();
@@ -192,7 +196,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectResultProcessedProduct(ProcessedProduct processedProduct) {
-        try  {
+        try {
             processedProduct = getService().findById(ProcessedProduct.class, processedProduct.getId());
 
             OutputProductionVoucher outputProductionVoucher = new OutputProductionVoucher();
@@ -298,8 +302,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return outcome;
     }
 
-    public ProductComposition getProductComposition() { return productComposition; }
-    public void setProductComposition(ProductComposition productComposition) { this.productComposition = productComposition; }
+    public ProductComposition getProductComposition() {
+        return productComposition;
+    }
+
+    public void setProductComposition(ProductComposition productComposition) {
+        this.productComposition = productComposition;
+    }
 
     public List<ProductComposition> getProductCompositionList() {
         List<ProductComposition> productCompositionList = new ArrayList<ProductComposition>();
@@ -307,7 +316,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             return productCompositionList;
         }
 
-        for(ProductComposition pc : processedProduct.getProductCompositionList()) {
+        for (ProductComposition pc : processedProduct.getProductCompositionList()) {
             if (Boolean.TRUE.equals(pc.getActive())) {
                 productCompositionList.add(pc);
             }
@@ -318,7 +327,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void removeOutputProductionVoucher(OutputProductionVoucher outputProductionVoucher) {
         OutputProductionVoucher outputForRemove = null;
 
-        for(OutputProductionVoucher output : productionOrder.getOutputProductionVoucherList()) {
+        for (OutputProductionVoucher output : productionOrder.getOutputProductionVoucherList()) {
             if (output.getId().equals(outputProductionVoucher.getId())) {
                 outputForRemove = output;
                 break;
@@ -334,11 +343,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         private double amount;
         private MetaProduct product;
 
-        public double getAmount() { return amount; }
-        public void setAmount(double amount) { this.amount = amount; }
+        public double getAmount() {
+            return amount;
+        }
 
-        public MetaProduct getProduct() { return product; }
-        public void setProduct(MetaProduct product) { this.product = product; }
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
+
+        public MetaProduct getProduct() {
+            return product;
+        }
+
+        public void setProduct(MetaProduct product) {
+            this.product = product;
+        }
     }
 
     private static class Formulation {
