@@ -988,6 +988,15 @@
                         value="#{messages['menu.production.supplierPayments.rawMaterialProducerDiscount']}"
                         propagation="none" />
             </rich:menuItem>
+
+            <rich:menuItem submitMode="none"
+                           styleClass="main-menu-item"
+                           >
+                <s:link view="/production/salaryMovementGABList.xhtml"
+                        value="#{messages['menu.production.salaryMovementGAB']}"
+                        propagation="none" />
+            </rich:menuItem>
+
             <rich:menuItem submitMode="none"
                            styleClass="main-menu-item"
                            rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEW')}">
