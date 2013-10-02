@@ -117,7 +117,7 @@
                           propagation="none" />
             </div>
 
-            <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{rawMaterialProducerDataModel}"/>
+            <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{salaryMovementProducerDataModel}"/>
 
             <rich:jQuery selector="#salaryMovementProducerList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
             <rich:jQuery selector="#salaryMovementProducerList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>

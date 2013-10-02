@@ -39,7 +39,7 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
     private RawMaterialProducer rawMaterialProducer;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDTIPOMOVIMIENTOPRODUCTOR", nullable = false, updatable = false, insertable = true)
     private TypeMovementProducer typeMovementProducer;
 

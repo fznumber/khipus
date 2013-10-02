@@ -22,9 +22,9 @@ import java.util.List;
 public class ProductionInputDataModel extends QueryDataModel<Long, ProductionInput> {
 
     private static final String[] RESTRICTIONS = {
-            "lower(productionInput.name) like concat(#{productionInputDataModel.criteria.name}, '%')",
-            "lower(productionInput.code) like concat(#{productionInputDataModel.criteria.code}, '%')",
-            "lower(productionInput.description) like concat(#{productionInputDataModel.criteria.description}, '%')"
+            "upper(productionInput.name) like concat(concat('%',upper(#{productionInputDataModel.criteria.name})), '%')",
+            "upper(productionInput.code) like concat(concat('%',upper(#{productionInputDataModel.criteria.code})), '%')",
+            "upper(productionInput.description) like concat(concat('%',upper(#{productionInputDataModel.criteria.description})), '%')"
     };
 
     @Create

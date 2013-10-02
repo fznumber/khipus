@@ -27,7 +27,7 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
     private static final String[] RESTRICTIONS = {
             "productionPlanning.date >= #{productionPlanningDataModel.modelCriteria.startDate}",
             "productionPlanning.date <= #{productionPlanningDataModel.modelCriteria.endDate}",
-            "lower(productionOrder.code) like concat(#{productionPlanningDataModel.modelCriteria.order}, '%')"
+            "upper(productionOrder.code) like concat(concat('%',upper(#{productionPlanningDataModel.modelCriteria.order})), '%')"
     };
 
     @Create

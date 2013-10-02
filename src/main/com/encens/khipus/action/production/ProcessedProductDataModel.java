@@ -21,9 +21,9 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class ProcessedProductDataModel extends QueryDataModel<Long, ProcessedProduct> {
     private static final String[] RESTRICTIONS = {
-            "lower(processedProduct.name) like concat(#{processedProductDataModel.criteria.name}, '%')",
-            "lower(processedProduct.code) like concat(#{processedProductDataModel.criteria.code}, '%')",
-            "lower(processedProduct.description) like concat(#{processedProductDataModel.criteria.description}, '%')"
+            "upper(processedProduct.name) like concat(concat('%',upper(#{processedProductDataModel.criteria.name})), '%')",
+            "upper(processedProduct.code) like concat(concat('%',upper(#{processedProductDataModel.criteria.code})), '%')",
+            "upper(processedProduct.description) like concat(concat('%',upper(#{processedProductDataModel.criteria.description})), '%')"
     };
 
     @Create

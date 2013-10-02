@@ -39,7 +39,7 @@ public class SalaryMovementGAB implements com.encens.khipus.model.BaseModel {
     @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false, updatable = false, insertable = true)
     private ProductiveZone productiveZone;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDTIPOMOVIMIENTOGAB", nullable = false, updatable = false, insertable = true)
     private TypeMovementGAB typeMovementGAB;
 
