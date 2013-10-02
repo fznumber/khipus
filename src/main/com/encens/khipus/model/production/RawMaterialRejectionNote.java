@@ -13,7 +13,7 @@ import java.util.Date;
         allocationSize = 10)
 
 @Entity
-@Table(name = "NOTARECHAZOMATERIAPRIMA", uniqueConstraints = @UniqueConstraint(columnNames = {"IDPRODUCTORMATERIAPRIMA", "FECHA", "IDCOMPANIA"}))
+@Table(name = "NOTARECHAZOMATERIAPRIMA", uniqueConstraints = @UniqueConstraint(columnNames = {"IDCOMPANIA"}))
 @Filter(name = "companyFilter")
 @EntityListeners(com.encens.khipus.model.CompanyListener.class)
 public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseModel {

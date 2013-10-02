@@ -228,7 +228,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         Map<Date, Double> totalWeightsByGab = createMapOfCollectedWeights(rawMaterialPayRoll);
         Map<Date, Double> differences = createMapOfDifferencesWeights(rawMaterialPayRoll);
         Map<Long, Aux> map = createMapOfProducers(rawMaterialPayRoll, totalWeight, countProducers,totalWeightsByGab,differences);
-        Double alcoholByGAB = salaryMovementGABService.getAlcoholBayGAB(rawMaterialPayRoll.getProductiveZone(),rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+        Double alcoholByGAB = salaryMovementGABService.getAlcoholBayGAB(rawMaterialPayRoll.getProductiveZone(), rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
 
         Double totalWeighed = 0.0;
         Double totalAmountCollected = 0.0;
@@ -269,7 +269,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
             //RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
             RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer,rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
-            discount.setAlcohol(alcoholByGAB*(aux.procentaje));
+            discount.setAlcohol(RoundUtil.getRoundValue(alcoholByGAB*(aux.procentaje),2, RoundUtil.RoundMode.SYMMETRIC));
             auxwithholdingTax = aux.withholdingTax;
             discount.setWithholdingTax(RoundUtil.getRoundValue(auxwithholdingTax,2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setRawMaterialPayRecord(record);
@@ -563,7 +563,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Double totalWeight = find(totalCollectedByGab,date);
 
             //aux =RoundUtil.getRoundValue(mountCollected * (diff/totalWeight),2, RoundUtil.RoundMode.SYMMETRIC);
+            if(totalWeight != 0)
             aux =mountCollected * (diff/totalWeight);
+            else
+            aux = 0.0;
             differ = (diff - aux);
             totalBayGab = (totalWeight - mountCollected);
             differences.put(date,differ);
