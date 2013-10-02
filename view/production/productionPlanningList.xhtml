@@ -8,18 +8,20 @@
                 xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
 
-    <ui:define name="pageTitle">#{messages['ProductiveZone.list']}</ui:define>
+    <ui:define name="pageTitle">#{messages['ProductionPlanning.list']}</ui:define>
     <ui:param name="bodyWidth" value="100%"/>
     <ui:param name="selectedTab" value="products"/>
     <ui:define name="body">
         <style type="text/css">
-            .special tr[id]{
-                display:none;
+            .special tr[id] {
+                display: none;
             }
+
             .top-aligned {
                 vertical-align: top;
                 border: none;
             }
+
             .row-borders {
                 border-top: solid #616161 thin;
                 border-bottom: solid #616161 thin;
@@ -29,11 +31,13 @@
             <rich:simpleTogglePanel label="#{messages['ProductionPlanning.search']}" switchType="client">
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionPlanning.criteria.startDate']}</ui:define>
-                    <rich:calendar id="startDate" datePattern="dd-MM-yyyy" value="#{productionPlanningDataModel.modelCriteria.startDate}"/>
+                    <rich:calendar id="startDate" datePattern="dd-MM-yyyy"
+                                   value="#{productionPlanningDataModel.modelCriteria.startDate}"/>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionPlanning.criteria.endDate']}</ui:define>
-                    <rich:calendar id="endDate" datePattern="dd-MM-yyyy" value="#{productionPlanningDataModel.modelCriteria.endDate}"/>
+                    <rich:calendar id="endDate" datePattern="dd-MM-yyyy"
+                                   value="#{productionPlanningDataModel.modelCriteria.endDate}"/>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionPlanning.criteria.order']}</ui:define>
@@ -52,23 +56,30 @@
 
 
             <div class="buttons">
-                <h:commandButton value="#{messages['Common.new']}" action="#{productionPlanningAction.createNew}" styleClass="button"
+                <h:commandButton value="#{messages['Common.new']}" action="#{productionPlanningAction.createNew}"
+                                 styleClass="button"
                                  rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"/>
             </div>
-            <rich:dataGrid value="#{productionPlanningDataModel}" var="productionPlanningItem" id="productionPlanningList"
-                            width="100%" columns="3" elements="6" border="0" rowClasses="row-borders" columnClasses="top-aligned" style="border: none;"  >
+            <rich:dataGrid value="#{productionPlanningDataModel}" var="productionPlanningItem"
+                           id="productionPlanningList"
+                           width="100%" columns="3" elements="6" border="0" rowClasses="row-borders"
+                           columnClasses="top-aligned" style="border: none;">
                 <rich:panel style="position:relative; top:0;">
                     <f:facet name="header">
                         <h:outputFormat value="{0, date, dd-MM-yyyy}">
-                            <f:param value="#{productionPlanningItem.date}" />
+                            <f:param value="#{productionPlanningItem.date}"/>
                         </h:outputFormat>
                     </f:facet>
                     <s:div>
-                        <h:commandLink style="float:left;" value="#{messages['Common.select']}" action="#{productionPlanningAction.select(productionPlanningItem)}" />
-                        <h:outputText style="float: right; color: #{productionPlanningItem.state eq 'PENDING' ? 'red' : (productionPlanningItem.state eq 'EXECUTED' ? 'blue' : 'green')}" value="#{productionPlanningItem.state eq 'PENDING' ? messages['ProductionPlanning.state.pending'] : (productionPlanningItem.state eq 'EXECUTED' ? messages['ProductionPlanning.state.executed'] : messages['ProductionPlanning.state.finalized'])}" />
+                        <h:commandLink style="float:left;" value="#{messages['Common.select']}"
+                                       action="#{productionPlanningAction.select(productionPlanningItem)}"/>
+                        <h:outputText
+                                style="float: right; color: #{productionPlanningItem.state eq 'PENDING' ? 'red' : (productionPlanningItem.state eq 'EXECUTED' ? 'blue' : 'green')}"
+                                value="#{productionPlanningItem.state eq 'PENDING' ? messages['ProductionPlanning.state.pending'] : (productionPlanningItem.state eq 'EXECUTED' ? messages['ProductionPlanning.state.executed'] : messages['ProductionPlanning.state.finalized'])}"/>
                         <s:div style="float:clear"/>
                     </s:div>
-                    <rich:dataTable value="#{productionPlanningItem.productionOrderList}" var="productionOrderItem" id="productionOrderList"
+                    <rich:dataTable value="#{productionPlanningItem.productionOrderList}" var="productionOrderItem"
+                                    id="productionOrderList"
                                     width="100%">
                         <f:facet name="header">
                             <rich:columnGroup>
@@ -102,10 +113,12 @@
                     </rich:dataTable>
                 </rich:panel>
             </rich:dataGrid>
-            <app:dataScroller id="dataScroller" for="productionPlanningList" dataModel="#{productionPlanningDataModel}"/>
+            <app:dataScroller id="dataScroller" for="productionPlanningList"
+                              dataModel="#{productionPlanningDataModel}"/>
 
             <div class="buttons">
-                <h:commandButton value="#{messages['Common.new']}" action="#{productionPlanningAction.createNew}" styleClass="button"
+                <h:commandButton value="#{messages['Common.new']}" action="#{productionPlanningAction.createNew}"
+                                 styleClass="button"
                                  rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"/>
             </div>
 
