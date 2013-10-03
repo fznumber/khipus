@@ -17,6 +17,8 @@ import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -71,6 +73,8 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
@@ -78,9 +82,13 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
-
         addSummaryTotal(reportParameters);
         log.debug("generating expenseBudgetReport......................................");
+
+        reportParameters.put("reportTitle",messages.get("Report.titleGeneral"));
+        reportParameters.put("period",messages.get("Report.period"));
+        reportParameters.put("startDate",df.format(dateIni.getTime()));
+        reportParameters.put("endDate",df.format(dateEnd.getTime()));
 
         super.generateReport(
                 "rawMaterialPaySummaryReportAction",
@@ -93,33 +101,39 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     private void addSummaryTotal(HashMap<String, Object> params) {
         //discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
+        DecimalFormat df = new DecimalFormat("#0.00");
         discounts = rawMaterialPayRollService.getDiscounts(dateIni,dateEnd,zone,metaProduct);
 
         summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni,dateEnd,zone,metaProduct);
 
         Double totalMoneyCollected = discounts.mount;
-        Double totalDifferencesMoney = (discounts.collected - summaryTotal.balanceWeightTotal) * discounts.unitPrice;
-        Double totalMoneyBalance = summaryTotal.balanceWeightTotal * discounts.unitPrice;
-
-        params.put("total_collected", discounts.collected.toString());
-        params.put("price_unit", discounts.unitPrice.toString());
-        params.put("total_money_collected", totalMoneyCollected.toString());
-        params.put("difference_money", totalDifferencesMoney.toString());
-        params.put("total_money", totalMoneyBalance.toString());
-        params.put("weight_balance_total", summaryTotal.balanceWeightTotal.toString());
+        Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
+        Double totalMoneyBalance = rawMaterialPayRollService.getTotalWeightMoney(discounts.unitPrice,dateIni,dateEnd,metaProduct);
+        Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, dateIni, dateEnd, metaProduct);
+        params.put("total_collected", df.format(discounts.collected));
+        params.put("price_unit", df.format(discounts.unitPrice));
+        params.put("total_money_collected", df.format(totalMoneyCollected));
+        params.put("difference_money", df.format(totalDifferencesMoney));
+        params.put("total_money", df.format(totalMoneyBalance));
+        params.put("weight_balance_total", df.format(balanceWeightTotal));
 
         //discounts
-        //Double totalDifferences = discounts.yogurt + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention;
+        Double totalDiscount = discounts.alcohol + discounts.concentrated + discounts.yogurt
+                             + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention
+                             + discounts.otherDiscount + discounts.adjustment - discounts.otherIncome;
         //Double liquidPay = totalMoney - totalDifferences;
-        params.put("alcohol", discounts.alcohol.toString());
-        params.put("concentrated", discounts.concentrated.toString());
-        params.put("yogurt", discounts.yogurt.toString());
-        params.put("veterinary", discounts.veterinary.toString());
-        params.put("credit", discounts.credit.toString());
-        params.put("recip", discounts.recip.toString());
-        params.put("retention", discounts.retention.toString());
-        params.put("total_differences", discounts.discount.toString());
-        params.put("liquid_pay", discounts.liquid.toString());
+        params.put("alcohol", df.format(discounts.alcohol));
+        params.put("concentrated", df.format(discounts.concentrated));
+        params.put("yogurt", df.format(discounts.yogurt));
+        params.put("veterinary", df.format(discounts.veterinary));
+        params.put("credit", df.format(discounts.credit));
+        params.put("recip", df.format(discounts.recip));
+        params.put("retention", df.format(discounts.retention));
+        params.put("otrosDescuentos", df.format(discounts.otherDiscount));
+        params.put("otrosIngresos", df.format(discounts.otherIncome));
+        params.put("ajuste", df.format(discounts.adjustment));
+        params.put("total_differences", df.format(totalDiscount));
+        params.put("liquid_pay", df.format(discounts.liquid));
 
     }
 

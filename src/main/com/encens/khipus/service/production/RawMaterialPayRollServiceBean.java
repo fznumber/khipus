@@ -134,7 +134,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         }
         return result;
     }
-     //region borrar
+
+    //region borrar
 
     /*@Override
     public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryNotFoundException, RawMaterialPayRollException {
@@ -378,7 +379,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             discounts.credit = ((Double)datas.get(0)[8] !=null) ? ((Double)datas.get(0)[8]).doubleValue() : 0.0 ;
             discounts.discount = ((Double)datas.get(0)[9] !=null) ? ((Double)datas.get(0)[9]).doubleValue() : 0.0 ;
             discounts.liquid = ((Double)datas.get(0)[10] !=null) ? ((Double)datas.get(0)[10]).doubleValue() : 0.0 ;
-            discounts.unitPrice = ((Double)datas.get(0)[11] !=null) ? ((Double)datas.get(0)[11]).doubleValue() : 0.0 ;
+            discounts.otherDiscount = ((Double)datas.get(0)[11] !=null) ? ((Double)datas.get(0)[11]).doubleValue() : 0.0 ;
+            discounts.otherIncome = ((Double)datas.get(0)[12] !=null) ? ((Double)datas.get(0)[12]).doubleValue() : 0.0 ;
+            discounts.adjustment = ((Double)datas.get(0)[13] !=null) ? ((Double)datas.get(0)[13]).doubleValue() : 0.0 ;
+            discounts.unitPrice = ((Double)datas.get(0)[14] !=null) ? ((Double)datas.get(0)[14]).doubleValue() : 0.0 ;
         }else{
             discounts.mount = 0.0 ;
             discounts.collected = 0.0 ;
@@ -391,6 +395,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             discounts.credit = 0.0 ;
             discounts.discount = 0.0 ;
             discounts.liquid = 0.0 ;
+            discounts.otherDiscount = 0.0;
+            discounts.otherIncome = 0.0;
+            discounts.adjustment = 0.0;
             discounts.unitPrice = 0.0;
         }
 
@@ -431,6 +438,125 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             differences.put(date,diffs);
         }
         return differences;
+    }
+
+    public Double getBalanceWeightTotal(Double unitPrice, Calendar startDate, Calendar endDate, MetaProduct metaProduct) {
+
+        List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
+        Double weight = 0.0;
+
+        for(Object[] obj : datas){
+            weight += (Double)obj[1];
+        }
+        return weight;
+    }
+
+    public Double getTotalWeightMoney(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    {
+        List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
+        Double totalWeightMoney = 0.0;
+        Double weight = 0.0;
+
+        for(Object[] obj : datas){
+            weight += (Double)obj[1];
+        }
+        totalWeightMoney = weight * unitPrice;
+        return totalWeightMoney;
+    }
+
+    public Double getTotalMoneyDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    {
+        List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
+
+       /* List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates")
+                .setParameter("startDate", startDate.getTime(),TemporalType.DATE)
+                .setParameter("endDate", endDate.getTime(),TemporalType.DATE)
+                        //.setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                .setParameter("metaProduct", metaProduct)
+                .getResultList();*/
+
+        Double totalMoneyDiff = 0.0;
+        Double weight = 0.0;
+        Double collected = 0.0;
+
+        for(Object[] obj : datas){
+
+            collected += (Double)obj[0];
+            weight += (Double)obj[1];
+        }
+
+        totalMoneyDiff = (weight - collected) * unitPrice;
+
+        return totalMoneyDiff;
+    }
+
+
+    public Double getTotalWeightMoney(RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> datas = findWeights("getTotalWeightedAndCollectedBetweenDates", rawMaterialPayRoll);
+        Double totalWeightMoney = 0.0;
+        Double weight = 0.0;
+
+        for(Object[] obj : datas){
+            weight += (Double)obj[1];
+        }
+        totalWeightMoney = weight * rawMaterialPayRoll.getUnitPrice();
+        return totalWeightMoney;
+    }
+
+    public Double getTotalMoneyDiff(RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> datas = findWeights("getTotalWeightedAndCollectedBetweenDates",rawMaterialPayRoll);
+
+        Double totalMoneyDiff = 0.0;
+        Double weight = 0.0;
+        Double collected = 0.0;
+
+        for(Object[] obj : datas){
+
+            collected += (Double)obj[0];
+            weight += (Double)obj[1];
+        }
+
+        totalMoneyDiff = (weight - collected) * rawMaterialPayRoll.getUnitPrice();
+
+        return totalMoneyDiff;
+    }
+
+    private List<Object[]> findWeights(String namedQuery, Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    {
+        List<Object[]> result = null;
+
+        try{
+            result = getEntityManager().createNamedQuery(namedQuery)
+                    .setParameter("startDate", startDate.getTime(),TemporalType.DATE)
+                    .setParameter("endDate", endDate.getTime(),TemporalType.DATE)
+                            //.setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                    .setParameter("metaProduct", metaProduct)
+                    .getResultList();
+        }catch(Exception e)
+        {
+
+        }
+        return result;
+    }
+
+    private List<Object[]> findWeights(String namedQuery, RawMaterialPayRoll rawMaterialPayRoll)
+    {
+        List<Object[]> result = null;
+
+        try{
+            result = getEntityManager().createNamedQuery(namedQuery)
+                    .setParameter("startDate", rawMaterialPayRoll.getStartDate())
+                    .setParameter("endDate", rawMaterialPayRoll.getEndDate())
+                    //.setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
+                    .setParameter("metaProduct", rawMaterialPayRoll.getMetaProduct())
+                    .getResultList();
+        }catch(Exception e)
+        {
+
+        }
+        return result;
     }
 
     private List<Object[]> findDifferencesWeights(String namedQuery, RawMaterialPayRoll rawMaterialPayRoll)
@@ -767,6 +893,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         public Double discount;
         public Double liquid;
         public Double retention;
+        public Double otherDiscount;
+        public Double otherIncome;
+        public Double adjustment;
     }
 
     public class SummaryTotal{

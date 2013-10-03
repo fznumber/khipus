@@ -30,4 +30,10 @@ public interface RawMaterialPayRollService extends GenericService {
     RawMaterialPayRollServiceBean.SummaryTotal getSumaryTotal(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct);
 
     List<RawMaterialPayRecordDetailDummy> generateDetails(RawMaterialPayRecord rawMaterialPayRecord) throws RawMaterialPayRollException;
+
+    Double getTotalWeightMoney(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+
+    Double getTotalMoneyDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+
+    Double getBalanceWeightTotal(Double unitPrice, Calendar dateIni, Calendar dateEnd, MetaProduct metaProduct);
 }

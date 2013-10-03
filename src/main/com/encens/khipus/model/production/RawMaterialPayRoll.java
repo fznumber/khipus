@@ -95,6 +95,16 @@ import java.util.List;
                         "order by collectionRecord.collectionForm.date asc"
         ),
 
+        @NamedQuery(name = "RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",
+                query = "select collectionRecord.receivedAmount ,collectionRecord.weightedAmount " +
+                        " from CollectionRecord collectionRecord " +
+                        " join collectionRecord.collectionForm " +
+                        " where collectionRecord.collectionForm.date between :startDate and :endDate " +
+                        //"and collectionRecord.productiveZone = :productiveZone " +
+                        " and collectionRecord.collectionForm.metaProduct = :metaProduct "
+
+        ),
+
         @NamedQuery(name = "RawMaterialPayRoll.getRawMaterialCollentionByProductor",
                 query = "select CollectedRawMaterial.rawMaterialCollectionSession.date ,CollectedRawMaterial.amount " +
                         "from CollectedRawMaterial collectedRawMaterial " +
@@ -118,17 +128,20 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getDiscounts",
                 query = "select " +
-                        " round(sum(rawMaterialPayRoll.totalMountCollectdByGAB)) as mount, " +
-                        " round(sum(rawMaterialPayRoll.totalCollectedByGAB)) as collected, " +
-                        " round(sum(rawMaterialPayRoll.totalAlcoholByGAB)) as alcohol, " +
-                        " round(sum(rawMaterialPayRoll.totalConcentratedByGAB)) as concentrated, " +
-                        " round(sum(rawMaterialPayRoll.totalYogourdByGAB)) as yogurt, " +
-                        " round(sum(rawMaterialPayRoll.totalRecipByGAB)) as recip, " +
-                        " round(sum(rawMaterialPayRoll.totalRetentionGAB)) as retention, " +
-                        " round(sum(rawMaterialPayRoll.totalVeterinaryByGAB)) as veterinary, " +
-                        " round(sum(rawMaterialPayRoll.totalCreditByGAB)) as credit, " +
-                        " round(sum(rawMaterialPayRoll.totalLiquidByGAB )) as totalLiquid, " +
-                        " round(sum(rawMaterialPayRoll.totalDiscountByGAB)) as totalDiscount, " +
+                        " sum(rawMaterialPayRoll.totalMountCollectdByGAB) as mount, " +
+                        " sum(rawMaterialPayRoll.totalCollectedByGAB) as collected, " +
+                        " sum(rawMaterialPayRoll.totalAlcoholByGAB) as alcohol, " +
+                        " sum(rawMaterialPayRoll.totalConcentratedByGAB) as concentrated, " +
+                        " sum(rawMaterialPayRoll.totalYogourdByGAB) as yogurt, " +
+                        " sum(rawMaterialPayRoll.totalRecipByGAB) as recip, " +
+                        " sum(rawMaterialPayRoll.totalRetentionGAB) as retention, " +
+                        " sum(rawMaterialPayRoll.totalVeterinaryByGAB) as veterinary, " +
+                        " sum(rawMaterialPayRoll.totalCreditByGAB) as credit, " +
+                        " sum(rawMaterialPayRoll.totalDiscountByGAB) as totalDiscount, " +
+                        " sum(rawMaterialPayRoll.totalLiquidByGAB ) as totalLiquid, " +
+                        " sum(rawMaterialPayRoll.totalOtherDiscountByGAB) as totalOtherDiscount, " +
+                        " sum(rawMaterialPayRoll.totalOtherIncomeByGAB) as totalOtherIncome, " +
+                        " sum(rawMaterialPayRoll.totalAdjustmentByGAB) as totalAdjustment, " +
                         " rawMaterialPayRoll.unitPrice as unitPrice " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
                         "where rawMaterialPayRoll.startDate = :startDate " +
