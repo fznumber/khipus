@@ -468,13 +468,6 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     {
         List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
 
-       /* List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates")
-                .setParameter("startDate", startDate.getTime(),TemporalType.DATE)
-                .setParameter("endDate", endDate.getTime(),TemporalType.DATE)
-                        //.setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
-                .setParameter("metaProduct", metaProduct)
-                .getResultList();*/
-
         Double totalMoneyDiff = 0.0;
         Double weight = 0.0;
         Double collected = 0.0;
@@ -488,6 +481,25 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         totalMoneyDiff = (weight - collected) * unitPrice;
 
         return totalMoneyDiff;
+    }
+
+    public Double getTotalDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    {
+        List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
+
+        Double totalDiff = 0.0;
+        Double weight = 0.0;
+        Double collected = 0.0;
+
+        for(Object[] obj : datas){
+
+            collected += (Double)obj[0];
+            weight += (Double)obj[1];
+        }
+
+        totalDiff = weight - collected;
+
+        return totalDiff;
     }
 
 
@@ -877,7 +889,10 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         public Double withholdingTax = 0.0;
         public Double procentaje = 0.0;
         public Double totaDiffMoney= 0.0;
-
+        public Double totalCollected= 0.0;
+        public Double totalWeight = 0.0;
+        public Double totalCollectedMoney = 0.0;
+        public Double totalWeightMoney = 0.0;
     }
 
     public class Discounts {

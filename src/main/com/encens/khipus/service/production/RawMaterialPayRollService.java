@@ -36,4 +36,6 @@ public interface RawMaterialPayRollService extends GenericService {
     Double getTotalMoneyDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
 
     Double getBalanceWeightTotal(Double unitPrice, Calendar dateIni, Calendar dateEnd, MetaProduct metaProduct);
+
+    Double getTotalDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
 }
