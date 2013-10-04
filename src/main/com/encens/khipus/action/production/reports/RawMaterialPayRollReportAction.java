@@ -20,6 +20,7 @@ import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -79,11 +80,17 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1));
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
-
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
 
 
         Map params = new HashMap();
+
+        params.put("reportTitle",messages.get("Report.titleGeneral"));
+        params.put("period",messages.get("Report.period"));
+        params.put("startDate",df.format(dateIni.getTime()));
+        params.put("endDate",df.format(dateEnd.getTime()));
+
         params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
         params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
         params.put("totalRetentionGAB",rawMaterialPayRoll.getTotalRetentionGAB());

@@ -1011,20 +1011,20 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         String restricMeta = (metaProduct == null)? "": " and rawMaterialPayRoll.metaProduct = :metaProduct ";
 
         return  "select " +
-                "rawMaterialPayRoll.totalCollectedByGAB, " +
-                "rawMaterialPayRoll.totalMountCollectdByGAB, " +
-                "rawMaterialPayRoll.totalRetentionGAB, " +
-                "rawMaterialPayRoll.totalCreditByGAB, " +
-                "rawMaterialPayRoll.totalVeterinaryByGAB, " +
-                "rawMaterialPayRoll.totalAlcoholByGAB, " +
-                "rawMaterialPayRoll.totalConcentratedByGAB, " +
-                "rawMaterialPayRoll.totalYogourdByGAB, " +
-                "rawMaterialPayRoll.totalRecipByGAB, " +
-                "rawMaterialPayRoll.totalDiscountByGAB," +
-                "rawMaterialPayRoll.totalAdjustmentByGAB," +
-                "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-                "rawMaterialPayRoll.totalLiquidByGAB, " +
-                "rawMaterialPayRoll.productiveZone " +
+                "sum(rawMaterialPayRoll.totalCollectedByGAB), " +
+                "sum(rawMaterialPayRoll.totalMountCollectdByGAB), " +
+                "sum(rawMaterialPayRoll.totalRetentionGAB), " +
+                "sum(rawMaterialPayRoll.totalCreditByGAB), " +
+                "sum(rawMaterialPayRoll.totalVeterinaryByGAB), " +
+                "sum(rawMaterialPayRoll.totalAlcoholByGAB), " +
+                "sum(rawMaterialPayRoll.totalConcentratedByGAB), " +
+                "sum(rawMaterialPayRoll.totalYogourdByGAB), " +
+                "sum(rawMaterialPayRoll.totalRecipByGAB), " +
+                "sum(rawMaterialPayRoll.totalDiscountByGAB)," +
+                "sum(rawMaterialPayRoll.totalAdjustmentByGAB)," +
+                "sum(rawMaterialPayRoll.totalOtherIncomeByGAB)," +
+                "sum(rawMaterialPayRoll.totalLiquidByGAB), " +
+                "sum(rawMaterialPayRoll.productiveZone) " +
                 "from RawMaterialPayRoll rawMaterialPayRoll " +
                 "where rawMaterialPayRoll.startDate = :startDate " +
                 "and rawMaterialPayRoll.endDate <=  :endDate"
