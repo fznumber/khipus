@@ -71,6 +71,9 @@
 	<field name="rawMaterialProducer.maidenName" class="java.lang.String">
 		<fieldDescription><![CDATA[COLUMN_18]]></fieldDescription>
 	</field>
+	<field name="productiveZone.name" class="java.lang.String">
+		<fieldDescription><![CDATA[COLUMN_19]]></fieldDescription>
+	</field>
 	<title>
 		<band height="80" splitType="Stretch">
 			<image scaleImage="RetainShape" onErrorType="Icon">
@@ -370,6 +373,14 @@
 				</box>
 				<textElement textAlignment="Center"/>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.credit}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="33" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{productiveZone.name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

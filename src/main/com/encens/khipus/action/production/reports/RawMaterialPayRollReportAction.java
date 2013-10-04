@@ -97,7 +97,6 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
         params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
-        //params.put("cod_productive_zone","GAB - " +(rawMaterialPayRoll.getProductiveZone() == null ? " " : rawMaterialPayRoll.getProductiveZone().getNumber().toString()));
         params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
         params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
         super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
@@ -123,12 +122,13 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " rawMaterialProducerDiscount.otherIncoming, " +
                 " rawMaterialPayRecord.liquidPayable, " +
                 " rawMaterialProducer.lastName, " +
-                " rawMaterialProducer.maidenName " +
-                //" rawMaterialPayRoll.productiveZone.number " +
+                " rawMaterialProducer.maidenName, " +
+                " productiveZone.name " +
                 " FROM RawMaterialPayRoll rawMaterialPayRoll " +
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
-                " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer ";
+                " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer " +
+                " inner join RawMaterialPayRoll.productiveZone productiveZone";
 
     }
 
