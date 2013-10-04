@@ -18,8 +18,8 @@ public class DeliverableProductionOrdersDataModel extends QueryDataModel<Long, P
     private PrivateCriteria privateCriteria;
 
     private final static String[] RESTRICTIONS = {
-            "lower(productionOrder.code) like concat(#{deliverableProductionOrdersDataModel.criteria.code}, '%')",
-            "lower(processedProduct.name) like concat(#{deliverableProductionOrdersDataModel.privateCriteria.processedProduct.name}, '%')",
+            "upper(productionOrder.code) like concat(concat('%',upper(#{deliverableProductionOrdersDataModel.criteria.code})), '%')",
+            "upper(processedProduct.name) like concat(concat('%',upper(#{deliverableProductionOrdersDataModel.privateCriteria.processedProduct.name})), '%')",
             "productionPlanning.date >= #{deliverableProductionOrdersDataModel.privateCriteria.startDate}",
             "productionPlanning.date <= #{deliverableProductionOrdersDataModel.privateCriteria.endDate}"
     };

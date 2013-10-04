@@ -25,9 +25,9 @@ import java.util.List;
 public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovementGAB> {
 
     private static final String[] RESTRICTIONS = {
-            "productiveZone.number like concat(#{salaryMovementGABDataModel.criteria.productiveZone.number}, '%')",
-            "productiveZone.group like concat(#{salaryMovementGABDataModel.criteria.productiveZone.group}, '%')",
-            "productiveZone.name like concat(#{salaryMovementGABDataModel.criteria.productiveZone.name}, '%')",
+            "upper(productiveZone.number) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.number})), '%')",
+            "upper(productiveZone.group) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.group})), '%')",
+            "upper(productiveZone.name) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.name})), '%')",
     };
 
     @Create

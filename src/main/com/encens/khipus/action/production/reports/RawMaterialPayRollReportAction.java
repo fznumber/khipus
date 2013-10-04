@@ -76,7 +76,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
-        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1));
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 

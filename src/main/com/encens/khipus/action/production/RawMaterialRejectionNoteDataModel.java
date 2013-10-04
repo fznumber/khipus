@@ -17,12 +17,12 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class RawMaterialRejectionNoteDataModel extends QueryDataModel<Long, RawMaterialRejectionNote> {
     private final static String[] RESTRICTIONS = {
-            "lower(rawMaterialProducer.firstName) like concat(#{rawMaterialProducerForSearch.firstName}, '%')",
-            "lower(rawMaterialProducer.lastName) like concat(#{rawMaterialProducerForSearch.lastName}, '%')",
-            "lower(rawMaterialProducer.maidenName) like concat(#{rawMaterialProducerForSearch.maidenName}, '%')",
-            "lower(productiveZone.name) like concat(#{productiveZoneForSearch.name}, '%')",
-            "lower(productiveZone.group) like concat(#{productiveZoneForSearch.group}, '%')",
-            "lower(productiveZone.number) like concat(#{productiveZoneForSearch.number}, '%')"
+            "upper(rawMaterialProducer.firstName) like concat(concat(%,upper(#{rawMaterialProducerForSearch.firstName})), '%')",
+            "upper(rawMaterialProducer.lastName) like concat(concat(%,upper(#{rawMaterialProducerForSearch.lastName})), '%')",
+            "upper(rawMaterialProducer.maidenName) like concat(concat(%,upper(#{rawMaterialProducerForSearch.maidenName})), '%')",
+            "upper(productiveZone.name) like concat(concat(%,upper(#{productiveZoneForSearch.name})), '%')",
+            "upper(productiveZone.group) like concat(concat(%,upper(#{productiveZoneForSearch.group})), '%')",
+            "upper(productiveZone.number) like concat(#{productiveZoneForSearch.number}, '%')"
     };
 
     @Factory(value = "productiveZoneForSearch", scope = ScopeType.PAGE)

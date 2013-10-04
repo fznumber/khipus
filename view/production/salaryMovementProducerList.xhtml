@@ -50,7 +50,8 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
-                          propagation="none"/>
+                          propagation="none"
+                          rendered="#{s:hasPermission('SALARYMOVEMENTPRODUCER','CREATE')}"/>
             </div>
 
             <rich:dataTable value="#{salaryMovementProducerDataModel}" var="salaryMovementProducerItem" id="salaryMovementProducerList"
@@ -114,10 +115,11 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
-                          propagation="none" />
+                          propagation="none"
+                          rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"/>
             </div>
 
-            <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{rawMaterialProducerDataModel}"/>
+            <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{salaryMovementProducerDataModel}"/>
 
             <rich:jQuery selector="#salaryMovementProducerList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
             <rich:jQuery selector="#salaryMovementProducerList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>

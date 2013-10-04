@@ -21,8 +21,8 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class InputsAndMaterialsDataModel extends QueryDataModel<Long, MetaProduct> {
     private static final String[] RESTRICTIONS = {
-            "lower(meta.name) like concat(#{inputsAndMaterialsDataModel.criteria.name}, '%')",
-            "lower(meta.code) like concat(#{inputsAndMaterialsDataModel.criteria.code}, '%')"
+            "upper(meta.name) like concat(concat('%',upper(#{inputsAndMaterialsDataModel.criteria.name})), '%')",
+            "upper(meta.code) like concat(concat('%',upper(#{inputsAndMaterialsDataModel.criteria.code})), '%')"
     };
 
     @Create

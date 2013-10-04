@@ -24,8 +24,8 @@ public class ProductCompositionDataModel extends QueryDataModel<Long, ProductCom
 
     private static final String[] RESTRICTIONS = {
             "productComposition.active = #{true}",
-            "lower(productComposition.processedProduct.name) like concat(#{productCompositionDataModel.criteria.processedProduct.name}, '%')",
-            "lower(productComposition.processedProduct.code) like concat(#{productCompositionDataModel.criteria.processedProduct.code}, '%')"
+            "upper(productComposition.processedProduct.name) like concat(concat('%',upper(#{productCompositionDataModel.criteria.processedProduct.name})), '%')",
+            "upper(productComposition.processedProduct.code) like concat(concat('%',upper(#{productCompositionDataModel.criteria.processedProduct.code})), '%')"
     };
 
     @Override

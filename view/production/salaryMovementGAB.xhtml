@@ -25,14 +25,14 @@
         <h:form id="salaryMovementGABForm">
             <div class="buttons">
                 <h:commandButton action="#{salaryMovementGABAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!salaryMovementGABAction.managed }" id="createButtonId">
+                                 styleClass="button" rendered="#{!salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','CREATE')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementGABAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed }"/>
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed }">
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -120,14 +120,14 @@
 
             <div class="buttons">
                 <h:commandButton action="#{salaryMovementGABAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!salaryMovementGABAction.managed }" >
+                                 styleClass="button" rendered="#{!salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','CREATE')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementGABAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed }"/>
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed }">
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -135,6 +135,7 @@
                 <h:commandButton action="#{salaryMovementGABAction.cancel}" value="#{messages['Common.cancel']}"
                                  styleClass="button" immediate="true"/>
             </div>
+
 
         </h:form>
 

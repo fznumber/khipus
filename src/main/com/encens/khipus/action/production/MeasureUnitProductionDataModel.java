@@ -22,8 +22,8 @@ import java.util.List;
 public class MeasureUnitProductionDataModel extends QueryDataModel<Long, MeasureUnitProduction> {
 
     private static final String[] RESTRICTIONS = {
-            "lower(measureUnit.name) like concat(#{measureUnitProductionDataModel.criteria.name}, '%')",
-            "lower(measureUnit.description) like concat(#{measureUnitProductionDataModel.criteria.description}, '%')"
+            "upper(measureUnit.name) like concat(concat('%',upper(#{measureUnitProductionDataModel.criteria.name})), '%')",
+            "upper(measureUnit.description) like concat(concat('%',upper(#{measureUnitProductionDataModel.criteria.description})), '%')"
     };
 
     @Create
