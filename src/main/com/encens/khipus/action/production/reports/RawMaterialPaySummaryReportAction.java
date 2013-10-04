@@ -78,7 +78,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
         dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
-        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()));
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1));
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
@@ -108,19 +108,22 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
         Double totalMoneyCollected = discounts.mount;
         Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
-        Double totalMoneyBalance = rawMaterialPayRollService.getTotalWeightMoney(discounts.unitPrice,dateIni,dateEnd,metaProduct);
+        Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
         Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, dateIni, dateEnd, metaProduct);
+        Double totalMoneyBalance = totalMoneyCollected + totalDifferencesMoney;
         params.put("total_collected", df.format(discounts.collected));
+        params.put("diff_total", df.format(diffTotal));
         params.put("price_unit", df.format(discounts.unitPrice));
         params.put("total_money_collected", df.format(totalMoneyCollected));
         params.put("difference_money", df.format(totalDifferencesMoney));
         params.put("total_money", df.format(totalMoneyBalance));
         params.put("weight_balance_total", df.format(balanceWeightTotal));
+        params.put("total_other_incom", df.format(totalMoneyBalance + discounts.otherIncome));
 
         //discounts
         Double totalDiscount = discounts.alcohol + discounts.concentrated + discounts.yogurt
                              + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention
-                             + discounts.otherDiscount + discounts.adjustment - discounts.otherIncome;
+                             + discounts.otherDiscount ;
         //Double liquidPay = totalMoney - totalDifferences;
         params.put("alcohol", df.format(discounts.alcohol));
         params.put("concentrated", df.format(discounts.concentrated));

@@ -226,7 +226,7 @@ public class RawMaterialPayRoll implements BaseModel {
     @OneToOne
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
-
+     //todo: cambiar TOTALACOPIADOXGAB -> TOTALPESADOXGAB
     @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalWeighedByGAB = 0.0;
 
@@ -479,5 +479,13 @@ public class RawMaterialPayRoll implements BaseModel {
 
     public void setTotalConcentratedByGAB(double totalConcentratedByGAB) {
         this.totalConcentratedByGAB = totalConcentratedByGAB;
+    }
+
+    public double getTotalWeighedByGAB() {
+        return totalWeighedByGAB;
+    }
+
+    public void setTotalWeighedByGAB(double totalWeighedByGAB) {
+        this.totalWeighedByGAB = totalWeighedByGAB;
     }
 }
