@@ -12,6 +12,7 @@ import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
@@ -20,6 +21,7 @@ import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -38,6 +40,9 @@ import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 public class RawMaterialPayRollReportAction extends GenericReportAction {
     @In
     RawMaterialPayRollService rawMaterialPayRollService;
+
+    @In
+    ProductiveZoneService productiveZoneService;
 
     private String summaryReportTitle;
     private String gestionTitle;
@@ -79,28 +84,37 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1));
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-        RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
 
 
         Map params = new HashMap();
-        params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
-        params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
-        params.put("totalRetentionGAB",rawMaterialPayRoll.getTotalRetentionGAB());
-        params.put("totalCreditByGAB",rawMaterialPayRoll.getTotalCreditByGAB());
-        params.put("totalVeterinaryByGAB",rawMaterialPayRoll.getTotalVeterinaryByGAB());
-        params.put("totalAlcoholByGAB",rawMaterialPayRoll.getTotalAlcoholByGAB());
-        params.put("totalConcentratedByGAB",rawMaterialPayRoll.getTotalConcentratedByGAB());
-        params.put("totalYogourdByGAB",rawMaterialPayRoll.getTotalYogourdByGAB());
-        params.put("totalRecipByGAB",rawMaterialPayRoll.getTotalRecipByGAB());
-        params.put("totalDiscountByGAB",rawMaterialPayRoll.getTotalDiscountByGAB());
-        params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
-        params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
-        params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
-        //params.put("cod_productive_zone","GAB - " +(rawMaterialPayRoll.getProductiveZone() == null ? " " : rawMaterialPayRoll.getProductiveZone().getNumber().toString()));
-        params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
-        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
-        super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+
+
+         RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+            params.put("reportTitle",messages.get("Report.titleGeneral"));
+            params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
+            params.put("startDate",df.format(dateIni.getTime()));
+            params.put("endDate",df.format(dateEnd.getTime()));
+            params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
+
+            params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
+            params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
+            params.put("totalRetentionGAB",rawMaterialPayRoll.getTotalRetentionGAB());
+            params.put("totalCreditByGAB",rawMaterialPayRoll.getTotalCreditByGAB());
+            params.put("totalVeterinaryByGAB",rawMaterialPayRoll.getTotalVeterinaryByGAB());
+            params.put("totalAlcoholByGAB",rawMaterialPayRoll.getTotalAlcoholByGAB());
+            params.put("totalConcentratedByGAB",rawMaterialPayRoll.getTotalConcentratedByGAB());
+            params.put("totalYogourdByGAB",rawMaterialPayRoll.getTotalYogourdByGAB());
+            params.put("totalRecipByGAB",rawMaterialPayRoll.getTotalRecipByGAB());
+            params.put("totalDiscountByGAB",rawMaterialPayRoll.getTotalDiscountByGAB());
+            params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
+            params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
+            params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
+            params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+            params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+
     }
 
     @Override
@@ -123,19 +137,52 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " rawMaterialProducerDiscount.otherIncoming, " +
                 " rawMaterialPayRecord.liquidPayable, " +
                 " rawMaterialProducer.lastName, " +
-                " rawMaterialProducer.maidenName " +
-                //" rawMaterialPayRoll.productiveZone.number " +
+                " rawMaterialProducer.maidenName, " +
+                " productiveZone.name " +
                 " FROM RawMaterialPayRoll rawMaterialPayRoll " +
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
-                " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer ";
+                " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer " +
+                " inner join RawMaterialPayRoll.productiveZone productiveZone ";
 
+    }
+
+    private String getMes(Month month)
+    {
+        String result = "";
+        if(Month.JANUARY == month)
+            result = "Enero";
+        if(Month.FEBRUARY == month)
+            result = "Febrero";
+        if(Month.MARCH == month)
+            result = "Marzo";
+        if(Month.APRIL == month)
+            result = "Abril";
+        if(Month.MAY == month)
+            result = "Mayo";
+        if(Month.JUNE == month)
+            result = "Junio";
+        if(Month.JULY == month)
+            result = "Julio";
+        if(Month.AUGUST == month)
+            result = "Agosto";
+        if(Month.SEPTEMBER == month)
+            result = "Septiembre";
+        if(Month.OCTOBER == month)
+            result = "Octubre";
+        if(Month.NOVEMBER == month)
+            result = "Noviembre";
+        if(Month.DECEMBER == month)
+            result = "Diciembre";
+
+        return result;
     }
 
     @Create
     public void init() {
         restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
                                     "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
+        sortProperty = "rawMaterialProducer.firstName";
     }
 
     private void getTotal(RawMaterialPayRoll rawMaterialPayRoll)
