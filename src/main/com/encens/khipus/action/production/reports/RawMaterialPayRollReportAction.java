@@ -87,7 +87,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         Map params = new HashMap();
 
         params.put("reportTitle",messages.get("Report.titleGeneral"));
-        params.put("period",messages.get("Report.period"));
+        params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
         params.put("startDate",df.format(dateIni.getTime()));
         params.put("endDate",df.format(dateEnd.getTime()));
 
@@ -137,6 +137,37 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer " +
                 " inner join RawMaterialPayRoll.productiveZone productiveZone";
 
+    }
+
+    private String getMes(Month month)
+    {
+        String result = "";
+        if(Month.JANUARY == month)
+            result = "Enero";
+        if(Month.FEBRUARY == month)
+            result = "Febrero";
+        if(Month.MARCH == month)
+            result = "Marzo";
+        if(Month.APRIL == month)
+            result = "Abril";
+        if(Month.MAY == month)
+            result = "Mayo";
+        if(Month.JUNE == month)
+            result = "Junio";
+        if(Month.JULY == month)
+            result = "Julio";
+        if(Month.AUGUST == month)
+            result = "Agosto";
+        if(Month.SEPTEMBER == month)
+            result = "Septiembre";
+        if(Month.OCTOBER == month)
+            result = "Octubre";
+        if(Month.NOVEMBER == month)
+            result = "Noviembre";
+        if(Month.DECEMBER == month)
+            result = "Diciembre";
+
+        return result;
     }
 
     @Create
