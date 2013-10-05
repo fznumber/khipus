@@ -96,6 +96,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
             params.put("startDate",df.format(dateIni.getTime()));
             params.put("endDate",df.format(dateEnd.getTime()));
+            params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
 
             params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
             params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
@@ -142,7 +143,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
                 " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer " +
-                " inner join RawMaterialPayRoll.productiveZone productiveZone";
+                " inner join RawMaterialPayRoll.productiveZone productiveZone ";
 
     }
 
@@ -181,6 +182,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     public void init() {
         restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
                                     "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
+        sortProperty = "rawMaterialProducer.firstName";
     }
 
     private void getTotal(RawMaterialPayRoll rawMaterialPayRoll)
