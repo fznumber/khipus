@@ -18,12 +18,12 @@ public class RawMaterialCollectionSessionDataModel extends QueryDataModel<Long, 
     private final static String[] RESTRICTIONS = {
             "session.date >= #{rawMaterialCollectionSessionDataModel.privateCriteria.startDate}",
             "session.date <= #{rawMaterialCollectionSessionDataModel.privateCriteria.endDate}",
-            "upper(productiveZone.name) like concat(concat(%,upper(#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.name})), '%')",
-            "upper(productiveZone.group) like concat(concat(%,upper(#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.group})), '%')",
+            "upper(productiveZone.name) like concat(concat('%',upper(#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.name})), '%')",
+            "upper(productiveZone.group) like concat(concat('%',upper(#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.group})), '%')",
             "productiveZone.number like concat(#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.number}, '%')",
-            "upper(rawMaterialProducer.firstName) like concat(concat(%,upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.firstName})), '%')",
-            "upper(rawMaterialProducer.lastName) like concat(concat(%,upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.lastName})), '%')",
-            "upper(rawMaterialProducer.maidenName) like concat(concat(%,upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.maidenName})), '%')"
+            "upper(rawMaterialProducer.firstName) like concat(concat('%',upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.firstName})), '%')",
+            "upper(rawMaterialProducer.lastName) like concat(concat('%',upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.lastName})), '%')",
+            "upper(rawMaterialProducer.maidenName) like concat(concat('%',upper(#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.maidenName})), '%')"
     };
 
     private PrivateCriteria privateCriteria;
