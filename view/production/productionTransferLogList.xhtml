@@ -16,17 +16,18 @@
             <rich:simpleTogglePanel label="#{messages['ProductionTransferLog.search']}" switchType="client">
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionTransferLog.productionOrderCode']}</ui:define>
-                    <h:inputText id="code" value="#{productionTransferLogDataModel.privateCriteria.productionOrder.code}"
+                    <h:inputText id="code"
+                                 value="#{productionTransferLogDataModel.privateCriteria.productionOrder.code}"
                                  maxlength="100" tabindex="1" styleClass="input">
                     </h:inputText>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionTransferLog.startDate']}</ui:define>
-                    <rich:calendar value="#{productionTransferLogDataModel.privateCriteria.startDate}" />
+                    <rich:calendar value="#{productionTransferLogDataModel.privateCriteria.startDate}"/>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionTransferLog.endDate']}</ui:define>
-                    <rich:calendar value="#{productionTransferLogDataModel.privateCriteria.endDate}" />
+                    <rich:calendar value="#{productionTransferLogDataModel.privateCriteria.endDate}"/>
                     <a4j:commandButton action="#{productionTransferLogDataModel.search}"
                                        reRender="productionTransferLogList, dataScroller"
                                        styleClass="button"
@@ -39,29 +40,34 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" action="#{productionTransferLogAction.createNew}"  styleClass="button"
+                <s:button value="#{messages['Common.new']}" action="#{productionTransferLogAction.createNew}"
+                          styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('DELIVERPRODUCTIONTRANSFERLOG','CREATE')}"/>
             </div>
-            <rich:dataTable value="#{productionTransferLogDataModel}" var="productionTransferLogItem" id="productionTransferLogList"
+            <rich:dataTable value="#{productionTransferLogDataModel}" var="productionTransferLogItem"
+                            id="productionTransferLogList"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%" columnsWidth="20%, 20%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productionTransferLog.deliveredDate" dataModel="#{productionTransferLogDataModel}"
+                            <app:commandSortHeader sortProperty="productionTransferLog.deliveredDate"
+                                                   dataModel="#{productionTransferLogDataModel}"
                                                    reRender="productionTransferLogList, dataScroller">
                                 #{messages['ProductionTransferLog.deliveredDate']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productionTransferLog.receivedDate" dataModel="#{productionTransferLogDataModel}"
+                            <app:commandSortHeader sortProperty="productionTransferLog.receivedDate"
+                                                   dataModel="#{productionTransferLogDataModel}"
                                                    reRender="productionTransferLogList, dataScroller">
                                 #{messages['ProductionTransferLog.receivedDate']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productionTransferLog.state" dataModel="#{productionTransferLogDataModel}"
+                            <app:commandSortHeader sortProperty="productionTransferLog.state"
+                                                   dataModel="#{productionTransferLogDataModel}"
                                                    reRender="productionTransferLogList, dataScroller">
                                 #{messages['ProductionTransferLog.state']}
                             </app:commandSortHeader>
@@ -72,10 +78,6 @@
                     </rich:columnGroup>
                 </f:facet>
 
-                <rich:column>
-                    <h:outputText value="#{productionTransferLogItem.}"/>
-                </rich:column>
-                <rich:column>
                 <rich:column>
                     <h:outputText value="#{productionTransferLogItem.deliveredDate}"/>
                 </rich:column>
@@ -94,15 +96,19 @@
                     </h:commandLink>
                 </rich:column>
             </rich:dataTable>
-            <app:dataScroller id="dataScroller" for="productionTransferLogList" dataModel="#{productionTransferLogDataModel}"/>
+            <app:dataScroller id="dataScroller" for="productionTransferLogList"
+                              dataModel="#{productionTransferLogDataModel}"/>
 
 
-            <rich:jQuery selector="#productionTransferLogList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
-            <rich:jQuery selector="#productionTransferLogList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+            <rich:jQuery selector="#productionTransferLogList tr"
+                         query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+            <rich:jQuery selector="#productionTransferLogList tr"
+                         query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" action="#{productionTransferLogAction.createNew}"  styleClass="button"
+                <s:button value="#{messages['Common.new']}" action="#{productionTransferLogAction.createNew}"
+                          styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('DELIVERPRODUCTIONTRANSFERLOG','CREATE')}"/>
             </div>
 
