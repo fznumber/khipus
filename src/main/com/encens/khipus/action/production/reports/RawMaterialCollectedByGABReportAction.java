@@ -1,8 +1,6 @@
 package com.encens.khipus.action.production.reports;
 
 import com.encens.khipus.action.reports.GenericReportAction;
-import com.encens.khipus.action.reports.PageFormat;
-import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
@@ -17,15 +15,15 @@ import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Encens S.R.L.
@@ -34,10 +32,9 @@ import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
  * @author
  * @version $Id: SummaryPayrollByPaymentMethodReportAction.java  22-ene-2010 11:38:12$
  */
-@Name("rawMaterialPayRollReportAction")
+@Name("rawMaterialCollectedByGABReportAction")
 @Scope(ScopeType.CONVERSATION)
-//@Restrict("#{s:hasPermission('RAWMATERIALPAYSUMMARY','VIEW')}")
-public class RawMaterialPayRollReportAction extends GenericReportAction {
+public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
     @In
     RawMaterialPayRollService rawMaterialPayRollService;
 
@@ -97,7 +94,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("startDate",df.format(dateIni.getTime()));
             params.put("endDate",df.format(dateEnd.getTime()));
             params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
-
+            params.put("DISPLAY_COLUMN_LAST","N");
 
             params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
             params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
@@ -114,7 +111,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
-            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialCollectedByGABReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
     }
 
@@ -259,12 +256,12 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         this.zone = zone;
     }
 
-    @Factory(value = "monthEnumPayRoll")
+    @Factory(value = "monthEnumCollectedByGAB")
     public Month[] getMonthEnum() {
         return Month.values();
     }
 
-    @Factory(value = "periodosPayRoll", scope = ScopeType.STATELESS)
+    @Factory(value = "periodosCollectedByGAB", scope = ScopeType.STATELESS)
     public Periodo[] getPeriodos() {
         return Periodo.values();
     }

@@ -43,11 +43,28 @@ public enum Periodo {
         this.initDay = initDay;
     }
 
-    public int getEndDay(int mount) {
+    public int getEndDay(int mount, int year) {
         if((mount == 1 || mount == 3 || mount ==5 || mount ==7 || mount ==8 || mount ==10 || mount ==12) && (resourceKey == "Periodo.second"))
         return endDay +1;
 
+        if(mount == 2)
+        {
+          if(isBisiesto(year))
+          {
+              return 28;
+          }
+            return 29;
+        }
         return endDay;
+    }
+
+    private boolean isBisiesto(int year)
+    {
+        if (year %4 == 0 && (year% 100 != 0 || year% 400 == 0)) {
+            return true;
+        }
+
+        return false;
     }
 
     public int getEndDay() {
