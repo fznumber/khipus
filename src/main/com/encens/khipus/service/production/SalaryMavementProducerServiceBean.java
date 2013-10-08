@@ -76,7 +76,7 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
                        {
                            cans += valor;
                        }
-                       if(typeDiscount.compareTo("OTROS EGRESOSO")==0)
+                       if(typeDiscount.compareTo("OTROS EGRESOS")==0)
                        {
                            otherDiscount += valor;
                        }
