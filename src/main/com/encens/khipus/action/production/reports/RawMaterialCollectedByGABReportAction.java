@@ -98,13 +98,21 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
             params.put("reportTitle",messages.get("Report.rawMaterialSession.total"));
 
 
-            int cont = 1;
+            int cont = periodo.getInitDay();
             for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
-            //for(int i = 1; i<=16;i++)
             {
 
                 params.put("DAY"+cont,"D"+i);
                 cont ++;
+            }
+
+            if(cont < 31 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
+            {
+                for(int i = cont; i<=31;i++)
+                {
+                    params.put("DAY"+cont,"D"+i);
+                    cont ++;
+                }
             }
 
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
