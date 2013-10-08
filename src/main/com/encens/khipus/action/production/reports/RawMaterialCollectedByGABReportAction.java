@@ -95,6 +95,9 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
             params.put("startDate",df.format(dateIni.getTime()));
             params.put("endDate",df.format(dateEnd.getTime()));
             params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
+            params.put("reportTitle",messages.get("Report.rawMaterialSession.total"));
+
+
             int cont = 1;
             for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
             //for(int i = 1; i<=16;i++)
@@ -119,10 +122,11 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
         int cont = 1;
         String sql =" select \n"+
                     " A"+cont+".productor as productor \n";
-
+        String total = "";
         for(int i = initDay; i<=endDay;i++)
         {
           sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
+            total += ((i==initDay)?",":"+")+" A"+cont+".CANTIDAD";
             cont ++;
         }
         if(cont < 16 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
@@ -133,6 +137,7 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
                 cont ++;
             }
         }
+         sql += total+" AS TOTAL \n";
          sql += " from \n";
         cont = 1;
         int month_act = (month.getValue())+1;
