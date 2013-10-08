@@ -14,29 +14,47 @@
     <ui:define name="body">
         <h:form id="salaryMovementProducerSearch">
             <rich:simpleTogglePanel label="#{messages['SalaryMovementProducer.search']}" switchType="client">
-                <h:panelGrid columns="1" width="100%">
+                <h:panelGrid columns="2" width="100%">
+
+                    <s:div>
+
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.startDate']}</ui:define>
+                            <rich:calendar value="#{salaryMovementProducerDataModel.privateCriteria.startDate}"
+                                           tabindex="1" styleClass="input">
+                            </rich:calendar>
+                        </s:decorate>
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.endDate']}</ui:define>
+                            <rich:calendar value="#{salaryMovementProducerDataModel.privateCriteria.endDate}"
+                                           tabindex="2" styleClass="input">
+                            </rich:calendar>
+                        </s:decorate>
+
+                    </s:div>
+
                     <s:div>
 
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
                             <h:inputText id="firstName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.firstName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.lastName']}</ui:define>
                             <h:inputText id="lastName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName}"
-                                         maxlength="100" tabindex="2" styleClass="input">
+                                         maxlength="100" tabindex="4" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
                             <h:inputText id="maidenName" value="#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName}"
-                                         maxlength="100" tabindex="3" styleClass="input">
+                                         maxlength="100" tabindex="5" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{salaryMovementProducerDataModel.search}" reRender="salaryMovementProducerList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                               tabindex="4">
+                                               tabindex="6">
                                 <s:defaultAction/>
                             </a4j:commandButton>
                         </s:decorate>
@@ -51,7 +69,7 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
                           propagation="none"
-                          rendered="#{s:hasPermission('SALARYMOVEMENTPRODUCER','CREATE')}"/>
+                          rendered="#{s:hasPermission('SALARYMOVEMENTDISCOUNTPRODUCER','CREATE')}"/>
             </div>
 
             <rich:dataTable value="#{salaryMovementProducerDataModel}" var="salaryMovementProducerItem" id="salaryMovementProducerList"
@@ -79,10 +97,7 @@
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="salaryMovementProducer.typeMovementProducer.name" dataModel="#{salaryMovementProducerDataModel}"
-                                                   reRender="salaryMovementProducer, dataScroller">
                                 #{messages['SalaryMovementProducer.concept']}
-                            </app:commandSortHeader>
                         </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
@@ -116,7 +131,7 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementProducer.xhtml" styleClass="button"
                           propagation="none"
-                          rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"/>
+                          rendered="#{s:hasPermission('SALARYMOVEMENTDISCOUNTPRODUCER','CREATE')}"/>
             </div>
 
             <app:dataScroller id="dataScroller" for="salaryMovementProducerList" dataModel="#{salaryMovementProducerDataModel}"/>
