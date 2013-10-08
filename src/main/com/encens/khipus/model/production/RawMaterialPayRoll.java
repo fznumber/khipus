@@ -117,8 +117,6 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getSumaryTotal",
                 query = "select " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
                         " round(sum(RawMaterialPayRoll.totalWeighedByGAB)) as balanceWeight, " +
                         " round(sum(RawMaterialPayRoll.totalCollectedByGAB)) as collected " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
