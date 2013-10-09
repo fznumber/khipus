@@ -32,9 +32,10 @@ public class ProductiveZoneServiceBean implements ProductiveZoneService {
     }
 
     @Override
-    public List<ProductiveZone> findAllThatDoNotHaveCollectionForm(Date date) {
-        return em.createNamedQuery("ProductiveZone.findAllThatDoNotHaveCollectionFormOnDate")
-                 .setParameter("date", date)
+    public List<ProductiveZone> findAllThatDoNotHaveCollectionForm(Date startDate,Date endDate) {
+        return em.createNamedQuery("ProductiveZone.findAllThatDoNotHavePayRollOnDate")
+                 .setParameter("startDate", startDate)
+                 .setParameter("endDate", endDate)
                  .getResultList();
     }
 

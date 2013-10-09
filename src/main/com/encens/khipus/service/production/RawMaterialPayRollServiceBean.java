@@ -60,6 +60,30 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         }
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createAll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException {
+        try {
+            //validate(rawMaterialPayRoll);
+            //Object args = preCreate(rawMaterialPayRoll);
+            //processCreate(rawMaterialPayRoll);
+            //postCreate(rawMaterialPayRoll, args);
+            //getEntityManager().merge(rawMaterialPayRoll);
+            //getEntityManager().flush();
+
+            validate(rawMaterialPayRoll);
+            Object args = preCreate(rawMaterialPayRoll);
+            processCreate(rawMaterialPayRoll);
+            postCreate(rawMaterialPayRoll, args);
+            getEntityManager().flush();
+
+        } catch (PersistenceException e) { //TODO when hibernate will fix this http://opensource.atlassian.com/projects/hibernate/browse/EJB-382, we have to restore EntityExistsException here.
+            log.debug("Persistence error..", e);
+            log.info("PersistenceException caught");
+            //log.error(e);
+            //throw new EntryDuplicatedException(e);
+        }
+    }
+
     @Override
     public void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException {
         Date lastEndDate = (Date)getEntityManager().createNamedQuery("RawMaterialPayRoll.findLasEndDateByMetaProductAndProductiveZone")
@@ -668,7 +692,12 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Aux aux = (Aux)thisEntry.getValue();
             Map<Date,Double> rawMaterialCollected = getRawMaterialCollected(aux.producer, rawMaterialPayRoll);
             //Double porcentage =RoundUtil.getRoundValue( ((aux.earnedMoney *100)/totalMoneyCollected)/100,2, RoundUtil.RoundMode.SYMMETRIC);
-            Double porcentage =((aux.earnedMoney *100)/totalMoneyCollected)/100;
+            //todo: lanzar un mensaje de advertencia
+            Double porcentage;
+            if(totalMoneyCollected != 0)
+                porcentage = ((aux.earnedMoney *100)/totalMoneyCollected)/100;
+            else
+                porcentage = 0.0;
             //Double porcentage =RoundUtil.getRoundValue( ((aux.earnedMoney *100)/totalMoneyCollected)/100,5, RoundUtil.RoundMode.SYMMETRIC);
             ((Aux) thisEntry.getValue()).totaDiffMoney = totalMoneyCollected;
             ((Aux) thisEntry.getValue()).procentaje = porcentage;
@@ -698,7 +727,13 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             Aux aux = (Aux)thisEntry.getValue();
             Map<Date,Double> rawMaterialCollected = getRawMaterialCollected(aux.producer, rawMaterialPayRoll);
             //Double porcentage =RoundUtil.getRoundValue( ((aux.earnedMoney *100)/totalMoneyCollected)/100,2, RoundUtil.RoundMode.SYMMETRIC);
-            Double porcentage  = ((aux.earnedMoney *100)/totalMoneyCollected)/100;
+            //todo: lanzar un mensaje de advertencia
+            Double porcentage;
+            if(totalMoneyCollected != 0)
+                porcentage = ((aux.earnedMoney *100)/totalMoneyCollected)/100;
+            else
+                porcentage = 0.0;
+
             Double proration = totalDiference * porcentage;
             ((Aux) thisEntry.getValue()).adjustmentAmount = proration;
             ((Aux) thisEntry.getValue()).earnedMoney = ((Aux) thisEntry.getValue()).earnedMoney + proration;

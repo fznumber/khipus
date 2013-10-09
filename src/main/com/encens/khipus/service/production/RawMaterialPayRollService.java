@@ -21,6 +21,8 @@ public interface RawMaterialPayRollService extends GenericService {
 
     void create(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException;
 
+    void createAll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException;
+
     void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException;
 
     RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);

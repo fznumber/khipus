@@ -7,6 +7,7 @@ import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -31,6 +32,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @In
     private RawMaterialPayRollService rawMaterialPayRollService;
+
+    @In
+    private ProductiveZoneService productiveZoneService;
 
     @Override
     protected GenericService getService() {
@@ -177,6 +181,68 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             log.error("Caught Error", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
+    }
+
+    public String generateAll() {
+        try {
+            // for(int i= 0;i<=3;i++)
+            // {
+
+            //List<ProductiveZone> productiveZones = productiveZoneService.findAllThatDoNotHaveCollectionForm(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+            List<ProductiveZone> productiveZones = productiveZoneService.findAll();
+            /*if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
+                facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
+                return;
+            }*/
+            RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+            Long id_aux = rawMaterialPayRoll.getId();
+            for(ProductiveZone productiveZone: productiveZones)
+            {
+                RawMaterialPayRoll rawMaterialPayRol = new RawMaterialPayRoll();
+                //setOp(OP_CREATE);
+                //define the unmanaged instance as current instance
+                //rawMaterialPayRol.setId(id_aux);
+                rawMaterialPayRol.setEndDate(rawMaterialPayRoll.getEndDate());
+                rawMaterialPayRol.setStartDate(rawMaterialPayRoll.getStartDate());
+                rawMaterialPayRol.setCompany(rawMaterialPayRoll.getCompany());
+                rawMaterialPayRol.setMetaProduct(rawMaterialPayRoll.getMetaProduct());
+                rawMaterialPayRol.setProductiveZone(productiveZone);
+                rawMaterialPayRollService.validate(rawMaterialPayRol);
+
+                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRol);
+                //   this.rawMaterialPayRollList.add(rawMaterialPayRoll);
+                rawMaterialPayRollService.createAll(rawMaterialPayRol);
+
+                //id_aux++;
+
+            /*RawMaterialPayRoll rawMaterialPayRoll1 = new RawMaterialPayRoll();
+                rawMaterialPayRoll1 = rawMaterialPayRoll;
+                rawMaterialPayRoll.setProductiveZone(productiveZones.get(1));
+                rawMaterialPayRollService.validate(rawMaterialPayRoll);
+
+                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+                //   this.rawMaterialPayRollList.add(rawMaterialPayRoll);
+                rawMaterialPayRollService.createAll(rawMaterialPayRoll);*/
+                //addCreatedMessage();
+            }
+
+        } catch (RawMaterialPayRollException ex) {
+            print(ex);
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        } catch (Exception ex) {
+            if (ex.getCause() instanceof RawMaterialPayRollException) {
+                print((RawMaterialPayRollException)ex.getCause());
+                return Outcome.REDISPLAY;
+            } else {
+                facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+                return Outcome.REDISPLAY;
+            }
+        }
+        return Outcome.SUCCESS;
     }
 
     public void redefine() {

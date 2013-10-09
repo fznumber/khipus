@@ -115,6 +115,11 @@
     <s:div styleClass="formRow" style="width:100%; text-align:right;">
         <s:div style="buttons">
             <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
+                               value="#{messages['RawMaterialPayRoll.generateAllPayroll']}"
+                               action="#{rawMaterialPayRollAction.generateAll}"></a4j:commandButton>
+        </s:div>
+        <s:div style="buttons">
+            <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
                                value="#{messages['RawMaterialPayRoll.generatePayroll']}"
                                action="#{rawMaterialPayRollAction.generate}"></a4j:commandButton>
             <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and rawMaterialPayRollAction.readonly}"
