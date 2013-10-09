@@ -18,7 +18,7 @@ public interface ProductiveZoneService {
 
     public List<ProductiveZone> findAll();
 
-    public List<ProductiveZone> findAllThatDoNotHaveCollectionForm(Date date);
+    public List<ProductiveZone> findAllThatDoNotHaveCollectionForm(Date startDate,Date endDate);
 
     public ProductiveZone find(long id);
 }

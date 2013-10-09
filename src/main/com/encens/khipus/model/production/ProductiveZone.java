@@ -19,15 +19,18 @@ import java.util.List;
  */
 
 @NamedQueries({
-    @NamedQuery(name = "ProductiveZone.findAll", query = "select productiveZone from ProductiveZone productiveZone")
-    /*@NamedQuery(name = "ProductiveZone.findAllThatDoNotHaveCollectionFormOnDate",
-                query = "select productiveZone " +
-                        "from ProductiveZone  productiveZone " +
-                        "where NOT EXISTS ( " +
-                        "   select collectionForm " +
-                        "   from CollectionForm collectionForm " +
-                        "   where collectionForm.productiveZone.id = productiveZone.id and collectionForm.date = :date" +
-                        ")")*/
+    @NamedQuery(name = "ProductiveZone.findAll", query = "select productiveZone from ProductiveZone productiveZone"),
+    @NamedQuery(name = "ProductiveZone.findAllThatDoNotHavePayRollOnDate",
+                query = " SELECT productiveZone " +
+                        " FROM ProductiveZone productiveZone " +
+                        " WHERE NOT EXISTS ( " +
+                        "  SELECT rawMaterialPayRoll.productiveZone " +
+                        "  FROM RawMaterialPayRoll rawMaterialPayRoll " +
+                        "  WHERE rawMaterialPayRoll.startDate = :startDate " +
+                        "  and rawMaterialPayRoll.endDate = :endDate " +
+                        "  and rawMaterialPayRoll.productiveZone = productiveZone"  +
+                        " )  "
+    )
 })
 
 @TableGenerator(name = "ProductiveZone_Generator",

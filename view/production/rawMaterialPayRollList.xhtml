@@ -35,7 +35,7 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
+                <s:button value="#{messages['RawMaterialPayRoll.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}" />
                 <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
                            propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
@@ -93,7 +93,7 @@
             <rich:jQuery selector="#rawMaterialPayRollList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
+                <s:button value="#{messages['RawMaterialPayRoll.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"
                           rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
                 <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
                           propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
