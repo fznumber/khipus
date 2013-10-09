@@ -168,6 +168,19 @@ import java.util.List;
                         "and rawMaterialPayRoll.endDate = :endDate " +
                         "and rawMaterialPayRoll.productiveZone = :productiveZone " +
                         "and rawMaterialPayRoll.metaProduct = :metaProduct "
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getMaterialPayRollInDates",
+                query = " select " +
+                        " rawMaterialPayRoll "+
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.metaProduct = :metaProduct "
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getAllMaterialPayRoll",
+        query = " select " +
+                " rawMaterialPayRoll " +
+                " from RawMaterialPayRoll rawMaterialPayRoll "
         )
 })
 

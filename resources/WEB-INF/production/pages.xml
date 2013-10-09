@@ -56,6 +56,12 @@
             </rule>
         </navigation>
 
+        <navigation from-action="#{rawMaterialPayRollAction.deleteAll}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/rawMaterialPayRollList.xhtml"/>
+            </rule>
+        </navigation>
+
         <navigation>
             <rule>
                 <redirect view-id="/production/rawMaterialPayRollList.xhtml"/>

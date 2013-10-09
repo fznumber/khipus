@@ -25,11 +25,11 @@ import java.util.List;
                         " FROM ProductiveZone productiveZone " +
                         " WHERE NOT EXISTS ( " +
                         "  SELECT rawMaterialPayRoll.productiveZone " +
-                        "  FROM RawMaterialPayRoll rawMaterialPayRoll" +
+                        "  FROM RawMaterialPayRoll rawMaterialPayRoll " +
                         "  WHERE rawMaterialPayRoll.startDate = :startDate " +
-                        "  and rawMaterialPayRoll.endDate = :endDate "  +
+                        "  and rawMaterialPayRoll.endDate = :endDate " +
+                        "  and rawMaterialPayRoll.productiveZone = productiveZone"  +
                         " )  "
-
     )
 })
 

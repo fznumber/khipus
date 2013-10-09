@@ -55,7 +55,7 @@
         <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
             <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
-                         maxlength="150" tabindex="1" required="true" readonly="#{rawMaterialPayRollAction.readonly}" >
+                         maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}" >
             </h:inputText>
             <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                              title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
@@ -113,18 +113,24 @@
         </s:decorate>
     </h:panelGrid>
     <s:div styleClass="formRow" style="width:100%; text-align:right;">
+
+
         <s:div style="buttons">
-            <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
-                               value="#{messages['RawMaterialPayRoll.generateAllPayroll']}"
-                               action="#{rawMaterialPayRollAction.generateAll}"></a4j:commandButton>
-        </s:div>
-        <s:div style="buttons">
+
+            <a4j:commandButton rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly and rawMaterialPayRollAction.delete }"
+                               value="#{messages['RawMaterialPayRoll.deleteAllPayroll']}">
+                <rich:componentControl for="deleteAllConfirmation" event="onclick" disableDefault="true"
+                                       operation="show"/>
+            </a4j:commandButton>
+
             <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
                                value="#{messages['RawMaterialPayRoll.generatePayroll']}"
                                action="#{rawMaterialPayRollAction.generate}"></a4j:commandButton>
+
             <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and rawMaterialPayRollAction.readonly}"
                                value="#{messages['RawMaterialPayRoll.redefinePayroll']}"
                                action="#{rawMaterialPayRollAction.redefine}"></a4j:commandButton>
+
         </s:div>
     </s:div>
 </rich:panel>
@@ -353,6 +359,24 @@
     </ui:define>
     <ui:define name="dialogOption">
         <a4j:commandButton action="#{rawMaterialPayRollAction.delete}"
+                           value="#{messages['Common.delete']}" immediate="true"
+                           styleClass="button"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate template="/include/modalDialog.xhtml" rendered="#{rawMaterialPayRollAction.delete}">
+    <ui:param name="dialogId" value="deleteAllConfirmation"/>
+    <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
+    <ui:define name="dialogContent">
+        <p>
+            <h:outputFormat value="#{messages['RawMaterialPayRoll.deleteAll.confirmation']}">
+                <f:param value="#{rawMaterialPayRoll.startDate}"/>
+                <f:param value="#{rawMaterialPayRoll.endDate}"/>
+            </h:outputFormat>
+        </p>
+    </ui:define>
+    <ui:define name="dialogOption">
+        <a4j:commandButton action="#{rawMaterialPayRollAction.deleteAll}"
                            value="#{messages['Common.delete']}" immediate="true"
                            styleClass="button"/>
     </ui:define>

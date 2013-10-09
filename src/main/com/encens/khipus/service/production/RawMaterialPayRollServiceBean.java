@@ -1065,4 +1065,21 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 "and rawMaterialPayRoll.endDate <=  :endDate"
                 +restricZone+restricMeta;
     }
+
+    @Override
+    public List<RawMaterialPayRoll> findAll(Date startDate, Date endDate, MetaProduct metaProduct) {
+        List<RawMaterialPayRoll> rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getMaterialPayRollInDates")
+                                                       .setParameter("startDate",startDate,TemporalType.DATE)
+                                                       .setParameter("endDate",endDate,TemporalType.DATE)
+                                                       .setParameter("metaProduct",metaProduct)
+                                                       .getResultList();
+        return rawMaterialPayRolls;
+    }
+
+    @Override
+    public List<RawMaterialPayRoll> findAll() {
+        List<RawMaterialPayRoll> rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getAllMaterialPayRoll")
+                                                              .getResultList();
+        return rawMaterialPayRolls;
+    }
 }
