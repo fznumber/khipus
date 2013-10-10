@@ -95,7 +95,6 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
             params.put("startDate",df.format(dateIni.getTime()));
             params.put("endDate",df.format(dateEnd.getTime()));
             params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
-            params.put("reportTitle",messages.get("Report.rawMaterialSession.total"));
 
 
             int cont = periodo.getInitDay();
@@ -110,6 +109,7 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
             {
                 for(int i = cont; i<=31;i++)
                 {
+                    cont = 16;
                     params.put("DAY"+cont,"D"+i);
                     cont ++;
                 }

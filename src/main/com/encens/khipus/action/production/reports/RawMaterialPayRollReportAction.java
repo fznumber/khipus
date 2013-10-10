@@ -12,15 +12,20 @@ import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
+import com.jatun.titus.reportgenerator.util.TypedReportData;
+import net.sf.jasperreports.engine.JRPrintPage;
+import net.sf.jasperreports.engine.JasperPrint;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -86,12 +91,22 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateEnd);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-
+        JasperPrint jasperPrint1 = new JasperPrint();
+        JasperPrint jasperPrint2;
 
         Map params = new HashMap();
 
+        List<ProductiveZone> productiveZones = productiveZoneService.findAll();
+        TypedReportData typedReportData;
+        TypedReportData mostrar = new TypedReportData();
+        RawMaterialPayRoll rawMaterialPayRoll;
+        boolean tomarPrimero = true;
 
-         RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+        for(ProductiveZone productiveZone :productiveZones)
+         {
+            zone = productiveZone;
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+
             params.put("reportTitle",messages.get("Report.titleGeneral"));
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
             params.put("startDate",df.format(dateIni.getTime()));
@@ -114,8 +129,30 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
-            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
+            typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+            if(tomarPrimero)
+            {
+                jasperPrint1 = typedReportData.getJasperPrint();
+                mostrar = typedReportData;
+            }else
+            {
+                jasperPrint2 = typedReportData.getJasperPrint();
+                List pages = jasperPrint2.getPages();
+                for(Object jrPrintPage: pages){
+                    jasperPrint1.addPage((JRPrintPage)jrPrintPage);
+                }
+            }
+             tomarPrimero = false;
+        }
+
+        try {
+            mostrar.setJasperPrint(jasperPrint1);
+            GenerationReportData generationReportData = new GenerationReportData(mostrar);
+            generationReportData.exportReport();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Override
