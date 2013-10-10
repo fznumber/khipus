@@ -90,20 +90,60 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
-        JasperPrint jasperPrint1 = new JasperPrint();
-        JasperPrint jasperPrint2;
-
         Map params = new HashMap();
 
-        List<ProductiveZone> productiveZones = productiveZoneService.findAll();
+        if(zone==null)
+        {
+            generarTodosGAB(params,df);
+        }else
+        {
+            generarGAB(params,df);
+        }
+
+    }
+
+    private void generarGAB(Map params,DateFormat df) {
+        RawMaterialPayRoll rawMaterialPayRoll;
+
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+
+            params.put("reportTitle",messages.get("Report.titleGeneral"));
+            params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
+            params.put("startDate",df.format(dateIni.getTime()));
+            params.put("endDate",df.format(dateEnd.getTime()));
+            params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
+
+
+            params.put("totalCollectedByGAB", rawMaterialPayRoll.getTotalCollectedByGAB());
+            params.put("totalMountCollectdByGAB",rawMaterialPayRoll.getTotalMountCollectdByGAB());
+            params.put("totalRetentionGAB",rawMaterialPayRoll.getTotalRetentionGAB());
+            params.put("totalCreditByGAB",rawMaterialPayRoll.getTotalCreditByGAB());
+            params.put("totalVeterinaryByGAB",rawMaterialPayRoll.getTotalVeterinaryByGAB());
+            params.put("totalAlcoholByGAB",rawMaterialPayRoll.getTotalAlcoholByGAB());
+            params.put("totalConcentratedByGAB",rawMaterialPayRoll.getTotalConcentratedByGAB());
+            params.put("totalYogourdByGAB",rawMaterialPayRoll.getTotalYogourdByGAB());
+            params.put("totalRecipByGAB",rawMaterialPayRoll.getTotalRecipByGAB());
+            params.put("totalDiscountByGAB",rawMaterialPayRoll.getTotalDiscountByGAB());
+            params.put("totalAdjustmentByGAB",rawMaterialPayRoll.getTotalAdjustmentByGAB());
+            params.put("totalOtherIncomeByGAB",rawMaterialPayRoll.getTotalOtherIncomeByGAB());
+            params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
+            params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+            params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+
+            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+
+    }
+
+    private void generarTodosGAB(Map params,DateFormat df) {
+        JasperPrint jasperPrint1 = new JasperPrint();
+        JasperPrint jasperPrint2;
+        RawMaterialPayRoll rawMaterialPayRoll;
         TypedReportData typedReportData;
         TypedReportData mostrar = new TypedReportData();
-        RawMaterialPayRoll rawMaterialPayRoll;
         boolean tomarPrimero = true;
-
+        List<ProductiveZone> productiveZones = productiveZoneService.findAll();
         for(ProductiveZone productiveZone :productiveZones)
-         {
+        {
             zone = productiveZone;
             rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
 
@@ -143,7 +183,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                     jasperPrint1.addPage((JRPrintPage)jrPrintPage);
                 }
             }
-             tomarPrimero = false;
+            tomarPrimero = false;
         }
 
         try {
