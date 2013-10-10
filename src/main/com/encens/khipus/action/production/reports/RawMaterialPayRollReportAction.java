@@ -91,7 +91,6 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateEnd);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Map params = new HashMap();
-
         if(zone==null)
         {
             generarTodosGAB(params,df);
@@ -104,6 +103,10 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
     private void generarGAB(Map params,DateFormat df) {
         RawMaterialPayRoll rawMaterialPayRoll;
+        TypedReportData typedReportData;
+        TypedReportData mostrar = new TypedReportData();
+        JasperPrint jasperPrint1 = new JasperPrint();
+        JasperPrint jasperPrint2 ;
 
             rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
 
@@ -130,13 +133,30 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
 
-            super.generateReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+            typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+
+            jasperPrint1 = typedReportData.getJasperPrint();
+
+            jasperPrint2 = getbyGABReportTypedReportData().getJasperPrint();
+            List pages = jasperPrint2.getPages();
+            for(Object jrPrintPage: pages){
+                jasperPrint1.addPage((JRPrintPage)jrPrintPage);
+            }
+
+
+        try {
+            typedReportData.setJasperPrint(jasperPrint1);
+            GenerationReportData generationReportData = new GenerationReportData(typedReportData);
+            generationReportData.exportReport();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
     }
 
     private void generarTodosGAB(Map params,DateFormat df) {
         JasperPrint jasperPrint1 = new JasperPrint();
-        JasperPrint jasperPrint2;
+        JasperPrint jasperPrint2,collectedBayGAB;
         RawMaterialPayRoll rawMaterialPayRoll;
         TypedReportData typedReportData;
         TypedReportData mostrar = new TypedReportData();
@@ -171,13 +191,26 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
 
             typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+
             if(tomarPrimero)
             {
                 jasperPrint1 = typedReportData.getJasperPrint();
+                collectedBayGAB = getbyGABReportTypedReportData().getJasperPrint();
+                List pages = collectedBayGAB.getPages();
+                for(Object jrPrintPage: pages){
+                    jasperPrint1.addPage((JRPrintPage)jrPrintPage);
+                }
                 mostrar = typedReportData;
             }else
             {
                 jasperPrint2 = typedReportData.getJasperPrint();
+                collectedBayGAB = getbyGABReportTypedReportData().getJasperPrint();
+                List pagesCollecteds = collectedBayGAB.getPages();
+
+                for(Object jrPrintPage: pagesCollecteds){
+                    jasperPrint2.addPage((JRPrintPage)jrPrintPage);
+                }
+
                 List pages = jasperPrint2.getPages();
                 for(Object jrPrintPage: pages){
                     jasperPrint1.addPage((JRPrintPage)jrPrintPage);
@@ -191,7 +224,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             GenerationReportData generationReportData = new GenerationReportData(mostrar);
             generationReportData.exportReport();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 
@@ -410,5 +443,108 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         }
     }
 
+    public TypedReportData getbyGABReportTypedReportData() {
+        log.debug("Generate RotatoryFundReportAction........");
+        String subReportKey = "RAWMATERIALCOLLECTEDBYGABREPORT";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        dateIni = Calendar.getInstance();
+        dateEnd = Calendar.getInstance();
+        dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1,gestion.getYear()));
+        sdf.setCalendar(dateIni);
+        sdf.setCalendar(dateEnd);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
+        Map params = new HashMap();
+
+        //params.put("reportTitle",messages.get("Report.titleGeneral"));
+        params.put("title",messages.get("Report.titleGeneral"));
+        params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
+        params.put("startDate",df.format(dateIni.getTime()));
+        params.put("endDate",df.format(dateEnd.getTime()));
+        params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
+
+
+        int cont = periodo.getInitDay();
+        for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
+        {
+
+            params.put("DAY"+cont,"D"+i);
+            cont ++;
+        }
+
+        if(cont < 31 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
+        {
+            for(int i = cont; i<=31;i++)
+            {
+                cont = 16;
+                params.put("DAY"+cont,"D"+i);
+                cont ++;
+            }
+        }
+
+        params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+
+        return super.getReport(
+                subReportKey,
+                "/production/reports/rawMaterialCollectedByGABReport.jrxml",
+                getSql(),
+                params,
+                "rotatoryFundReport");
+
+    }
+
+    protected String getSql()
+    {
+
+        int initDay = periodo.getInitDay();
+        int endDay = periodo.getEndDay(month.getValue()+1,gestion.getYear());
+        int cont = 1;
+        String sql =" select \n"+
+                " A"+cont+".productor as productor \n";
+        String total = "";
+        for(int i = initDay; i<=endDay;i++)
+        {
+            sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
+            total += ((i==initDay)?",":"+")+" A"+cont+".CANTIDAD";
+            cont ++;
+        }
+        if(cont < 16 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
+        {
+            for(int i = cont; i<=16;i++)
+            {
+                sql += "      , 0.0 AS D"+cont+"\n";
+                cont ++;
+            }
+        }
+        sql += total+" AS TOTAL \n";
+        sql += " from \n";
+        cont = 1;
+        int month_act = (month.getValue())+1;
+        for(int i = initDay; i<= endDay; i++)
+        {
+            sql +=  "   (select zp.numero , zp.nombre, am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, am.IDPRODUCTORMATERIAPRIMA\n" +
+                    "  from sesionacopio sa\n" +
+                    "                              inner join acopiomateriaprima am\n" +
+                    "                              on am.idsesionacopio = sa.idsesionacopio\n" +
+                    "                              inner join EOS.persona pe \n" +
+                    "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
+                    "                              inner join zonaproductiva zp\n" +
+                    "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
+                    "                              where sa.fecha = to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                    "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                    "      ) A"+cont+( (i != endDay)?",\n":"\n");
+            cont++;
+        }
+        cont = 2;
+
+        for(int i = initDay; i<endDay;i++)
+        {
+            sql += ((cont == 2)?" WHERE A":" and A") +1+".IDPRODUCTORMATERIAPRIMA = A"+cont+".IDPRODUCTORMATERIAPRIMA\n";
+            cont ++;
+        }
+
+        return sql;
+    }
 }
