@@ -84,18 +84,18 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
     public boolean mathematicalFormulaActionListener(ActionEvent e) {
 
         try {
-            ProductComposition comp = getInstance();
-            if (comp.getProducingAmount() == null || comp.getContainerWeight() == null || comp.getSupposedAmount() == null) {
+            ProductComposition productComposition = getInstance();
+            if (productComposition.getProducingAmount() == null || productComposition.getContainerWeight() == null || productComposition.getSupposedAmount() == null) {
                 return false;
             }
 
-            for (ProductionIngredient pi : comp.getProductionIngredientList()) {
+            for (ProductionIngredient pi : productComposition.getProductionIngredientList()) {
                 if (pi.getMathematicalFormula() == null) {
                     return false;
                 }
             }
 
-            evaluatorMathematicalExpressionsService.executeMathematicalFormulas(comp);
+            evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productComposition);
             return true;
         } catch (Exception ex1) {
             Throwable throwable = ex1;

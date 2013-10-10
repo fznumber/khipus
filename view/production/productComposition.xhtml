@@ -32,7 +32,7 @@
         <s:defaultAction/>
     </h:commandButton>
 
-    <h:commandButton action="#{productCompositionAction.update}" value="#{messages['Common.save']}"
+    <h:commandButton action="#{productCompositionAction.update}" value="#{messages['Common.save_update']}"
                      styleClass="button"
                      rendered="#{productCompositionAction.managed and s:hasPermission('PRODUCTCOMPOSITION','UPDATE')}"
                      tabindex="2"/>
@@ -109,6 +109,7 @@
                     <a4j:support event="onblur" ajaxSingle="true"
                                  actionListener="#{productCompositionAction.mathematicalFormulaActionListener}"
                                  reRender="formPanel"/>
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:inputText>
                 <h:outputText value=" [#{messages['ProductComposition.defaultContainerWeight']}]"/>
             </s:decorate>
@@ -124,7 +125,9 @@
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductComposition.realWeight']}</ui:define>
                 <h:inputText value="#{productCompositionAction.totalWeight}" required="false" style="width: 15em;"
-                             readonly="true"/>
+                             readonly="true">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:inputText>
             </s:decorate>
         </h:panelGrid>
     </fieldset>
@@ -193,7 +196,10 @@
                     <rich:message for="mathematicalFormula" errorClass="errors"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{ingredientItem.amount}"/>
+                    <h:outputText value="#{ingredientItem.amount}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
+
                 </rich:column>
                 <rich:column styleClass="center">
                     <a4j:commandLink ajaxSingle="true" value="#{messages['Common.remove']}"
