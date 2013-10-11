@@ -17,12 +17,13 @@
             <rich:simpleTogglePanel label="#{messages['CollectionForm.search']}" switchType="client">
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['CollectionForm.startDate']}</ui:define>
-                    <rich:calendar value="#{collectionFormDataModel.privateCriteria.startDate}" />
+                    <rich:calendar value="#{collectionFormDataModel.privateCriteria.startDate}"/>
                 </s:decorate>
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['CollectionForm.endDate']}</ui:define>
-                    <rich:calendar value="#{collectionFormDataModel.privateCriteria.endDate}" />
-                    <a4j:commandButton action="#{collectionFormDataModel.search}" reRender="collectionFormList, dataScroller"
+                    <rich:calendar value="#{collectionFormDataModel.privateCriteria.endDate}"/>
+                    <a4j:commandButton action="#{collectionFormDataModel.search}"
+                                       reRender="collectionFormList, dataScroller"
                                        styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
                                        tabindex="4">
                         <s:defaultAction/>
@@ -51,13 +52,15 @@
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="collectionForm.date" dataModel="#{collectionFormDataModel}"
+                            <app:commandSortHeader sortProperty="collectionForm.date"
+                                                   dataModel="#{collectionFormDataModel}"
                                                    reRender="collectionFormList, dataScroller">
                                 #{messages['CollectionForm.date']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="collectionForm.metaProduct.name" dataModel="#{collectionFormDataModel}"
+                            <app:commandSortHeader sortProperty="collectionForm.metaProduct.name"
+                                                   dataModel="#{collectionFormDataModel}"
                                                    reRender="collectionFormList, dataScroller">
                                 #{messages['CollectionForm.rawMaterial']}
                             </app:commandSortHeader>
@@ -84,16 +87,22 @@
                 </f:facet>
 
                 <rich:column>
-                    <h:outputText value="#{collectionFormItem.date}"/>
+                    <h:outputText value="#{collectionFormItem.date}">
+                        <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                           timeZone="#{sessionUser.timeZone}"
+                                           type="date"/>
+                    </h:outputText>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{collectionFormItem.metaProduct.name}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{collectedRawMaterialCalculator.calculateCollectedAmount(collectionFormItem)}"/>
+                    <h:outputText
+                            value="#{collectedRawMaterialCalculator.calculateCollectedAmount(collectionFormItem)}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{collectedRawMaterialCalculator.calculateAvailableAmount(collectionFormItem)}"/>
+                    <h:outputText
+                            value="#{collectedRawMaterialCalculator.calculateAvailableAmount(collectionFormItem)}"/>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{collectedRawMaterialCalculator.calculateUsedAmount(collectionFormItem)}"/>
@@ -112,11 +121,14 @@
             </rich:dataTable>
             <app:dataScroller id="dataScroller" for="collectionFormList" dataModel="#{collectionFormDataModel}"/>
 
-            <rich:jQuery selector="#collectionFormList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
-            <rich:jQuery selector="#collectionFormList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+            <rich:jQuery selector="#collectionFormList tr"
+                         query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+            <rich:jQuery selector="#collectionFormList tr"
+                         query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
             <div class="buttons">
-                <h:commandButton styleClass="button" value="#{messages['Common.new']}" action="#{collectionFormAction.startCreate}"
+                <h:commandButton styleClass="button" value="#{messages['Common.new']}"
+                                 action="#{collectionFormAction.startCreate}"
                                  rendered="#{s:hasPermission('COLLECTIONFORM','CREATE')}">
                 </h:commandButton>
             </div>
