@@ -17,6 +17,7 @@ import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import com.encens.khipus.util.MessageUtils;
+import com.encens.khipus.util.MoneyUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -133,6 +134,9 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
 
+            Double liquidPayable = rawMaterialPayRoll.getTotalLiquidByGAB();
+            MoneyUtil moneyUtil = new MoneyUtil();
+            params.put("literally_money",moneyUtil.Convertir(liquidPayable.toString(),true));
             typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
             jasperPrint1 = typedReportData.getJasperPrint();
@@ -151,7 +155,6 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
     }
 
     private void generarTodosGAB(Map params,DateFormat df) {
@@ -190,6 +193,10 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
 
+            Double liquidPayable = rawMaterialPayRoll.getTotalLiquidByGAB();
+            MoneyUtil moneyUtil = new MoneyUtil();
+            params.put("literally_money",moneyUtil.Convertir(liquidPayable.toString(),true));
+
             typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
             if(tomarPrimero)
@@ -226,6 +233,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        zone = null;
     }
 
     @Override
@@ -378,17 +386,6 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     public Periodo[] getPeriodos() {
         return Periodo.values();
     }
-    /*
-    public void selectProductiveZone(ProductiveZone productiveZone) {
-        try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
-            getInstance().setProductiveZone(productiveZone);
-        } catch (Exception ex) {
-            log.error("Caught Error", ex);
-            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
-        }
-    }
-    */
 
     public GeneratedPayrollType getGeneratedPayrollType() {
         return generatedPayrollType;
@@ -454,16 +451,19 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
         Map params = new HashMap();
 
         //params.put("reportTitle",messages.get("Report.titleGeneral"));
         params.put("title",messages.get("Report.titleGeneral"));
+        params.put("header",messages.get("Report.header.collectedByGAB"));
         params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
         params.put("startDate",df.format(dateIni.getTime()));
         params.put("endDate",df.format(dateEnd.getTime()));
         params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
 
+        boolean isFirst = (periodo.getResourceKey().toString()== "Periodo.first") ?true:false;
+
+        String fileReport = (isFirst)? "rawMaterialCollectedByGAB1raReport.jrxml":"rawMaterialCollectedByGAB2daReport.jrxml" ;
 
         int cont = periodo.getInitDay();
         for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
@@ -473,11 +473,10 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             cont ++;
         }
 
-        if(cont < 31 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
+        if(cont <= 31 && isFirst)
         {
             for(int i = cont; i<=31;i++)
             {
-                cont = 16;
                 params.put("DAY"+cont,"D"+i);
                 cont ++;
             }
@@ -488,7 +487,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
         return super.getReport(
                 subReportKey,
-                "/production/reports/rawMaterialCollectedByGABReport.jrxml",
+                "/production/reports/" + fileReport,
                 getSql(),
                 params,
                 "rotatoryFundReport");
