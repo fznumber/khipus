@@ -11,6 +11,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +25,11 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovementGAB> {
 
+    private PrivateCriteria privateCriteria;
+
     private static final String[] RESTRICTIONS = {
+            "salaryMovementGAB.date >= #{salaryMovementGABDataModel.privateCriteria.startDate}",
+            "salaryMovementGAB.date <= #{salaryMovementGABDataModel.privateCriteria.endDate}",
             "upper(productiveZone.number) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.number})), '%')",
             "upper(productiveZone.group) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.group})), '%')",
             "upper(productiveZone.name) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.name})), '%')",
@@ -53,6 +58,38 @@ public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovem
     @Override
     public List<String> getRestrictions() {
         return Arrays.asList(RESTRICTIONS);
+    }
+
+    public static class PrivateCriteria{
+        private Date startDate;
+        private Date endDate;
+
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
+        }
+
+        public Date getEndDate() {
+            return endDate;
+        }
+
+        public void setEndDate(Date endDate) {
+            this.endDate = endDate;
+        }
+    }
+
+    public PrivateCriteria getPrivateCriteria() {
+        if (privateCriteria == null) {
+            privateCriteria = new PrivateCriteria();
+        }
+        return privateCriteria;
+    }
+
+    public void setPrivateCriteria(PrivateCriteria privateCriteria) {
+        this.privateCriteria = privateCriteria;
     }
 
 }

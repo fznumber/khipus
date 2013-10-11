@@ -1,12 +1,15 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -27,10 +30,15 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     private Date month;
     private int fortnight;
     private boolean readonly;
+    private boolean generateAll = true;
+    private boolean delete = false;
     private List<RawMaterialPayRoll> rawMaterialPayRollList;
 
     @In
     private RawMaterialPayRollService rawMaterialPayRollService;
+
+    @In
+    private ProductiveZoneService productiveZoneService;
 
     @Override
     protected GenericService getService() {
@@ -148,35 +156,83 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         try {
             productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
             getInstance().setProductiveZone(productiveZone);
+            generateAll = false;
         } catch (Exception ex) {
             log.error("Caught Error", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
     }
 
-    public void generate() {
+    public String generate() {
         try {
-           // for(int i= 0;i<=3;i++)
-           // {
                 RawMaterialPayRoll rawMaterialPayRoll = getInstance();
                 if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
                     facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
-                    return;
+                    return Outcome.FAIL;
                 }
-
-                rawMaterialPayRollService.validate(rawMaterialPayRoll);
-
-                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
-             //   this.rawMaterialPayRollList.add(rawMaterialPayRoll);
-           // }
-            readonly = true;
+                if(rawMaterialPayRoll.getProductiveZone() != null)
+                {
+                    rawMaterialPayRollService.validate(rawMaterialPayRoll);
+                    rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                    rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+                    readonly = true;
+                }else
+                {
+                    return generateAll();
+                }
         } catch (RawMaterialPayRollException ex) {
             print(ex);
         } catch (Exception ex) {
             log.error("Caught Error", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
+        return Outcome.REDISPLAY;
+    }
+
+    public String generateAll() {
+        try {
+
+            RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+            List<ProductiveZone> productiveZones = productiveZoneService.findAllThatDoNotHaveCollectionForm(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+            for(ProductiveZone productiveZone: productiveZones)
+            {
+                RawMaterialPayRoll rawMaterialPayRol = new RawMaterialPayRoll();
+                rawMaterialPayRol.setEndDate(rawMaterialPayRoll.getEndDate());
+                rawMaterialPayRol.setStartDate(rawMaterialPayRoll.getStartDate());
+                rawMaterialPayRol.setCompany(rawMaterialPayRoll.getCompany());
+                rawMaterialPayRol.setMetaProduct(rawMaterialPayRoll.getMetaProduct());
+                rawMaterialPayRol.setProductiveZone(productiveZone);
+                rawMaterialPayRollService.validate(rawMaterialPayRol);
+                rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRol);
+                rawMaterialPayRollService.createAll(rawMaterialPayRol);
+            }
+
+        } catch (RawMaterialPayRollException ex) {
+            print(ex);
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        } catch (Exception ex) {
+            if (ex.getCause() instanceof RawMaterialPayRollException) {
+                print((RawMaterialPayRollException)ex.getCause());
+                return Outcome.REDISPLAY;
+            } else {
+                facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+                return Outcome.REDISPLAY;
+            }
+        }
+        return Outcome.SUCCESS;
+    }
+
+    public String deleteAll() throws ReferentialIntegrityException, ConcurrencyException {
+        RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+        List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate(),rawMaterialPayRoll.getMetaProduct());
+        for(RawMaterialPayRoll payRoll: rawMaterialPayRolls)
+        {
+            rawMaterialPayRollService.delete(payRoll);
+        }
+        return Outcome.SUCCESS;
     }
 
     public void redefine() {
@@ -203,5 +259,22 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void setRawMaterialPayRollList(List<RawMaterialPayRoll> rawMaterialPayRollList) {
         this.rawMaterialPayRollList = rawMaterialPayRollList;
+    }
+
+    public boolean isGenerateAll() {
+        return generateAll;
+    }
+
+    public void setGenerateAll(boolean generateAll) {
+        this.generateAll = generateAll;
+    }
+
+    public boolean isDelete() {
+        List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll();
+        return (rawMaterialPayRolls.size()>0)? true : false;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 }

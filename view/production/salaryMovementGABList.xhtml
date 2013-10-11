@@ -14,29 +14,47 @@
     <ui:define name="body">
         <h:form id="salaryMovementGABSearch">
             <rich:simpleTogglePanel label="#{messages['SalaryMovementGAB.search']}" switchType="client">
-                <h:panelGrid columns="1" width="100%">
+                <h:panelGrid columns="2" width="100%">
+
+                    <s:div>
+
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.startDate']}</ui:define>
+                            <rich:calendar value="#{salaryMovementGABDataModel.privateCriteria.startDate}"
+                                           tabindex="1" styleClass="input">
+                            </rich:calendar>
+                        </s:decorate>
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.endDate']}</ui:define>
+                            <rich:calendar value="#{salaryMovementGABDataModel.privateCriteria.endDate}"
+                                           tabindex="2" styleClass="input">
+                            </rich:calendar>
+                        </s:decorate>
+
+                    </s:div>
+
                     <s:div>
 
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.number']}</ui:define>
                             <h:inputText id="firstName" value="#{salaryMovementGABDataModel.criteria.productiveZone.number}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
                             <h:inputText id="lastName" value="#{salaryMovementGABDataModel.criteria.productiveZone.group}"
-                                         maxlength="100" tabindex="2" styleClass="input">
+                                         maxlength="100" tabindex="4" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
                             <h:inputText id="maidenName" value="#{salaryMovementGABDataModel.criteria.productiveZone.name}"
-                                         maxlength="100" tabindex="3" styleClass="input">
+                                         maxlength="100" tabindex="5" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{salaryMovementGABDataModel.search}" reRender="salaryMovementGABList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                               tabindex="4">
+                                               tabindex="6">
                                 <s:defaultAction/>
                             </a4j:commandButton>
                         </s:decorate>
@@ -50,7 +68,8 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementGAB.xhtml" styleClass="button"
-                          propagation="none"/>
+                          propagation="none"
+                          rendered="#{s:hasPermission('SALARYMOVEMENTDISCOUNTGAB','CREATE')}"/>
             </div>
 
             <rich:dataTable value="#{salaryMovementGABDataModel}" var="salaryMovementGABItem" id="salaryMovementGABList"
@@ -114,7 +133,8 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/salaryMovementGAB.xhtml" styleClass="button"
-                          propagation="none" />
+                          propagation="none"
+                          rendered="#{s:hasPermission('SALARYMOVEMENTDISCOUNTGAB','CREATE')}"/>
             </div>
 
             <app:dataScroller id="dataScroller" for="salaryMovementGABList" dataModel="#{rawMaterialGABDataModel}"/>

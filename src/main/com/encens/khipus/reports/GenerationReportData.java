@@ -6,6 +6,8 @@ import com.encens.khipus.util.JSFUtil;
 import com.jatun.titus.reportgenerator.TemplateReportGenerator;
 import com.jatun.titus.reportgenerator.util.ReportConfigParams;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
+import com.jatun.titus.web.util.SubReportInfo;
+import net.sf.jasperreports.engine.JasperPrint;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +51,16 @@ public class GenerationReportData implements Serializable {
 
         //Add report params
         typedReportData.getReportParams().putAll(params);
+
+        // init templateReportGenerator
+        templateReportGenerator = new TemplateReportGenerator();
+
+        FileCacheLoader.i.refreshRoot();
+    }
+
+    public GenerationReportData(TypedReportData reportData) {
+        // init typedReportData
+        typedReportData = reportData;
 
         // init templateReportGenerator
         templateReportGenerator = new TemplateReportGenerator();
@@ -107,5 +119,9 @@ public class GenerationReportData implements Serializable {
         templateReportGenerator.exportReport(typedReportData, httpServletResponse);
         httpServletResponse.flushBuffer();
         JSFUtil.getFacesContext().responseComplete();
+    }
+
+    public TypedReportData getExportReport() {
+        return this.typedReportData;
     }
 }

@@ -117,8 +117,6 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getSumaryTotal",
                 query = "select " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
-                        //" sum(RawMaterialPayRoll.totalMountCollectdByGAB) - sum(RawMaterialPayRoll.totalDiscountByGAB) as differences, " +
                         " round(sum(RawMaterialPayRoll.totalWeighedByGAB)) as balanceWeight, " +
                         " round(sum(RawMaterialPayRoll.totalCollectedByGAB)) as collected " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
@@ -170,6 +168,19 @@ import java.util.List;
                         "and rawMaterialPayRoll.endDate = :endDate " +
                         "and rawMaterialPayRoll.productiveZone = :productiveZone " +
                         "and rawMaterialPayRoll.metaProduct = :metaProduct "
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getMaterialPayRollInDates",
+                query = " select " +
+                        " rawMaterialPayRoll "+
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.metaProduct = :metaProduct "
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getAllMaterialPayRoll",
+        query = " select " +
+                " rawMaterialPayRoll " +
+                " from RawMaterialPayRoll rawMaterialPayRoll "
         )
 })
 

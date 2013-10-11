@@ -21,6 +21,8 @@ public interface RawMaterialPayRollService extends GenericService {
 
     void create(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException;
 
+    void createAll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryDuplicatedException, RawMaterialPayRollException;
+
     void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException;
 
     RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
@@ -38,4 +40,8 @@ public interface RawMaterialPayRollService extends GenericService {
     Double getBalanceWeightTotal(Double unitPrice, Calendar dateIni, Calendar dateEnd, MetaProduct metaProduct);
 
     Double getTotalDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+
+    List<RawMaterialPayRoll> findAll(Date startDate, Date endDate, MetaProduct metaProduct);
+
+    List<RawMaterialPayRoll> findAll();
 }
