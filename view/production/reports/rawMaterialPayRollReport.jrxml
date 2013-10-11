@@ -19,6 +19,7 @@
 	<parameter name="totalLiquidByGAB" class="java.lang.Double"/>
 	<parameter name="periodo" class="java.lang.String"/>
 	<parameter name="nombre_gab" class="java.lang.String"/>
+	<parameter name="literally_money" class="java.lang.String"/>
 	<field name="rawMaterialPayRecord.id" class="java.lang.Long">
 		<fieldDescription><![CDATA[COLUMN_1]]></fieldDescription>
 	</field>
@@ -485,7 +486,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="65">
+		<band height="92">
 			<textField pattern="#,##0.00">
 				<reportElement style="detailStyle" x="360" y="0" width="38" height="12"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -583,25 +584,30 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Common.totals}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="246" y="45" width="126" height="20"/>
+				<reportElement x="240" y="72" width="126" height="20"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[ADMINISTRACION ILVA]]></text>
 			</staticText>
 			<line>
-				<reportElement x="213" y="45" width="137" height="1"/>
+				<reportElement x="207" y="72" width="137" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="456" y="45" width="252" height="20"/>
+				<reportElement x="450" y="72" width="252" height="20"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[RESPONSABLE DEL GAB]]></text>
 			</staticText>
 			<line>
-				<reportElement x="423" y="45" width="137" height="1"/>
+				<reportElement x="417" y="72" width="137" height="1"/>
 			</line>
+			<textField>
+				<reportElement x="0" y="12" width="436" height="17"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{literally_money}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

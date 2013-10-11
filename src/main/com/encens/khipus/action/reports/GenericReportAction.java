@@ -42,7 +42,7 @@ public class GenericReportAction implements Serializable {
     protected Map<String, String> messages;
 
     @In
-    private GenericReportService genericReportService;
+    protected GenericReportService genericReportService;
 
     private String reportTitle;
 
@@ -221,6 +221,42 @@ public class GenericReportAction implements Serializable {
     }
 
     /**
+     * Generate's a report using template page sizes and orientation
+     *
+     * @param reportId           ReportId
+     * @param reportTemplatePath Report template path
+     * @param defaultReportTitle A default title
+     * @param params             A map of params
+     */
+    public TypedReportData getReport(String reportId, String reportTemplatePath,
+                               String defaultReportTitle, Map params) {
+        TypedReportData typedReportData = new TypedReportData();
+        log.debug("Generating report........................");
+        String reportTitleString = getReportTitle();
+        if (reportTitleString == null || reportTitleString.isEmpty()) {
+            reportTitleString = defaultReportTitle;
+        }
+        QueryResult queryResult = createReportQueryResult(reportId);
+
+        params.putAll(queryResult.getQueryParameters());
+        try {
+            typedReportData = genericReportService.generateReport(
+                    GenerationReportData.getInstance("messages_app",
+                            (SessionUser) Component.getInstance("sessionUser"),
+                            params),
+                    reportId,
+                    JSFUtil.getResourceAsStream(reportTemplatePath),
+                    getReportFormat().getFormat(),
+                    defaultReportTitle,
+                    queryResult.getEjbql(),
+                    reportTitleString).getTypedReportData();
+        } catch (IOException e) {
+            log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());
+        }
+        return typedReportData;
+    }
+
+    /**
      * This method generates a subreport
      *
      * @param reportId           ReportId
@@ -283,6 +319,32 @@ public class GenericReportAction implements Serializable {
         } catch (IOException e) {
             log.error("ERROR IN GENERATING SUB REPORT......................" + e.getMessage() + "\n" + e.getStackTrace().toString());
         }
+        return typedReportData;
+    }
+
+    public TypedReportData getReport(String reportId, String reportTemplatePath,String query, Map params,String defaultReportTitle ) {
+
+        TypedReportData typedReportData = new TypedReportData();
+        log.debug("Generating sql report........................");
+        String reportTitleString = getReportTitle();
+        if (reportTitleString == null || reportTitleString.isEmpty()) {
+            reportTitleString = defaultReportTitle;
+        }
+        try {
+            typedReportData = genericReportService.generateSqlReport(
+                    GenerationReportData.getInstance("messages_app",
+                            (SessionUser) Component.getInstance("sessionUser"),
+                            params),
+                    reportId,
+                    JSFUtil.getResourceAsStream(reportTemplatePath),
+                    getReportFormat().getFormat(),
+                    defaultReportTitle,
+                    query,
+                    reportTitleString).getTypedReportData();
+        } catch (IOException e) {
+            log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());
+        }
+
         return typedReportData;
     }
 

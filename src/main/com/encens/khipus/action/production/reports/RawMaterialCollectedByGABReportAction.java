@@ -87,37 +87,34 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
 
         Map params = new HashMap();
 
-
-         RawMaterialPayRoll rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
-
-            params.put("reportTitle",messages.get("Report.titleGeneral"));
-            params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
-            params.put("startDate",df.format(dateIni.getTime()));
-            params.put("endDate",df.format(dateEnd.getTime()));
-            params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
-            params.put("reportTitle",messages.get("Report.rawMaterialSession.total"));
+        params.put("title",messages.get("Report.titleGeneral"));
+        params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
+        params.put("startDate",df.format(dateIni.getTime()));
+        params.put("endDate",df.format(dateEnd.getTime()));
+        params.put("nombre_gab","GAB: "+zone.getNumber()+" - "+zone.getName());
 
 
-            int cont = periodo.getInitDay();
-            for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
+        int cont = periodo.getInitDay();
+        for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
+        {
+
+            params.put("DAY"+cont,"D"+i);
+            cont ++;
+        }
+
+        if(cont < 31 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
+        {
+            for(int i = cont; i<=31;i++)
             {
-
+                cont = 16;
                 params.put("DAY"+cont,"D"+i);
                 cont ++;
             }
+        }
 
-            if(cont < 31 && (periodo.getResourceKey().toString()== "Periodo.first") ?false:true)
-            {
-                for(int i = cont; i<=31;i++)
-                {
-                    params.put("DAY"+cont,"D"+i);
-                    cont ++;
-                }
-            }
-
-            params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
-            params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
-            super.generateSqlReport("rotatoryFundReport", "/production/reports/rawMaterialCollectedByGABReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+        params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
+        params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+        super.generateSqlReport("rotatoryFundReport", "/production/reports/rawMaterialCollectedByGABReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
     }
 
@@ -129,11 +126,11 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
         int endDay = periodo.getEndDay(month.getValue()+1,gestion.getYear());
         int cont = 1;
         String sql =" select \n"+
-                    " A"+cont+".productor as productor \n";
+                " A"+cont+".productor as productor \n";
         String total = "";
         for(int i = initDay; i<=endDay;i++)
         {
-          sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
+            sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
             total += ((i==initDay)?",":"+")+" A"+cont+".CANTIDAD";
             cont ++;
         }
@@ -145,8 +142,8 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
                 cont ++;
             }
         }
-         sql += total+" AS TOTAL \n";
-         sql += " from \n";
+        sql += total+" AS TOTAL \n";
+        sql += " from \n";
         cont = 1;
         int month_act = (month.getValue())+1;
         for(int i = initDay; i<= endDay; i++)
@@ -209,7 +206,7 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
     @Create
     public void init() {
         restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
-                                    "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
+                "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
         sortProperty = "rawMaterialProducer.firstName";
     }
 
