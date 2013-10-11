@@ -139,7 +139,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
                 List<String> variables = extractVariables(formula);
                 double result = executeFormula(formula, variables, map);
                 result = RoundUtil.getRoundValue(result, 2, RoundUtil.RoundMode.SYMMETRIC);
-                //result = equation.getMeasureUnit().equals("GR") ? result*1000 : result ;
+                result = equation.getMeasureUnit().equals("GR") ? result * 1000 : result;
                 equation.setResult(result);
             }
         } catch (NotFoundException ex) {

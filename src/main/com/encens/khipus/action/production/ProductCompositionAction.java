@@ -253,7 +253,11 @@ public class ProductCompositionAction extends GenericAction<ProductComposition> 
         double total = 0.0;
 
         for (ProductionIngredient ingredient : getInstance().getProductionIngredientList()) {
-            total += ingredient.getAmount();
+            //total += ingredient.getAmount();
+            if (ingredient.getMetaProduct().getProductItem().getUsageMeasureCode().equals("GR"))
+                total = total + ingredient.getAmount() / 1000.0;
+            else
+                total = total + ingredient.getAmount();
         }
         return total;
     }
