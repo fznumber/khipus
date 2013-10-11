@@ -2,14 +2,20 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
-import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.production.ProductComposition;
+import com.encens.khipus.model.production.ProductionIngredient;
+import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.util.RoundUtil;
 import com.encens.khipus.util.TopologicalSorting;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import de.congrace.exp4j.UnknownFunctionException;
 import de.congrace.exp4j.UnparsableExpressionException;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.seam.annotations.*;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.Create;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,7 +44,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     @Create
     public void initalizeService() {
         String format = String.format("%s|%s|%s|%s", "ING\\d+", containerVariable, amountVariable, supposedVariable);
-        variablePattern =  Pattern.compile(format);
+        variablePattern = Pattern.compile(format);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     private void calculateMathematicalFormulasWithoutDependencies(EquationMap map) throws ProductCompositionException {
         String formula = "";
         try {
-            for(Equation pi : map.values()) {
+            for (Equation pi : map.values()) {
                 if (extractVariables(pi.getFormula()).size() > 0) {
                     continue;
                 }
@@ -80,6 +86,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
                 formula = pi.getFormula();
                 Calculable calc = new ExpressionBuilder(formula).build();
                 double result = calc.calculate();
+                result = RoundUtil.getRoundValue(result, 2, RoundUtil.RoundMode.SYMMETRIC);
                 pi.setResult(result);
             }
         } catch (Exception ex) {
@@ -125,12 +132,14 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         String formula = "";
         String variable = "";
         try {
-            for(String var : executionOrder) {
+            for (String var : executionOrder) {
                 variable = var;
                 Equation equation = map.find(variable);
                 formula = equation.getFormula();
                 List<String> variables = extractVariables(formula);
                 double result = executeFormula(formula, variables, map);
+                result = RoundUtil.getRoundValue(result, 2, RoundUtil.RoundMode.SYMMETRIC);
+                result = equation.getMeasureUnit().equals("GR") ? result * 1000 : result;
                 equation.setResult(result);
             }
         } catch (NotFoundException ex) {
@@ -148,7 +157,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
 
         String result = "";
         String root = pi.getVariable();
-        for(String dependency : dependencies) {
+        for (String dependency : dependencies) {
             result += (result.length() == 0 ? "" : "\n");
             result += root + " " + dependency;
         }
@@ -161,7 +170,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         expr.withVariableNames(variables.toArray(new String[]{}));
         Calculable calc = expr.build();
 
-        for(String var : variables) {
+        for (String var : variables) {
             Equation eq = map.find(var);
             calc.setVariable(var, eq.getResult());
         }
@@ -172,7 +181,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     private List<String> extractVariables(String formula) {
         List<String> result = new ArrayList<String>();
         Matcher matcher = variablePattern.matcher(formula);
-        while(matcher.find()) {
+        while (matcher.find()) {
             result.add(matcher.group());
         }
         return result;
@@ -190,7 +199,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         }
 
         public void addProductionIngredient(List<ProductionIngredient> productionIngredientList) {
-            for(ProductionIngredient pi : productionIngredientList) {
+            for (ProductionIngredient pi : productionIngredientList) {
                 addProductionIngredient(pi);
             }
         }
@@ -220,22 +229,42 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
 
     interface Equation {
         public String getVariable();
+
         public String getFormula();
+
         public void setResult(double result);
+
         public double getResult();
+
+        public String getMeasureUnit();
     }
 
     class ProductionIngredientEquation implements Equation {
         private ProductionIngredient pi;
 
         public ProductionIngredientEquation(ProductionIngredient pi) {
-            this.pi  = pi;
+            this.pi = pi;
         }
 
-        public String getVariable() { return "ING" + pi.getMetaProduct().getId(); }
-        public String getFormula() { return pi.getMathematicalFormula(); }
-        public void setResult(double result) { pi.setAmount(result); }
-        public double getResult() { return pi.getAmount(); }
+        public String getVariable() {
+            return "ING" + pi.getMetaProduct().getId();
+        }
+
+        public String getFormula() {
+            return pi.getMathematicalFormula();
+        }
+
+        public void setResult(double result) {
+            pi.setAmount(result);
+        }
+
+        public double getResult() {
+            return pi.getAmount();
+        }
+
+        public String getMeasureUnit() {
+            return pi.getMetaProduct().getProductItem().getUsageMeasureCode();
+        }
     }
 
     class LiteralEquation implements Equation {
@@ -247,9 +276,24 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
             this.variable = variable;
         }
 
-        public String getVariable() { return variable; }
-        public String getFormula() { return Double.toString(value); }
-        public void setResult(double result) { value = result; }
-        public double getResult() { return value; }
+        public String getVariable() {
+            return variable;
+        }
+
+        public String getFormula() {
+            return Double.toString(value);
+        }
+
+        public void setResult(double result) {
+            value = result;
+        }
+
+        public double getResult() {
+            return value;
+        }
+
+        public String getMeasureUnit() {
+            return variable;
+        }
     }
 }
