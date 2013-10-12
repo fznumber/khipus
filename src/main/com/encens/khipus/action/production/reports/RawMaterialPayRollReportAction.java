@@ -488,13 +488,43 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/production/reports/" + fileReport,
-                getSql(),
+                getSqlOld(),
                 params,
                 "rotatoryFundReport");
 
     }
 
-    protected String getSql()
+    protected String getSqlNew()
+    {
+
+        int initDay = periodo.getInitDay();
+        int endDay = periodo.getEndDay(month.getValue()+1,gestion.getYear());
+        int month_act = (month.getValue())+1;
+        int cont = 1;
+        String sql ="select am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor \n";
+        for(int i = initDay; i<=endDay;i++)
+        {
+            sql +=  "       , (case sa.fecha \n" +
+                    "             when to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                    "             then am.cantidad\n" +
+                    "             end) as D"+cont+"\n";
+            cont++;
+        }
+              sql +=  "  from sesionacopio sa\n" +
+                "                              inner join acopiomateriaprima am\n" +
+                "                              on am.idsesionacopio = sa.idsesionacopio\n" +
+                "                              inner join EOS.persona pe \n" +
+                "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
+                "                              inner join zonaproductiva zp\n" +
+                "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
+                "                              where sa.fecha between to_date('"+initDay+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') and to_date('"+endDay+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                "                              order by sa.fecha asc\n";
+
+        return sql;
+    }
+
+    private String getSqlOld()
     {
 
         int initDay = periodo.getInitDay();
@@ -503,6 +533,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         String sql =" select \n"+
                 " A"+cont+".productor as productor \n";
         String total = "";
+        boolean wasCollected = true;
+
         for(int i = initDay; i<=endDay;i++)
         {
             sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
@@ -521,20 +553,35 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sql += " from \n";
         cont = 1;
         int month_act = (month.getValue())+1;
+
         for(int i = initDay; i<= endDay; i++)
         {
-            sql +=  "   (select zp.numero , zp.nombre, am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, am.IDPRODUCTORMATERIAPRIMA\n" +
-                    "  from sesionacopio sa\n" +
-                    "                              inner join acopiomateriaprima am\n" +
-                    "                              on am.idsesionacopio = sa.idsesionacopio\n" +
-                    "                              inner join EOS.persona pe \n" +
-                    "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
-                    "                              inner join zonaproductiva zp\n" +
-                    "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
-                    "                              where sa.fecha = to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
-                    "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
-                    "      ) A"+cont+( (i != endDay)?",\n":"\n");
-            cont++;
+            Calendar date_aux = Calendar.getInstance();
+            date_aux.set(gestion.getYear(),month.getValue(),i);
+            wasCollected = rawMaterialPayRollService.verifDayColected(date_aux,zone);
+                if(wasCollected)
+                        sql +=  ((cont == 1)?"":" , ")+"   (select am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, am.IDPRODUCTORMATERIAPRIMA\n" +
+                                "  from sesionacopio sa\n" +
+                                "                              inner join acopiomateriaprima am\n" +
+                                "                              on am.idsesionacopio = sa.idsesionacopio\n" +
+                                "                              inner join EOS.persona pe \n" +
+                                "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
+                                "                              inner join zonaproductiva zp\n" +
+                                "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
+                                "                              where sa.fecha = to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                                "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                                "                              ORDER BY pe.nombres\n" +
+                                "      ) A"+cont+( (i != endDay)?"\n":"\n");
+                else
+                        sql += ((cont == 1)?"":" , ")+"    (select 0.0 AS CANTIDAD , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, PM.IDPRODUCTORMATERIAPRIMA\n" +
+                            "  from PRODUCTORMATERIAPRIMA PM                             \n" +
+                            "                              inner join EOS.persona pe \n" +
+                            "                              on PM.IDPRODUCTORMATERIAPRIMA=pe.idpersona                               \n" +
+                            "                              WHERE PM.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                            "                              ORDER BY pe.nombres" +
+                            "      ) A"+cont+( (i != endDay)?"\n":"\n");
+
+                cont++;
         }
         cont = 2;
 
