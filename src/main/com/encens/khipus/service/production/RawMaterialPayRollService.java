@@ -44,4 +44,6 @@ public interface RawMaterialPayRollService extends GenericService {
     List<RawMaterialPayRoll> findAll(Date startDate, Date endDate, MetaProduct metaProduct);
 
     List<RawMaterialPayRoll> findAll();
+
+    boolean verifDayColected(Calendar date_aux, ProductiveZone zone);
 }

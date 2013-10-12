@@ -1069,9 +1069,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     @Override
     public List<RawMaterialPayRoll> findAll(Date startDate, Date endDate, MetaProduct metaProduct) {
         List<RawMaterialPayRoll> rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getMaterialPayRollInDates")
-                                                       .setParameter("startDate",startDate,TemporalType.DATE)
+                                                       .setParameter("startDate", startDate, TemporalType.DATE)
                                                        .setParameter("endDate",endDate,TemporalType.DATE)
-                                                       .setParameter("metaProduct",metaProduct)
+                                                       .setParameter("metaProduct", metaProduct)
                                                        .getResultList();
         return rawMaterialPayRolls;
     }
@@ -1081,5 +1081,18 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         List<RawMaterialPayRoll> rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getAllMaterialPayRoll")
                                                               .getResultList();
         return rawMaterialPayRolls;
+    }
+
+    @Override
+    public boolean verifDayColected(Calendar date_aux, ProductiveZone zone) {
+        List<Object> list = getEntityManager().createQuery("SELECT rawMaterialCollectionSession " +
+                "from RawMaterialCollectionSession rawMaterialCollectionSession" +
+                " where rawMaterialCollectionSession.date = :date_aux" +
+                " and rawMaterialCollectionSession.productiveZone = :zone ")
+                .setParameter("date_aux",date_aux.getTime(),TemporalType.DATE)
+                .setParameter("zone",zone)
+                .getResultList();
+
+        return (list.size()==0) ? false:true;
     }
 }
