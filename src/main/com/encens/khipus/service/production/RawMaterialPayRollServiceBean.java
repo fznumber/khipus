@@ -209,7 +209,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             //RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
             RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer,rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
             //todo: arreglar el alcohol
-            //alcoholDiff += (alcoholByGAB*(aux.procentaje) - RoundUtil.getRoundValue(alcoholByGAB*(aux.procentaje),2, RoundUtil.RoundMode.SYMMETRIC));
+            alcoholDiff += ((alcoholByGAB*(aux.procentaje)) - RoundUtil.getRoundValue(alcoholByGAB*(aux.procentaje),2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setAlcohol(RoundUtil.getRoundValue(alcoholByGAB*(aux.procentaje),2, RoundUtil.RoundMode.SYMMETRIC));
             //discount.setAlcohol(alcoholByGAB*(aux.procentaje));
             auxwithholdingTax = aux.withholdingTax;
@@ -235,8 +235,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             totalIncome += discount.getOtherIncoming();
 
         }
-
-
+        alcoholDiff = RoundUtil.getRoundValue(alcoholDiff,2, RoundUtil.RoundMode.SYMMETRIC);
+        totalAlcohol += alcoholDiff;
         totalAmountCollected = RoundUtil.getRoundValue(totalAmountCollected,2, RoundUtil.RoundMode.SYMMETRIC);
         totalPayCollected = RoundUtil.getRoundValue(totalPayCollected,2, RoundUtil.RoundMode.SYMMETRIC);
         totalRetention = RoundUtil.getRoundValue(totalRetention,2, RoundUtil.RoundMode.SYMMETRIC);
@@ -249,6 +249,12 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         totalOtherDiscount = RoundUtil.getRoundValue(totalOtherDiscount,2, RoundUtil.RoundMode.SYMMETRIC);
         totalAdjustment = RoundUtil.getRoundValue(totalAdjustment,2, RoundUtil.RoundMode.SYMMETRIC);
         totalIncome = RoundUtil.getRoundValue(totalIncome,2, RoundUtil.RoundMode.SYMMETRIC);
+
+        if(alcoholDiff != 0)
+        {
+         Double aux =    rawMaterialPayRoll.getRawMaterialPayRecordList().get(0).getRawMaterialProducerDiscount().getAlcohol();
+         rawMaterialPayRoll.getRawMaterialPayRecordList().get(0).getRawMaterialProducerDiscount().setAlcohol(aux + alcoholDiff);
+        }
 
         calculateLiquidPayable(rawMaterialPayRoll);
         rawMaterialPayRoll.setTotalCollectedByGAB(totalAmountCollected);

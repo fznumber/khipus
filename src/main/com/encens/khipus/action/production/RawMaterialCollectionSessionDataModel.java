@@ -39,7 +39,7 @@ public class RawMaterialCollectionSessionDataModel extends QueryDataModel<Long, 
 
     @Override
     public String getSortProperty() {
-        return "session.date,rawMaterialProducer.lastName";
+        return "session.date";
     }
 
     @Override
