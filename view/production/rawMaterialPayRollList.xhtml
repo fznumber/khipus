@@ -14,25 +14,59 @@
     <ui:define name="body">
         <h:form id="rawMaterialPayRollSearch">
             <rich:simpleTogglePanel label="#{messages['RawMaterialPayRoll.search']}" switchType="client">
-                <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['RawMaterialPayRoll.startDate']}</ui:define>
-                    <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.startDate}"
-                                   tabindex="1" styleClass="input">
-                    </rich:calendar>
-                </s:decorate>
-                <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['RawMaterialPayRoll.endDate']}</ui:define>
-                    <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.endDate}"
-                                   tabindex="1" styleClass="input">
-                    </rich:calendar>
-                    <a4j:commandButton action="#{rawMaterialPayRollDataModel.search}" reRender="rawMaterialPayRollList, dataScroller"
-                                       styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                       tabindex="4">
-                        <s:defaultAction/>
-                    </a4j:commandButton>
-                </s:decorate>
-            </rich:simpleTogglePanel>
+            <h:panelGrid columns="2" width="100%" columnClasses="top-aligned">
 
+                <s:div>
+
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define
+                                name="label">#{messages['RawMaterialCollectionSession.productiveZoneName']}</ui:define>
+                        <h:inputText value="#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.name}"
+                                     maxlength="50" tabindex="1" styleClass="input">
+                        </h:inputText>
+                    </s:decorate>
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define
+                                name="label">#{messages['RawMaterialCollectionSession.productiveZoneGroup']}</ui:define>
+                        <h:inputText value="#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.group}"
+                                     maxlength="50" tabindex="2" styleClass="input">
+                        </h:inputText>
+                    </s:decorate>
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define
+                                name="label">#{messages['RawMaterialCollectionSession.productiveZoneNumber']}</ui:define>
+                        <h:inputText value="#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.number}"
+                                     maxlength="50" tabindex="3" styleClass="input">
+                        </h:inputText>
+                    </s:decorate>
+
+                </s:div>
+
+                <s:div>
+
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['RawMaterialPayRoll.startDate']}</ui:define>
+                        <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.startDate}"
+                                       tabindex="4" styleClass="input">
+                        </rich:calendar>
+                    </s:decorate>
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['RawMaterialPayRoll.endDate']}</ui:define>
+                        <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.endDate}"
+                                       tabindex="5" styleClass="input">
+                        </rich:calendar>
+                        <a4j:commandButton action="#{rawMaterialPayRollDataModel.search}" reRender="rawMaterialPayRollList, dataScroller"
+                                           styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
+                                           tabindex="6">
+                            <s:defaultAction/>
+                        </a4j:commandButton>
+                    </s:decorate>
+
+                </s:div>
+
+            </h:panelGrid>
+
+            </rich:simpleTogglePanel>
 
             <div class="buttons">
                 <s:button value="#{messages['RawMaterialPayRoll.new']}" action="#{rawMaterialPayRollAction.startNew}" styleClass="button"

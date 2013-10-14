@@ -28,6 +28,7 @@ import org.jboss.seam.annotations.*;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -133,6 +134,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+            params.put("unitPrice",String.format("%.2f",rawMaterialPayRoll.getUnitPrice()));
+            //params.put("unitPrice","3.00");
 
             Double liquidPayable = rawMaterialPayRoll.getTotalLiquidByGAB();
             MoneyUtil moneyUtil = new MoneyUtil();
