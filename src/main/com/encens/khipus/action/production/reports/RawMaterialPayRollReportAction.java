@@ -29,6 +29,7 @@ import org.jboss.seam.annotations.*;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -95,22 +96,35 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         Map params = new HashMap();
         if(zone==null)
         {
-            generarTodosGAB(params,df);
+            try {
+                generarTodosGAB(params,df);
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }else
         {
-            generarGAB(params,df);
+            try {
+                generarGAB(params,df);
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
 
     }
 
-    private void generarGAB(Map params,DateFormat df) {
+    private void generarGAB(Map params,DateFormat df) throws ParseException {
         RawMaterialPayRoll rawMaterialPayRoll;
         TypedReportData typedReportData;
         TypedReportData mostrar = new TypedReportData();
         JasperPrint jasperPrint1 = new JasperPrint();
         JasperPrint jasperPrint2 ;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));
+
+
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(startDate,endDate,zone,metaProduct);
 
             params.put("reportTitle",messages.get("Report.titleGeneral"));
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
@@ -160,7 +174,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         }
     }
 
-    private void generarTodosGAB(Map params,DateFormat df) {
+    private void generarTodosGAB(Map params,DateFormat df) throws ParseException {
         JasperPrint jasperPrint1 = new JasperPrint();
         JasperPrint jasperPrint2,collectedBayGAB;
         RawMaterialPayRoll rawMaterialPayRoll;
@@ -168,10 +182,15 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         TypedReportData mostrar = new TypedReportData();
         boolean tomarPrimero = true;
         List<ProductiveZone> productiveZones = productiveZoneService.findAll();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));
+
         for(ProductiveZone productiveZone :productiveZones)
         {
             zone = productiveZone;
-            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(startDate,endDate,zone,metaProduct);
 
             params.put("reportTitle",messages.get("Report.titleGeneral"));
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));

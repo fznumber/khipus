@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="791" pageHeight="612" whenNoDataType="AllSectionsNoDetail" columnWidth="735" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="1">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="791" pageHeight="612" whenNoDataType="AllSectionsNoDetail" columnWidth="735" leftMargin="28" rightMargin="28" topMargin="56" bottomMargin="42">
 	<property name="ireport.zoom" value="1.771561000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="218"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
 	<parameter name="totalCollectedByGAB" class="java.lang.Double"/>
 	<parameter name="totalMountCollectdByGAB" class="java.lang.Double"/>
@@ -79,7 +79,7 @@
 		<fieldDescription><![CDATA[COLUMN_19]]></fieldDescription>
 	</field>
 	<title>
-		<band height="76" splitType="Stretch">
+		<band height="112" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="0" width="450" height="12"/>
 				<box padding="1">
@@ -136,9 +136,9 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="30" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="102" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="102" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -148,7 +148,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.producer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="102" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="102" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -158,7 +158,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.collected}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="144" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="144" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -168,7 +168,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.totalPayCollected}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -178,7 +178,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.retention}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="228" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="228" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -188,7 +188,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.alcohol}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="268" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="268" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -198,7 +198,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.concentrated}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="308" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="308" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -208,7 +208,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="348" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="348" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -218,7 +218,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.veterinary}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="388" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="388" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -228,7 +228,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.yogourt}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="428" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="428" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -238,7 +238,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.recip}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="468" y="0" width="40" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="468" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -248,7 +248,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.otherDiscount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="508" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="508" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -258,7 +258,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.ajusmentZone}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="550" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="550" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -268,7 +268,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.otherIncome}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="592" y="0" width="42" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="592" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -278,7 +278,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialPayRoll.liquidPay}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="635" y="0" width="100" height="30"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="635" y="0" width="100" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -290,9 +290,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="31" splitType="Stretch">
+		<band height="34" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="102" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="102" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -302,7 +302,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{rawMaterialProducer.firstName} +" "+$F{rawMaterialProducer.lastName} +" "+ $F{rawMaterialProducer.maidenName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="102" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="102" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -312,7 +312,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{RawMaterialPayRecord.totalAmount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="144" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="144" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -322,7 +322,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{RawMaterialPayRecord.totalPayCollected}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -332,7 +332,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.withholdingTax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="228" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="228" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -342,7 +342,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.alcohol}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="268" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="268" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -352,7 +352,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.concentrated}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="348" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="348" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -362,7 +362,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.veterinary}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="388" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="388" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -372,7 +372,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.yogurt}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="468" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="468" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -382,7 +382,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.otherDiscount}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="508" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="508" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -392,7 +392,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialPayRecord.productiveZoneAdjustment}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="550" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="550" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -402,7 +402,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.otherIncoming}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="428" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="428" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -412,7 +412,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.cans}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="592" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="592" y="0" width="42" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -422,7 +422,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialPayRecord.liquidPayable}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="308" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="308" y="0" width="40" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -432,7 +432,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{rawMaterialProducerDiscount.credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="635" y="0" width="100" height="30"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="635" y="0" width="100" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -477,125 +477,125 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="110">
+		<band height="114">
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="348" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="348" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalVeterinaryByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="388" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="388" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalYogourdByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="592" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="592" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalLiquidByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="550" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="550" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalOtherIncomeByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="508" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="508" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalAdjustmentByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="468" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="468" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalDiscountByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="428" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="428" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalRecipByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="308" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="308" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalCreditByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="268" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="268" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalConcentratedByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="228" y="0" width="40" height="30"/>
+				<reportElement style="detailStyle" x="228" y="0" width="40" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalAlcoholByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="186" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="186" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalRetentionGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="144" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="144" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalMountCollectdByGAB}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement style="detailStyle" x="102" y="0" width="42" height="30"/>
+				<reportElement style="detailStyle" x="102" y="0" width="42" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalCollectedByGAB}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="102" height="30"/>
+				<reportElement x="0" y="0" width="102" height="33"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Common.totals}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="226" y="90" width="126" height="20"/>
+				<reportElement x="222" y="93" width="126" height="20"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[ADMINISTRACION ILVA]]></text>
 			</staticText>
 			<line>
-				<reportElement x="193" y="90" width="137" height="1"/>
+				<reportElement x="189" y="93" width="137" height="1"/>
 			</line>
 			<staticText>
-				<reportElement x="436" y="90" width="252" height="20"/>
+				<reportElement x="432" y="93" width="252" height="20"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
 				<text><![CDATA[RESPONSABLE DEL GAB]]></text>
 			</staticText>
 			<line>
-				<reportElement x="403" y="90" width="137" height="1"/>
+				<reportElement x="399" y="93" width="137" height="1"/>
 			</line>
 			<textField>
-				<reportElement x="0" y="36" width="436" height="17"/>
+				<reportElement x="0" y="35" width="436" height="17"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{literally_money}]]></textFieldExpression>
 			</textField>

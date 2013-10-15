@@ -19,8 +19,10 @@ import org.jboss.seam.annotations.*;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,7 +84,11 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
-        addSummaryTotal(reportParameters);
+        try {
+            addSummaryTotal(reportParameters);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         log.debug("generating expenseBudgetReport......................................");
 
         reportParameters.put("reportTitle",messages.get("Report.titleGeneral"));
@@ -99,18 +105,24 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
                 reportParameters);
     }
 
-    private void addSummaryTotal(HashMap<String, Object> params) {
+    private void addSummaryTotal(HashMap<String, Object> params) throws ParseException {
         //discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
         DecimalFormat df = new DecimalFormat("#0.00");
-        discounts = rawMaterialPayRollService.getDiscounts(dateIni,dateEnd,zone,metaProduct);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni,dateEnd,zone,metaProduct);
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));
+
+        discounts = rawMaterialPayRollService.getDiscounts(startDate,endDate,zone,metaProduct);
+
+        summaryTotal = rawMaterialPayRollService.getSumaryTotal(startDate,endDate,zone,metaProduct);
 
         Double totalMoneyCollected = discounts.mount;
-        Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
-        Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
-        Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, dateIni, dateEnd, metaProduct);
+        Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, startDate,endDate, metaProduct);
+        Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, startDate,endDate, metaProduct);
+        Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, startDate,endDate, metaProduct);
         Double totalMoneyBalance = totalMoneyCollected + totalDifferencesMoney;
+
         params.put("total_collected", df.format(discounts.collected));
         params.put("diff_total", df.format(diffTotal));
         params.put("price_unit", df.format(discounts.unitPrice));

@@ -25,21 +25,21 @@ public interface RawMaterialPayRollService extends GenericService {
 
     void validate(RawMaterialPayRoll rawMaterialPayRoll) throws RawMaterialPayRollException;
 
-    RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
+    RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct);
 
-    RawMaterialPayRollServiceBean.Discounts getDiscounts(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct);
+    RawMaterialPayRollServiceBean.Discounts getDiscounts(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct);
 
-    RawMaterialPayRollServiceBean.SummaryTotal getSumaryTotal(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct);
+    RawMaterialPayRollServiceBean.SummaryTotal getSumaryTotal(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct);
 
     List<RawMaterialPayRecordDetailDummy> generateDetails(RawMaterialPayRecord rawMaterialPayRecord) throws RawMaterialPayRollException;
 
-    Double getTotalWeightMoney(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+    Double getTotalWeightMoney(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct);
 
-    Double getTotalMoneyDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+    Double getTotalMoneyDiff(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct);
 
-    Double getBalanceWeightTotal(Double unitPrice, Calendar dateIni, Calendar dateEnd, MetaProduct metaProduct);
+    Double getBalanceWeightTotal(Double unitPrice, Date dateIni, Date dateEnd, MetaProduct metaProduct);
 
-    Double getTotalDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct);
+    Double getTotalDiff(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct);
 
     List<RawMaterialPayRoll> findAll(Date startDate, Date endDate, MetaProduct metaProduct);
 

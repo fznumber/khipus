@@ -7,6 +7,10 @@ import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.employees.Gestion;
+import com.encens.khipus.model.employees.GestionPayroll;
+import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.production.ProductiveZoneService;
@@ -14,6 +18,9 @@ import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,11 +34,16 @@ import static org.jboss.seam.international.StatusMessage.Severity.WARN;
 @Scope(ScopeType.CONVERSATION)
 public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> {
 
-    private Date month;
+    //private Date month;
     private int fortnight;
     private boolean readonly;
     private boolean generateAll = true;
     private boolean delete = false;
+    private Gestion gestion;
+    private Month month;
+    private Periodo periodo;
+    private List<GestionPayroll> gestionPayrollList;
+
     private List<RawMaterialPayRoll> rawMaterialPayRollList;
 
     @In
@@ -60,6 +72,11 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         return Outcome.SUCCESS;
     }
 
+    @Factory(value = "periodosPayRollGenerate", scope = ScopeType.STATELESS)
+    public Periodo[] getPeriodos() {
+        return Periodo.values();
+    }
+
     public int[] getFortnightList() {
         return new int[]{1, 2};
     }
@@ -72,13 +89,13 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         this.fortnight = fortnight;
     }
 
-    public Date getMonth() {
+    /*public Date getMonth() {
         return month;
     }
 
     public void setMonth(Date month) {
         this.month = month;
-    }
+    }*/
 
     public boolean getReadonly() {
         return readonly;
@@ -128,7 +145,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         }
     }
 
-    @Override
+    /*@Override
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String select(RawMaterialPayRoll instance) {
         readonly = true;
@@ -145,7 +162,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         String outcome = super.select(instance);
         rawMaterialPayRollService.calculateLiquidPayable(getInstance());
         return outcome;
-    }
+    }*/
 
     @Begin(join = true, ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String selectJoin(RawMaterialPayRoll instance) {
@@ -166,6 +183,15 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     public String generate() {
         try {
                 RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+                Calendar dateIni = Calendar.getInstance();
+                Calendar dateEnd = Calendar.getInstance();
+                dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+                dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue() + 1, gestion.getYear()));
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+                rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
+                rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+
                 if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
                     facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
                     return Outcome.FAIL;
@@ -193,6 +219,15 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         try {
 
             RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+            Calendar dateIni = Calendar.getInstance();
+            Calendar dateEnd = Calendar.getInstance();
+            dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+            dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1,gestion.getYear()));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+            rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
+            rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+
             List<ProductiveZone> productiveZones = productiveZoneService.findAllThatDoNotHaveCollectionForm(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
             for(ProductiveZone productiveZone: productiveZones)
             {
@@ -225,8 +260,17 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         return Outcome.SUCCESS;
     }
 
-    public String deleteAll() throws ReferentialIntegrityException, ConcurrencyException {
+    public String deleteAll() throws ReferentialIntegrityException, ConcurrencyException, ParseException {
         RawMaterialPayRoll rawMaterialPayRoll = getInstance();
+        Calendar dateIni = Calendar.getInstance();
+        Calendar dateEnd = Calendar.getInstance();
+        dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1,gestion.getYear()));
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+        rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
+        rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+
         List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate(),rawMaterialPayRoll.getMetaProduct());
         for(RawMaterialPayRoll payRoll: rawMaterialPayRolls)
         {
@@ -276,5 +320,41 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void setDelete(boolean delete) {
         this.delete = delete;
+    }
+
+    public Gestion getGestion() {
+        return gestion;
+    }
+
+    public void setGestion(Gestion gestion) {
+        this.gestion = gestion;
+    }
+
+    public Month getMonth() {
+        return month;
+    }
+
+    public void setMonth(Month month) {
+        this.month = month;
+    }
+
+    public Periodo getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
+    }
+
+    public List<GestionPayroll> getGestionPayrollList() {
+        return gestionPayrollList;
+    }
+
+    public void setGestionPayrollList(List<GestionPayroll> gestionPayrollList) {
+        this.gestionPayrollList = gestionPayrollList;
+    }
+
+    public void cleanGestionList() {
+        setGestionPayrollList(null);
     }
 }

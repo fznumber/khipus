@@ -54,25 +54,49 @@
 
         <s:div>
 
-            <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
-                <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
-                             maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}" >
-                </h:inputText>
-                <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
-                                 title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
-                                 onclick="Richfaces.showModalPanel('productiveZoneModalPanel');"
-                                 rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}">
-                    <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
-                </a4j:commandLink>
+            <s:decorate id="gestionField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['Gestion.gestion']}</ui:define>
+                <h:selectOneMenu id="gestion"
+                                 value="#{rawMaterialPayRollAction.gestion}"
+                                 styleClass="input"
+                                 required="true"
+                                 tabindex="3">
+                    <s:selectItems value="#{gestionList}"
+                                   var="gestion"
+                                   label="#{gestion.year}"
+                                   hideNoSelectionLabel="false"/>
+                    <a4j:support event="onchange"
+                                 action="#{rawMaterialPayRollAction.cleanGestionList}"
+                                 reRender="gestionField, gestionPayrollListField" ajaxSingle="true"/>
+                    <s:convertEntity/>
+                </h:selectOneMenu>
             </s:decorate>
 
-            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['RawMaterialPayRoll.startDate']}</ui:define>
-                <rich:calendar showWeekDaysBar="false" showFooter="true" readonly="#{rawMaterialPayRollAction.readonly}" disabled="#{rawMaterialPayRollAction.readonly}"
-                               value="#{rawMaterialPayRoll.startDate}" required="true"
-                               oncurrentdateselected="event.rich.component.selectDate(event.rich.date)"
-                               popup="true" datePattern="dd/MMM/yyyy"/>
+            <s:decorate id="monthField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['Month.month']}</ui:define>
+                <h:selectOneMenu id="month"
+                                 value="#{rawMaterialPayRollAction.month}"
+                                 styleClass="input"
+                                 required="true">
+
+                    <s:selectItems value="#{monthEnumPayRoll}" var="month"
+                                   label="#{messages[month.resourceKey]}"
+                                   hideNoSelectionLabel="false"/>
+                    <s:convertEnum/>
+                </h:selectOneMenu>
+            </s:decorate>
+
+            <s:decorate id="periodoField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['Reports.controlReport.period']}</ui:define>
+                <h:selectOneMenu id="periodo"
+                                 value="#{rawMaterialPayRollAction.periodo}"
+                                 styleClass="input" required="true">
+
+                    <s:selectItems value="#{periodosPayRollGenerate}" var="periodos"
+                                   label="#{messages[periodos.resourceKey]}"
+                                   hideNoSelectionLabel="false"/>
+                    <s:convertEnum/>
+                </h:selectOneMenu>
             </s:decorate>
 
         </s:div>
@@ -85,12 +109,10 @@
             </s:decorate>
 
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['RawMaterialPayRoll.endDate']}</ui:define>
-                <rich:calendar showWeekDaysBar="false" showFooter="true" readonly="#{rawMaterialPayRollAction.readonly}" disabled="#{rawMaterialPayRollAction.readonly}"
-                               value="#{rawMaterialPayRoll.endDate}" required="true"
-                               oncurrentdateselected="event.rich.component.selectDate(event.rich.date)"
-                               popup="true" datePattern="dd/MMM/yyyy"/>
+                <ui:define name="label">#{messages['RawMaterialPayRoll.taxRate']}</ui:define>
+                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" readonly="#{rawMaterialPayRollAction.readonly}"/>
             </s:decorate>
+
         <s:div style="buttons">
             <a4j:commandButton rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly and rawMaterialPayRollAction.delete }"
                                value="#{messages['RawMaterialPayRoll.deleteAllPayroll']}">
@@ -127,9 +149,17 @@
                 </c:otherwise>
             </c:choose>
 
-            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['RawMaterialPayRoll.taxRate']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" readonly="#{rawMaterialPayRollAction.readonly}"/>
+            <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
+                <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
+                             maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}" >
+                </h:inputText>
+                <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
+                                 title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
+                                 onclick="Richfaces.showModalPanel('productiveZoneModalPanel');"
+                                 rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}">
+                    <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+                </a4j:commandLink>
             </s:decorate>
 
         <s:div style="buttons">
