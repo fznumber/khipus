@@ -150,9 +150,9 @@
                     <rich:column>
                         #{messages['CollectionRecord.weightedAmount']}
                     </rich:column>
-                    <!--<rich:column>
-                        #{messages['CollectionRecord.rejectedAmount']}
-                    </rich:column>-->
+                    <rich:column>
+                        #{messages['CollectionRecord.difference']}
+                    </rich:column>
                 </rich:columnGroup>
             </f:facet>
 
@@ -178,12 +178,13 @@
                 </h:inputText>
                 <rich:message for="weightedAmount" styleClass="single-error" />
             </rich:column>
-            <!--<rich:column>
-                <h:inputText value="#{collectionRecordItem.rejectedAmount}" id="rejectedAmount" required="true" style="width:95%;">
-                    <a4j:support event="onblur" ajaxSingle="true" reRender="rejectedAmountTotal"/>
+            <rich:column>
+                <h:inputText value="#{collectionRecordItem.receivedAmount - collectionRecordItem.weightedAmount}"
+                             id="weighedAmountTotal"
+                             disabled="true">
+
                 </h:inputText>
-                <rich:message for="rejectedAmount" styleClass="single-error" />
-            </rich:column>-->
+            </rich:column>
         </rich:dataTable>
 
         <div class="buttons">

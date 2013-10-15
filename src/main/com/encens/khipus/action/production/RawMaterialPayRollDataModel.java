@@ -1,6 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -18,6 +19,9 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     private PrivateCriteria privateCriteria;
 
     private static final String[] RESTRICTIONS = {
+            "upper(productiveZone.name) like concat(concat('%',upper(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.name})), '%')",
+            "upper(productiveZone.group) like concat(concat('%',upper(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.group})), '%')",
+            "productiveZone.number like concat(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.number}, '%')",
             "rawMaterialPayRoll.startDate >= #{rawMaterialPayRollDataModel.privateCriteria.startDate}",
             "rawMaterialPayRoll.endDate <= #{rawMaterialPayRollDataModel.privateCriteria.endDate}"
     };
@@ -30,7 +34,8 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     @Override
     public String getEjbql() {
         String query = "select rawMaterialPayRoll " +
-                "from RawMaterialPayRoll rawMaterialPayRoll ";
+                " from RawMaterialPayRoll rawMaterialPayRoll " +
+                " join fetch rawMaterialPayRoll.productiveZone productiveZone ";
         return query;
     }
 
@@ -49,6 +54,7 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     public static class PrivateCriteria {
         private Date startDate;
         private Date endDate;
+        private ProductiveZone productiveZone = new ProductiveZone();
 
         public Date getStartDate() {
             return startDate;
@@ -64,6 +70,14 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
 
         public void setEndDate(Date endDate) {
             this.endDate = endDate;
+        }
+
+        public ProductiveZone getProductiveZone() {
+            return productiveZone;
+        }
+
+        public void setProductiveZone(ProductiveZone productiveZone) {
+            this.productiveZone = productiveZone;
         }
     }
 }

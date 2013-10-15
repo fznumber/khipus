@@ -134,7 +134,11 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("retention", df.format(discounts.retention));
         params.put("otrosDescuentos", df.format(discounts.otherDiscount));
         params.put("otrosIngresos", df.format(discounts.otherIncome));
-        params.put("ajuste", df.format(discounts.adjustment));
+        Double iue,it;
+        iue = discounts.retention * 0.05;
+        it = discounts.retention * 0.03;
+        params.put("iue", df.format(iue));
+        params.put("it", df.format(it));
         params.put("total_differences", df.format(totalDiscount));
         params.put("liquid_pay", df.format(discounts.liquid));
 
