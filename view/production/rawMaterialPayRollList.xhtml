@@ -100,6 +100,12 @@
                                 #{messages['RawMaterialPayRoll.endDate']}
                             </app:commandSortHeader>
                         </rich:column>
+                        <!--<rich:column>
+                            <app:commandSortHeader sortProperty="rawMaterialPayRoll.state" dataModel="#{rawMaterialPayRollDataModel}"
+                                                   reRender="rawMaterialPayRollList,dataScroller">
+                                #{messages['RawMaterialPayRoll.state']}
+                            </app:commandSortHeader>
+                        </rich:column>-->
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -115,6 +121,9 @@
                 <rich:column>
                     <h:outputText value="#{rawMaterialPayRollItem.endDate}"/>
                 </rich:column>
+                <!--<rich:column>
+                    <h:outputText value="#{rawMaterialPayRollItem.state}"/>
+                </rich:column>-->
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
                                    action="#{rawMaterialPayRollAction.select(rawMaterialPayRollItem)}">

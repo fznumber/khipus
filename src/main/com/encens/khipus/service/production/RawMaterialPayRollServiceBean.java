@@ -302,13 +302,13 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return countProducers;
     }
 
-    public Discounts getDiscounts(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct)
+    public Discounts getDiscounts(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
     {
         Discounts discounts = new Discounts();
 
         List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getDiscounts")
-                                .setParameter("startDate", dateIni.getTime(), TemporalType.DATE)
-                                .setParameter("endDate", dateEnd.getTime(), TemporalType.DATE)
+                                .setParameter("startDate", dateIni, TemporalType.DATE)
+                                .setParameter("endDate", dateEnd, TemporalType.DATE)
                                 //.setParameter("productiveZone", zone)
                                 .setParameter("metaProduct", metaProduct)
                                 .getResultList();
@@ -350,13 +350,13 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return discounts;
     }
 
-    public SummaryTotal getSumaryTotal(Calendar dateIni, Calendar dateEnd,ProductiveZone zone, MetaProduct metaProduct)
+    public SummaryTotal getSumaryTotal(Date dateIni, Date dateEnd,ProductiveZone zone, MetaProduct metaProduct)
     {
         SummaryTotal summaryTotal = new SummaryTotal();
 
         List<Object[]> datas = getEntityManager().createNamedQuery("RawMaterialPayRoll.getSumaryTotal")
-                            .setParameter("startDate", dateIni.getTime(), TemporalType.DATE)
-                            .setParameter("endDate", dateEnd.getTime(), TemporalType.DATE)
+                            .setParameter("startDate", dateIni, TemporalType.DATE)
+                            .setParameter("endDate", dateEnd, TemporalType.DATE)
                             //.setParameter("productiveZone", zone)
                             .setParameter("metaProduct", metaProduct)
                             .getResultList();
@@ -386,7 +386,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return differences;
     }
 
-    public Double getBalanceWeightTotal(Double unitPrice, Calendar startDate, Calendar endDate, MetaProduct metaProduct) {
+    public Double getBalanceWeightTotal(Double unitPrice, Date startDate, Date endDate, MetaProduct metaProduct) {
 
         List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
         Double weight = 0.0;
@@ -397,7 +397,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return weight;
     }
 
-    public Double getTotalWeightMoney(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    public Double getTotalWeightMoney(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct)
     {
         List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
         Double totalWeightMoney = 0.0;
@@ -410,7 +410,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return totalWeightMoney;
     }
 
-    public Double getTotalMoneyDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    public Double getTotalMoneyDiff(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct)
     {
         List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
 
@@ -429,7 +429,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return totalMoneyDiff;
     }
 
-    public Double getTotalDiff(double unitPrice,Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    public Double getTotalDiff(double unitPrice,Date startDate,Date endDate, MetaProduct metaProduct)
     {
         List<Object[]> datas = findWeights("RawMaterialPayRoll.getWeightedAndCollectedBetweenDates",startDate,endDate,metaProduct);
 
@@ -481,14 +481,14 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return totalMoneyDiff;
     }
 
-    private List<Object[]> findWeights(String namedQuery, Calendar startDate,Calendar endDate, MetaProduct metaProduct)
+    private List<Object[]> findWeights(String namedQuery, Date startDate,Date endDate, MetaProduct metaProduct)
     {
         List<Object[]> result = null;
 
         try{
             result = getEntityManager().createNamedQuery(namedQuery)
-                    .setParameter("startDate", startDate.getTime(),TemporalType.DATE)
-                    .setParameter("endDate", endDate.getTime(),TemporalType.DATE)
+                    .setParameter("startDate", startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate,TemporalType.DATE)
                             //.setParameter("productiveZone", rawMaterialPayRoll.getProductiveZone())
                     .setParameter("metaProduct", metaProduct)
                     .getResultList();
@@ -916,14 +916,14 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         rawMaterialPayRoll.setTotalLiquidByGAB(RoundUtil.getRoundValue(totalLiquidPay,2, RoundUtil.RoundMode.SYMMETRIC));
     }
 
-        public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Calendar dateIni, Calendar dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
+    public RawMaterialPayRoll getTotalsRawMaterialPayRoll(Date dateIni, Date dateEnd, ProductiveZone productiveZone, MetaProduct metaProduct)
     {
 
-        String query = createQuery(productiveZone,metaProduct, dateIni,dateEnd);
+        String query = createQuery(productiveZone,metaProduct);
         RawMaterialPayRoll rawMaterialPayRoll = new RawMaterialPayRoll();
         Query queryObj = getEntityManager().createQuery(query)
-                        .setParameter("startDate", dateIni.getTime(), TemporalType.DATE)
-                        .setParameter("endDate", dateEnd.getTime(), TemporalType.DATE);
+                        .setParameter("startDate", dateIni, TemporalType.DATE)
+                        .setParameter("endDate", dateEnd, TemporalType.DATE);
         if(productiveZone != null)
             queryObj.setParameter("productiveZone", productiveZone);
         if(metaProduct != null)
@@ -960,7 +960,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return rawMaterialPayRoll;
     }
 
-    private String createQuery(ProductiveZone productiveZone, MetaProduct metaProduct, Calendar dateIni, Calendar dateEnd) {
+    private String createQuery(ProductiveZone productiveZone, MetaProduct metaProduct) {
         String restricZone = (productiveZone == null)? "": " and rawMaterialPayRoll.productiveZone = :productiveZone ";
         String restricMeta = (metaProduct == null)? "": " and rawMaterialPayRoll.metaProduct = :metaProduct ";
 
