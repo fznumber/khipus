@@ -28,6 +28,8 @@ import org.jboss.seam.annotations.*;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -70,7 +72,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     private double recipient;
     private RawMaterialPayRollServiceBean.SummaryTotal summaryTotal;
     private RawMaterialPayRollServiceBean.Discounts discounts;
-
+    private Date startDate;
+    private Date endDate;
     private Calendar dateIni;
     private Calendar dateEnd;
 
@@ -80,7 +83,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     private GeneratedPayrollType generatedPayrollType = GeneratedPayrollType.OFFICIAL;
 
 
-    public void generateReport() {
+    public void generateReport() throws ParseException {
         log.debug("Generate RotatoryFundReportAction........");
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
@@ -92,24 +95,44 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sdf.setCalendar(dateEnd);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         Map params = new HashMap();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+        dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1,gestion.getYear()));
+        startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));
+
         if(zone==null)
         {
-            generarTodosGAB(params,df);
+            try {
+                generarTodosGAB(params,df);
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }else
         {
-            generarGAB(params,df);
+            try {
+                generarGAB(params,df);
+            } catch (ParseException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
 
     }
 
-    private void generarGAB(Map params,DateFormat df) {
+    private void generarGAB(Map params,DateFormat df) throws ParseException {
         RawMaterialPayRoll rawMaterialPayRoll;
         TypedReportData typedReportData;
         TypedReportData mostrar = new TypedReportData();
         JasperPrint jasperPrint1 = new JasperPrint();
         JasperPrint jasperPrint2 ;
+      /*  DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));*/
+
+
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(startDate,endDate,zone,metaProduct);
 
             params.put("reportTitle",messages.get("Report.titleGeneral"));
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
@@ -133,6 +156,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("totalLiquidByGAB",rawMaterialPayRoll.getTotalLiquidByGAB());
             params.put("dateStart","Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
             params.put("dateEnd","Fecha Fin - "+ FastDateFormat.getInstance("dd-MM-yyyy").format(dateEnd));
+            params.put("unitPrice",String.format("%.2f",rawMaterialPayRoll.getUnitPrice()));
+            //params.put("unitPrice","3.00");
 
             Double liquidPayable = rawMaterialPayRoll.getTotalLiquidByGAB();
             MoneyUtil moneyUtil = new MoneyUtil();
@@ -157,7 +182,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         }
     }
 
-    private void generarTodosGAB(Map params,DateFormat df) {
+    private void generarTodosGAB(Map params,DateFormat df) throws ParseException {
         JasperPrint jasperPrint1 = new JasperPrint();
         JasperPrint jasperPrint2,collectedBayGAB;
         RawMaterialPayRoll rawMaterialPayRoll;
@@ -165,10 +190,15 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         TypedReportData mostrar = new TypedReportData();
         boolean tomarPrimero = true;
         List<ProductiveZone> productiveZones = productiveZoneService.findAll();
+       /* DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));*/
+
         for(ProductiveZone productiveZone :productiveZones)
         {
             zone = productiveZone;
-            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(dateIni,dateEnd,zone,metaProduct);
+            rawMaterialPayRoll = rawMaterialPayRollService.getTotalsRawMaterialPayRoll(startDate,endDate,zone,metaProduct);
 
             params.put("reportTitle",messages.get("Report.titleGeneral"));
             params.put("periodo",(periodo.getResourceKey().toString()== "Periodo.first") ?"1RA QUINCENA":"2DA QUINCENA" +" "+getMes(month));
@@ -299,8 +329,13 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
     @Create
     public void init() {
+
         restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
-                                    "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}"};
+                                    "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}",
+                                    "rawMaterialPayRoll.startDate = #{rawMaterialPayRollReportAction.startDate}",
+                                    "rawMaterialPayRoll.endDate = #{rawMaterialPayRollReportAction.endDate}"
+        };
+
         sortProperty = "rawMaterialProducer.firstName";
     }
 
@@ -488,13 +523,43 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/production/reports/" + fileReport,
-                getSql(),
+                getSqlOld(),
                 params,
                 "rotatoryFundReport");
 
     }
 
-    protected String getSql()
+    protected String getSqlNew()
+    {
+
+        int initDay = periodo.getInitDay();
+        int endDay = periodo.getEndDay(month.getValue()+1,gestion.getYear());
+        int month_act = (month.getValue())+1;
+        int cont = 1;
+        String sql ="select am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor \n";
+        for(int i = initDay; i<=endDay;i++)
+        {
+            sql +=  "       , (case sa.fecha \n" +
+                    "             when to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                    "             then am.cantidad\n" +
+                    "             end) as D"+cont+"\n";
+            cont++;
+        }
+              sql +=  "  from sesionacopio sa\n" +
+                "                              inner join acopiomateriaprima am\n" +
+                "                              on am.idsesionacopio = sa.idsesionacopio\n" +
+                "                              inner join EOS.persona pe \n" +
+                "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
+                "                              inner join zonaproductiva zp\n" +
+                "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
+                "                              where sa.fecha between to_date('"+initDay+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') and to_date('"+endDay+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                "                              order by sa.fecha asc\n";
+
+        return sql;
+    }
+
+    private String getSqlOld()
     {
 
         int initDay = periodo.getInitDay();
@@ -503,6 +568,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         String sql =" select \n"+
                 " A"+cont+".productor as productor \n";
         String total = "";
+        boolean wasCollected = true;
+
         for(int i = initDay; i<=endDay;i++)
         {
             sql += "      , A"+cont+".CANTIDAD AS D"+cont+"\n";
@@ -521,20 +588,35 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sql += " from \n";
         cont = 1;
         int month_act = (month.getValue())+1;
+
         for(int i = initDay; i<= endDay; i++)
         {
-            sql +=  "   (select zp.numero , zp.nombre, am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, am.IDPRODUCTORMATERIAPRIMA\n" +
-                    "  from sesionacopio sa\n" +
-                    "                              inner join acopiomateriaprima am\n" +
-                    "                              on am.idsesionacopio = sa.idsesionacopio\n" +
-                    "                              inner join EOS.persona pe \n" +
-                    "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
-                    "                              inner join zonaproductiva zp\n" +
-                    "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
-                    "                              where sa.fecha = to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
-                    "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
-                    "      ) A"+cont+( (i != endDay)?",\n":"\n");
-            cont++;
+            Calendar date_aux = Calendar.getInstance();
+            date_aux.set(gestion.getYear(),month.getValue(),i);
+            wasCollected = rawMaterialPayRollService.verifDayColected(date_aux,zone);
+                if(wasCollected)
+                        sql +=  ((cont == 1)?"":" , ")+"   (select am.cantidad , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, am.IDPRODUCTORMATERIAPRIMA\n" +
+                                "  from sesionacopio sa\n" +
+                                "                              inner join acopiomateriaprima am\n" +
+                                "                              on am.idsesionacopio = sa.idsesionacopio\n" +
+                                "                              inner join EOS.persona pe \n" +
+                                "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
+                                "                              inner join zonaproductiva zp\n" +
+                                "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
+                                "                              where sa.fecha = to_date('"+i+"/"+month_act+"/"+gestion.getYear()+"','dd/mm/yyyy') \n" +
+                                "                              AND zp.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                                "                              ORDER BY pe.nombres\n" +
+                                "      ) A"+cont+( (i != endDay)?"\n":"\n");
+                else
+                        sql += ((cont == 1)?"":" , ")+"    (select 0.0 AS CANTIDAD , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, PM.IDPRODUCTORMATERIAPRIMA\n" +
+                            "  from PRODUCTORMATERIAPRIMA PM                             \n" +
+                            "                              inner join EOS.persona pe \n" +
+                            "                              on PM.IDPRODUCTORMATERIAPRIMA=pe.idpersona                               \n" +
+                            "                              WHERE PM.idzonaproductiva = "+zone.getId().toString()+"\n" +
+                            "                              ORDER BY pe.nombres" +
+                            "      ) A"+cont+( (i != endDay)?"\n":"\n");
+
+                cont++;
         }
         cont = 2;
 
@@ -545,5 +627,21 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         }
 
         return sql;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }
