@@ -300,16 +300,16 @@
     </rich:column>
     <rich:column rendered="#{rawMaterialPayRollAction.managed}">
         <h:commandLink value="#{messages['Common.select']}" action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}" />
-        <rich:spacer/>
-        <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />
+        <!--<rich:spacer/>
+        <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />-->
     </rich:column>
-
+    <!--Todo: la columna del total acopiado esta en vaz del total pesado por error-->
     <f:facet name="footer">
 
         <rich:columnGroup>
             <rich:column>#{messages['Common.totals']}</rich:column>
             <rich:column>
-                <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.totalCollectedByGAB}">
+                <h:outputText value="#{rawMaterialPayRoll.totalCollectedByGAB}">
 
                 </h:outputText>
             </rich:column>
