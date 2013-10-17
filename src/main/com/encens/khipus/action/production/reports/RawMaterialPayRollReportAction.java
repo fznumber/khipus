@@ -498,7 +498,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
         boolean isFirst = (periodo.getResourceKey().toString()== "Periodo.first") ?true:false;
 
-        String fileReport = (isFirst)? "rawMaterialCollectedByGAB1raReport.jrxml":"rawMaterialCollectedByGAB2daReport.jrxml" ;
+        String fileReport = (isFirst)? "rawMaterialCollectedByGAB1daReport.jrxml":"rawMaterialCollectedByGAB2daReport.jrxml" ;
 
         int cont = periodo.getInitDay();
         for(int i = periodo.getInitDay(); i<=periodo.getEndDay(month.getValue()+1,gestion.getYear());i++)
