@@ -1,6 +1,9 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.employees.Gestion;
+import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
 import org.jboss.seam.ScopeType;
@@ -8,7 +11,11 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +24,10 @@ import java.util.List;
 public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMaterialPayRoll> {
 
     private PrivateCriteria privateCriteria;
+
+    private Gestion gestion;
+    private Month month;
+    private Periodo periodo;
 
     private static final String[] RESTRICTIONS = {
             "upper(productiveZone.name) like concat(concat('%',upper(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.name})), '%')",
@@ -51,6 +62,56 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
         return privateCriteria;
     }
 
+   /*@Override
+   public void search() {
+       Calendar dateIni = Calendar.getInstance();
+       Calendar dateEnd = Calendar.getInstance();
+       dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
+       dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue() + 1, gestion.getYear()));
+       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+       try {
+           privateCriteria.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
+           privateCriteria.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+       } catch (ParseException e) {
+           e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+       }
+
+       if (entityQuery != null) {
+           entityQuery.refresh();
+       }
+       setPage(1);
+       clearAllSelection();
+   }*/
+
+    public void cleanGestionList() {
+        setGestion(null);
+    }
+
+    public Gestion getGestion() {
+        return gestion;
+    }
+
+    public void setGestion(Gestion gestion) {
+        this.gestion = gestion;
+    }
+
+    public Month getMonth() {
+        return month;
+    }
+
+    public void setMonth(Month month) {
+        this.month = month;
+    }
+
+    public Periodo getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
+    }
+
     public static class PrivateCriteria {
         private Date startDate;
         private Date endDate;
@@ -80,4 +141,5 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
             this.productiveZone = productiveZone;
         }
     }
+
 }
