@@ -340,7 +340,8 @@ public class RawMaterialPayRoll implements BaseModel {
     }
 
     public double getUnitPrice() {
-        return unitPrice;
+        //return unitPrice;
+        return 3.0;
     }
 
     public void setUnitPrice(double unitPrice) {
@@ -373,7 +374,8 @@ public class RawMaterialPayRoll implements BaseModel {
     }
 
     public double getTaxRate() {
-        return taxRate;
+        //return taxRate;
+        return 8.0;
     }
 
     public void setTaxRate(double taxRate) {

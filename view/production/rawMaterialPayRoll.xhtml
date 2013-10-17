@@ -105,12 +105,12 @@
 
             <s:decorate id="unitPriceField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.unitPrice']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" readonly="#{rawMaterialPayRollAction.readonly}" />
+                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" disabled="true" readonly="#{rawMaterialPayRollAction.readonly}" />
             </s:decorate>
 
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.taxRate']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" readonly="#{rawMaterialPayRollAction.readonly}"/>
+                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" disabled="true" readonly="#{rawMaterialPayRollAction.readonly}"/>
             </s:decorate>
 
         <s:div style="buttons">
@@ -422,9 +422,8 @@
     <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
     <ui:define name="dialogContent">
         <p>
-            <h:outputFormat value="#{messages['RawMaterialPayRoll.deleteAll.confirmation']}">
-                <f:param value="#{rawMaterialPayRoll.startDate}"/>
-                <f:param value="#{rawMaterialPayRoll.endDate}"/>
+            <h:outputFormat value="#{messages['RawMaterialPayRoll.deleteAll.confirmation2']}">
+                <f:param value="#{rawMaterialPayRollAction.getCompletPeriod()}"/>
             </h:outputFormat>
         </p>
     </ui:define>

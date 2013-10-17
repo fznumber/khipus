@@ -145,25 +145,6 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         }
     }
 
-    /*@Override
-    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
-    public String select(RawMaterialPayRoll instance) {
-        readonly = true;
-        setMonth(instance.getStartDate());
-
-        Calendar c = Calendar.getInstance();
-        c.setTime(instance.getStartDate());
-        if (c.get(DAY_OF_MONTH) == 1) {
-            setFortnight(1);
-        } else {
-            setFortnight(2);
-        }
-
-        String outcome = super.select(instance);
-        rawMaterialPayRollService.calculateLiquidPayable(getInstance());
-        return outcome;
-    }*/
-
     @Begin(join = true, ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String selectJoin(RawMaterialPayRoll instance) {
         return select(instance);
@@ -231,16 +212,18 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             List<ProductiveZone> productiveZones = productiveZoneService.findAllThatDoNotHaveCollectionForm(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
             for(ProductiveZone productiveZone: productiveZones)
             {
-                RawMaterialPayRoll rawMaterialPayRol = new RawMaterialPayRoll();
-                rawMaterialPayRol.setEndDate(rawMaterialPayRoll.getEndDate());
-                rawMaterialPayRol.setStartDate(rawMaterialPayRoll.getStartDate());
-                rawMaterialPayRol.setCompany(rawMaterialPayRoll.getCompany());
-                rawMaterialPayRol.setMetaProduct(rawMaterialPayRoll.getMetaProduct());
-                rawMaterialPayRol.setProductiveZone(productiveZone);
-                rawMaterialPayRollService.validate(rawMaterialPayRol);
+                RawMaterialPayRoll payRoll = new RawMaterialPayRoll();
+                payRoll.setEndDate(rawMaterialPayRoll.getEndDate());
+                payRoll.setStartDate(rawMaterialPayRoll.getStartDate());
+                payRoll.setCompany(rawMaterialPayRoll.getCompany());
+                payRoll.setMetaProduct(rawMaterialPayRoll.getMetaProduct());
+                payRoll.setUnitPrice(rawMaterialPayRoll.getUnitPrice());
+                payRoll.setTaxRate(rawMaterialPayRoll.getTaxRate());
+                payRoll.setProductiveZone(productiveZone);
+                rawMaterialPayRollService.validate(payRoll);
                 rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-                rawMaterialPayRollService.generatePayroll(rawMaterialPayRol);
-                rawMaterialPayRollService.createAll(rawMaterialPayRol);
+                rawMaterialPayRollService.generatePayroll(payRoll);
+                rawMaterialPayRollService.createAll(payRoll);
             }
 
         } catch (RawMaterialPayRollException ex) {
@@ -356,5 +339,12 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void cleanGestionList() {
         setGestionPayrollList(null);
+    }
+
+    public String getCompletPeriod()
+    {  if(periodo != null || month != null)
+        return  periodo.getPeriodoLiteral() +"del mes de "+ month.getMonthLiteral();
+       else
+        return "";
     }
 }
