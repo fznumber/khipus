@@ -75,4 +75,9 @@ public enum Periodo {
     public void setEndDay(int endDay) {
         this.endDay = endDay;
     }
+
+    public String getPeriodoLiteral()
+    {
+        return (resourceKey == "Periodo.first")?" Primera Quincena ": " Segunda Quincena ";
+    }
 }
