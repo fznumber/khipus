@@ -107,7 +107,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     private void addSummaryTotal(HashMap<String, Object> params) throws ParseException {
         //discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
-        DecimalFormat df = new DecimalFormat("#0.00");
+        DecimalFormat df = new DecimalFormat("#,##0.00");
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
         Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
@@ -123,6 +123,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, startDate,endDate, metaProduct);
         Double totalMoneyBalance = totalMoneyCollected + totalDifferencesMoney;
 
+        Double total = totalMoneyBalance + discounts.otherIncome;
         params.put("total_collected", df.format(discounts.collected));
         params.put("diff_total", df.format(diffTotal));
         params.put("price_unit", df.format(discounts.unitPrice));
@@ -130,7 +131,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("difference_money", df.format(totalDifferencesMoney));
         params.put("total_money", df.format(totalMoneyBalance));
         params.put("weight_balance_total", df.format(balanceWeightTotal));
-        params.put("total_other_incom", df.format(totalMoneyBalance + discounts.otherIncome));
+        params.put("total_other_incom", df.format(total));
 
         //discounts
         Double totalDiscount = discounts.alcohol + discounts.concentrated + discounts.yogurt
@@ -148,11 +149,15 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("otrosIngresos", df.format(discounts.otherIncome));
         Double iue,it;
         iue = discounts.retention * 0.625;
-        it = discounts.retention * 0.375;
+        //it = discounts.retention * 0.375;
+        it = discounts.retention - iue;
         params.put("iue", df.format(iue));
         params.put("it", df.format(it));
         params.put("total_differences", df.format(totalDiscount));
-        params.put("liquid_pay", df.format(discounts.liquid));
+        //todo: modificar ajustar el prorrateo
+        Double totalLiquid = total - totalDiscount  ;
+        //params.put("liquid_pay", df.format(discounts.liquid));
+        params.put("liquid_pay", df.format(totalLiquid));
 
     }
 
