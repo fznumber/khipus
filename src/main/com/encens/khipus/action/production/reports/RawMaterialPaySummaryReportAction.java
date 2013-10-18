@@ -147,8 +147,6 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("otrosDescuentos", df.format(discounts.otherDiscount));
         params.put("otrosIngresos", df.format(discounts.otherIncome));
         Double iue,it;
-        //iue = discounts.retention * 0.05;
-        //it = discounts.retention * 0.03;
         iue = discounts.retention * 0.625;
         it = discounts.retention * 0.375;
         params.put("iue", df.format(iue));
