@@ -104,18 +104,11 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
 
         if(zone==null)
         {
-            try {
                 generarTodosGAB(params,df);
-            } catch (ParseException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
         }else
         {
-            try {
+
                 generarGAB(params,df);
-            } catch (ParseException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
         }
 
     }
@@ -227,7 +220,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             MoneyUtil moneyUtil = new MoneyUtil();
             params.put("literally_money",moneyUtil.Convertir(liquidPayable.toString(),true));
 
-            typedReportData = super.getReport("rotatoryFundReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+            typedReportData = super.getReport("RawMaterialPayRollReport", "/production/reports/rawMaterialPayRollReport.jrxml", MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
 
             if(tomarPrimero)
             {
