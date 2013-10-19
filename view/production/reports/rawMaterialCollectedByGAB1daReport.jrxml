@@ -144,7 +144,7 @@
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="70" height="20"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="70" height="20"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -154,7 +154,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.rawMaterialSession.rawMaterialProducer}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="70" y="0" width="29" height="20"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="71" y="0" width="29" height="20"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -318,7 +318,7 @@
 	<detail>
 		<band height="22" splitType="Stretch">
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="70" height="22"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="70" height="22"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -328,7 +328,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{productor}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="70" y="0" width="29" height="22"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="71" y="0" width="29" height="22"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -535,12 +535,12 @@
 				<reportElement x="202" y="90" width="137" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="70" y="0" width="29" height="22"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="71" y="0" width="29" height="22"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D1}]]></textFieldExpression>
 			</textField>
@@ -550,7 +550,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D2}]]></textFieldExpression>
 			</textField>
@@ -560,7 +560,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D4}]]></textFieldExpression>
 			</textField>
@@ -570,7 +570,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D5}]]></textFieldExpression>
 			</textField>
@@ -580,7 +580,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D6}]]></textFieldExpression>
 			</textField>
@@ -590,7 +590,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D8}]]></textFieldExpression>
 			</textField>
@@ -600,7 +600,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D7}]]></textFieldExpression>
 			</textField>
@@ -610,7 +610,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D10}]]></textFieldExpression>
 			</textField>
@@ -620,7 +620,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D9}]]></textFieldExpression>
 			</textField>
@@ -630,7 +630,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D11}]]></textFieldExpression>
 			</textField>
@@ -640,7 +640,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D3}]]></textFieldExpression>
 			</textField>
@@ -650,7 +650,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D14}]]></textFieldExpression>
 			</textField>
@@ -660,7 +660,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D15}]]></textFieldExpression>
 			</textField>
@@ -670,12 +670,12 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_TOTAL}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="70" height="22"/>
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="1" y="0" width="70" height="22"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -690,7 +690,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D12}]]></textFieldExpression>
 			</textField>
@@ -700,7 +700,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="7"/>
+					<font size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D13}]]></textFieldExpression>
 			</textField>

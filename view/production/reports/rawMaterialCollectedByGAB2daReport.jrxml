@@ -560,7 +560,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D1}]]></textFieldExpression>
 			</textField>
@@ -570,7 +570,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D2}]]></textFieldExpression>
 			</textField>
@@ -580,7 +580,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D4}]]></textFieldExpression>
 			</textField>
@@ -590,7 +590,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D5}]]></textFieldExpression>
 			</textField>
@@ -600,7 +600,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D6}]]></textFieldExpression>
 			</textField>
@@ -610,7 +610,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D8}]]></textFieldExpression>
 			</textField>
@@ -620,7 +620,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D7}]]></textFieldExpression>
 			</textField>
@@ -630,7 +630,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D10}]]></textFieldExpression>
 			</textField>
@@ -640,7 +640,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D9}]]></textFieldExpression>
 			</textField>
@@ -650,7 +650,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D11}]]></textFieldExpression>
 			</textField>
@@ -660,7 +660,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D14}]]></textFieldExpression>
 			</textField>
@@ -670,7 +670,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D13}]]></textFieldExpression>
 			</textField>
@@ -680,7 +680,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D15}]]></textFieldExpression>
 			</textField>
@@ -690,7 +690,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D16}]]></textFieldExpression>
 			</textField>
@@ -700,7 +700,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_TOTAL}]]></textFieldExpression>
 			</textField>
@@ -730,7 +730,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="7"/>
+					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTAL_D3}]]></textFieldExpression>
 			</textField>

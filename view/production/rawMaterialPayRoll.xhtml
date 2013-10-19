@@ -5,6 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 xmlns:rich="http://richfaces.org/rich"
                 template="/layout/template.xhtml">
 
@@ -257,46 +258,74 @@
         <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.rawMaterialProducer.fullName}"/>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.totalAmount}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.totalAmount}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.credit}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.credit}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.veterinary}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.veterinary}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.yogurt}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.yogurt}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.cans}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.cans}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherDiscount}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherDiscount}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherIncoming}"/>
+        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherIncoming}">
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.liquidPayable}" />
+        <h:outputText value="#{rawMaterialPayRecordItem.liquidPayable}" >
+            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+        </h:outputText>
     </rich:column>
     <rich:column rendered="#{rawMaterialPayRollAction.managed}">
         <h:commandLink value="#{messages['Common.select']}" action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}" />
@@ -310,75 +339,75 @@
             <rich:column>#{messages['Common.totals']}</rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalCollectedByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalMountCollectdByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
 
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalRetentionGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
 
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalAlcoholByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalConcentratedByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
 
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalCreditByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalVeterinaryByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalYogourdByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalRecipByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalOtherDiscountByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalAdjustmentByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalOtherIncomeByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRoll.totalLiquidByGAB}">
-
+                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
         </rich:columnGroup>
