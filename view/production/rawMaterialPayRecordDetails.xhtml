@@ -123,32 +123,26 @@
                 <rich:dataTable value="#{rawMaterialPayRecordDetailDummyList}" var="rawMaterialPayRecordDetailDummyItem" style="width:100%;">
                     <f:facet name="header">
                         <rich:columnGroup>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.date']}
                             </rich:column>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.collectedAmount']}
                             </rich:column>
-                            <rich:column colspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.productiveZoneAdjustment']}
                             </rich:column>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.unitPrice']}
                             </rich:column>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.earned']}
                             </rich:column>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.withholding']}
                             </rich:column>
-                            <rich:column rowspan="2">
+                            <rich:column >
                                 #{messages['RawMaterialPayRecordDetails.grandTotal']}
-                            </rich:column>
-                            <rich:column breakBefore="true">
-                                #{messages['RawMaterialPayRecordDetails.productiveZoneDelta']}
-                            </rich:column>
-                            <rich:column>
-                                #{messages['RawMaterialPayRecordDetails.totalProducer']}
                             </rich:column>
                         </rich:columnGroup>
                     </f:facet>
@@ -160,9 +154,6 @@
                     </rich:column>
                     <rich:column>
                         <h:outputText value="#{rawMaterialPayRecordDetailDummyItem.productiveZoneDelta}" />
-                    </rich:column>
-                    <rich:column>
-                        <h:outputText value="#{rawMaterialPayRecordDetailDummyItem.totalProducers}" />
                     </rich:column>
                     <rich:column>
                         <h:outputText value="#{rawMaterialPayRecordDetailDummyItem.unitPrice}" />
