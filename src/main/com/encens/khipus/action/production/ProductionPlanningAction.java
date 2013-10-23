@@ -1,5 +1,7 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
+import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -347,6 +349,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         private double amount;
         private MetaProduct product;
 
+        public Consolidated(double amount, MetaProduct product) {
+            this.amount = amount;
+            this.product = product;
+        }
+
+        public Consolidated() {
+        }
+
         public double getAmount() {
             return amount;
         }
@@ -371,5 +381,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public static enum FormulaState {
         NONE, NEW, EDIT
+    }
+
+    public ProductionOrder getProductionOrder() {
+        return productionOrder;
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
     }
 }
