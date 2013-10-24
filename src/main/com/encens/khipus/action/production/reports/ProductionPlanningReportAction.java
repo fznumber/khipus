@@ -7,11 +7,11 @@ import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.admin.User;
-import com.encens.khipus.model.production.ProductComposition;
-import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.production.ProductionPlanning;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
 import com.encens.khipus.reports.GenerationReportData;
+import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
+import com.encens.khipus.service.production.MetaProductService;
 import com.encens.khipus.util.MessageUtils;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.*;
@@ -25,6 +25,7 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.fill.JRTemplatePrintText;
 import net.sf.jasperreports.engine.type.HorizontalAlignEnum;
 import net.sf.jasperreports.engine.type.ModeEnum;
+import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -33,9 +34,12 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
 /**
  * Encens S.R.L.
@@ -52,91 +56,111 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     User currentUser;
     @In
     private SessionUser sessionUser;
+    @In
+    private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
+    @In
+    private MetaProductService metaProductService;
 
     private Map<String, Object> commonDocumentParamsInfo;
     private ProductionPlanning productionPlanning;
     private List<ProductionOrder> productionOrders;
     private List<ProductionPlanningAction.Consolidated> consolidateds;
+    private List<MetaProduct> metaProducts;
     private ProductComposition productComposition;
+    private ArrayList<Long> metadIds = new ArrayList<Long>();
+    private Map<Long, ProductionPlanningAction.Consolidated> datas;
+    private ArrayList<Double> mounts = new ArrayList<Double>();
+    private ArrayList<Long> ids = new ArrayList<Long>();
 
-    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidateds,List<ProductionOrder> productionOrders ) {
+    public void generateReport(List<MetaProduct> products,List<ProductionOrder> orders ) {
         log.debug("Generate ProductionPlannigReportAction........");
         TypedReportData typedReportData;
-        //setWarehouseVoucher(getEntityManager().find(WarehouseVoucher.class, warehouseVoucher.getId()));
         String templatePath = "/production/reports/productionPlanningReport.jrxml";
-        String fileName = "";
+        String fileName = "ProductionPlanningReportAction";
 
         Map params = new HashMap();
 
-        params.putAll(getCommonDocumentParamsInfo());
-        consolidateds = consolidateds;
-        productionOrders = productionOrders;
+        metaProducts = products;
 
-        JRDesignStaticText staticText = new JRDesignStaticText();
-        staticText.setX(75);
-        staticText.setY(83);
-        staticText.setWidth(100);
-        staticText.setHeight(20);
-        staticText.setMode(ModeEnum.OPAQUE);
-        staticText.setHorizontalAlignment(HorizontalAlignEnum.LEFT);
-        staticText.setText("AQUIIIIIIIIIIII ");
-        staticText.getLineBox().getLeftPen().setLineWidth(1);
-        staticText.getLineBox().getTopPen().setLineWidth(1);
-        staticText.getLineBox().setLeftPadding(10);
+        params.putAll(getCommonDocumentParamsInfo());
+        //consolidateds = consolis;
+        productionOrders = orders;
+        metaProducts.clear();
+        consolidateds = getConsolidatedInputs();
+        //getMetaProducts(consolidateds);
+
+        for(Map.Entry<Long, ProductionPlanningAction.Consolidated> entry : datas.entrySet())
+        {
+            //metaProducts.add(metaProductService.find(entry.getKey()));
+            ids.add(entry.getKey());
+        }
 
         setReportFormat(ReportFormat.PDF);
-        //add sub report
-        //addProductionPlannnigSubReport(params);
-        //typedReportData = super.getReport("productionPlanning", templatePath, PageFormat.LETTER, PageOrientation.PORTRAIT, fileName, params);
-        //value = (java.lang.Double)((Double)(((java.util.List<ProductionPlanningAction.Consolidated>)consolidateds.getValue()).get(((java.lang.Integer)parameter_cont.getValue())).getAmount()));
-        typedReportData = getReport("productionPlanning", templatePath, MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+        //typedReportData = getReport("productionPlanning", templatePath, MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
+        String query = " select nombre, codigo " +
+                       " from metaproductoproduccion " +
+                       " where idmetaproductoproduccion in ( ";
+        boolean band = true;
+        for(Long id: ids)
+        {
+           query += (band?" ":",") + id.toString();
+           band = false;
+        }
+        query += " )";
+
+        typedReportData = getReport(
+                                                fileName
+                                              , templatePath
+                                              , query
+                                              , params
+                                              , "productionPlanningReport"
+                                    );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-
-        ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(0))).getElements().get(20))).setText("AQUIII");
-
-       /* try {
-            jasperPrint = JasperFillManager.fillReport( "prueba", params, new JRBeanCollectionDataSource(consolidateds));
-        } catch (JRException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }*/
-
-        //JasperFillManager.fillReport( fileName, parameters, new JRBeanCollectionDataSource(list));
-        /*List pages = jasperPrint.getPages();
-        JRPrintPage p = (JRPrintPage)pages.get(0);*/
-
-        //typedReportData.getReportData().getJasperReport().getDetailSection().getBands()[0].getChildren().add(staticText);
-        //typedReportData.getReportData().getJasperReport().getDetailSection().getBands()[0] = staticText;
-        //(JRDesignSection)(typedReportData.getReportData().getJasperReport().getDetailSection()).addBand(null);
-        //JasperReport jasperReport = new JasperReport();
-        //typedReportData.setJasperReport();
-        JasperDesign jasperDesign = typedReportData.getJasperDesign();
-        /*JRBaseStaticText texto = (JRBaseStaticText)typedReportData.getJasperReport().getColumnHeader().getChildren().get(7);
-        texto.setText("mirame..");
-        texto.setX(75);
-        texto.setWidth(168);
-        typedReportData.getJasperReport().getColumnHeader().getChildren().add(texto);*/
-
-     /*   try {
-            jasperDesign.addGroup(new JRDesignGroup());
-        } catch (JRException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }*/
-
-        /*for(int j =0; j < el.size(); j++)
-           {
-                JRPrintElement e = ((JRPrintElement)el.get(j));
-                if(e.getKey().equals("Detail 1"))
-                        height = e.getHeight();
-           }*/
-
+        int cont = 10;
+        for(ProductionPlanningAction.Consolidated consolidated:consolidateds)
+        {
+            ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(0))).getElements().get(cont))).setText(String.format("%.2f", consolidated.getAmount()));
+            cont +=3;
+        }
         try {
             typedReportData.setJasperPrint(jasperPrint);
             GenerationReportData generationReportData = new GenerationReportData(typedReportData);
             generationReportData.exportReport();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
+    }
+
+    public List<ProductionPlanningAction.Consolidated> getConsolidatedInputs() {
+        try {
+
+            datas = new HashMap<Long, ProductionPlanningAction.Consolidated>();
+            for (ProductionOrder order : productionOrders) {
+                evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
+                for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
+                    ProductionPlanningAction.Consolidated aux = datas.get(ingredient.getMetaProduct().getId());
+                    if (aux == null) {
+                        aux = new ProductionPlanningAction.Consolidated();
+                        aux.setProduct(ingredient.getMetaProduct());
+                        datas.put(ingredient.getMetaProduct().getId(), aux);
+                    }
+                    aux.setAmount(aux.getAmount() + ingredient.getAmount());
+                }
+            }
+            return new ArrayList<ProductionPlanningAction.Consolidated>(datas.values());
+        } catch (Exception ex) {
+            log.error("Exception caught", ex);
+            return new ArrayList<ProductionPlanningAction.Consolidated>();
+        }
+    }
+
+    private void getMetaProducts(List<ProductionPlanningAction.Consolidated> consolidatedList) {
+
+             for(ProductionPlanningAction.Consolidated consolidated:consolidatedList)
+             {
+                 metaProducts.add(consolidated.getProduct());
+             }
     }
 
     public Map<String, Object> getCommonDocumentParamsInfo() {
@@ -149,7 +173,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         return paramMap;
     }
 
-    @Override
+    /*@Override
     protected String getEjbql() {
 
         return  " SELECT distinct  metaProduct.name, " +
@@ -160,11 +184,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 " inner join productionIngredient.metaProduct metaProduct ";
         //return "SELECT NEW ProductionPlanningAction.Consolidated(productionOrder.amount,productionOrder.product) FROM #{productionOrders} as productionOrder ";
        // return "";
-    }
+    }*/
 
-    @Create
+/*    @Create
     public void init() {
         restrictions = new String[]{"productionOrder = #{productionOrders}"};
-    }
+    }*/
 
 }

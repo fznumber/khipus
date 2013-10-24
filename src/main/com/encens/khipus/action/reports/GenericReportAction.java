@@ -256,6 +256,32 @@ public class GenericReportAction implements Serializable {
         return typedReportData;
     }
 
+    public TypedReportData getReport(String reportId, String reportTemplatePath,String query, Map params,String defaultReportTitle ) {
+
+        TypedReportData typedReportData = new TypedReportData();
+        log.debug("Generating sql report........................");
+        String reportTitleString = getReportTitle();
+        if (reportTitleString == null || reportTitleString.isEmpty()) {
+            reportTitleString = defaultReportTitle;
+        }
+        try {
+            typedReportData = genericReportService.generateSqlReport(
+                    GenerationReportData.getInstance("messages_app",
+                            (SessionUser) Component.getInstance("sessionUser"),
+                            params),
+                    reportId,
+                    JSFUtil.getResourceAsStream(reportTemplatePath),
+                    getReportFormat().getFormat(),
+                    defaultReportTitle,
+                    query,
+                    reportTitleString).getTypedReportData();
+        } catch (IOException e) {
+            log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());
+        }
+
+        return typedReportData;
+    }
+
     /**
      * This method generates a subreport
      *
@@ -319,32 +345,6 @@ public class GenericReportAction implements Serializable {
         } catch (IOException e) {
             log.error("ERROR IN GENERATING SUB REPORT......................" + e.getMessage() + "\n" + e.getStackTrace().toString());
         }
-        return typedReportData;
-    }
-
-    public TypedReportData getReport(String reportId, String reportTemplatePath,String query, Map params,String defaultReportTitle ) {
-
-        TypedReportData typedReportData = new TypedReportData();
-        log.debug("Generating sql report........................");
-        String reportTitleString = getReportTitle();
-        if (reportTitleString == null || reportTitleString.isEmpty()) {
-            reportTitleString = defaultReportTitle;
-        }
-        try {
-            typedReportData = genericReportService.generateSqlReport(
-                    GenerationReportData.getInstance("messages_app",
-                            (SessionUser) Component.getInstance("sessionUser"),
-                            params),
-                    reportId,
-                    JSFUtil.getResourceAsStream(reportTemplatePath),
-                    getReportFormat().getFormat(),
-                    defaultReportTitle,
-                    query,
-                    reportTitleString).getTypedReportData();
-        } catch (IOException e) {
-            log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());
-        }
-
         return typedReportData;
     }
 
