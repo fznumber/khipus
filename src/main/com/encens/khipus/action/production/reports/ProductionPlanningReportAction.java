@@ -95,10 +95,10 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         for(int i =0; i<typedReportData.getJasperPrint().getPages().size();i++)
         {
-            int contName = 8;
-            int contUnidad = 10;
-            int contCod = 9;
-            int cantidad = 11;
+            int contName = 7;
+            int contUnidad = 9;
+            int contCod = 8;
+            int cantidad = 10;
 
             for(ProductionPlanningAction.Consolidated consolidated:consolidatedsIN)
             {
@@ -141,7 +141,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("userLoginParam", currentUser.getEmployee().getFullName());
-        paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.makePending"));
+        paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
         paramMap.put("dateParam", date);
         paramMap.put("estate", state);
         return paramMap;

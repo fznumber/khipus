@@ -17,43 +17,33 @@
 	</field>
 	<field name="cod_med" class="java.lang.String"/>
 	<title>
-		<band height="60" splitType="Stretch">
+		<band height="50" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="0" width="450" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="0" width="598" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="12" width="450" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="12" width="598" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="9" isBold="true"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Responsable: "+$P{userLoginParam}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="24" width="450" height="12"/>
-				<box padding="1">
-					<pen lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Fecha: "+$P{dateParam}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="36" width="450" height="13"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="24" width="598" height="13"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Estado: "+$P{estate}]]></textFieldExpression>
@@ -152,7 +142,7 @@
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="15" splitType="Stretch">
+		<band height="18" splitType="Stretch">
 			<frame>
 				<reportElement style="detailStyle" positionType="Float" mode="Opaque" x="0" y="0" width="578" height="15"/>
 				<box padding="0">
@@ -186,26 +176,24 @@
 	</pageFooter>
 	<summary>
 		<band height="84">
+			<line>
+				<reportElement x="356" y="63" width="121" height="1"/>
+			</line>
 			<staticText>
-				<reportElement x="146" y="62" width="92" height="20"/>
+				<reportElement x="115" y="64" width="167" height="20"/>
 				<textElement>
 					<font size="6"/>
 				</textElement>
-				<text><![CDATA[ADMINISTRACION ILVA]]></text>
+				<text><![CDATA[Encargado de Almacen]]></text>
 			</staticText>
 			<line>
-				<reportElement x="135" y="62" width="103" height="1"/>
+				<reportElement x="112" y="63" width="123" height="1"/>
 			</line>
-			<staticText>
-				<reportElement x="357" y="62" width="218" height="20"/>
-				<textElement>
-					<font size="6"/>
-				</textElement>
-				<text><![CDATA["Responsable: "+$P{userLoginParam}]]></text>
-			</staticText>
-			<line>
-				<reportElement x="345" y="62" width="103" height="1"/>
-			</line>
+			<textField>
+				<reportElement x="356" y="64" width="121" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Responsable: "+$P{userLoginParam}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
