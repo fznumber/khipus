@@ -31,21 +31,27 @@
 
 <div class="buttons">
     <s:div id="ruleBotton1">
+
+        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+                         value="#{messages['ProductionPlanning.generateDocumnt']}"
+                         styleClass="button"
+                         tabindex="1"/>
+
         <h:commandButton action="#{productionPlanningAction.makeFinalized}"
                          value="#{messages['ProductionPlanning.makeFinalized']}"
                          styleClass="button"
                          rendered="#{productionPlanning.state eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
+                         tabindex="3"/>
         <h:commandButton action="#{productionPlanningAction.makeExecuted}"
                          value="#{messages['ProductionPlanning.makeExecuted']}"
                          styleClass="button"
                          rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
+                         tabindex="3"/>
 
         <h:commandButton action="#{productionPlanningAction.create}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
-                         tabindex="1">
+                         tabindex="2">
             <s:defaultAction/>
         </h:commandButton>
         <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.save']}"

@@ -1,5 +1,7 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
+import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -111,6 +113,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     if (aux == null) {
                         aux = new Consolidated();
                         aux.setProduct(ingredient.getMetaProduct());
+                        aux.setIdMeta(ingredient.getMetaProduct().getId());
+                        aux.setName(ingredient.getMetaProduct().getName());
+                        aux.setCode(ingredient.getMetaProduct().getCode());
+                        aux.setUnit(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
                         consolidated.put(ingredient.getMetaProduct().getId(), aux);
                     }
 
@@ -346,6 +352,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public static class Consolidated {
         private double amount;
         private MetaProduct product;
+        private Long idMeta;
+        private String name;
+        private String code;
+        private String unit;
+
+        public Consolidated(double amount, MetaProduct product) {
+            this.amount = amount;
+            this.product = product;
+        }
+
+        public Consolidated() {
+        }
 
         public double getAmount() {
             return amount;
@@ -362,6 +380,38 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         public void setProduct(MetaProduct product) {
             this.product = product;
         }
+
+        public Long getIdMeta() {
+            return idMeta;
+        }
+
+        public void setIdMeta(Long idMeta) {
+            this.idMeta = idMeta;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getUnit() {
+            return unit;
+        }
+
+        public void setUnit(String unit) {
+            this.unit = unit;
+        }
     }
 
     private static class Formulation {
@@ -371,5 +421,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public static enum FormulaState {
         NONE, NEW, EDIT
+    }
+
+    public ProductionOrder getProductionOrder() {
+        return productionOrder;
+    }
+
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
     }
 }
