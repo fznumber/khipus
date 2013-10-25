@@ -34,10 +34,8 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
@@ -54,74 +52,65 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
     @In
     User currentUser;
-    @In
-    private SessionUser sessionUser;
-    @In
-    private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
-    @In
-    private MetaProductService metaProductService;
+    private List<ProductionPlanningAction.Consolidated> consolidatedsIN;
 
-    private Map<String, Object> commonDocumentParamsInfo;
-    private ProductionPlanning productionPlanning;
-    private List<ProductionOrder> productionOrders;
-    private List<ProductionPlanningAction.Consolidated> consolidateds;
-    private List<MetaProduct> metaProducts;
-    private ProductComposition productComposition;
-    private ArrayList<Long> metadIds = new ArrayList<Long>();
-    private Map<Long, ProductionPlanningAction.Consolidated> datas;
-    private ArrayList<Double> mounts = new ArrayList<Double>();
-    private ArrayList<Long> ids = new ArrayList<Long>();
+    private String date;
+    private String state;
 
-    public void generateReport(List<MetaProduct> products,List<ProductionOrder> orders ) {
+    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning) {
         log.debug("Generate ProductionPlannigReportAction........");
         TypedReportData typedReportData;
         String templatePath = "/production/reports/productionPlanningReport.jrxml";
         String fileName = "ProductionPlanningReportAction";
-
+        SimpleDateFormat sdf=new java.text.SimpleDateFormat("dd/MM/yyyy");
+        date = sdf.format(productionPlanning.getDate());
+        state  = getEstate(productionPlanning.getState());
         Map params = new HashMap();
 
-        metaProducts = products;
-
         params.putAll(getCommonDocumentParamsInfo());
-        //consolidateds = consolis;
-        productionOrders = orders;
-        metaProducts.clear();
-        consolidateds = getConsolidatedInputs();
-        //getMetaProducts(consolidateds);
-
-        for(Map.Entry<Long, ProductionPlanningAction.Consolidated> entry : datas.entrySet())
-        {
-            //metaProducts.add(metaProductService.find(entry.getKey()));
-            ids.add(entry.getKey());
-        }
-
+        consolidatedsIN = consolidatedLists;
         setReportFormat(ReportFormat.PDF);
-        //typedReportData = getReport("productionPlanning", templatePath, MessageUtils.getMessage("Report.rawMaterialPayRollReportAction"), params);
-        String query = " select nombre, codigo " +
-                       " from metaproductoproduccion " +
+        String query = " select nombre, codigo, cod_med  " +
+                       " from metaproductoproduccion mp " +
+                       " inner join WISE.inv_articulos ia " +
+                       " on ia.cod_art = mp.codigo " +
                        " where idmetaproductoproduccion in ( ";
         boolean band = true;
-        for(Long id: ids)
+        for(ProductionPlanningAction.Consolidated consolidated: consolidatedsIN)
         {
-           query += (band?" ":",") + id.toString();
+           query += (band?" ":",") + consolidated.getIdMeta().toString();
            band = false;
         }
         query += " )";
 
         typedReportData = getReport(
-                                                fileName
-                                              , templatePath
-                                              , query
-                                              , params
-                                              , "productionPlanningReport"
-                                    );
+                fileName
+                , templatePath
+                , query
+                , params
+                , "productionPlanningReport"
+        );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-        int cont = 10;
-        for(ProductionPlanningAction.Consolidated consolidated:consolidateds)
+
+        for(int i =0; i<typedReportData.getJasperPrint().getPages().size();i++)
         {
-            ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(0))).getElements().get(cont))).setText(String.format("%.2f", consolidated.getAmount()));
-            cont +=3;
+            int contName = 8;
+            int contUnidad = 10;
+            int contCod = 9;
+            int cantidad = 11;
+
+            for(ProductionPlanningAction.Consolidated consolidated:consolidatedsIN)
+            {
+                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contName))).setText(consolidated.getName());
+                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contUnidad))).setText(consolidated.getUnit());
+                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contCod))).setText(consolidated.getCode());
+                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(cantidad))).setText(String.format("%.2f", consolidated.getAmount()));
+                contName += 4;
+                contUnidad += 4;
+                contCod +=4;
+                cantidad +=4;
+            }
         }
         try {
             typedReportData.setJasperPrint(jasperPrint);
@@ -132,63 +121,30 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         }
     }
 
-    public List<ProductionPlanningAction.Consolidated> getConsolidatedInputs() {
-        try {
+    private String getEstate(ProductionPlanningState statePlaning)
+    {
+        String estateLiteral = "";
 
-            datas = new HashMap<Long, ProductionPlanningAction.Consolidated>();
-            for (ProductionOrder order : productionOrders) {
-                evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
-                for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
-                    ProductionPlanningAction.Consolidated aux = datas.get(ingredient.getMetaProduct().getId());
-                    if (aux == null) {
-                        aux = new ProductionPlanningAction.Consolidated();
-                        aux.setProduct(ingredient.getMetaProduct());
-                        datas.put(ingredient.getMetaProduct().getId(), aux);
-                    }
-                    aux.setAmount(aux.getAmount() + ingredient.getAmount());
-                }
-            }
-            return new ArrayList<ProductionPlanningAction.Consolidated>(datas.values());
-        } catch (Exception ex) {
-            log.error("Exception caught", ex);
-            return new ArrayList<ProductionPlanningAction.Consolidated>();
-        }
-    }
+        if(statePlaning == ProductionPlanningState.EXECUTED)
+            estateLiteral = MessageUtils.getMessage("ProductionPlanning.makeExecuted");
 
-    private void getMetaProducts(List<ProductionPlanningAction.Consolidated> consolidatedList) {
+        if(statePlaning == ProductionPlanningState.FINALIZED)
+            estateLiteral = MessageUtils.getMessage("productionPlanningAction.makeFinalized");
 
-             for(ProductionPlanningAction.Consolidated consolidated:consolidatedList)
-             {
-                 metaProducts.add(consolidated.getProduct());
-             }
+        if(statePlaning == ProductionPlanningState.PENDING)
+            estateLiteral = MessageUtils.getMessage("ProductionPlanning.makePending");
+
+        return estateLiteral;
     }
 
     public Map<String, Object> getCommonDocumentParamsInfo() {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("userLoginParam", currentUser.getEmployee().getFullName());
-        paramMap.put("reportTitle", "titulo");
-        paramMap.put("dateParam", "fecha");
-        paramMap.put("estate", "estado");
+        paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.makePending"));
+        paramMap.put("dateParam", date);
+        paramMap.put("estate", state);
         return paramMap;
     }
-
-    /*@Override
-    protected String getEjbql() {
-
-        return  " SELECT distinct  metaProduct.name, " +
-                "                   metaProduct.code " +
-                " FROM ProductionOrder productionOrder " +
-                " inner join ProductionOrder.productComposition productComposition " +
-                " inner join productComposition.productionIngredientList productionIngredient " +
-                " inner join productionIngredient.metaProduct metaProduct ";
-        //return "SELECT NEW ProductionPlanningAction.Consolidated(productionOrder.amount,productionOrder.product) FROM #{productionOrders} as productionOrder ";
-       // return "";
-    }*/
-
-/*    @Create
-    public void init() {
-        restrictions = new String[]{"productionOrder = #{productionOrders}"};
-    }*/
 
 }
