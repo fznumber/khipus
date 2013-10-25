@@ -13,6 +13,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 
 import javax.faces.event.ActionEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,6 +118,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                         aux.setName(ingredient.getMetaProduct().getName());
                         aux.setCode(ingredient.getMetaProduct().getCode());
                         aux.setUnit(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
+                        aux.setAmountWarehouse(productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct()));
                         consolidated.put(ingredient.getMetaProduct().getId(), aux);
                     }
 
@@ -356,6 +358,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         private String name;
         private String code;
         private String unit;
+        private BigDecimal amountWarehouse;
 
         public Consolidated(double amount, MetaProduct product) {
             this.amount = amount;
@@ -411,6 +414,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         public void setUnit(String unit) {
             this.unit = unit;
+        }
+
+        public BigDecimal getAmountWarehouse() {
+            return amountWarehouse;
+        }
+
+        public void setAmountWarehouse(BigDecimal amountWarehouse) {
+            this.amountWarehouse = amountWarehouse;
         }
     }
 
