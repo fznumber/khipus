@@ -445,6 +445,11 @@
 
 <div class="buttons">
     <s:div id="ruleBotton2">
+        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+                         value="#{messages['ProductionPlanning.generateDocumnt']}"
+                         styleClass="button"
+                         tabindex="1"/>
+
         <h:commandButton action="#{productionPlanningAction.makeFinalized}"
                          value="#{messages['ProductionPlanning.makeFinalized']}"
                          styleClass="button"
