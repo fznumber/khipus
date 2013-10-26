@@ -34,6 +34,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private FormulaState formulaState = FormulaState.NONE;
 
+    private Boolean dispobleBalance = true;
+
     @In
     private ProductionPlanningService productionPlanningService;
     @In
@@ -143,6 +145,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 total = total + ingredient.getAmount() / 1000.0;
             else
                 total = total + ingredient.getAmount();
+
+            //productComposition.setMountWareHouse(productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct()));
         }
         return total;
     }

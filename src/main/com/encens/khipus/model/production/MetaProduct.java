@@ -10,6 +10,7 @@ import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.

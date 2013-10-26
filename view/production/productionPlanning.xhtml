@@ -118,7 +118,7 @@
             <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
             <h:inputText id="processedProduct" value="#{processedProductForPlanning.fullName}"
                          required="true" maxlength="500" styleClass="input" tabindex="5"
-                         disabled="#{productionPlanning.state eq 'EXECUTED'}">                  ºº
+                         disabled="#{productionPlanning.state eq 'EXECUTED'}">
             </h:inputText>
             <a4j:commandLink id="selectProcessedProduct" ajaxSingle="true" immediate="true"
                              tabindex="2"
@@ -185,6 +185,9 @@
                                 <rich:column>
                                     #{messages['ProductionPlanning.inputAmount']}
                                 </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.productionInput.amountWareHouse']}
+                                </rich:column>
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
@@ -198,6 +201,12 @@
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
                         </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{productionIngredientItem.mountWareHouse}">
+                                <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                            </h:outputText>
+                        </rich:column>
+
                     </rich:dataTable>
                 </td>
                 <td style="width:30%; vertical-align: bottom; text-align: right;">

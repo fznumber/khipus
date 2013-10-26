@@ -2,6 +2,7 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.ProductComposition;
 import com.encens.khipus.model.production.ProductionIngredient;
 import com.encens.khipus.model.production.ProductionOrder;
@@ -17,8 +18,10 @@ import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
+import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +76,20 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         map.addLiteralEquation(supposedVariable, productComposition.getSupposedAmount());
 
         calculateMathematicalFormula(map);
+    }
+
+    public BigDecimal getMountInWarehouse(MetaProduct metaProduct)
+    {
+        BigDecimal result = null;
+        try{
+        result =   (BigDecimal)getEntityManager()
+                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .setParameter("productItem", metaProduct.getProductItem())
+                .getSingleResult();
+            return result;
+        }catch (NoResultException nre){
+            return (result == null)? new BigDecimal(0):result;
+        }
     }
 
     private void calculateMathematicalFormulasWithoutDependencies(EquationMap map) throws ProductCompositionException {
@@ -256,6 +273,9 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
 
         public void setResult(double result) {
             pi.setAmount(result);
+            BigDecimal mount = getMountInWarehouse(pi.getMetaProduct());
+            pi.setMountWareHouse((mount==null) ? new BigDecimal(0) : mount);
+           // pi.setMountWareHouse(new BigDecimal(123));
         }
 
         public double getResult() {
