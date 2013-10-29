@@ -35,6 +35,7 @@
         <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
                          value="#{messages['ProductionPlanning.generateDocumnt']}"
                          styleClass="button"
+                         rendered="#{productionPlanningAction.managed}"
                          tabindex="1"/>
 
         <h:commandButton action="#{productionPlanningAction.makeFinalized}"
@@ -48,7 +49,7 @@
                          rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="3"/>
 
-        <h:commandButton action="#{productionPlanningAction.create}" value="#{messages['Common.save']}"
+        <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="2">
@@ -185,6 +186,9 @@
                                 <rich:column>
                                     #{messages['ProductionPlanning.inputAmount']}
                                 </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.productionInput.amountWareHouse']}
+                                </rich:column>
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
@@ -198,6 +202,12 @@
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
                         </rich:column>
+                        <rich:column styleClass="#{productionPlanningAction.verifMount(productionIngredientItem)?'labelAlarm':'labelInfo'}">
+                            <h:outputText value="#{productionIngredientItem.mountWareHouse}">
+                                <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                            </h:outputText>
+                        </rich:column>
+
                     </rich:dataTable>
                 </td>
                 <td style="width:30%; vertical-align: bottom; text-align: right;">
@@ -205,11 +215,11 @@
                         <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonAdd']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionPlanning.state != 'EXECUTED'}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionPlanning.state != 'EXECUTED' and !productionPlanningAction.dispobleBalance}"/>
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'EXECUTED'}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionPlanning.state != 'EXECUTED' and !productionPlanningAction.dispobleBalance}"/>
                         <a4j:commandButton id="removeInnerButton" action="#{productionPlanningAction.removeFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonRemove']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
@@ -378,9 +388,6 @@
         <rich:column>
             <h:outputText value="#{productionOrderItem.producingAmount}"/>
         </rich:column>
-        <!--<rich:column>
-            <h:outputText value="#{productionOrderItem.outputProductionVoucher.producedAmount}"/>
-        </rich:column>-->
         <rich:column styleClass="center">
             <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['Common.select']}"
                              action="#{productionPlanningAction.select(productionOrderItem)}"
@@ -423,6 +430,9 @@
                 <rich:column>
                     #{messages['ProductionOrder.productionInput.amount']}
                 </rich:column>
+                <!--<rich:column>
+                    #{messages['ProductionOrder.productionInput.amountWareHouse']}
+                </rich:column>-->
             </rich:columnGroup>
         </f:facet>
         <rich:column>
@@ -445,6 +455,12 @@
 
 <div class="buttons">
     <s:div id="ruleBotton2">
+        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+                         value="#{messages['ProductionPlanning.generateDocumnt']}"
+                         rendered="#{productionPlanningAction.managed}"
+                         styleClass="button"
+                         tabindex="1"/>
+
         <h:commandButton action="#{productionPlanningAction.makeFinalized}"
                          value="#{messages['ProductionPlanning.makeFinalized']}"
                          styleClass="button"
@@ -456,7 +472,7 @@
                          rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="2"/>
 
-        <h:commandButton action="#{productionPlanningAction.create}" value="#{messages['Common.save']}"
+        <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="1">

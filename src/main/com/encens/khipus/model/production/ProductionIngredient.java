@@ -1,6 +1,7 @@
 package com.encens.khipus.model.production;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,6 +41,12 @@ public class ProductionIngredient implements com.encens.khipus.model.BaseModel {
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
+    @Column(name = "INGREDIENTEVERIFICABLE", nullable = true, length = 20)
+    private String isVerifiably;
+
+    @Transient
+    private BigDecimal mountWareHouse = new BigDecimal(0);
+
     public Long getId() {
         return id;
     }
@@ -78,5 +85,21 @@ public class ProductionIngredient implements com.encens.khipus.model.BaseModel {
 
     public void setMathematicalFormula(String mathematicalFormula) {
         this.mathematicalFormula = mathematicalFormula;
+    }
+
+    public BigDecimal getMountWareHouse() {
+        return mountWareHouse;
+    }
+
+    public void setMountWareHouse(BigDecimal mountWareHouse) {
+        this.mountWareHouse = mountWareHouse;
+    }
+
+    public String getVerifiably() {
+        return isVerifiably;
+    }
+
+    public void setVerifiably(String verifiably) {
+        isVerifiably = verifiably;
     }
 }

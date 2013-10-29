@@ -2,6 +2,7 @@ package com.encens.khipus.action.production;
 
 import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
 import com.encens.khipus.action.reports.GenericReportAction;
+import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -11,8 +12,10 @@ import com.encens.khipus.service.production.ProcessedProductService;
 import com.encens.khipus.service.production.ProductionPlanningService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+import org.jboss.seam.international.StatusMessage;
 
 import javax.faces.event.ActionEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Formulation existingFormulation;
 
     private FormulaState formulaState = FormulaState.NONE;
+
+    private Boolean dispobleBalance = false;
 
     @In
     private ProductionPlanningService productionPlanningService;
@@ -117,6 +122,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                         aux.setName(ingredient.getMetaProduct().getName());
                         aux.setCode(ingredient.getMetaProduct().getCode());
                         aux.setUnit(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
+                        aux.setAmountWarehouse(productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct()));
                         consolidated.put(ingredient.getMetaProduct().getId(), aux);
                     }
 
@@ -141,6 +147,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 total = total + ingredient.getAmount() / 1000.0;
             else
                 total = total + ingredient.getAmount();
+
+            //productComposition.setMountWareHouse(productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct()));
         }
         return total;
     }
@@ -158,13 +166,64 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
+    //public Boolean verifMount(BigDecimal mountWareHouse, Double amount)
+    //public Boolean verifMount(Consolidated consolidated)
+    public Boolean verifMount(ProductionIngredient productionIngredient)
+    {
+        Boolean aux = true;
+        if((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0) || productionIngredient.getVerifiably() == null)
+        {
+            aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
+        }
+        if(aux)
+        {
+            dispobleBalance = true;
+        }
+
+              return aux;
+    }
+
     public void addFormulation() {
+
         ProductionPlanning productionPlanning = getInstance();
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
 
         clearFormulation();
         disableEditingFormula();
+    }
+
+    @End
+    public String create(List<Consolidated> consolidateds) {
+        Boolean band = true;
+        try {
+                for(Consolidated consolidated : consolidateds){
+                    BigDecimal mountWareHouse =  productionPlanningService.getMountInWarehouse(consolidated.getProduct());
+                    if(consolidated.getAmount() > mountWareHouse.doubleValue())
+                    {
+                        addMessageError(consolidated,mountWareHouse.doubleValue());
+                        band = false;
+                    }
+                }
+
+            if(band)
+            {
+                getService().create(getInstance());
+                addCreatedMessage();
+                return Outcome.SUCCESS;
+            }else{
+                return Outcome.REDISPLAY;
+            }
+
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        }
+    }
+
+    public void addMessageError(Consolidated consolidated, Double mount)
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,"Common.message.errorMountWarehouse",consolidated.getName(),mount);
     }
 
     public void evaluateExpressionActionListener(ActionEvent e) {
@@ -284,6 +343,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
             productionPlanningService.refresh(productionOrder);
         }
+        dispobleBalance = true;
     }
 
     private void disableEditingFormula() {
@@ -356,6 +416,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         private String name;
         private String code;
         private String unit;
+        private BigDecimal amountWarehouse;
+        private Boolean isVerifiably;
 
         public Consolidated(double amount, MetaProduct product) {
             this.amount = amount;
@@ -412,6 +474,22 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         public void setUnit(String unit) {
             this.unit = unit;
         }
+
+        public BigDecimal getAmountWarehouse() {
+            return amountWarehouse;
+        }
+
+        public void setAmountWarehouse(BigDecimal amountWarehouse) {
+            this.amountWarehouse = amountWarehouse;
+        }
+
+        public Boolean getVerifiably() {
+            return isVerifiably;
+        }
+
+        public void setVerifiably(Boolean verifiably) {
+            isVerifiably = verifiably;
+        }
     }
 
     private static class Formulation {
@@ -429,5 +507,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+    }
+
+    public Boolean getDispobleBalance() {
+        return dispobleBalance;
+    }
+
+    public void setDispobleBalance(Boolean dispobleBalance) {
+        this.dispobleBalance = dispobleBalance;
     }
 }
