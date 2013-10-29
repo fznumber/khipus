@@ -381,6 +381,10 @@ input.button {
     float: left;
 }
 
+.labelAlarm {
+    background-color: #ff8b8e;
+}
+
 .labelWarm {
     background-color: #ffffe0;
 }
