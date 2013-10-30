@@ -17,7 +17,7 @@
 	</field>
 	<field name="cod_med" class="java.lang.String"/>
 	<title>
-		<band height="50" splitType="Stretch">
+		<band height="54" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="0" width="598" height="12"/>
 				<box padding="1">
@@ -40,6 +40,16 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="24" width="598" height="13"/>
+				<box padding="1">
+					<pen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Estado: "+$P{estate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="37" width="598" height="13"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>

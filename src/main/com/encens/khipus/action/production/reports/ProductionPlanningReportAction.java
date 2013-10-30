@@ -140,6 +140,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     public Map<String, Object> getCommonDocumentParamsInfo() {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
+        paramMap.put("position", currentUser.getRoles().get(0).getName());
         paramMap.put("userLoginParam", currentUser.getEmployee().getFullName());
         paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
         paramMap.put("dateParam", date);

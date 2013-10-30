@@ -160,6 +160,12 @@
                          required="false" styleClass="input" tabindex="5" readonly="true"/>
         </s:decorate>
 
+       <!-- <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['ProductionPlanning.milk']}</ui:define>
+            <h:inputText value="#{productionOrderForPlanning.getMountMilk()}"
+                         styleClass="input" />
+        </s:decorate>-->
+
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.totalWeight']}</ui:define>
             <h:inputText value="#{productionPlanningAction.totalWeight}"
@@ -365,9 +371,9 @@
                 <rich:column>
                     #{messages['ProductionOrder.expectedAmount']}
                 </rich:column>
-                <!--<rich:column>
+                <rich:column>
                     #{messages['ProductionOrder.producedAmount']}
-                </rich:column>-->
+                </rich:column>
                 <rich:column styleClass="center">
                     #{messages['Common.action']}
                 </rich:column>
@@ -384,6 +390,9 @@
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.productComposition.name}"/>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{productionOrderItem.supposedAmount}"/>
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.producingAmount}"/>

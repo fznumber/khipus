@@ -51,6 +51,9 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "TEORICOOBTENIDO", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double supposedAmount;
 
+    @Transient
+    private Double milk;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private Company company;
@@ -149,5 +152,31 @@ public class ProductionOrder implements BaseModel {
 
     public void setSupposedAmount(Double supposedAmount) {
         this.supposedAmount = supposedAmount;
+    }
+
+    public Double getMilk() {
+        return milk;
+    }
+
+    public void setMilk(Double milk) {
+        this.milk = milk;
+    }
+
+    public Double getMountMilk()
+    {
+        Double mount = 0.0;
+        if(this.productComposition != null)
+        {
+            List<ProductionIngredient> ingredients = this.productComposition.getProductionIngredientList();
+
+            for(ProductionIngredient ingredient : ingredients)
+            {
+                if(ingredient.getMetaProduct().getName().compareTo("LECHE CRUDA") == 0)
+                {
+                    mount = ingredient.getAmount();
+                }
+            }
+        }
+        return mount;
     }
 }
