@@ -53,12 +53,84 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     @In
     User currentUser;
     private List<ProductionPlanningAction.Consolidated> consolidatedsIN;
+    private List<ProductionOrder> productionOrders;
+    private ProductionPlanning productionPlanning;
+
 
     private String date;
     private String state;
 
-    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning) {
+    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlan,List<ProductionOrder> orders) {
+        log.debug("Generating productionOrderPlanningDetailSubReport............................");
+        productionOrders = orders;
+        consolidatedsIN = consolidatedLists;
+        productionPlanning = productionPlan;
+        Map params = new HashMap();
+        setReportFormat(ReportFormat.PDF);
+        params.putAll(getCommonDocumentParamsInfo());
+        //add sub reports
+        addProductionOrderPlanningDetailSubReport(params);
+
+        super.generateSqlReport("incomeByInvoiceReport", "/production/reports/productionPlanningReportprub.jrxml", "titulo prueba", params);
+    }
+
+    private void addProductionOrderPlanningDetailSubReport(Map mainReportParams) {
+        log.debug("Generating productionOrderPlanningDetailSubReport.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String ejbql = "SELECT " +
+                " productionOrder.productComposition.processedProduct.name, " +
+                " productionOrder.productComposition.processedProduct.code, " +
+                " productionOrder.code, " +
+                " productionOrder.productComposition.name, " +
+                " productionOrder.supposedAmount, " +
+                " productionOrder.producingAmount " +
+                " FROM ProductionOrder productionOrder " ;
+
+        String sql = "SELECT mp.nombre as nombre ,mp.codigo as codigo , op.codigo as codigo_orden, cp.nombre as formula, op.TEORICOOBTENIDO as teorico, op.CANTIDADPRODUCIR as producido \n" +
+                "FROM ordenproduccion OP\n" +
+                "INNER JOIN composicionproducto CP\n" +
+                "ON cp.idcomposicionproducto = op.idcomposicionproducto\n" +
+                "INNER JOIN productoprocesado PP\n" +
+                "ON pp.idproductoprocesado = cp.idproductoprocesado\n" +
+                "INNER JOIN metaproductoproduccion MP\n" +
+                "ON mp.idmetaproductoproduccion = pp.idproductoprocesado\n" +
+                "WHERE op.idordenproduccion IN (";
+
+        boolean band = true;
+        for(ProductionOrder productionOrder: productionOrders)
+        {
+            sql += (band?" ":",") + productionOrder.getId().toString();
+            band = false;
+        }
+        sql += " )";
+
+
+        String[] restrictions = new String[]{
+                "productionOrder = #{productionOrders}",
+        };
+
+        String orderBy = "";
+        //generate the sub report
+        String subReportKey = "INCOMEBYCONCEPTSUBREPORT";
+
+        TypedReportData subReportData = super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderPlanningDetailSubReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+    }
+
+    public void addProductionOrderPlanningReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning,List<ProductionOrder> orders) {
         log.debug("Generate ProductionPlannigReportAction........");
+        productionOrders = orders;
         TypedReportData typedReportData;
         String templatePath = "/production/reports/productionPlanningReport.jrxml";
         String fileName = "ProductionPlanningReportAction";
@@ -70,6 +142,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         params.putAll(getCommonDocumentParamsInfo());
         consolidatedsIN = consolidatedLists;
         setReportFormat(ReportFormat.PDF);
+
         String query = " select nombre, codigo, cod_med  " +
                        " from metaproductoproduccion mp " +
                        " inner join WISE.inv_articulos ia " +
@@ -120,6 +193,97 @@ public class ProductionPlanningReportAction extends GenericReportAction {
             e.printStackTrace();
         }
     }
+
+
+
+    /*private TypedReportData addProductionOrderPlanningDetailSubReport() {
+        log.debug("Generating productionOrderPlanningDetailSubReport.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String ejbql = "SELECT " +
+                " productionOrder.productComposition.processedProduct.name, " +
+                " productionOrder.productComposition.processedProduct.code, " +
+                " productionOrder.code, " +
+                " productionOrder.productComposition.name, " +
+                " productionOrder.supposedAmount, " +
+                " productionOrder.producingAmount " +
+                " FROM ProductionOrder productionOrder " ;
+
+        String sql = "SELECT mp.nombre ,mp.codigo, op.codigo, cp.nombre, op.TEORICOOBTENIDO, op.CANTIDADPRODUCIR \n" +
+                "FROM ordenproduccion OP\n" +
+                "INNER JOIN composicionproducto CP\n" +
+                "ON cp.idcomposicionproducto = op.idcomposicionproducto\n" +
+                "INNER JOIN productoprocesado PP\n" +
+                "ON pp.idproductoprocesado = cp.idproductoprocesado\n" +
+                "INNER JOIN metaproductoproduccion MP\n" +
+                "ON mp.idmetaproductoproduccion = pp.idproductoprocesado\n" +
+                "WHERE op.idordenproduccion IN (";
+
+        boolean band = true;
+        for(ProductionOrder productionOrder: productionOrders)
+        {
+            sql += (band?" ":",") + productionOrder.getId().toString();
+            band = false;
+        }
+        sql += " )";
+
+
+        String[] restrictions = new String[]{
+                "productionOrder = #{productionOrders}",
+        };
+
+        String orderBy = "";
+        //generate the sub report
+        String subReportKey = "PRODUCTIONPLANINGSUBREPORT";
+
+       *//*return super.generateSubReport(
+                subReportKey,
+                "/production/reports/productionOrderPlanningDetailSubReportJPA.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                //createQueryForSubreport(subReportKey, ejbql, null, orderBy),
+                createQueryForSubreport(subReportKey, ejbql, new ArrayList(),""),
+                params);*//*
+
+        return super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderPlanningDetailSubReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        //mainReportParams.putAll(subReportData.getReportParams());
+        //mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
+    }
+    */
+    /*
+    @Override
+    protected String getEjbql()
+    {
+        " select nombre, codigo, cod_med  " +
+                " from metaproductoproduccion mp " +
+                " inner join WISE.inv_articulos ia " +
+                " on ia.cod_art = mp.codigo " +
+                " where idmetaproductoproduccion in (
+        String sql = " SELECT metaProduct.name, metaProduct.code   " +
+                " FROM MetaProduct metaProduct  " +
+                " inner join ";
+        return sql;
+    }
+    */
+
+/*
+    @Create
+    public void init() {
+        restrictions = new String[]{""
+        };
+
+        sortProperty = "";
+    }*/
 
     private String getEstate(ProductionPlanningState statePlaning)
     {

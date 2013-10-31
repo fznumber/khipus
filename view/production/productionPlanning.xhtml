@@ -32,7 +32,7 @@
 <div class="buttons">
     <s:div id="ruleBotton1">
 
-        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning,productionPlanning.productionOrderList)}"
                          value="#{messages['ProductionPlanning.generateDocumnt']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.managed}"
