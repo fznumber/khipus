@@ -60,7 +60,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     private String date;
     private String state;
 
-    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlan,List<ProductionOrder> orders) {
+    /*public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlan,List<ProductionOrder> orders) {
         log.debug("Generating productionOrderPlanningDetailSubReport............................");
         productionOrders = orders;
         consolidatedsIN = consolidatedLists;
@@ -72,7 +72,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         addProductionOrderPlanningDetailSubReport(params);
 
         super.generateSqlReport("incomeByInvoiceReport", "/production/reports/productionPlanningReportprub.jrxml", "titulo prueba", params);
-    }
+    }*/
 
     private void addProductionOrderPlanningDetailSubReport(Map mainReportParams) {
         log.debug("Generating productionOrderPlanningDetailSubReport.............................");
@@ -128,11 +128,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         mainReportParams.put(subReportKey, subReportData.getJasperReport());
     }
 
-    public void addProductionOrderPlanningReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning,List<ProductionOrder> orders) {
+    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning,List<ProductionOrder> orders) {
         log.debug("Generate ProductionPlannigReportAction........");
         productionOrders = orders;
         TypedReportData typedReportData;
-        String templatePath = "/production/reports/productionPlanningReport.jrxml";
+        String templatePath = "/production/reports/productionPlanningReportprub.jrxml";
         String fileName = "ProductionPlanningReportAction";
         SimpleDateFormat sdf=new java.text.SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(productionPlanning.getDate());
@@ -142,6 +142,8 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         params.putAll(getCommonDocumentParamsInfo());
         consolidatedsIN = consolidatedLists;
         setReportFormat(ReportFormat.PDF);
+
+        addProductionOrderPlanningDetailSubReport(params);
 
         String query = " select nombre, codigo, cod_med  " +
                        " from metaproductoproduccion mp " +
@@ -193,8 +195,6 @@ public class ProductionPlanningReportAction extends GenericReportAction {
             e.printStackTrace();
         }
     }
-
-
 
     /*private TypedReportData addProductionOrderPlanningDetailSubReport() {
         log.debug("Generating productionOrderPlanningDetailSubReport.............................");
