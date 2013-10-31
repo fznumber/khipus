@@ -11,8 +11,6 @@ import javax.ejb.Stateless;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
 
@@ -99,14 +97,6 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                            .setParameter("productItem", metaProduct.getProductItem())
                            .getSingleResult();
     }
-
-    /*public BigDecimal getMountInWarehouse(MetaProduct metaProduct)
-    {
-        return   (BigDecimal)getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
-                .setParameter("productItem", metaProduct.getProductItem())
-                .getSingleResult();
-    }*/
 
     public BigDecimal getMountInWarehouse(Long id)
     {

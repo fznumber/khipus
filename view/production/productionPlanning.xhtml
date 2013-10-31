@@ -32,7 +32,7 @@
 <div class="buttons">
     <s:div id="ruleBotton1">
 
-        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning,productionPlanning.productionOrderList)}"
                          value="#{messages['ProductionPlanning.generateDocumnt']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.managed}"
@@ -159,6 +159,12 @@
             <h:inputText value="#{productionOrderForPlanning.containerWeight}"
                          required="false" styleClass="input" tabindex="5" readonly="true"/>
         </s:decorate>
+
+       <!-- <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['ProductionPlanning.milk']}</ui:define>
+            <h:inputText value="#{productionOrderForPlanning.getMountMilk()}"
+                         styleClass="input" />
+        </s:decorate>-->
 
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.totalWeight']}</ui:define>
@@ -365,9 +371,9 @@
                 <rich:column>
                     #{messages['ProductionOrder.expectedAmount']}
                 </rich:column>
-                <!--<rich:column>
+                <rich:column>
                     #{messages['ProductionOrder.producedAmount']}
-                </rich:column>-->
+                </rich:column>
                 <rich:column styleClass="center">
                     #{messages['Common.action']}
                 </rich:column>
@@ -384,6 +390,9 @@
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.productComposition.name}"/>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{productionOrderItem.supposedAmount}"/>
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.producingAmount}"/>

@@ -142,13 +142,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         double total = 0.0;
         for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
-            //total += ingredient.getAmount();
             if (ingredient.getMetaProduct().getProductItem().getUsageMeasureCode().equals("GR"))
                 total = total + ingredient.getAmount() / 1000.0;
             else
                 total = total + ingredient.getAmount();
 
-            //productComposition.setMountWareHouse(productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct()));
         }
         return total;
     }
@@ -166,8 +164,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    //public Boolean verifMount(BigDecimal mountWareHouse, Double amount)
-    //public Boolean verifMount(Consolidated consolidated)
     public Boolean verifMount(ProductionIngredient productionIngredient)
     {
         Boolean aux = true;
@@ -516,4 +512,5 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void setDispobleBalance(Boolean dispobleBalance) {
         this.dispobleBalance = dispobleBalance;
     }
+
 }

@@ -275,7 +275,6 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
             pi.setAmount(result);
             BigDecimal mount = getMountInWarehouse(pi.getMetaProduct());
             pi.setMountWareHouse((mount==null) ? new BigDecimal(0) : mount);
-           // pi.setMountWareHouse(new BigDecimal(123));
         }
 
         public double getResult() {
