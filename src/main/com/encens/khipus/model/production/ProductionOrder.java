@@ -70,6 +70,10 @@ public class ProductionOrder implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OutputProductionVoucher> outputProductionVoucherList = new ArrayList<OutputProductionVoucher>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = true,  insertable = true)
     private ProductComposition productComposition;
@@ -178,5 +182,13 @@ public class ProductionOrder implements BaseModel {
             }
         }
         return mount;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
+        this.orderMaterials = orderMaterials;
     }
 }

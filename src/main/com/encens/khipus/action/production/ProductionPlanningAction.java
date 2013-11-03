@@ -2,14 +2,19 @@ package com.encens.khipus.action.production;
 
 import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
 import com.encens.khipus.action.reports.GenericReportAction;
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.finances.MeasureUnit;
+import com.encens.khipus.model.finances.MeasureUnitPk;
 import com.encens.khipus.model.production.*;
-import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.khipus.service.production.ProcessedProductService;
-import com.encens.khipus.service.production.ProductionPlanningService;
+import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.model.warehouse.ProductItemPK;
+import com.encens.khipus.service.production.*;
+import com.encens.khipus.service.warehouse.WarehouseCatalogService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -30,14 +35,24 @@ import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 public class ProductionPlanningAction extends GenericAction<ProductionPlanning> {
 
     private ProcessedProduct processedProduct;
+    private ProductionOrder productionOrderMaterial;
+    private ProductionOrder productionOrderSelected;
     private ProductComposition productComposition;
     private ProductionOrder productionOrder;
     private Formulation existingFormulation;
+    private OrderMaterial orderMaterial;
+    private ProductItem productItem;
+    private List<ProductItemPK> selectedProductItems = new ArrayList<ProductItemPK>();
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
     private FormulaState formulaState = FormulaState.NONE;
 
     private Boolean dispobleBalance = false;
 
+    private Boolean addMaterial = false;
+
+    /*@In
+    private ProductionOrderService productionOrderService;*/
     @In
     private ProductionPlanningService productionPlanningService;
     @In
@@ -74,6 +89,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @Factory(value = "productionOrderForPlanning", scope = ScopeType.STATELESS)
     public ProductionOrder initProductionOrder() {
         return productionOrder;
+    }
+
+    @Factory(value = "productionOrderMaterialForPlanning", scope = ScopeType.STATELESS)
+    public ProductionOrder initProductionOrderMaterial() {
+        return productionOrderMaterial;
     }
 
     @Factory(value = "processedProductForPlanning", scope = ScopeType.STATELESS)
@@ -291,6 +311,37 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         formulaState = FormulaState.EDIT;
     }
 
+    public void selectMaterial(ProductionOrder order) {
+
+        //cancelFormulation();
+        productionOrder = order;
+        this.productionOrderMaterial = productionOrder;
+        this.productComposition = productionOrder.getProductComposition();
+        this.processedProduct = productComposition.getProcessedProduct();
+        addMaterial = true;
+    }
+
+    public void addProductItems(List<ProductItem> productItems) {
+        for (ProductItem productItem : productItems) {
+            if (selectedProductItems.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedProductItems.add(productItem.getId());
+
+            OrderMaterial material = new OrderMaterial();
+            material.setProductItem(productItem);
+            material.setProductionOrder(productionOrder);
+            material.setCompanyNumber(productItem.getCompanyNumber());
+            orderMaterials.add(material);
+        }
+    }
+
+    public void removeMaterial(OrderMaterial instance) {
+        selectedProductItems.remove(instance.getProductItem().getId());
+        orderMaterials.remove(instance);
+    }
+
     public void clearFormulation() {
         processedProduct = new ProcessedProduct();
         productComposition = new ProductComposition();
@@ -314,6 +365,26 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         existingFormulation = null;
         disableEditingFormula();
     }
+
+    public void addOrderProduced() {
+
+        ProductionPlanning productionPlanning = getInstance();
+        int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
+        productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
+        addMaterial = false;
+    }
+
+/*
+    public void addFormulation() {
+
+        ProductionPlanning productionPlanning = getInstance();
+        productionPlanning.getProductionOrderList().add(productionOrder);
+        productionOrder.setProductionPlanning(productionPlanning);
+
+        clearFormulation();
+        disableEditingFormula();
+    }
+*/
 
     public void cancelFormulation() {
         if (existingFormulation != null) {
@@ -513,4 +584,42 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         this.dispobleBalance = dispobleBalance;
     }
 
+    public Boolean getAddMaterial() {
+        return addMaterial;
+    }
+
+    public void setAddMaterial(Boolean addMaterial) {
+        this.addMaterial = addMaterial;
+    }
+
+    public void cancelMaterial()
+    {
+        selectedProductItems.clear();
+        orderMaterials.clear();
+        addMaterial = false;
+    }
+
+    public OrderMaterial getOrderMaterial() {
+        return orderMaterial;
+    }
+
+    public void setOrderMaterial(OrderMaterial orderMaterial) {
+        this.orderMaterial = orderMaterial;
+    }
+
+    public ProductItem getProductItem() {
+        return productItem;
+    }
+
+    public void setProductItem(ProductItem productItem) {
+        this.productItem = productItem;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
+        this.orderMaterials = orderMaterials;
+    }
 }
