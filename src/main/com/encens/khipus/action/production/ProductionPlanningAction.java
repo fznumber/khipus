@@ -1,20 +1,15 @@
 package com.encens.khipus.action.production;
 
-import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
-import com.encens.khipus.action.reports.GenericReportAction;
-import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
-import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
-import com.encens.khipus.model.finances.MeasureUnit;
-import com.encens.khipus.model.finances.MeasureUnitPk;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
-import com.encens.khipus.service.production.*;
-import com.encens.khipus.service.warehouse.WarehouseCatalogService;
+import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
+import com.encens.khipus.service.production.ProcessedProductService;
+import com.encens.khipus.service.production.ProductionPlanningService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -36,7 +31,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private ProcessedProduct processedProduct;
     private ProductionOrder productionOrderMaterial;
-    private ProductionOrder productionOrderSelected;
     private ProductComposition productComposition;
     private ProductionOrder productionOrder;
     private Formulation existingFormulation;
@@ -51,8 +45,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private Boolean addMaterial = false;
 
-    /*@In
-    private ProductionOrderService productionOrderService;*/
     @In
     private ProductionPlanningService productionPlanningService;
     @In
@@ -298,7 +290,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void select(ProductionOrder productionOrder) {
 
         cancelFormulation();
-
+        dispobleBalance = false;
         existingFormulation = new Formulation();
         existingFormulation.producingAmount = productionOrder.getProducingAmount();
         existingFormulation.productComposition = productionOrder.getProductComposition();
@@ -316,12 +308,26 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //cancelFormulation();
         productionOrder = order;
         this.productionOrderMaterial = productionOrder;
+        /*
         this.productComposition = productionOrder.getProductComposition();
         this.processedProduct = productComposition.getProcessedProduct();
-        addMaterial = true;
+
+        if(orderMaterials.size() == 0)
+        orderMaterials = order.getOrderMaterials();*/
+
+        orderMaterials = new ArrayList<OrderMaterial>();
+        orderMaterials.addAll(order.getOrderMaterials());
+
+         addMaterial = true;
     }
 
     public void addProductItems(List<ProductItem> productItems) {
+
+        if(selectedProductItems.size() == 0 && orderMaterials.size() > 0)
+            for (OrderMaterial material : orderMaterials) {
+                selectedProductItems.add(material.getProductItem().getId());
+            }
+
         for (ProductItem productItem : productItems) {
             if (selectedProductItems.contains(productItem.getId())) {
                 continue;
@@ -370,21 +376,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         ProductionPlanning productionPlanning = getInstance();
         int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
+        productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
         productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
         addMaterial = false;
     }
-
-/*
-    public void addFormulation() {
-
-        ProductionPlanning productionPlanning = getInstance();
-        productionPlanning.getProductionOrderList().add(productionOrder);
-        productionOrder.setProductionPlanning(productionPlanning);
-
-        clearFormulation();
-        disableEditingFormula();
-    }
-*/
 
     public void cancelFormulation() {
         if (existingFormulation != null) {
@@ -596,6 +591,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     {
         selectedProductItems.clear();
         orderMaterials.clear();
+        //productionOrder = null;
         addMaterial = false;
     }
 

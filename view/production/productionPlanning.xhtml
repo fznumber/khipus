@@ -616,7 +616,7 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.save']}"
+        <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
                          styleClass="button"
                          rendered="#{productionPlanning.state eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="2"/>

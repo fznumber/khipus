@@ -185,10 +185,16 @@ public class ProductionOrder implements BaseModel {
     }
 
     public List<OrderMaterial> getOrderMaterials() {
+
+        if(orderMaterials == null) orderMaterials = new ArrayList<OrderMaterial>();
+
         return orderMaterials;
     }
 
-    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
-        this.orderMaterials = orderMaterials;
+    public void setOrderMaterials(List<OrderMaterial> orders) {
+        orderMaterials.clear();
+        if (orders != null){
+        this.orderMaterials.addAll(orders);
+        }
     }
 }

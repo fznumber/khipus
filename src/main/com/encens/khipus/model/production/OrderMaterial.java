@@ -36,16 +36,16 @@ public class OrderMaterial implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "OrderMaterial_Generator")
     private Long id;
 
-    @Column(name = "CANTIDADPESOSOLICITADA", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESOSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountRequired;
 
-    @Column(name = "CANTIDADUNIDADSOLICITADA", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADUNIDADSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountRequiredUnit;
 
-    @Column(name = "CANTIDADPESOUSADA", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESOUSADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountUsed;
 
-    @Column(name = "CANTIDADPESORETORNADA", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountReturned;
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
@@ -55,6 +55,14 @@ public class OrderMaterial implements BaseModel {
     @Length(max = 2)
     private String companyNumber;
 
+   /* @Column(name = "COD_ART", nullable = true, length = 6)
+    @Length(max = 6)
+    private String productItemCode;
+
+    @Column(name = "NO_CIA", nullable = false, length = 2)
+    @Length(max = 2)
+    private String companyNumber;*/
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
@@ -62,7 +70,7 @@ public class OrderMaterial implements BaseModel {
     })
     private ProductItem productItem;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
