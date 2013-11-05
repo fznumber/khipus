@@ -301,11 +301,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
+
     }
 
     public void selectMaterial(ProductionOrder order) {
 
-        //cancelFormulation();
+        cancelFormulation();
         productionOrder = order;
         this.productionOrderMaterial = productionOrder;
         /*
@@ -406,6 +407,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionPlanningService.refresh(productionOrder);
         }
         dispobleBalance = true;
+        addMaterial = false;
     }
 
     private void disableEditingFormula() {
