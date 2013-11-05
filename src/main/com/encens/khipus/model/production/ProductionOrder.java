@@ -51,6 +51,18 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "TEORICOOBTENIDO", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double supposedAmount;
 
+    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceMaterial = 0.0;
+
+    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceInput = 0.0;
+
+    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceJourney = 0.0;
+
+    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalCostProduction = 0.0;
+
     @Transient
     private Double milk;
 
@@ -69,6 +81,10 @@ public class ProductionOrder implements BaseModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OutputProductionVoucher> outputProductionVoucherList = new ArrayList<OutputProductionVoucher>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = true,  insertable = true)
@@ -178,5 +194,51 @@ public class ProductionOrder implements BaseModel {
             }
         }
         return mount;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+
+        if(orderMaterials == null) orderMaterials = new ArrayList<OrderMaterial>();
+
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orders) {
+        orderMaterials.clear();
+        if (orders != null){
+        this.orderMaterials.addAll(orders);
+        }
+    }
+
+    public Double getTotalPriceMaterial() {
+        return totalPriceMaterial;
+    }
+
+    public void setTotalPriceMaterial(Double totalPriceMaterial) {
+        this.totalPriceMaterial = totalPriceMaterial;
+    }
+
+    public Double getTotalPriceInput() {
+        return totalPriceInput;
+    }
+
+    public void setTotalPriceInput(Double totalPriceInput) {
+        this.totalPriceInput = totalPriceInput;
+    }
+
+    public Double getTotalPriceJourney() {
+        return totalPriceJourney;
+    }
+
+    public void setTotalPriceJourney(Double totalPriceJourney) {
+        this.totalPriceJourney = totalPriceJourney;
+    }
+
+    public Double getTotalCostProduction() {
+        return totalCostProduction;
+    }
+
+    public void setTotalCostProduction(Double totalCostProduction) {
+        this.totalCostProduction = totalCostProduction;
     }
 }

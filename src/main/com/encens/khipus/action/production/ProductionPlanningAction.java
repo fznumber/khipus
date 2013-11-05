@@ -1,12 +1,14 @@
 package com.encens.khipus.action.production;
 
-import com.encens.khipus.action.production.reports.ProductionPlanningReportAction;
-import com.encens.khipus.action.reports.GenericReportAction;
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.model.warehouse.ProductItemPK;
 import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
 import com.encens.khipus.service.production.ProcessedProductService;
 import com.encens.khipus.service.production.ProductionPlanningService;
@@ -30,13 +32,22 @@ import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 public class ProductionPlanningAction extends GenericAction<ProductionPlanning> {
 
     private ProcessedProduct processedProduct;
+    private ProductionOrder productionOrderMaterial;
     private ProductComposition productComposition;
     private ProductionOrder productionOrder;
     private Formulation existingFormulation;
+    private OrderMaterial orderMaterial;
+    private ProductItem productItem;
+    private List<ProductItemPK> selectedProductItems = new ArrayList<ProductItemPK>();
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
+    private List<ProductItem> productItems = new ArrayList<ProductItem>();
 
     private FormulaState formulaState = FormulaState.NONE;
 
     private Boolean dispobleBalance = false;
+    private Boolean addMaterial = false;
+    private Boolean showMaterialDetail = false;
+    private Boolean showInputDetail = false;
 
     @In
     private ProductionPlanningService productionPlanningService;
@@ -46,6 +57,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
     @In
     private ProductionOrderCodeGenerator productionOrderCodeGenerator;
+    private ProductionOrder totalsMaterials;
 
     @Override
     protected GenericService getService() {
@@ -74,6 +86,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @Factory(value = "productionOrderForPlanning", scope = ScopeType.STATELESS)
     public ProductionOrder initProductionOrder() {
         return productionOrder;
+    }
+
+    @Factory(value = "productionOrderMaterialForPlanning", scope = ScopeType.STATELESS)
+    public ProductionOrder initProductionOrderMaterial() {
+        return productionOrderMaterial;
     }
 
     @Factory(value = "processedProductForPlanning", scope = ScopeType.STATELESS)
@@ -167,15 +184,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public Boolean verifMount(ProductionIngredient productionIngredient)
     {
         Boolean aux = true;
-        if((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0) || productionIngredient.getVerifiably() == null)
-        {
-            aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
-        }
-        if(aux)
-        {
-            dispobleBalance = true;
-        }
+        if(productionIngredient.getVerifiably() != null)
+        {if((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0))
+            {
+                aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
+            }
+        }else{
+            aux = false;
 
+        }
+        dispobleBalance = aux;
               return aux;
     }
 
@@ -278,7 +296,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void select(ProductionOrder productionOrder) {
 
         cancelFormulation();
-
+        dispobleBalance = false;
         existingFormulation = new Formulation();
         existingFormulation.producingAmount = productionOrder.getProducingAmount();
         existingFormulation.productComposition = productionOrder.getProductComposition();
@@ -289,6 +307,86 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
+
+    }
+
+    public void selectMaterial(ProductionOrder order) {
+
+        cancelFormulation();
+        productionOrder = order;
+        this.productionOrderMaterial = productionOrder;
+        /*
+        this.productComposition = productionOrder.getProductComposition();
+        this.processedProduct = productComposition.getProcessedProduct();
+
+        if(orderMaterials.size() == 0)
+        orderMaterials = order.getOrderMaterials();*/
+
+        orderMaterials = new ArrayList<OrderMaterial>();
+        orderMaterials.addAll(order.getOrderMaterials());
+
+         addMaterial = true;
+    }
+
+    public void selectMaterialDetail(ProductionOrder order){
+        cancelFormulation();
+        productionOrderMaterial = order;
+        productionOrder = order;
+        orderMaterials = new ArrayList<OrderMaterial>();
+        orderMaterials.addAll(order.getOrderMaterials());
+
+        showMaterialDetail = true;
+    }
+
+    public void addProductItems(List<ProductItem> productItems) {
+
+        if(selectedProductItems.size() == 0 && orderMaterials.size() > 0)
+            for (OrderMaterial material : orderMaterials) {
+                selectedProductItems.add(material.getProductItem().getId());
+            }
+
+        for (ProductItem productItem : productItems) {
+            if (selectedProductItems.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedProductItems.add(productItem.getId());
+
+            OrderMaterial material = new OrderMaterial();
+            material.setProductItem(productItem);
+            material.setProductionOrder(productionOrder);
+            material.setCompanyNumber(productItem.getCompanyNumber());
+            orderMaterials.add(material);
+        }
+    }
+
+    public void setProductItems(List<ProductItem> productItems) {
+        this.productItems = productItems;
+    }
+
+    public void addOrderProduced() {
+        for(OrderMaterial material: orderMaterials)
+        {
+           if(material.getAmountUsed() > 0)
+           {
+               Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
+               //Double total = (material.getAmountUsed() - amountReturn) * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
+               Double total = material.getAmountUsed()  * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
+               material.setAmountReturned(amountReturn);
+               material.setPriceTotal(total);
+
+           }
+        }
+        ProductionPlanning productionPlanning = getInstance();
+        int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
+        productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
+        productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
+        addMaterial = false;
+    }
+
+    public void removeMaterial(OrderMaterial instance) {
+        selectedProductItems.remove(instance.getProductItem().getId());
+        orderMaterials.remove(instance);
     }
 
     public void clearFormulation() {
@@ -340,6 +438,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionPlanningService.refresh(productionOrder);
         }
         dispobleBalance = true;
+        addMaterial = false;
+        showInputDetail = false;
+        showMaterialDetail = false;
     }
 
     private void disableEditingFormula() {
@@ -360,12 +461,44 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @End(ifOutcome = Outcome.SUCCESS)
     public String makeFinalized() {
         getInstance().setState(FINALIZED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
             getInstance().setState(EXECUTED);
         }
         return outcome;
+    }
+    public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder)
+    {
+        Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney();
+        productionOrder.setTotalCostProduction(total);
+        Double priceUnit = total/productionOrder.getProducingAmount();
+        productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
+    }
+
+    public void setTotalsInputs(ProductionOrder productionOrder)
+    {
+        Double totalInput = 0.0;
+        for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
+        {
+            totalInput += inputProductionVoucher.getAmount() * (((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
+        }
+        productionOrder.setTotalPriceInput(totalInput);
+    }
+
+    public void setTotalsMaterials(ProductionOrder productionOrder) {
+        Double totalMaterial = 0.0;
+        for(OrderMaterial material:productionOrder.getOrderMaterials())
+        {
+            totalMaterial += material.getPriceTotal();
+        }
+        productionOrder.setTotalPriceMaterial(totalMaterial);
     }
 
     public ProductComposition getProductComposition() {
@@ -513,4 +646,51 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         this.dispobleBalance = dispobleBalance;
     }
 
+    public Boolean getAddMaterial() {
+        return addMaterial;
+    }
+
+    public void setAddMaterial(Boolean addMaterial) {
+        this.addMaterial = addMaterial;
+    }
+
+    public void cancelMaterial()
+    {
+        selectedProductItems.clear();
+        orderMaterials.clear();
+        //productionOrder = null;
+        addMaterial = false;
+    }
+
+    public OrderMaterial getOrderMaterial() {
+        return orderMaterial;
+    }
+
+    public void setOrderMaterial(OrderMaterial orderMaterial) {
+        this.orderMaterial = orderMaterial;
+    }
+
+    public ProductItem getProductItem() {
+        return productItem;
+    }
+
+    public void setProductItem(ProductItem productItem) {
+        this.productItem = productItem;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
+        this.orderMaterials = orderMaterials;
+    }
+
+    public Boolean getShowMaterialDetail() {
+        return showMaterialDetail;
+    }
+
+    public void setShowMaterialDetail(Boolean showMaterialDetail) {
+        this.showMaterialDetail = showMaterialDetail;
+    }
 }

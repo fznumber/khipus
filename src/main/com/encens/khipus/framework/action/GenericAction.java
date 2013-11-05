@@ -5,6 +5,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.products.Product;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.core.Manager;
 import org.jboss.seam.faces.FacesMessages;

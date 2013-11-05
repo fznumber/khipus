@@ -5,6 +5,7 @@ import com.encens.khipus.model.CompanyNumberListener;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.finances.MeasureUnit;
+import com.encens.khipus.model.production.OrderMaterial;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.Length;
@@ -126,6 +127,9 @@ public class ProductItem implements BaseModel {
 
     @OneToMany(mappedBy = "productItem", fetch = FetchType.LAZY)
     private List<MovementDetail> movementDetailList = new ArrayList<MovementDetail>(0);
+
+    @OneToMany(mappedBy = "productItem", fetch = FetchType.LAZY)
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>(0);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
@@ -357,5 +361,13 @@ public class ProductItem implements BaseModel {
 
     public String getFullName() {
         return getProductItemCode() + " - " + getName();
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
+        this.orderMaterials = orderMaterials;
     }
 }
