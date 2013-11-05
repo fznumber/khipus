@@ -1,6 +1,8 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -55,6 +57,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
     @In
     private ProductionOrderCodeGenerator productionOrderCodeGenerator;
+    private ProductionOrder totalsMaterials;
 
     @Override
     protected GenericService getService() {
@@ -181,15 +184,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public Boolean verifMount(ProductionIngredient productionIngredient)
     {
         Boolean aux = true;
-        if((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0) || productionIngredient.getVerifiably() == null)
-        {
-            aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
-        }
-        if(aux)
-        {
-            dispobleBalance = true;
-        }
+        if(productionIngredient.getVerifiably() != null)
+        {if((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0))
+            {
+                aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
+            }
+        }else{
+            aux = false;
 
+        }
+        dispobleBalance = aux;
               return aux;
     }
 
@@ -327,6 +331,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void selectMaterialDetail(ProductionOrder order){
         cancelFormulation();
         productionOrderMaterial = order;
+        productionOrder = order;
+        orderMaterials = new ArrayList<OrderMaterial>();
+        orderMaterials.addAll(order.getOrderMaterials());
+
         showMaterialDetail = true;
     }
 
@@ -357,7 +365,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void addOrderProduced() {
-
+        for(OrderMaterial material: orderMaterials)
+        {
+           if(material.getAmountUsed() > 0)
+           {
+               Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
+               //Double total = (material.getAmountUsed() - amountReturn) * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
+               Double total = material.getAmountUsed()  * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
+               material.setAmountReturned(amountReturn);
+               material.setPriceTotal(total);
+           }
+        }
         ProductionPlanning productionPlanning = getInstance();
         int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
         productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
@@ -442,12 +460,44 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @End(ifOutcome = Outcome.SUCCESS)
     public String makeFinalized() {
         getInstance().setState(FINALIZED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
             getInstance().setState(EXECUTED);
         }
         return outcome;
+    }
+    public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder)
+    {
+        Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney();
+        productionOrder.setTotalCostProduction(total);
+        Double priceUnit = total/productionOrder.getProducingAmount();
+        productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
+    }
+
+    public void setTotalsInputs(ProductionOrder productionOrder)
+    {
+        Double totalInput = 0.0;
+        for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
+        {
+            totalInput += inputProductionVoucher.getAmount() * (((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
+        }
+        productionOrder.setTotalPriceInput(totalInput);
+    }
+
+    public void setTotalsMaterials(ProductionOrder productionOrder) {
+        Double totalMaterial = 0.0;
+        for(OrderMaterial material:productionOrder.getOrderMaterials())
+        {
+            totalMaterial += material.getPriceTotal();
+        }
+        productionOrder.setTotalPriceMaterial(totalMaterial);
     }
 
     public ProductComposition getProductComposition() {

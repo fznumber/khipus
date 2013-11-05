@@ -249,36 +249,139 @@
                     <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"/>
                 </s:decorate>
 
-                <s:decorate id="materialProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
+                <s:decorate id="materialCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
                     <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"/>
                 </s:decorate>
 
-                <s:decorate id="materialProductOrderField" template="/include/inputField.xhtml" styleClass="formRow">
+                <s:decorate id="materialOrderField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
                     <h:outputText value="#{productionOrderMaterialForPlanning.code}"/>
                 </s:decorate>
 
-                <s:decorate id="materialProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
+                <s:decorate id="materialSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
                     <h:outputText value="#{productionOrderMaterialForPlanning.supposedAmount}"/>
                 </s:decorate>
+            </s:div>
 
-                <s:decorate id="unitCostField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
+            <s:div>
+                <s:decorate id="producingAmountField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.amountObtained'] }</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.producingAmount}"/>
+                </s:decorate>
+
+                <s:decorate id="totalPriceMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.totalPriceMaterial']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.totalPriceMaterial}"/>
+                </s:decorate>
+
+                <s:decorate id="totalPriceInputField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.totalPriceInput']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.totalPriceInput}"/>
+                </s:decorate>
+
+                <s:decorate id="totalPriceJourneyField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.totalPriceJourney']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.totalPriceJourney}"/>
+                </s:decorate>
+
+                <s:decorate id="totalCostProductionField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.totalCostProduction']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.totalCostProduction}"/>
+                </s:decorate>
+
+                <s:decorate id="unitCostMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.costPriceObtained']}</ui:define>
                     <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.productItem.unitCost}"/>
                 </s:decorate>
             </s:div>
+
         </h:panelGrid>
     </app:fieldset>
+
+    <app:fieldset id="materialDetailProducts" title="#{messages['MovementDetail.title']}">
+        <h:panelGrid columns="1"
+                     width="100%"
+                     cellpadding="0"
+                     cellspacing="0"
+                     border="0">
+            <s:div id="materialDetailListPanel">
+
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="rich-table">
+                    <thead class="rich-table-thead">
+                    <tr class="rich-table-header">
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.productItem']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.measureUnit']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.amountRequired']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.unitRequired']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.amountUsed']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.amountReturn']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.priceCost']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.priceCostTotal']}
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <c:forEach var="instance" items="#{productionPlanningAction.orderMaterials}" varStatus="row">
+                        <c:set var="amountRequiredId" value="quantityField_#{row.index}"/>
+
+                        <tr class="rich-table-row">
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.productItem.fullName}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.productItem.usageMeasureUnit.name}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.amountRequired}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.amountRequiredUnit}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.amountUsed}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.amountReturned}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.productItem.unitCost}"/>
+                            </td>
+
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.priceTotal}"/>
+                            </td>
+                        </tr>
+
+                    </c:forEach>
+                </table>
+            </s:div>
+        </h:panelGrid>
+    </app:fieldset>
+
 </a4j:region>
 <!--fin region detalle Materiales-->
-
+<!--Agregar Materiales-->
 <a4j:region rendered="#{productionPlanningAction.addMaterial}">
-
+<!--Detalle del producto-->
     <app:fieldset id="productDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
-            <h:panelGrid columns="4" width="100%"
-                         >
+            <h:panelGrid columns="4" width="100%">
 
                 <s:decorate id="processedProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
@@ -314,8 +417,9 @@
 
             </h:panelGrid>
     </app:fieldset>
-
-            <app:fieldset id="movementDetailFields" title="#{messages['MovementDetail.title']}">
+<!--Fin Detalle del producto-->
+<!--Detalle de Materiales-->
+            <app:fieldset id="movementDetailFields" title="#{messages['ProductionPlanning.detailMaterial']}">
                 <h:panelGrid columns="1"
                              width="100%"
                              cellpadding="0"
@@ -370,9 +474,6 @@
                                     #{messages['MovementDetail.amountUsed']}
                                 </th>
                                 <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.amountReturn']}
-                                </th>
-                                <th class="rich-table-headercell">
                                     #{messages['Common.action']}
                                 </th>
                             </tr>
@@ -391,7 +492,7 @@
                                     <td class="rich-table-cell center" id="amountRequiredField">
                                         <h:inputText value="#{instance.amountRequired}"
                                                      maxlength="500" styleClass="input"
-                                                     required="true">
+                                                     required="false">
                                             <a4j:support event="onblur" reRender="amountRequiredField"/>
                                         </h:inputText>
                                     </td>
@@ -399,7 +500,7 @@
                                     <td class="rich-table-cell center" id="amountRequiredUnitField">
                                         <h:inputText value="#{instance.amountRequiredUnit}"
                                                      maxlength="500" styleClass="input"
-                                                     required="true">
+                                                     required="false">
                                             <a4j:support event="onblur" reRender="amountRequiredUnitField"/>
                                         </h:inputText>
                                     </td>
@@ -407,18 +508,11 @@
                                     <td class="rich-table-cell center" id="amountUsedField">
                                         <h:inputText value="#{instance.amountUsed}"
                                                      maxlength="500" styleClass="input"
-                                                     required="true">
+                                                     required="false">
                                             <a4j:support event="onblur" reRender="amountUsedField"/>
                                         </h:inputText>
                                     </td>
 
-                                    <td class="rich-table-cell center" id="amountReturnedField">
-                                        <h:inputText value="#{instance.amountReturned}"
-                                                     maxlength="500" styleClass="input"
-                                                     required="true">
-                                            <a4j:support event="onblur" reRender="amountReturnedField"/>
-                                        </h:inputText>
-                                    </td>
                                     <td class="rich-table-cell center">
                                         <a4j:commandLink immediate="true"
                                                          title="#{messages['Common.remove']}"
@@ -435,9 +529,9 @@
                     </s:div>
                 </h:panelGrid>
             </app:fieldset>
-
+    <!--Detalle de Materiales-->
 </a4j:region>
-
+<!--Fin Agregar Materiales-->
 
 <a4j:region>
     <h:panelGrid columns="3" columnClasses="top-aligned,top-aligned,top-aligned" width="100%"
@@ -603,15 +697,17 @@
             <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
                              action="#{productionPlanningAction.selectMaterial(productionOrderItem)}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1"/>
+            <rich:spacer width="5"/>
             <!--MOSTRAR OPCION DETALLE MATERIAL-->
             <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
-                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
+                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailMaterial']}"
                                  action="#{productionPlanningAction.selectMaterialDetail(productionOrderItem)}"
                                  reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>
+            <rich:spacer width="5"/>
             <!--MOSTRAR OPCION DETALLE INSUMO-->
             <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
-                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
+                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailInput']}"
                                  action="#{productionPlanningAction.selectInputDetail(productionOrderItem)}"
                                  reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>

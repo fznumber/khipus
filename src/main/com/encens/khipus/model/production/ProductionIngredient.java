@@ -42,7 +42,7 @@ public class ProductionIngredient implements com.encens.khipus.model.BaseModel {
     private MetaProduct metaProduct;
 
     @Column(name = "INGREDIENTEVERIFICABLE", nullable = true, length = 20)
-    private String isVerifiably;
+    private String isVerifiably = "VERIFICABLE";
 
     @Transient
     private BigDecimal mountWareHouse = new BigDecimal(0);

@@ -48,20 +48,15 @@ public class OrderMaterial implements BaseModel {
     @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountReturned = 0.0;
 
+    @Column(name = "PRECIOTOTAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double priceTotal = 0.0;
+
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
     private String productItemCode;
 
     @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = false)
     @Length(max = 2)
     private String companyNumber;
-
-   /* @Column(name = "COD_ART", nullable = true, length = 6)
-    @Length(max = 6)
-    private String productItemCode;
-
-    @Column(name = "NO_CIA", nullable = false, length = 2)
-    @Length(max = 2)
-    private String companyNumber;*/
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
@@ -156,5 +151,13 @@ public class OrderMaterial implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Double getPriceTotal() {
+        return priceTotal;
+    }
+
+    public void setPriceTotal(Double priceTotal) {
+        this.priceTotal = priceTotal;
     }
 }
