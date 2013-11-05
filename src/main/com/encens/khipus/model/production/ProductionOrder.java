@@ -3,14 +3,10 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +31,14 @@ import java.util.List;
 public class ProductionOrder implements BaseModel {
 
     @Id
-    @Column(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionOrder_Generator")
     private Long id;
 
     @Column(name = "CODIGO", length = 50, nullable = false)
     private String code;
 
-    @Column(name = "CANTIDADPRODUCIR", nullable = false,columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADPRODUCIR", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double producingAmount;
 
     @Column(name = "PESOCONTENEDOR", nullable = false, columnDefinition = "NUMBER(24,0)")
@@ -52,11 +48,11 @@ public class ProductionOrder implements BaseModel {
     private Double supposedAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionPlanning productionPlanning;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
@@ -68,7 +64,7 @@ public class ProductionOrder implements BaseModel {
     private List<OutputProductionVoucher> outputProductionVoucherList = new ArrayList<OutputProductionVoucher>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = true,  insertable = true)
+    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
 
     public Long getId() {
@@ -149,5 +145,9 @@ public class ProductionOrder implements BaseModel {
 
     public void setSupposedAmount(Double supposedAmount) {
         this.supposedAmount = supposedAmount;
+    }
+
+    public String getOrderProduct() {
+        return this.code + " " + this.productComposition.getProcessedProduct().getProductItem().getName();
     }
 }

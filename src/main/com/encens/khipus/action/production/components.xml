@@ -9,32 +9,52 @@
     <factory name="measureUnitProductionList" value="#{measureUnitProductionQuery}"/>
     <framework:entity-query name="measureUnitProductionQuery" ejbql="select mu from MeasureUnitProduction mu"/>
 
-    <factory name="inputAndMaterialForProductionList" value="#{inputAndMaterialProductionQuery}" />
+    <factory name="inputAndMaterialForProductionList" value="#{inputAndMaterialProductionQuery}"/>
     <framework:entity-query name="inputAndMaterialProductionQuery"
                             ejbql="select metaProduct
                                    from MetaProduct metaProduct
                                    where metaProduct not in (
                                         select processedProduct
-                                        from ProcessedProduct processedProduct)" />
+                                        from ProcessedProduct processedProduct)"/>
 
-    <factory name="processedProductList" value="#{processedProductQuery}" />
-    <framework:entity-query name="processedProductQuery" ejbql="select processedProduct from ProcessedProduct processedProduct" />
+    <factory name="processedProductList" value="#{processedProductQuery}"/>
+    <framework:entity-query name="processedProductQuery"
+                            ejbql="select processedProduct from ProcessedProduct processedProduct"/>
 
-    <factory name="productCompositionList" value="#{productCompositionQuery}" />
-    <framework:entity-query name="productCompositionQuery" ejbql="select productComposition from ProductComposition productComposition">
+    <factory name="productCompositionList" value="#{productCompositionQuery}"/>
+    <framework:entity-query name="productCompositionQuery"
+                            ejbql="select productComposition from ProductComposition productComposition">
         <framework:restrictions>
             <value>productComposition.active = #{true}</value>
         </framework:restrictions>
     </framework:entity-query>
 
-    <factory name="collectableProductList" value="#{collectableProductQuery}" />
+    <factory name="collectableProductList" value="#{collectableProductQuery}"/>
     <framework:entity-query name="collectableProductQuery" ejbql="select metaProduct from MetaProduct metaProduct">
         <framework:restrictions>
             <value>metaProduct.collectable = #{true}</value>
         </framework:restrictions>
     </framework:entity-query>
 
-    <framework:entity-query name="typeMovementProducerList" ejbql="select typeMovementProducer from TypeMovementProducer typeMovementProducer "/>
-    <framework:entity-query name="typeMovementGABList" ejbql="select typeMovementGAB from TypeMovementGAB typeMovementGAB "/>
+    <framework:entity-query name="typeMovementProducerList"
+                            ejbql="select typeMovementProducer from TypeMovementProducer typeMovementProducer "/>
+    <framework:entity-query name="typeMovementGABList"
+                            ejbql="select typeMovementGAB from TypeMovementGAB typeMovementGAB "/>
+
+    <factory name="productionPlanningList" value="#{productionPlanningQuery}"/>
+    <framework:entity-query name="productionPlanningQuery"
+                            ejbql="select pp from ProductionPlanning pp order by pp.date desc "/>
+
+    <factory name="productionOrderList" value="#{productionOrderQuery}"/>
+    <framework:entity-query name="productionOrderQuery"
+                            ejbql="select productionOrder from ProductionOrder productionOrder">
+        <framework:restrictions>
+            <value>productionOrder.productionPlanning = #{employeeTimeCardAction.productionPlanning}</value>
+        </framework:restrictions>
+    </framework:entity-query>
+
+    <factory name="productionTaskTypeList" value="#{productionTaskTypeQuery}"/>
+    <framework:entity-query name="productionTaskTypeQuery"
+                            ejbql="select productionTaskType from ProductionTaskType productionTaskType"/>
 
 </components>

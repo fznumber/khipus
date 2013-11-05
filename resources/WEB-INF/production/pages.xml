@@ -21,7 +21,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialRejectionNote.xhtml" no-conversation-view-id="/production/rawMaterialRejectionNoteList.xhtml">
+    <page view-id="/production/rawMaterialRejectionNote.xhtml"
+          no-conversation-view-id="/production/rawMaterialRejectionNoteList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/rawMaterialRejectionNoteList.xhtml"/>
@@ -43,7 +44,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialPayRoll.xhtml" no-conversation-view-id="/production/rawMaterialPayRollList.xhtml">
+    <page view-id="/production/rawMaterialPayRoll.xhtml"
+          no-conversation-view-id="/production/rawMaterialPayRollList.xhtml">
         <navigation from-action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}">
             <rule>
                 <redirect view-id="/production/rawMaterialPayRecordDetails.xhtml"/>
@@ -69,7 +71,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialPayRecordDetails.xhtml" no-conversation-view-id="/production/rawMaterialPayRollList.xhtml">
+    <page view-id="/production/rawMaterialPayRecordDetails.xhtml"
+          no-conversation-view-id="/production/rawMaterialPayRollList.xhtml">
         <navigation from-action="#{rawMaterialPayRollAction.selectJoin(rawMaterialPayRecord.rawMaterialPayRoll)}">
             <rule>
                 <redirect view-id="/production/rawMaterialPayRoll.xhtml"/>
@@ -86,7 +89,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialProducerDiscount.xhtml" no-conversation-view-id="/production/rawMaterialProducerDiscountList.xhtml">
+    <page view-id="/production/rawMaterialProducerDiscount.xhtml"
+          no-conversation-view-id="/production/rawMaterialProducerDiscountList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/rawMaterialProducerDiscountList.xhtml"/>
@@ -108,7 +112,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/productionTransferLog.xhtml" no-conversation-view-id="/production/productionTransferLogList.xhtml">
+    <page view-id="/production/productionTransferLog.xhtml"
+          no-conversation-view-id="/production/productionTransferLogList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/productionTransferLogList.xhtml"/>
@@ -130,7 +135,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialCollectionSession.xhtml" no-conversation-view-id="/production/rawMaterialCollectionSessionList.xhtml">
+    <page view-id="/production/rawMaterialCollectionSession.xhtml"
+          no-conversation-view-id="/production/rawMaterialCollectionSessionList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/rawMaterialCollectionSessionList.xhtml"/>
@@ -175,14 +181,16 @@
     <page view-id="/production/reportInputProductionVoucher.xhtml" action="#{productionOrderReporter.prepare}">
         <param name="id" value="#{productionOrderReporter.id}"/>
     </page>
-    <page view-id="/production/reportOutputProductionTransferLog.xhtml" action="#{productionTransferLogReporter.prepare}">
+    <page view-id="/production/reportOutputProductionTransferLog.xhtml"
+          action="#{productionTransferLogReporter.prepare}">
         <param name="id" value="#{productionTransferLogReporter.id}"/>
     </page>
     <page view-id="/warehouse/reportInputProductionTransferLog.xhtml" action="#{productionTransferLogReporter.prepare}">
         <param name="id" value="#{productionTransferLogReporter.id}"/>
     </page>
 
-    <page view-id="/production/productionPlanning.xhtml" no-conversation-view-id="/production/productionPlanningList.xhtml">
+    <page view-id="/production/productionPlanning.xhtml"
+          no-conversation-view-id="/production/productionPlanningList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/productionPlanningList.xhtml"/>
@@ -204,7 +212,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/productComposition.xhtml" no-conversation-view-id="/production/productCompositionList.xhtml">
+    <page view-id="/production/productComposition.xhtml"
+          no-conversation-view-id="/production/productCompositionList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/productCompositionList.xhtml"/>
@@ -221,7 +230,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/productionMaterial.xhtml" no-conversation-view-id="/production/productionMaterialList.xhtml">
+    <page view-id="/production/productionMaterial.xhtml"
+          no-conversation-view-id="/production/productionMaterialList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/productionMaterialList.xhtml"/>
@@ -255,7 +265,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/measureUnitProduction.xhtml" no-conversation-view-id="/production/measureUnitProductionList.xhtml">
+    <page view-id="/production/measureUnitProduction.xhtml"
+          no-conversation-view-id="/production/measureUnitProductionList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/measureUnitProducionList.xhtml"/>
@@ -302,7 +313,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/collectedRawMaterial.xhtml" no-conversation-view-id="/production/productiveZoneList.xhtml">
+    <page view-id="/production/collectedRawMaterial.xhtml"
+          no-conversation-view-id="/production/productiveZoneList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/productiveZoneList.xhtml"/>
@@ -349,7 +361,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/rawMaterialProducer.xhtml" no-conversation-view-id="/production/rawMaterialProducerList.xhtml">
+    <page view-id="/production/rawMaterialProducer.xhtml"
+          no-conversation-view-id="/production/rawMaterialProducerList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/rawMaterialProducerList.xhtml"/>
@@ -366,7 +379,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/salaryMovementProducer.xhtml" no-conversation-view-id="/production/salaryMovementProducerList.xhtml">
+    <page view-id="/production/salaryMovementProducer.xhtml"
+          no-conversation-view-id="/production/salaryMovementProducerList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/salaryMovementProducerList.xhtml"/>
@@ -383,7 +397,8 @@
         </navigation>
     </page>
 
-    <page view-id="/production/salaryMovementGAB.xhtml" no-conversation-view-id="/production/salaryMovementGABList.xhtml">
+    <page view-id="/production/salaryMovementGAB.xhtml"
+          no-conversation-view-id="/production/salaryMovementGABList.xhtml">
         <navigation>
             <rule>
                 <redirect view-id="/production/salaryMovementGABList.xhtml"/>
@@ -391,5 +406,21 @@
         </navigation>
     </page>
 
+    <page view-id="/production/employeeTimeCardList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{employeeTimeCardAction.select(employeeTimeCardItem)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/employeeTimeCard.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
+    <page view-id="/production/employeeTimeCard.xhtml" no-conversation-view-id="/production/employeeTimeCardList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/production/employeeTimeCardList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
 
 </pages>

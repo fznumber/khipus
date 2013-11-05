@@ -3,8 +3,10 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.Filter;
+import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.MessageUtils;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,14 +21,14 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 @NamedQueries({
-    @NamedQuery(name = "ProductionPlanning.widthProductionOrderAndProductCompositionAndProcessedProductFind",
+        @NamedQuery(name = "ProductionPlanning.widthProductionOrderAndProductCompositionAndProcessedProductFind",
                 query = "select productionPlanning " +
                         "from ProductionPlanning productionPlanning " +
                         "left join fetch productionPlanning.productionOrderList productionOrder " +
                         "left join fetch productionOrder.productComposition productComposition " +
                         "left join fetch productComposition.processedProduct " +
                         "where productionPlanning.id = :id"),
-    @NamedQuery(name = "ProductionPlanning.findByDate",
+        @NamedQuery(name = "ProductionPlanning.findByDate",
                 query = "select productionPlanning " +
                         "from ProductionPlanning productionPlanning " +
                         "where productionPlanning.date = :date")
@@ -48,7 +50,7 @@ public class ProductionPlanning implements BaseModel {
     public static final String UNIQUE_DATE = "UNIQUE_DATE";
 
     @Id
-    @Column(name = "IDPLANIFICACIONPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionPlanning_Generator")
     private Long id;
 
@@ -68,7 +70,7 @@ public class ProductionPlanning implements BaseModel {
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @OneToMany(mappedBy = "productionPlanning", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -129,5 +131,9 @@ public class ProductionPlanning implements BaseModel {
 
     public void setState(ProductionPlanningState state) {
         this.state = state;
+    }
+
+    public String getLabelDate() {
+        return DateUtils.format(this.date, MessageUtils.getMessage("patterns.date"));
     }
 }
