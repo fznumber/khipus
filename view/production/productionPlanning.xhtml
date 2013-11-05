@@ -234,14 +234,54 @@
         </table>
     </s:div>
 </a4j:region>
+<!--region detalle Materiales-->
+<a4j:region rendered="#{productionPlanningAction.showMaterialDetail}">
+    <app:fieldset id="orderDetail" title="#{messages['ProductionOrder.processedProduct.detail']}">
+        <h:panelGrid columns="2"
+                     width="100%"
+                     cellpadding="0"
+                     cellspacing="0"
+                     border="0"
+                     columnClasses="width50percent, width50percent">
+            <s:div>
+                <s:decorate id="materialProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"/>
+                </s:decorate>
+
+                <s:decorate id="materialProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"/>
+                </s:decorate>
+
+                <s:decorate id="materialProductOrderField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.code}"/>
+                </s:decorate>
+
+                <s:decorate id="materialProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.supposedAmount}"/>
+                </s:decorate>
+
+                <s:decorate id="unitCostField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.productItem.unitCost}"/>
+                </s:decorate>
+            </s:div>
+        </h:panelGrid>
+    </app:fieldset>
+</a4j:region>
+<!--fin region detalle Materiales-->
 
 <a4j:region rendered="#{productionPlanningAction.addMaterial}">
 
+    <app:fieldset id="productDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
             <h:panelGrid columns="4" width="100%"
                          >
 
                 <s:decorate id="processedProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.name']}</ui:define>
+                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
                     <h:inputText id="processedProductName" value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"
                                  maxlength="500" styleClass="input"
                                  disabled="true">
@@ -273,6 +313,7 @@
                 </s:decorate>
 
             </h:panelGrid>
+    </app:fieldset>
 
             <app:fieldset id="movementDetailFields" title="#{messages['MovementDetail.title']}">
                 <h:panelGrid columns="1"
@@ -320,7 +361,16 @@
                                     #{messages['MovementDetail.measureUnit']}
                                 </th>
                                 <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.quantity']}
+                                    #{messages['MovementDetail.amountRequired']}
+                                </th>
+                                <th class="rich-table-headercell">
+                                    #{messages['MovementDetail.unitRequired']}
+                                </th>
+                                <th class="rich-table-headercell">
+                                    #{messages['MovementDetail.amountUsed']}
+                                </th>
+                                <th class="rich-table-headercell">
+                                    #{messages['MovementDetail.amountReturn']}
                                 </th>
                                 <th class="rich-table-headercell">
                                     #{messages['Common.action']}
@@ -341,12 +391,34 @@
                                     <td class="rich-table-cell center" id="amountRequiredField">
                                         <h:inputText value="#{instance.amountRequired}"
                                                      maxlength="500" styleClass="input"
-                                                     disabled="false"
                                                      required="true">
                                             <a4j:support event="onblur" reRender="amountRequiredField"/>
                                         </h:inputText>
                                     </td>
 
+                                    <td class="rich-table-cell center" id="amountRequiredUnitField">
+                                        <h:inputText value="#{instance.amountRequiredUnit}"
+                                                     maxlength="500" styleClass="input"
+                                                     required="true">
+                                            <a4j:support event="onblur" reRender="amountRequiredUnitField"/>
+                                        </h:inputText>
+                                    </td>
+
+                                    <td class="rich-table-cell center" id="amountUsedField">
+                                        <h:inputText value="#{instance.amountUsed}"
+                                                     maxlength="500" styleClass="input"
+                                                     required="true">
+                                            <a4j:support event="onblur" reRender="amountUsedField"/>
+                                        </h:inputText>
+                                    </td>
+
+                                    <td class="rich-table-cell center" id="amountReturnedField">
+                                        <h:inputText value="#{instance.amountReturned}"
+                                                     maxlength="500" styleClass="input"
+                                                     required="true">
+                                            <a4j:support event="onblur" reRender="amountReturnedField"/>
+                                        </h:inputText>
+                                    </td>
                                     <td class="rich-table-cell center">
                                         <a4j:commandLink immediate="true"
                                                          title="#{messages['Common.remove']}"
@@ -531,24 +603,17 @@
             <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
                              action="#{productionPlanningAction.selectMaterial(productionOrderItem)}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1"/>
-
-            <c:if test="#{productionPlanning.state == 'FINALIZED'}">
-                <s:link id="reportOutputProductionVoucher" target="_blank"
-                        view="/production/reportOutputProductionVoucher.xhtml">
-                    <f:param name="id" value="#{productionOrderItem.id}"/>
-                    <h:graphicImage value="/img/report-icon.png"/>
-                </s:link>
-                <rich:toolTip value="#{messages['ProductionOrder.report.outputProductionVoucherTooltip']}"
-                              for="reportOutputProductionVoucher"/>
+            <!--MOSTRAR OPCION DETALLE MATERIAL-->
+            <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
+                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
+                                 action="#{productionPlanningAction.selectMaterialDetail(productionOrderItem)}"
+                                 reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>
-            <c:if test="#{productionPlanning.state != 'PENDING'}">
-                <s:link id="reportInputProductionVoucher" target="_blank"
-                        view="/production/reportInputProductionVoucher.xhtml">
-                    <f:param name="id" value="#{productionOrderItem.id}"/>
-                    <h:graphicImage value="/img/report-icon.png"/>
-                </s:link>
-                <rich:toolTip value="#{messages['ProductionOrder.report.inputProductionVoucherTooltip']}"
-                              for="reportInputProductionVoucher"/>
+            <!--MOSTRAR OPCION DETALLE INSUMO-->
+            <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
+                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.addMaterial']}"
+                                 action="#{productionPlanningAction.selectInputDetail(productionOrderItem)}"
+                                 reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>
         </rich:column>
     </rich:dataTable>

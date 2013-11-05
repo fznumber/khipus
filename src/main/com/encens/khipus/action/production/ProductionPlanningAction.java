@@ -38,12 +38,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ProductItem productItem;
     private List<ProductItemPK> selectedProductItems = new ArrayList<ProductItemPK>();
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
+    private List<ProductItem> productItems = new ArrayList<ProductItem>();
 
     private FormulaState formulaState = FormulaState.NONE;
 
     private Boolean dispobleBalance = false;
-
     private Boolean addMaterial = false;
+    private Boolean showMaterialDetail = false;
+    private Boolean showInputDetail = false;
 
     @In
     private ProductionPlanningService productionPlanningService;
@@ -322,6 +324,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
          addMaterial = true;
     }
 
+    public void selectMaterialDetail(ProductionOrder order){
+        cancelFormulation();
+        productionOrderMaterial = order;
+        showMaterialDetail = true;
+    }
+
     public void addProductItems(List<ProductItem> productItems) {
 
         if(selectedProductItems.size() == 0 && orderMaterials.size() > 0)
@@ -342,6 +350,19 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             material.setCompanyNumber(productItem.getCompanyNumber());
             orderMaterials.add(material);
         }
+    }
+
+    public void setProductItems(List<ProductItem> productItems) {
+        this.productItems = productItems;
+    }
+
+    public void addOrderProduced() {
+
+        ProductionPlanning productionPlanning = getInstance();
+        int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
+        productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
+        productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
+        addMaterial = false;
     }
 
     public void removeMaterial(OrderMaterial instance) {
@@ -373,15 +394,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         disableEditingFormula();
     }
 
-    public void addOrderProduced() {
-
-        ProductionPlanning productionPlanning = getInstance();
-        int position =  productionPlanning.getProductionOrderList().indexOf(productionOrder);
-        productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
-        productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
-        addMaterial = false;
-    }
-
     public void cancelFormulation() {
         if (existingFormulation != null) {
             productionOrder.setProductComposition(existingFormulation.productComposition);
@@ -408,6 +420,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         dispobleBalance = true;
         addMaterial = false;
+        showInputDetail = false;
+        showMaterialDetail = false;
     }
 
     private void disableEditingFormula() {
@@ -619,5 +633,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
         this.orderMaterials = orderMaterials;
+    }
+
+    public Boolean getShowMaterialDetail() {
+        return showMaterialDetail;
+    }
+
+    public void setShowMaterialDetail(Boolean showMaterialDetail) {
+        this.showMaterialDetail = showMaterialDetail;
     }
 }

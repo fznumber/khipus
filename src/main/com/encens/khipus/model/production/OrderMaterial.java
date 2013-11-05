@@ -37,16 +37,16 @@ public class OrderMaterial implements BaseModel {
     private Long id;
 
     @Column(name = "CANTIDADPESOSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double amountRequired;
+    private Double amountRequired = 0.0;
 
     @Column(name = "CANTIDADUNIDADSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double amountRequiredUnit;
+    private Double amountRequiredUnit = 0.0;
 
     @Column(name = "CANTIDADPESOUSADA", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double amountUsed;
+    private Double amountUsed = 0.0;
 
     @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double amountReturned;
+    private Double amountReturned = 0.0;
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
     private String productItemCode;
