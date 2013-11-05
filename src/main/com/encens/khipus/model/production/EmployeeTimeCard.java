@@ -25,6 +25,10 @@ import java.util.Date;
         pkColumnValue = "employeeTimeCard",
         allocationSize = Constants.SEQUENCE_ALLOCATION_SIZE)
 
+@NamedQueries(
+        {
+                @NamedQuery(name = "EmployeeTimeCard.findEmployeeTimeCardByProductionOrder", query = "select e from EmployeeTimeCard e where e.productionOrder=:productionOrder ")
+        })
 @Entity
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})

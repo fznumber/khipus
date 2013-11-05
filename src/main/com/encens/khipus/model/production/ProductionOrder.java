@@ -14,7 +14,8 @@ import java.util.List;
         @NamedQuery(name = "ProductionOrder.findBySubDateOnCode",
                 query = "select productionOrder.code " +
                         "from ProductionOrder productionOrder " +
-                        "where productionOrder.code like concat(:seed, '%')")
+                        "where productionOrder.code like concat(:seed, '%')"),
+        @NamedQuery(name = "ProductionOrder.findById", query = "Select p from ProductionOrder p where p.id=:id")
 })
 
 @TableGenerator(name = "ProductionOrder_Generator",
