@@ -374,6 +374,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                Double total = material.getAmountUsed()  * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
                material.setAmountReturned(amountReturn);
                material.setPriceTotal(total);
+
            }
         }
         ProductionPlanning productionPlanning = getInstance();
