@@ -203,11 +203,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
+        setPriceCostInput();
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
 
         clearFormulation();
         disableEditingFormula();
+    }
+
+    public void setPriceCostInput()
+    {
+        for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
+        {
+            inputProductionVoucher.setPriceCostTotal(inputProductionVoucher.getAmount() * ((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
+        }
     }
 
     @End
@@ -260,6 +269,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
+        setPriceCostInput();
         for (ProductionOrder po : productionPlanning.getProductionOrderList()) {
             if (po.getCode().equals(productionOrder.getCode())) {
                 productionPlanning.getProductionOrderList().remove(po);
@@ -315,9 +325,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void selectMaterial(ProductionOrder order) {
 
-        cancelFormulation();
+        //cancelFormulation();
+        disableEditingFormula();
         productionOrder = order;
         this.productionOrderMaterial = productionOrder;
+        this.productComposition = productionOrder.getProductComposition();
+        this.processedProduct = productComposition.getProcessedProduct();
         /*
         this.productComposition = productionOrder.getProductComposition();
         this.processedProduct = productComposition.getProcessedProduct();
@@ -402,12 +415,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (evaluateMathematicalExpression() == false) {
             return;
         }
-
+        setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
     }
 
     public void updateProducedAmount() {
+        Double totalProducer = 0.0;
+        for(OutputProductionVoucher outputProductionVoucher:productionOrder.getOutputProductionVoucherList())
+        {
+            totalProducer += outputProductionVoucher.getProducedAmount();
+        }
+        productionOrder.setProducingAmount(totalProducer);
         if (update() != Outcome.SUCCESS) {
             return;
         }
@@ -437,7 +456,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (OutputProductionVoucher voucher : fakeVouchers) {
                 productionOrder.getOutputProductionVoucherList().remove(voucher);
             }
-
+            if(productionOrder.getOutputProductionVoucherList().size() != 0)
             productionPlanningService.refresh(productionOrder);
         }
         dispobleBalance = true;
@@ -453,6 +472,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @End(ifOutcome = Outcome.SUCCESS)
     public String makeExecuted() {
         getInstance().setState(EXECUTED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -495,7 +521,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Double totalInput = 0.0;
         for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
         {
-            totalInput += inputProductionVoucher.getAmount() * (((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
+            totalInput += inputProductionVoucher.getPriceCostTotal();
         }
         productionOrder.setTotalPriceInput(totalInput);
     }

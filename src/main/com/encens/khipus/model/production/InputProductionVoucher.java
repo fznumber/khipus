@@ -28,6 +28,9 @@ public class InputProductionVoucher implements BaseModel {
     @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double amount;
 
+    @Column(name = "PRECIOCOSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double priceCostTotal = 0.0;
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
@@ -90,5 +93,13 @@ public class InputProductionVoucher implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Double getPriceCostTotal() {
+        return priceCostTotal;
+    }
+
+    public void setPriceCostTotal(Double priceCostTotal) {
+        this.priceCostTotal = priceCostTotal;
     }
 }

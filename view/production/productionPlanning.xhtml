@@ -390,17 +390,28 @@
                     <rich:column>
                         #{messages['ProductionPlanning.inputAmount']}
                     </rich:column>
+                    <rich:column>
+                        #{messages['ProductionPlanning.priceCostTotal']}
+                    </rich:column>
                 </rich:columnGroup>
             </f:facet>
 
             <rich:column>
                 <h:outputText value="#{inputProductionItem.metaProduct.name}"/>
             </rich:column>
+
             <rich:column>
                 <h:outputText value="#{inputProductionItem.metaProduct.productItem.usageMeasureCode}"/>
             </rich:column>
+
             <rich:column>
                 <h:outputText value="#{inputProductionItem.amount}">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:outputText>
+            </rich:column>
+
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.priceCostTotal}">
                     <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
@@ -413,38 +424,31 @@
 <a4j:region rendered="#{productionPlanningAction.addMaterial}">
 <!--Detalle del producto-->
     <app:fieldset id="productDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
-            <h:panelGrid columns="4" width="100%">
+            <h:panelGrid columns="1"
+                         width="100%"
+                         cellpadding="0"
+                         cellspacing="0"
+                         border="0"
+                         columnClasses="width50percent, width50percent">
 
                 <s:decorate id="processedProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
-                    <h:inputText id="processedProductName" value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"
-                                 maxlength="500" styleClass="input"
-                                 disabled="true">
-                    </h:inputText>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"/>
                 </s:decorate>
 
                 <s:decorate id="processedProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
-                    <h:inputText id="processedProductCode" value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"
-                                 maxlength="500" styleClass="input"
-                                 disabled="true">
-                    </h:inputText>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"/>
                 </s:decorate>
 
                 <s:decorate id="processedProductOrderField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
-                    <h:inputText id="processedProductOrder" value="#{productionOrderMaterialForPlanning.code}"
-                                 maxlength="500" styleClass="input"
-                                 disabled="true">
-                    </h:inputText>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.code}"/>
                 </s:decorate>
 
                 <s:decorate id="processedProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-                    <h:inputText id="processedProductSuppAmount" value="#{productionOrderMaterialForPlanning.supposedAmount}"
-                                 maxlength="500" styleClass="input"
-                                 disabled="true">
-                    </h:inputText>
+                    <h:outputText value="#{productionOrderMaterialForPlanning.supposedAmount}"/>
                 </s:decorate>
 
             </h:panelGrid>
@@ -461,7 +465,7 @@
                         <div class="buttons">
 
                             <a4j:commandButton action="#{productionPlanningAction.addOrderProduced}"
-                                               value="#{messages['ProductionPlanning.innerButtonUpdate']}"
+                                               value="#{messages['ProductionPlanning.materialUpdate']}"
                                                reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                                                rendered="#{productionPlanning.state eq 'EXECUTED' or productionPlanning.state eq 'PENDING'}"
                                                />
@@ -499,9 +503,9 @@
                                 <th class="rich-table-headercell">
                                     #{messages['MovementDetail.amountRequired']}
                                 </th>
-                                <th class="rich-table-headercell">
+                                <!--<th class="rich-table-headercell">
                                     #{messages['MovementDetail.unitRequired']}
-                                </th>
+                                </th>-->
                                 <th class="rich-table-headercell">
                                     #{messages['MovementDetail.amountUsed']}
                                 </th>
@@ -529,13 +533,13 @@
                                         </h:inputText>
                                     </td>
 
-                                    <td class="rich-table-cell center" id="amountRequiredUnitField">
+                                    <!--<td class="rich-table-cell center" id="amountRequiredUnitField">
                                         <h:inputText value="#{instance.amountRequiredUnit}"
                                                      maxlength="500" styleClass="input"
                                                      required="false">
                                             <a4j:support event="onblur" reRender="amountRequiredUnitField"/>
                                         </h:inputText>
-                                    </td>
+                                    </td>-->
 
                                     <td class="rich-table-cell center" id="amountUsedField">
                                         <h:inputText value="#{instance.amountUsed}"
