@@ -9,6 +9,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
+import com.encens.khipus.service.production.EmployeeTimeCardService;
 import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
 import com.encens.khipus.service.production.ProcessedProductService;
 import com.encens.khipus.service.production.ProductionPlanningService;
@@ -57,6 +58,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private EvaluatorMathematicalExpressionsService evaluatorMathematicalExpressionsService;
     @In
     private ProductionOrderCodeGenerator productionOrderCodeGenerator;
+    @In
+    private EmployeeTimeCardService employeeTimeCardService;
     private ProductionOrder totalsMaterials;
 
     @Override
@@ -465,6 +468,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         String outcome = update();
@@ -473,6 +477,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             getInstance().setState(EXECUTED);
         }
         return outcome;
+    }
+    public void setTotalHour(ProductionOrder productionOrder)
+    {
+        productionOrder.setTotalPriceJourney(((BigDecimal)(employeeTimeCardService.costProductionOrder(productionOrder))).doubleValue());
     }
     public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder)
     {
