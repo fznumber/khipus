@@ -1,6 +1,7 @@
 package com.encens.khipus.service.employees;
 
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.employees.Currency;
 import com.encens.khipus.model.employees.*;
 import com.encens.khipus.model.finances.*;
 import com.encens.khipus.util.Constants;
@@ -392,8 +393,8 @@ public class EmployeeServiceBean implements EmployeeService {
         return PaymentType.PAYMENT_WITH_CHECK;
     }
 
-    public com.encens.khipus.model.employees.Currency getEmployeesCurrencyByPaymentType(GeneratedPayroll generatedPayroll, Employee employee, PaymentType paymentType) {
-        com.encens.khipus.model.employees.Currency currency = null;
+    public Currency getEmployeesCurrencyByPaymentType(GeneratedPayroll generatedPayroll, Employee employee, PaymentType paymentType) {
+        Currency currency = null;
         if (PaymentType.PAYMENT_WITH_CHECK.equals(paymentType)) {
             Job job = getJobByGeneratedPayrollAndEmployee(generatedPayroll, employee);
             if (job != null) {
@@ -406,7 +407,7 @@ public class EmployeeServiceBean implements EmployeeService {
     }
 
 
-    public com.encens.khipus.model.employees.Currency getEmployeesCurrency(GeneratedPayroll generatedPayroll, Employee employee) {
+    public Currency getEmployeesCurrency(GeneratedPayroll generatedPayroll, Employee employee) {
         return getEmployeesCurrencyByPaymentType(generatedPayroll, employee, getEmployeesPaymentType(employee));
     }
 }
