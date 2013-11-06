@@ -234,7 +234,7 @@
         </table>
     </s:div>
 </a4j:region>
-<!--region detalle Materiales-->
+
 <a4j:region rendered="#{productionPlanningAction.showMaterialDetail}">
     <app:fieldset id="orderDetail" title="#{messages['ProductionOrder.processedProduct.detail']}">
         <h:panelGrid columns="2"
@@ -299,8 +299,8 @@
 
         </h:panelGrid>
     </app:fieldset>
-
-    <app:fieldset id="materialDetailProducts" title="#{messages['MovementDetail.title']}">
+    <!--region detalle Materiales-->
+    <app:fieldset id="materialDetailProducts" title="#{messages['MovementDetail.detailMaterial']}">
         <h:panelGrid columns="1"
                      width="100%"
                      cellpadding="0"
@@ -374,7 +374,39 @@
             </s:div>
         </h:panelGrid>
     </app:fieldset>
+    <!--region detalle Insumos-->
+    <app:fieldset id="inputDetailProducts" title="#{messages['MovementDetail.detailInput']}">
+        <rich:dataTable value="#{productionPlanningAction.productionOrder.inputProductionVoucherList}"
+                        var="inputProductionItem"
+                        id="productionIngredientDetailList" styleClass="formRow" width="100%">
+            <f:facet name="header">
+                <rich:columnGroup>
+                    <rich:column>
+                        #{messages['ProductionPlanning.inputName']}
+                    </rich:column>
+                    <rich:column>
+                        #{messages['ProductionOrder.productionInput.measureUnit']}
+                    </rich:column>
+                    <rich:column>
+                        #{messages['ProductionPlanning.inputAmount']}
+                    </rich:column>
+                </rich:columnGroup>
+            </f:facet>
 
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.metaProduct.name}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.metaProduct.productItem.usageMeasureCode}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.amount}">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:outputText>
+            </rich:column>
+
+        </rich:dataTable>
+    </app:fieldset>
 </a4j:region>
 <!--fin region detalle Materiales-->
 <!--Agregar Materiales-->
@@ -700,17 +732,17 @@
             <rich:spacer width="5"/>
             <!--MOSTRAR OPCION DETALLE MATERIAL-->
             <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
-                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailMaterial']}"
+                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailOrder']}"
                                  action="#{productionPlanningAction.selectMaterialDetail(productionOrderItem)}"
                                  reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>
-            <rich:spacer width="5"/>
-            <!--MOSTRAR OPCION DETALLE INSUMO-->
+            <!--<rich:spacer width="5"/>
+            &lt;!&ndash;MOSTRAR OPCION DETALLE INSUMO&ndash;&gt;
             <c:if test="#{productionPlanning.state == 'FINALIZED' or productionPlanning.state == 'EXECUTED'}">
                 <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailInput']}"
                                  action="#{productionPlanningAction.selectInputDetail(productionOrderItem)}"
                                  reRender="formulaSet,ruleBotton2,ruleBotton1"/>
-            </c:if>
+            </c:if>-->
         </rich:column>
     </rich:dataTable>
 
