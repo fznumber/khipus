@@ -73,10 +73,10 @@
                     <s:div>
                         <h:commandLink style="float:left;" value="#{messages['Common.select']}"
                                        action="#{productionPlanningAction.select(productionPlanningItem)}"/>
-                        <h:outputText
+                        <!--<h:outputText
                                 style="float: right; color: #{productionPlanningItem.state eq 'PENDING' ? 'red' : (productionPlanningItem.state eq 'EXECUTED' ? 'blue' : 'green')}"
                                 value="#{productionPlanningItem.state eq 'PENDING' ? messages['ProductionPlanning.state.pending'] : (productionPlanningItem.state eq 'EXECUTED' ? messages['ProductionPlanning.state.executed'] : messages['ProductionPlanning.state.finalized'])}"/>
-                        <s:div style="float:clear"/>
+                        <s:div style="float:clear"/>-->
                     </s:div>
                     <rich:dataTable value="#{productionPlanningItem.productionOrderList}" var="productionOrderItem"
                                     id="productionOrderList"
@@ -95,6 +95,9 @@
                                 <rich:column>
                                     #{messages['ProductionOrder.expectedAmount']}
                                 </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.estateOrderProduction']}
+                                </rich:column>
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
@@ -107,8 +110,16 @@
                         <rich:column>
                             <h:outputText value="#{productionOrderItem.code}"/>
                         </rich:column>
-                        <rich:column>
+                        <!--<rich:column>
                             <h:outputText value="#{productionOrderItem.producingAmount}"/>
+                        </rich:column>-->
+                        <rich:column>
+                            <h:outputText value="#{productionOrderItem.expendAmount}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText
+                                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
                         </rich:column>
                     </rich:dataTable>
                 </rich:panel>

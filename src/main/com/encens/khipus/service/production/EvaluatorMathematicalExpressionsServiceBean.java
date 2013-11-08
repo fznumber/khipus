@@ -54,9 +54,9 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     public void executeMathematicalFormulas(ProductionOrder productionOrder) throws ProductCompositionException, IOException {
         EquationMap map = new EquationMap();
         map.addProductionIngredient(productionOrder.getProductComposition().getProductionIngredientList());
-        map.addLiteralEquation(amountVariable, productionOrder.getProducingAmount());
+        map.addLiteralEquation(amountVariable, productionOrder.getExpendAmount());
         map.addLiteralEquation(containerVariable, productionOrder.getContainerWeight());
-        map.addLiteralEquation(supposedVariable, productionOrder.getSupposedAmount());
+        map.addLiteralEquation(supposedVariable, productionOrder.getProducedAmount());
 
         calculateMathematicalFormula(map);
     }

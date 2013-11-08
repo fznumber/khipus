@@ -1,8 +1,6 @@
 package com.encens.khipus.action.production;
 
-import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
-import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -49,6 +47,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean addMaterial = false;
     private Boolean showMaterialDetail = false;
     private Boolean showInputDetail = false;
+    private Boolean showDetailOrder = false;
 
     @In
     private ProductionPlanningService productionPlanningService;
@@ -110,11 +109,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         clearFormulation();
         formulaState = FormulaState.NEW;
         productionOrder.setCode(productionOrderCodeGenerator.generateCode());
-        productionOrder.setProducingAmount(0.0);
+        productionOrder.setExpendAmount(0.0);
     }
 
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String select(ProductionPlanning productionPlanning) {
+        showDetailOrder = false;
         try {
             ProductionPlanning aux = productionPlanningService.find(productionPlanning.getId());
             setInstance(aux);
@@ -173,9 +173,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void productCompositionSelected(ActionEvent e) {
         try {
-            productionOrder.setProducingAmount(productComposition.getProducingAmount());
+            productionOrder.setExpendAmount(productComposition.getProducingAmount());
             productionOrder.setContainerWeight(productComposition.getContainerWeight());
-            productionOrder.setSupposedAmount(productComposition.getSupposedAmount());
+            productionOrder.setProducedAmount(productComposition.getSupposedAmount());
             productionOrder.setProductComposition(productComposition);
             evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
         } catch (Exception ex) {
@@ -203,11 +203,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
+        setPriceCostInput();
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
 
         clearFormulation();
         disableEditingFormula();
+    }
+
+    public void setPriceCostInput()
+    {
+        for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
+        {
+            inputProductionVoucher.setPriceCostTotal(inputProductionVoucher.getAmount() * ((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
+        }
     }
 
     @End
@@ -260,6 +269,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
+        setPriceCostInput();
         for (ProductionOrder po : productionPlanning.getProductionOrderList()) {
             if (po.getCode().equals(productionOrder.getCode())) {
                 productionPlanning.getProductionOrderList().remove(po);
@@ -301,7 +311,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         cancelFormulation();
         dispobleBalance = false;
         existingFormulation = new Formulation();
-        existingFormulation.producingAmount = productionOrder.getProducingAmount();
+        existingFormulation.producingAmount = productionOrder.getExpendAmount();
         existingFormulation.productComposition = productionOrder.getProductComposition();
 
         this.productionOrder = productionOrder;
@@ -315,9 +325,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void selectMaterial(ProductionOrder order) {
 
-        cancelFormulation();
+        //cancelFormulation();
+        disableEditingFormula();
+        showDetailOrder = false;
         productionOrder = order;
         this.productionOrderMaterial = productionOrder;
+        this.productComposition = productionOrder.getProductComposition();
+        this.processedProduct = productComposition.getProcessedProduct();
         /*
         this.productComposition = productionOrder.getProductComposition();
         this.processedProduct = productComposition.getProcessedProduct();
@@ -332,13 +346,72 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectMaterialDetail(ProductionOrder order){
-        cancelFormulation();
+        disableEditingFormula();
         productionOrderMaterial = order;
         productionOrder = order;
         orderMaterials = new ArrayList<OrderMaterial>();
         orderMaterials.addAll(order.getOrderMaterials());
 
         showMaterialDetail = true;
+    }
+
+    public void selectDetail(ProductionOrder order)
+    {
+        disableEditingFormula();
+        addMaterial = false;
+        //productionOrderMaterial = order;
+        productionOrder = order;
+        //orderMaterials = new ArrayList<OrderMaterial>();
+        //orderMaterials.addAll(order.getOrderMaterials());
+
+        showDetailOrder = true;
+    }
+
+    @End(ifOutcome = Outcome.SUCCESS)
+    public String makeExecutedOrder() {
+        //getInstance().setState(EXECUTED);
+        productionOrder.setEstateOrder(EXECUTED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
+        String outcome = update();
+
+        if (outcome != Outcome.SUCCESS) {
+            productionOrder.setEstateOrder(PENDING);
+            //getInstance().setState(PENDING);
+        }
+        return outcome;
+    }
+
+    @End(ifOutcome = Outcome.SUCCESS)
+    public String makeFinalizedOrder() {
+        //getInstance().setState(FINALIZED);
+        productionOrder.setEstateOrder(FINALIZED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
+        String outcome = update();
+
+        if (outcome != Outcome.SUCCESS) {
+            productionOrder.setEstateOrder(EXECUTED);
+            //getInstance().setState(EXECUTED);
+        }
+        return outcome;
+    }
+
+    public void closeDetail()
+    {
+        disableEditingFormula();
+        //productionOrder = null;
+        showDetailOrder = false;
     }
 
     public void addProductItems(List<ProductItem> productItems) {
@@ -385,6 +458,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
         productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
         addMaterial = false;
+
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
     }
 
     public void removeMaterial(OrderMaterial instance) {
@@ -402,12 +479,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (evaluateMathematicalExpression() == false) {
             return;
         }
-
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
+        setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
     }
 
     public void updateProducedAmount() {
+        /*Double totalProducer = 0.0;
+        for(OutputProductionVoucher outputProductionVoucher:productionOrder.getOutputProductionVoucherList())
+        {
+            totalProducer += outputProductionVoucher.getProducedAmount();
+        }
+        productionOrder.setExpendAmount(totalProducer);*/
         if (update() != Outcome.SUCCESS) {
             return;
         }
@@ -419,7 +505,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void cancelFormulation() {
         if (existingFormulation != null) {
             productionOrder.setProductComposition(existingFormulation.productComposition);
-            productionOrder.setProducingAmount(existingFormulation.producingAmount);
+            productionOrder.setExpendAmount(existingFormulation.producingAmount);
             existingFormulation = null;
         }
 
@@ -437,13 +523,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (OutputProductionVoucher voucher : fakeVouchers) {
                 productionOrder.getOutputProductionVoucherList().remove(voucher);
             }
-
+            if(productionOrder.getOutputProductionVoucherList().size() != 0)
             productionPlanningService.refresh(productionOrder);
         }
         dispobleBalance = true;
         addMaterial = false;
         showInputDetail = false;
         showMaterialDetail = false;
+        showDetailOrder = false;
     }
 
     private void disableEditingFormula() {
@@ -452,18 +539,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     @End(ifOutcome = Outcome.SUCCESS)
     public String makeExecuted() {
-        getInstance().setState(EXECUTED);
-        String outcome = update();
-
-        if (outcome != Outcome.SUCCESS) {
-            getInstance().setState(PENDING);
-        }
-        return outcome;
-    }
-
-    @End(ifOutcome = Outcome.SUCCESS)
-    public String makeFinalized() {
-        getInstance().setState(FINALIZED);
+        //getInstance().setState(EXECUTED);
+        productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
@@ -474,7 +551,28 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
-            getInstance().setState(EXECUTED);
+            productionOrder.setEstateOrder(PENDING);
+            //getInstance().setState(PENDING);
+        }
+        return outcome;
+    }
+
+    @End(ifOutcome = Outcome.SUCCESS)
+    public String makeFinalized() {
+        //getInstance().setState(FINALIZED);
+        productionOrder.setEstateOrder(FINALIZED);
+        ProductionPlanning productionPlanning = getInstance();
+        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
+        String outcome = update();
+
+        if (outcome != Outcome.SUCCESS) {
+            productionOrder.setEstateOrder(EXECUTED);
+            //getInstance().setState(EXECUTED);
         }
         return outcome;
     }
@@ -486,17 +584,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     {
         Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney();
         productionOrder.setTotalCostProduction(total);
-        Double priceUnit = total/productionOrder.getProducingAmount();
+        Double priceUnit = 0.0;
+        if(productionOrder.getExpendAmount() > 0.0)
+        priceUnit = total/productionOrder.getExpendAmount();
+
         productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
     }
 
     public void setTotalsInputs(ProductionOrder productionOrder)
     {
         Double totalInput = 0.0;
-        for(InputProductionVoucher inputProductionVoucher:productionOrder.getInputProductionVoucherList())
-        {
-            totalInput += inputProductionVoucher.getAmount() * (((BigDecimal)(inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
-        }
+
+
+
+            for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList())
+            {
+                totalInput +=  (ingredient.getMetaProduct().getProductItem().getUnitCost().doubleValue()) * ingredient.getAmount();
+            }
+
         productionOrder.setTotalPriceInput(totalInput);
     }
 
@@ -700,5 +805,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowMaterialDetail(Boolean showMaterialDetail) {
         this.showMaterialDetail = showMaterialDetail;
+    }
+
+    public Boolean getShowDetailOrder() {
+        return showDetailOrder;
+    }
+
+    public void setShowDetailOrder(Boolean showDetailOrder) {
+        this.showDetailOrder = showDetailOrder;
     }
 }
