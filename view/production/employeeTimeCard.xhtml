@@ -43,6 +43,11 @@
                              rendered="#{employeeTimeCardAction.managed and s:hasPermission('EMPLOYEETIMECARD','UPDATE')}"
                              tabindex="2"/>
 
+            <h:commandButton action="#{employeeTimeCardAction.cancel}" value="#{messages['Common.cancel']}"
+                             styleClass="button" immediate="true"
+                             tabindex="3">
+            </h:commandButton>
+
             <!--<h:commandButton action="#{employeeTimeCardAction.test}" value="#{messages['Common.cancel']}"
                              styleClass="button" immediate="true"
                              tabindex="3">
@@ -83,7 +88,7 @@
             <s:decorate id="productionOrderField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['EmployeeTimeCard.productionOrders']}</ui:define>
                 <h:selectOneMenu id="productionOrder" value="#{employeeTimeCard.productionOrder}" styleClass="input"
-                                 required="true"
+                                 required="false"
                                  tabindex="5">
                     <s:selectItems value="#{productionOrderList.resultList}" var="productionOrder"
                                    label="#{productionOrder.orderProduct}"
