@@ -3,16 +3,11 @@ package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
-import com.encens.khipus.model.State;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -162,7 +157,7 @@ import java.util.List;
                         "rawMaterialPayRoll.totalDiscountByGAB," +
                         "rawMaterialPayRoll.totalAdjustmentByGAB," +
                         "rawMaterialPayRoll.totalOtherIncomeByGAB," +
-                        "rawMaterialPayRoll.totalLiquidByGAB "+
+                        "rawMaterialPayRoll.totalLiquidByGAB " +
                         "from RawMaterialPayRoll rawMaterialPayRoll " +
                         "where rawMaterialPayRoll.startDate = :startDate " +
                         "and rawMaterialPayRoll.endDate = :endDate " +
@@ -171,16 +166,16 @@ import java.util.List;
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getMaterialPayRollInDates",
                 query = " select " +
-                        " rawMaterialPayRoll "+
+                        " rawMaterialPayRoll " +
                         " from RawMaterialPayRoll rawMaterialPayRoll " +
                         " where rawMaterialPayRoll.startDate = :startDate " +
                         " and rawMaterialPayRoll.endDate = :endDate " +
                         " and rawMaterialPayRoll.metaProduct = :metaProduct "
         ),
         @NamedQuery(name = "RawMaterialPayRoll.getAllMaterialPayRoll",
-        query = " select " +
-                " rawMaterialPayRoll " +
-                " from RawMaterialPayRoll rawMaterialPayRoll "
+                query = " select " +
+                        " rawMaterialPayRoll " +
+                        " from RawMaterialPayRoll rawMaterialPayRoll "
         )
 })
 
@@ -202,16 +197,16 @@ public class RawMaterialPayRoll implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialPayRoll_Generator")
     private Long id;
 
-    @Column(name = "FECHAINICIO", columnDefinition = "DATE" ,nullable = false)
+    @Column(name = "FECHAINICIO", columnDefinition = "DATE", nullable = false)
     private Date startDate;
 
-    @Column(name = "FECHAFIN", columnDefinition = "DATE" , nullable = false)
+    @Column(name = "FECHAFIN", columnDefinition = "DATE", nullable = false)
     private Date endDate;
 
-    @Column(name = "PRECIOUNITARIO",columnDefinition = "NUMBER(9,2)", nullable = false)
+    @Column(name = "PRECIOUNITARIO", columnDefinition = "NUMBER(9,2)", nullable = false)
     private double unitPrice;
 
-    @Column(name = "TASAIMPUESTO",columnDefinition = "NUMBER(3,2)",nullable = false)
+    @Column(name = "TASAIMPUESTO", columnDefinition = "NUMBER(3,2)", nullable = false)
     private double taxRate;
 
     @Column(name = "ESTADO", nullable = false, length = 50)
@@ -237,7 +232,7 @@ public class RawMaterialPayRoll implements BaseModel {
     @OneToOne
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
-     //todo: cambiar TOTALACOPIADOXGAB -> TOTALPESADOXGAB
+    //todo: cambiar TOTALACOPIADOXGAB -> TOTALPESADOXGAB
     @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalWeighedByGAB = 0.0;
 

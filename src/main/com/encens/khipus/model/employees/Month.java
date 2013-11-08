@@ -88,32 +88,31 @@ public enum Month {
         return JANUARY;
     }
 
-    public String getMonthLiteral()
-    {
+    public String getMonthLiteral() {
         String result = "";
-        if(Month.JANUARY == this)
+        if (Month.JANUARY == this)
             result = "Enero";
-        if(Month.FEBRUARY == this)
+        if (Month.FEBRUARY == this)
             result = "Febrero";
-        if(Month.MARCH == this)
+        if (Month.MARCH == this)
             result = "Marzo";
-        if(Month.APRIL == this)
+        if (Month.APRIL == this)
             result = "Abril";
-        if(Month.MAY == this)
+        if (Month.MAY == this)
             result = "Mayo";
-        if(Month.JUNE == this)
+        if (Month.JUNE == this)
             result = "Junio";
-        if(Month.JULY == this)
+        if (Month.JULY == this)
             result = "Julio";
-        if(Month.AUGUST == this)
+        if (Month.AUGUST == this)
             result = "Agosto";
-        if(Month.SEPTEMBER == this)
+        if (Month.SEPTEMBER == this)
             result = "Septiembre";
-        if(Month.OCTOBER == this)
+        if (Month.OCTOBER == this)
             result = "Octubre";
-        if(Month.NOVEMBER == this)
+        if (Month.NOVEMBER == this)
             result = "Noviembre";
-        if(Month.DECEMBER == this)
+        if (Month.DECEMBER == this)
             result = "Diciembre";
 
         return result;

@@ -1,43 +1,30 @@
 package com.encens.khipus.action.production.reports;
 
-import com.encens.khipus.action.SessionUser;
 import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.admin.User;
-import com.encens.khipus.model.production.*;
-import com.encens.khipus.model.warehouse.WarehouseVoucher;
+import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.production.ProductionPlanning;
+import com.encens.khipus.model.production.ProductionPlanningState;
 import com.encens.khipus.reports.GenerationReportData;
-import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.khipus.service.production.MetaProductService;
 import com.encens.khipus.util.MessageUtils;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.base.JRBaseBand;
-import net.sf.jasperreports.engine.base.JRBaseStaticText;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JRDesignGroup;
-import net.sf.jasperreports.engine.design.JRDesignSection;
-import net.sf.jasperreports.engine.design.JRDesignStaticText;
-import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.JRPrintPage;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.fill.JRTemplatePrintText;
-import net.sf.jasperreports.engine.type.HorizontalAlignEnum;
-import net.sf.jasperreports.engine.type.ModeEnum;
-import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.log.Log;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Encens S.R.L.
@@ -86,7 +73,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 " productionOrder.productComposition.name, " +
                 " productionOrder.supposedAmount, " +
                 " productionOrder.producingAmount " +
-                " FROM ProductionOrder productionOrder " ;
+                " FROM ProductionOrder productionOrder ";
 
         String sql = "SELECT mp.nombre as nombre ,mp.codigo as codigo , op.codigo as codigo_orden, cp.nombre as formula, op.TEORICOOBTENIDO as teorico, op.CANTIDADPRODUCIR as producido \n" +
                 "FROM ordenproduccion OP\n" +
@@ -99,9 +86,8 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "WHERE op.idordenproduccion IN (";
 
         boolean band = true;
-        for(ProductionOrder productionOrder: productionOrders)
-        {
-            sql += (band?" ":",") + productionOrder.getId().toString();
+        for (ProductionOrder productionOrder : productionOrders) {
+            sql += (band ? " " : ",") + productionOrder.getId().toString();
             band = false;
         }
         sql += " )";
@@ -128,15 +114,15 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         mainReportParams.put(subReportKey, subReportData.getJasperReport());
     }
 
-    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists,ProductionPlanning productionPlanning,List<ProductionOrder> orders) {
+    public void generateReport(List<ProductionPlanningAction.Consolidated> consolidatedLists, ProductionPlanning productionPlanning, List<ProductionOrder> orders) {
         log.debug("Generate ProductionPlannigReportAction........");
         productionOrders = orders;
         TypedReportData typedReportData;
         String templatePath = "/production/reports/productionPlanningReportprub.jrxml";
         String fileName = "ProductionPlanningReportAction";
-        SimpleDateFormat sdf=new java.text.SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(productionPlanning.getDate());
-        state  = getEstate(productionPlanning.getState());
+        state = getEstate(productionPlanning.getState());
         Map params = new HashMap();
 
         params.putAll(getCommonDocumentParamsInfo());
@@ -146,15 +132,14 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         addProductionOrderPlanningDetailSubReport(params);
 
         String query = " select nombre, codigo, cod_med  " +
-                       " from metaproductoproduccion mp " +
-                       " inner join WISE.inv_articulos ia " +
-                       " on ia.cod_art = mp.codigo " +
-                       " where idmetaproductoproduccion in ( ";
+                " from metaproductoproduccion mp " +
+                " inner join WISE.inv_articulos ia " +
+                " on ia.cod_art = mp.codigo " +
+                " where idmetaproductoproduccion in ( ";
         boolean band = true;
-        for(ProductionPlanningAction.Consolidated consolidated: consolidatedsIN)
-        {
-           query += (band?" ":",") + consolidated.getIdMeta().toString();
-           band = false;
+        for (ProductionPlanningAction.Consolidated consolidated : consolidatedsIN) {
+            query += (band ? " " : ",") + consolidated.getIdMeta().toString();
+            band = false;
         }
         query += " )";
 
@@ -168,23 +153,21 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
 
-        for(int i =0; i<typedReportData.getJasperPrint().getPages().size();i++)
-        {
+        for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
             int contName = 7;
             int contUnidad = 9;
             int contCod = 8;
             int cantidad = 10;
 
-            for(ProductionPlanningAction.Consolidated consolidated:consolidatedsIN)
-            {
-                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contName))).setText(consolidated.getName());
-                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contUnidad))).setText(consolidated.getUnit());
-                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contCod))).setText(consolidated.getCode());
-                ((JRTemplatePrintText)(((JRPrintPage)(typedReportData.getJasperPrint().getPages().get(i))).getElements().get(cantidad))).setText(String.format("%.2f", consolidated.getAmount()));
+            for (ProductionPlanningAction.Consolidated consolidated : consolidatedsIN) {
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contName))).setText(consolidated.getName());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contUnidad))).setText(consolidated.getUnit());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contCod))).setText(consolidated.getCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(cantidad))).setText(String.format("%.2f", consolidated.getAmount()));
                 contName += 4;
                 contUnidad += 4;
-                contCod +=4;
-                cantidad +=4;
+                contCod += 4;
+                cantidad += 4;
             }
         }
         try {
@@ -285,17 +268,16 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         sortProperty = "";
     }*/
 
-    private String getEstate(ProductionPlanningState statePlaning)
-    {
+    private String getEstate(ProductionPlanningState statePlaning) {
         String estateLiteral = "";
 
-        if(statePlaning == ProductionPlanningState.EXECUTED)
+        if (statePlaning == ProductionPlanningState.EXECUTED)
             estateLiteral = MessageUtils.getMessage("ProductionPlanning.makeExecuted");
 
-        if(statePlaning == ProductionPlanningState.FINALIZED)
+        if (statePlaning == ProductionPlanningState.FINALIZED)
             estateLiteral = MessageUtils.getMessage("productionPlanningAction.makeFinalized");
 
-        if(statePlaning == ProductionPlanningState.PENDING)
+        if (statePlaning == ProductionPlanningState.PENDING)
             estateLiteral = MessageUtils.getMessage("ProductionPlanning.makePending");
 
         return estateLiteral;

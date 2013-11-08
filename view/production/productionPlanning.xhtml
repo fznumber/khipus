@@ -32,11 +32,12 @@
 <div class="buttons">
     <s:div id="ruleBotton1">
 
-        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning,productionPlanning.productionOrderList)}"
-                         value="#{messages['ProductionPlanning.generateDocumnt']}"
-                         styleClass="button"
-                         rendered="#{productionPlanningAction.managed}"
-                         tabindex="1"/>
+        <h:commandButton
+                action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning,productionPlanning.productionOrderList)}"
+                value="#{messages['ProductionPlanning.generateDocumnt']}"
+                styleClass="button"
+                rendered="#{productionPlanningAction.managed}"
+                tabindex="1"/>
 
         <!--<h:commandButton action="#{productionPlanningAction.makeFinalized}"
                          value="#{messages['ProductionPlanning.makeFinalized']}"
@@ -48,7 +49,7 @@
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="3"/>
-
+-->
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
@@ -58,7 +59,7 @@
         <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>-->
+                         tabindex="2"/>
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'  and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
@@ -92,9 +93,9 @@
             <a4j:support event="onchange"/>
         </rich:calendar>
     </s:decorate>
-<!--    <h:outputText
-            style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
-            value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>-->
+    <!--    <h:outputText
+style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>-->
 </h:panelGrid>
 
 <rich:separator/>
@@ -202,7 +203,8 @@
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
                         </rich:column>
-                        <rich:column styleClass="#{productionPlanningAction.verifMount(productionIngredientItem)?'labelAlarm':'labelInfo'}">
+                        <rich:column
+                                styleClass="#{productionPlanningAction.verifMount(productionIngredientItem)?'labelAlarm':'labelInfo'}">
                             <h:outputText value="#{productionIngredientItem.mountWareHouse}">
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
@@ -303,21 +305,22 @@
 
                 <s:decorate id="unitCostMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.costPriceObtained']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost}"/>
+                    <h:outputText
+                            value="#{productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost}"/>
                 </s:decorate>
             </s:div>
 
             <s:div>
                 <a4j:commandButton action="#{productionPlanningAction.makeFinalizedOrder}"
-                                 value="#{messages['ProductionPlanning.makeFinalized']}"
-                                 styleClass="button"
-                                 rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                                 tabindex="2"/>
+                                   value="#{messages['ProductionPlanning.makeFinalized']}"
+                                   styleClass="button"
+                                   rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                   tabindex="2"/>
                 <a4j:commandButton action="#{productionPlanningAction.makeExecutedOrder}"
-                                 value="#{messages['ProductionPlanning.makeExecuted']}"
-                                 styleClass="button"
-                                 rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                                 tabindex="2"/>
+                                   value="#{messages['ProductionPlanning.makeExecuted']}"
+                                   styleClass="button"
+                                   rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                                   tabindex="2"/>
                 <a4j:commandButton action="#{productionPlanningAction.closeDetail}" ajaxSingle="true"
                                    value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
                                    reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
@@ -439,158 +442,158 @@
 <!--fin region detalle Materiales-->
 <!--Agregar Materiales-->
 <a4j:region rendered="#{productionPlanningAction.addMaterial}">
-<!--Detalle del producto-->
+    <!--Detalle del producto-->
     <app:fieldset id="productDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
-            <h:panelGrid columns="1"
-                         width="100%"
-                         cellpadding="0"
-                         cellspacing="0"
-                         border="0"
-                         columnClasses="width50percent, width50percent">
+        <h:panelGrid columns="1"
+                     width="100%"
+                     cellpadding="0"
+                     cellspacing="0"
+                     border="0"
+                     columnClasses="width50percent, width50percent">
 
-                <s:decorate id="processedProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
-                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"/>
-                </s:decorate>
+            <s:decorate id="processedProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
+                <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.name}"/>
+            </s:decorate>
 
-                <s:decorate id="processedProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
-                    <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"/>
-                </s:decorate>
+            <s:decorate id="processedProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
+                <h:outputText value="#{productionOrderMaterialForPlanning.productComposition.processedProduct.code}"/>
+            </s:decorate>
 
-                <s:decorate id="processedProductOrderField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
-                    <h:outputText value="#{productionOrderMaterialForPlanning.code}"/>
-                </s:decorate>
+            <s:decorate id="processedProductOrderField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
+                <h:outputText value="#{productionOrderMaterialForPlanning.code}"/>
+            </s:decorate>
 
-                <s:decorate id="processedProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-                    <h:outputText value="#{productionOrderMaterialForPlanning.producedAmount}"/>
-                </s:decorate>
+            <s:decorate id="processedProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
+                <h:outputText value="#{productionOrderMaterialForPlanning.producedAmount}"/>
+            </s:decorate>
 
-                <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
-                    <h:outputText
-                            style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
-                            value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
-                </s:decorate>
+            <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
+                <h:outputText
+                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                        value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
+            </s:decorate>
 
-            </h:panelGrid>
+        </h:panelGrid>
     </app:fieldset>
-<!--Fin Detalle del producto-->
-<!--Detalle de Materiales-->
-            <app:fieldset id="movementDetailFields" title="#{messages['ProductionPlanning.detailMaterial']}">
-                <h:panelGrid columns="1"
-                             width="100%"
-                             cellpadding="0"
-                             cellspacing="0"
-                             border="0">
-                    <s:div id="movementDetailListPanel">
-                        <div class="buttons">
+    <!--Fin Detalle del producto-->
+    <!--Detalle de Materiales-->
+    <app:fieldset id="movementDetailFields" title="#{messages['ProductionPlanning.detailMaterial']}">
+        <h:panelGrid columns="1"
+                     width="100%"
+                     cellpadding="0"
+                     cellspacing="0"
+                     border="0">
+            <s:div id="movementDetailListPanel">
+                <div class="buttons">
 
-                            <a4j:commandButton action="#{productionPlanningAction.addOrderProduced}"
-                                               value="#{messages['ProductionPlanning.materialUpdate']}"
-                                               reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                               rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionOrderForPlanning.estateOrder eq 'PENDING'}"
-                                               />
-                            <rich:spacer width="10"/>
+                    <a4j:commandButton action="#{productionPlanningAction.addOrderProduced}"
+                                       value="#{messages['ProductionPlanning.materialUpdate']}"
+                                       reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                                       rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionOrderForPlanning.estateOrder eq 'PENDING'}"
+                            />
+                    <rich:spacer width="10"/>
 
-                            <a4j:commandButton id="addProductItemCommandButton"
-                                             action="#{productItemSearchDataModel.reset()}"
-                                             value="#{messages['WarehouseVoucher.button.addProductItem']}"
-                                             styleClass="button"
-                                             immediate="true"
-                                             oncomplete="Richfaces.showModalPanel('productItemsListModalPanel');"
-                                             actionListener="#{selectPopUpAction.select}"
-                                             rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
-                                             reRender="productItemsListModalPanel">
-                                <f:attribute name="entityManagerName" value=""/>
-                                <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
-                            </a4j:commandButton>
+                    <a4j:commandButton id="addProductItemCommandButton"
+                                       action="#{productItemSearchDataModel.reset()}"
+                                       value="#{messages['WarehouseVoucher.button.addProductItem']}"
+                                       styleClass="button"
+                                       immediate="true"
+                                       oncomplete="Richfaces.showModalPanel('productItemsListModalPanel');"
+                                       actionListener="#{selectPopUpAction.select}"
+                                       rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
+                                       reRender="productItemsListModalPanel">
+                        <f:attribute name="entityManagerName" value=""/>
+                        <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
+                    </a4j:commandButton>
 
-                            <a4j:commandButton id="cancelMaterialButton" action="#{productionPlanningAction.cancelMaterial}"
-                                               ajaxSingle="true"
-                                               value="#{messages['ProductionPlanning.innerButtonCancel']}"
-                                               reRender="formulaSet,ruleBotton2,ruleBotton1"/>
+                    <a4j:commandButton id="cancelMaterialButton" action="#{productionPlanningAction.cancelMaterial}"
+                                       ajaxSingle="true"
+                                       value="#{messages['ProductionPlanning.innerButtonCancel']}"
+                                       reRender="formulaSet,ruleBotton2,ruleBotton1"/>
 
-                        </div>
+                </div>
 
-                        <table cellpadding="0" cellspacing="0" border="0" width="100%" class="rich-table">
-                            <thead class="rich-table-thead">
-                            <tr class="rich-table-header">
-                                <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.productItem']}
-                                </th>
-                                <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.measureUnit']}
-                                </th>
-                                <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.amountRequired']}
-                                </th>
-                                <!--<th class="rich-table-headercell">
-                                    #{messages['MovementDetail.unitRequired']}
-                                </th>-->
-                                <th class="rich-table-headercell">
-                                    #{messages['MovementDetail.amountUsed']}
-                                </th>
-                                <th class="rich-table-headercell">
-                                    #{messages['Common.action']}
-                                </th>
-                            </tr>
-                            </thead>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%" class="rich-table">
+                    <thead class="rich-table-thead">
+                    <tr class="rich-table-header">
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.productItem']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.measureUnit']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.amountRequired']}
+                        </th>
+                        <!--<th class="rich-table-headercell">
+                            #{messages['MovementDetail.unitRequired']}
+                        </th>-->
+                        <th class="rich-table-headercell">
+                            #{messages['MovementDetail.amountUsed']}
+                        </th>
+                        <th class="rich-table-headercell">
+                            #{messages['Common.action']}
+                        </th>
+                    </tr>
+                    </thead>
 
-                            <c:forEach var="instance" items="#{productionPlanningAction.orderMaterials}" varStatus="row">
-                                <c:set var="amountRequiredId" value="quantityField_#{row.index}"/>
+                    <c:forEach var="instance" items="#{productionPlanningAction.orderMaterials}" varStatus="row">
+                        <c:set var="amountRequiredId" value="quantityField_#{row.index}"/>
 
-                                <tr class="rich-table-row">
-                                    <td class="rich-table-cell">
-                                        <h:outputText value="#{instance.productItem.fullName}"/>
-                                    </td>
-                                    <td class="rich-table-cell">
-                                        <h:outputText value="#{instance.productItem.usageMeasureUnit.name}"/>
-                                    </td>
-                                    <td class="rich-table-cell center" id="amountRequiredField">
-                                        <h:inputText value="#{instance.amountRequired}"
-                                                     maxlength="500" styleClass="input"
-                                                     required="false"
-                                                     disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
-                                            <a4j:support event="onblur" reRender="amountRequiredField"/>
-                                        </h:inputText>
-                                    </td>
+                        <tr class="rich-table-row">
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.productItem.fullName}"/>
+                            </td>
+                            <td class="rich-table-cell">
+                                <h:outputText value="#{instance.productItem.usageMeasureUnit.name}"/>
+                            </td>
+                            <td class="rich-table-cell center" id="amountRequiredField">
+                                <h:inputText value="#{instance.amountRequired}"
+                                             maxlength="500" styleClass="input"
+                                             required="false"
+                                             disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
+                                    <a4j:support event="onblur" reRender="amountRequiredField"/>
+                                </h:inputText>
+                            </td>
 
-                                    <!--<td class="rich-table-cell center" id="amountRequiredUnitField">
-                                        <h:inputText value="#{instance.amountRequiredUnit}"
-                                                     maxlength="500" styleClass="input"
-                                                     required="false">
-                                            <a4j:support event="onblur" reRender="amountRequiredUnitField"/>
-                                        </h:inputText>
-                                    </td>-->
+                            <!--<td class="rich-table-cell center" id="amountRequiredUnitField">
+                                <h:inputText value="#{instance.amountRequiredUnit}"
+                                             maxlength="500" styleClass="input"
+                                             required="false">
+                                    <a4j:support event="onblur" reRender="amountRequiredUnitField"/>
+                                </h:inputText>
+                            </td>-->
 
-                                    <td class="rich-table-cell center" id="amountUsedField">
-                                        <h:inputText value="#{instance.amountUsed}"
-                                                     maxlength="500" styleClass="input"
-                                                     required="false">
-                                            <a4j:support event="onblur" reRender="amountUsedField"/>
-                                        </h:inputText>
-                                    </td>
+                            <td class="rich-table-cell center" id="amountUsedField">
+                                <h:inputText value="#{instance.amountUsed}"
+                                             maxlength="500" styleClass="input"
+                                             required="false">
+                                    <a4j:support event="onblur" reRender="amountUsedField"/>
+                                </h:inputText>
+                            </td>
 
-                                    <td class="rich-table-cell center">
-                                        <a4j:commandLink immediate="true"
-                                                         title="#{messages['Common.remove']}"
-                                                         action="#{productionPlanningAction.removeMaterial(instance)}"
-                                                         ajaxSingle="true"
-                                                         rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
-                                                         reRender="movementDetailListPanel">
-                                            <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
-                                        </a4j:commandLink>
-                                    </td>
+                            <td class="rich-table-cell center">
+                                <a4j:commandLink immediate="true"
+                                                 title="#{messages['Common.remove']}"
+                                                 action="#{productionPlanningAction.removeMaterial(instance)}"
+                                                 ajaxSingle="true"
+                                                 rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
+                                                 reRender="movementDetailListPanel">
+                                    <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+                                </a4j:commandLink>
+                            </td>
 
-                                </tr>
-                            </c:forEach>
-                        </table>
-                    </s:div>
-                </h:panelGrid>
-            </app:fieldset>
+                        </tr>
+                    </c:forEach>
+                </table>
+            </s:div>
+        </h:panelGrid>
+    </app:fieldset>
     <!--Detalle de Materiales-->
 </a4j:region>
 <!--Fin Agregar Materiales-->
@@ -601,13 +604,13 @@
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
             <h:outputText value="#{productionOrderForPlanning.productComposition.processedProduct.name}"
-                         >
+                    >
             </h:outputText>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.productComposition.name']}</ui:define>
             <h:outputText value="#{productCompositionForPlanning.name}"
-                          >
+                    >
             </h:outputText>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -624,7 +627,7 @@
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.producingAmount']}</ui:define>
             <h:inputText value="#{productionOrderForPlanning.producedAmount}"
-                          required="false" readonly="false" maxlength="500" styleClass="input">
+                         required="false" readonly="false" maxlength="500" styleClass="input">
             </h:inputText>
         </s:decorate>
         <s:div>
@@ -781,28 +784,31 @@
         </rich:column>
         <rich:column styleClass="center">
 
-            <a4j:commandLink ajaxSingle="true" immediate="true" value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
+            <a4j:commandLink ajaxSingle="true" immediate="true"
+                             value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
                              action="#{productionPlanningAction.select(productionOrderItem)}"
                              rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             <rich:spacer width="5"/>
 
-            <a4j:commandLink ajaxSingle="true" immediate="true" value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
+            <a4j:commandLink ajaxSingle="true" immediate="true"
+                             value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
                              action="#{productionPlanningAction.selectMaterial(productionOrderItem)}"
                              rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             <rich:spacer width="5"/>
             <!--MOSTRAR OPCION DETALLE MATERIAL-->
-         <!--   <c:if test="#{productionOrderForPlanning.estateOrder == 'FINALIZED' or productionOrderForPlanning.estateOrder == 'EXECUTED'}">
+            <!--   <c:if test="#{productionOrderForPlanning.estateOrder == 'FINALIZED' or productionOrderForPlanning.estateOrder == 'EXECUTED'}">
                 <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.detailOrder']}"
                                  action="#{productionPlanningAction.selectMaterialDetail(productionOrderItem)}"
                                  reRender="formulaSet,ruleBotton2,ruleBotton1"/>
             </c:if>-->
             <!--MOSTRAR OPCION DETALLE MATERIAL-->
 
-                <a4j:commandLink ajaxSingle="true" immediate="true" value="#{messages['ProductionOrder.materialProduccion.selectOrder']}"
-                                 action="#{productionPlanningAction.selectDetail(productionOrderItem)}"
-                                 reRender="formulaSet,ruleBotton2,ruleBotton1"/>
+            <a4j:commandLink ajaxSingle="true" immediate="true"
+                             value="#{messages['ProductionOrder.materialProduccion.selectOrder']}"
+                             action="#{productionPlanningAction.selectDetail(productionOrderItem)}"
+                             reRender="formulaSet,ruleBotton2,ruleBotton1"/>
 
             <!--<rich:spacer width="5"/>
             &lt;!&ndash;MOSTRAR OPCION DETALLE INSUMO&ndash;&gt;
@@ -855,11 +861,12 @@
 
 <div class="buttons">
     <s:div id="ruleBotton2">
-        <h:commandButton action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
-                         value="#{messages['ProductionPlanning.generateDocumnt']}"
-                         rendered="#{productionPlanningAction.managed}"
-                         styleClass="button"
-                         tabindex="1"/>
+        <h:commandButton
+                action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
+                value="#{messages['ProductionPlanning.generateDocumnt']}"
+                rendered="#{productionPlanningAction.managed}"
+                styleClass="button"
+                tabindex="1"/>
 
         <!--&lt;!&ndash;<h:commandButton action="#{productionPlanningAction.makeFinalized}"
                          value="#{messages['ProductionPlanning.makeFinalized']}"
@@ -871,7 +878,7 @@
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="2"/>
-
+        -->
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
@@ -882,7 +889,7 @@
         <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>-->
+                         tabindex="2"/>
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"

@@ -24,15 +24,17 @@
 <ui:define name="body">
 <style type="text/css">
     .special tr[id] {
-        display:none;
+        display: none;
     }
 </style>
 <h:form id="rawMaterialPayRollForm">
 <div class="buttons">
     <h:commandButton action="#{rawMaterialPayRollAction.create}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+                     styleClass="button"
+                     rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
     <h:commandButton value="#{messages['Common.delete']}"
-                     styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
+                     styleClass="button"
+                     rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
         <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </h:commandButton>
@@ -106,21 +108,24 @@
 
             <s:decorate id="unitPriceField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.unitPrice']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" disabled="true" readonly="#{rawMaterialPayRollAction.readonly}" />
+                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" disabled="true"
+                             readonly="#{rawMaterialPayRollAction.readonly}"/>
             </s:decorate>
 
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.taxRate']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" disabled="true" readonly="#{rawMaterialPayRollAction.readonly}"/>
+                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" disabled="true"
+                             readonly="#{rawMaterialPayRollAction.readonly}"/>
             </s:decorate>
 
-        <s:div style="buttons">
-            <a4j:commandButton rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly and rawMaterialPayRollAction.delete }"
-                               value="#{messages['RawMaterialPayRoll.deleteAllPayroll']}">
-                <rich:componentControl for="deleteAllConfirmation" event="onclick" disableDefault="true"
-                                       operation="show"/>
-            </a4j:commandButton>
-        </s:div>
+            <s:div style="buttons">
+                <a4j:commandButton
+                        rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly and rawMaterialPayRollAction.delete }"
+                        value="#{messages['RawMaterialPayRoll.deleteAllPayroll']}">
+                    <rich:componentControl for="deleteAllConfirmation" event="onclick" disableDefault="true"
+                                           operation="show"/>
+                </a4j:commandButton>
+            </s:div>
 
         </s:div>
 
@@ -130,7 +135,8 @@
                 <c:when test="#{!rawMaterialPayRollAction.managed}">
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.rawMaterial']}</ui:define>
-                        <h:selectOneMenu id="metaProduct" value="#{rawMaterialPayRoll.metaProduct}" disabled="#{rawMaterialPayRollAction.readonly}"
+                        <h:selectOneMenu id="metaProduct" value="#{rawMaterialPayRoll.metaProduct}"
+                                         disabled="#{rawMaterialPayRollAction.readonly}"
                                          styleClass="input" required="true" tabindex="2">
                             <s:selectItems value="#{collectableProductList}"
                                            var="product"
@@ -143,8 +149,9 @@
                 <c:otherwise>
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['CollectionForm.rawMaterial']}</ui:define>
-                        <h:inputText id="metaProduct" value="#{rawMaterialPayRoll.metaProduct.fullNameRawMaterial}" styleClass="input"
-                                     maxlength="150" tabindex="1" required="false" readonly="true" >
+                        <h:inputText id="metaProduct" value="#{rawMaterialPayRoll.metaProduct.fullNameRawMaterial}"
+                                     styleClass="input"
+                                     maxlength="150" tabindex="1" required="false" readonly="true">
                         </h:inputText>
                     </s:decorate>
                 </c:otherwise>
@@ -152,8 +159,9 @@
 
             <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
-                <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}" styleClass="input"
-                             maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}" >
+                <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}"
+                             styleClass="input"
+                             maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}">
                 </h:inputText>
                 <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                                  title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
@@ -163,16 +171,18 @@
                 </a4j:commandLink>
             </s:decorate>
 
-        <s:div style="buttons">
+            <s:div style="buttons">
 
-            <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
-                               value="#{messages['RawMaterialPayRoll.generatePayroll']}"
-                               action="#{rawMaterialPayRollAction.generate}"></a4j:commandButton>
+                <a4j:commandButton reRender="formPanel,collectedRawMaterialList"
+                                   rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
+                                   value="#{messages['RawMaterialPayRoll.generatePayroll']}"
+                                   action="#{rawMaterialPayRollAction.generate}"></a4j:commandButton>
 
-            <a4j:commandButton reRender="formPanel,collectedRawMaterialList" rendered="#{!rawMaterialPayRollAction.managed and rawMaterialPayRollAction.readonly}"
-                               value="#{messages['RawMaterialPayRoll.redefinePayroll']}"
-                               action="#{rawMaterialPayRollAction.redefine}"></a4j:commandButton>
-        </s:div>
+                <a4j:commandButton reRender="formPanel,collectedRawMaterialList"
+                                   rendered="#{!rawMaterialPayRollAction.managed and rawMaterialPayRollAction.readonly}"
+                                   value="#{messages['RawMaterialPayRoll.redefinePayroll']}"
+                                   action="#{rawMaterialPayRollAction.redefine}"></a4j:commandButton>
+            </s:div>
 
         </s:div>
 
@@ -192,234 +202,236 @@
 <rich:spacer height="10"/>
 
 
-
 <rich:dataTable id="collectedRawMaterialList" value="#{rawMaterialPayRoll.rawMaterialPayRecordList}"
-                var="rawMaterialPayRecordItem" width="100%" columnsWidth="15%,7%,7%,7%,7%,7%,7%,7%,7%,7%" >
-    <f:facet name="header">
-        <rich:columnGroup>
-            <rich:column rowspan="2">
-                #{messages['RawMaterialPayRoll.rawMaterialProducer']}
-            </rich:column>
-            <rich:column colspan="2">
-                #{messages['RawMaterialPayRoll.amounts']}
-            </rich:column>
-            <rich:column rowspan="2">
-                #{messages['RawMaterialPayRecordDetails.totalMoneyCollected']}
-            </rich:column>
-            <rich:column colspan="9">
-                #{messages['RawMaterialPayRoll.discounts']}
-            </rich:column>
-            <rich:column rowspan="2">
-                #{messages['RawMaterialPayRoll.otherIncomings']}
-            </rich:column>
-            <rich:column rowspan="2">
-                #{messages['RawMaterialPayRoll.liquidPayable']}
-            </rich:column>
-            <rich:column rowspan="2" rendered="#{rawMaterialPayRollAction.managed}">
-                #{messages['Common.action']}
-            </rich:column>
-            <rich:column breakBefore="true">
-                #{messages['RawMaterialPayRoll.receivedAmount']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialPayRoll.unitPrice']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.withholdingTax']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.alcohol']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.concentrated']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.credit']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.veterinary']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.yogurt']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.cans']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialProducerDiscount.otherDiscounts']}
-            </rich:column>
-            <rich:column>
-                #{messages['RawMaterialPayRoll.productiveZoneAdjustment']}
-            </rich:column>
-        </rich:columnGroup>
-    </f:facet>
+                var="rawMaterialPayRecordItem" width="100%" columnsWidth="15%,7%,7%,7%,7%,7%,7%,7%,7%,7%">
+<f:facet name="header">
+    <rich:columnGroup>
+        <rich:column rowspan="2">
+            #{messages['RawMaterialPayRoll.rawMaterialProducer']}
+        </rich:column>
+        <rich:column colspan="2">
+            #{messages['RawMaterialPayRoll.amounts']}
+        </rich:column>
+        <rich:column rowspan="2">
+            #{messages['RawMaterialPayRecordDetails.totalMoneyCollected']}
+        </rich:column>
+        <rich:column colspan="9">
+            #{messages['RawMaterialPayRoll.discounts']}
+        </rich:column>
+        <rich:column rowspan="2">
+            #{messages['RawMaterialPayRoll.otherIncomings']}
+        </rich:column>
+        <rich:column rowspan="2">
+            #{messages['RawMaterialPayRoll.liquidPayable']}
+        </rich:column>
+        <rich:column rowspan="2" rendered="#{rawMaterialPayRollAction.managed}">
+            #{messages['Common.action']}
+        </rich:column>
+        <rich:column breakBefore="true">
+            #{messages['RawMaterialPayRoll.receivedAmount']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialPayRoll.unitPrice']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.withholdingTax']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.alcohol']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.concentrated']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.credit']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.veterinary']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.yogurt']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.cans']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialProducerDiscount.otherDiscounts']}
+        </rich:column>
+        <rich:column>
+            #{messages['RawMaterialPayRoll.productiveZoneAdjustment']}
+        </rich:column>
+    </rich:columnGroup>
+</f:facet>
 
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.rawMaterialProducer.fullName}"/>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.totalAmount}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.credit}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.veterinary}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.yogurt}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.cans}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherDiscount}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherIncoming}">
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{rawMaterialPayRecordItem.liquidPayable}" >
-            <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-        </h:outputText>
-    </rich:column>
-    <rich:column rendered="#{rawMaterialPayRollAction.managed}">
-        <h:commandLink value="#{messages['Common.select']}" action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}" />
-        <!--<rich:spacer/>
-        <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />-->
-    </rich:column>
-    <!--Todo: la columna del total acopiado esta en vaz del total pesado por error-->
-    <f:facet name="footer">
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.rawMaterialProducer.fullName}"/>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.totalAmount}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialPayRoll.unitPrice}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.totalPayCollected}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.withholdingTax}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.alcohol}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.concentrated}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.credit}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.veterinary}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.yogurt}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.cans}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherDiscount}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.productiveZoneAdjustment}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.rawMaterialProducerDiscount.otherIncoming}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column>
+    <h:outputText value="#{rawMaterialPayRecordItem.liquidPayable}">
+        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+    </h:outputText>
+</rich:column>
+<rich:column rendered="#{rawMaterialPayRollAction.managed}">
+    <h:commandLink value="#{messages['Common.select']}"
+                   action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}"/>
+    <!--<rich:spacer/>
+ <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />-->
+</rich:column>
+<!--Todo: la columna del total acopiado esta en vaz del total pesado por error-->
+<f:facet name="footer">
 
-        <rich:columnGroup>
-            <rich:column>#{messages['Common.totals']}</rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalCollectedByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalMountCollectdByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
+    <rich:columnGroup>
+        <rich:column>#{messages['Common.totals']}</rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalCollectedByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalMountCollectdByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
 
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalRetentionGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalRetentionGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
 
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalAlcoholByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalConcentratedByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalAlcoholByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalConcentratedByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
 
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalCreditByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalVeterinaryByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalYogourdByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalRecipByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalOtherDiscountByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalAdjustmentByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalOtherIncomeByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column>
-                <h:outputText value="#{rawMaterialPayRoll.totalLiquidByGAB}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-        </rich:columnGroup>
-    </f:facet>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalCreditByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalVeterinaryByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalYogourdByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalRecipByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalOtherDiscountByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalAdjustmentByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalOtherIncomeByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+        <rich:column>
+            <h:outputText value="#{rawMaterialPayRoll.totalLiquidByGAB}">
+                <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+            </h:outputText>
+        </rich:column>
+    </rich:columnGroup>
+</f:facet>
 
 </rich:dataTable>
 
 <div class="buttons">
     <h:commandButton action="#{rawMaterialPayRollAction.create}" value="#{messages['Common.save']}"
-                     styleClass="button" rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+                     styleClass="button"
+                     rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
     <h:commandButton value="#{messages['Common.delete']}"
-                     styleClass="button" rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
+                     styleClass="button"
+                     rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
         <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </h:commandButton>
@@ -466,8 +478,8 @@
 <rich:jQuery selector="#name" query="focus()" timing="onload"/>
 
 <s:decorate id="productiveZoneModalPanelContainer" template="/production/searchProductiveZoneModalPanel.xhtml">
-    <ui:param name="listTitle" value="#{messages['RawMaterialPayRoll.searchProductiveZone']}" />
-    <ui:param name="searchPanelTitle" value="#{messages['RawMaterialPayRoll.searchProductiveZone']}" />
+    <ui:param name="listTitle" value="#{messages['RawMaterialPayRoll.searchProductiveZone']}"/>
+    <ui:param name="searchPanelTitle" value="#{messages['RawMaterialPayRoll.searchProductiveZone']}"/>
     <ui:param name="dialogId" value="productiveZoneModalPanel"/>
     <ui:define name="assignButton">
         <a4j:commandButton id="assignButton"

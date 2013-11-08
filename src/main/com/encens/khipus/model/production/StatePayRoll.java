@@ -8,9 +8,9 @@ package com.encens.khipus.model.production;
  * To change this template use File | Settings | File Templates.
  */
 public enum StatePayRoll {
-    PENDING("PENDING","PENDIENTE"),
-    APPROVED("APPROVED","APROBADO"),
-    EXECUTED("EXECUTED","PENDIENTE");
+    PENDING("PENDING", "PENDIENTE"),
+    APPROVED("APPROVED", "APROBADO"),
+    EXECUTED("EXECUTED", "PENDIENTE");
     private String value;
     private String state;
 
