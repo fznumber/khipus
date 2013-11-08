@@ -52,14 +52,14 @@
 -->
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
+                         rendered="#{!productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="2">
             <s:defaultAction/>
         </h:commandButton>
-        <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
+        <!--<h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
+                         tabindex="2"/>-->
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'  and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
@@ -104,7 +104,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <a4j:commandButton id="editFormulaButton" value="#{messages['ProductionPlanning.editFormulaButton']}"
                    action="#{productionPlanningAction.initEditFormula}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
-                   rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder)}"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder)}"
                    ajaxSingle="true"/>
 
 <a4j:region>
@@ -147,7 +147,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.producingAmount']}</ui:define>
-            <h:inputText value="#{productionOrderForPlanning.expendAmount}"
+            <h:inputText value="#{productionOrderForPlanning.producedAmount}"
                          required="true" styleClass="input" tabindex="5"
                          disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
@@ -218,6 +218,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                            value="#{messages['ProductionPlanning.innerButtonAdd']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                                            rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED' and !productionPlanningAction.dispobleBalance}"/>
+
+                        <!--<a4j:commandButton id="createInnerButton" action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
+                                         styleClass="button"
+                                         rendered="#{ !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}">
+                            <s:defaultAction/>
+                        </a4j:commandButton>-->
+
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
@@ -344,6 +351,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <rich:column>
                         #{messages['ProductionPlanning.inputAmount']}
                     </rich:column>
+                    <rich:column>
+                        #{messages['ProductionOrder.unitPriceCost']}
+                    </rich:column>
                 </rich:columnGroup>
             </f:facet>
 
@@ -360,6 +370,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
+
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.metaProduct.productItem.unitCost}"/>
+            </rich:column>
+
 
         </rich:dataTable>
     </app:fieldset>
@@ -785,7 +800,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <rich:column styleClass="center">
 
             <a4j:commandLink ajaxSingle="true" immediate="true"
-                             value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
+                             value="#{ productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
                              action="#{productionPlanningAction.select(productionOrderItem)}"
                              rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1"/>
@@ -877,19 +892,21 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                          value="#{messages['ProductionPlanning.makeExecuted']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
-        -->
+                         tabindex="2"/>-->
+
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{productionPlanningAction.formulaState eq 'NONE' and !productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
+                         rendered="#{!productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="1">
             <s:defaultAction/>
         </h:commandButton>
 
+<!--
         <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
                          tabindex="2"/>
+-->
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
