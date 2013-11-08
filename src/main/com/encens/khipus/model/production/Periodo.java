@@ -1,7 +1,5 @@
 package com.encens.khipus.model.production;
 
-import com.encens.khipus.model.employees.Month;
-
 import java.util.Date;
 
 /**
@@ -12,8 +10,8 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public enum Periodo {
-    FIRSTPERIODO("Periodo.first",1,15),
-    SECONDPERIODO("Periodo.second",16,30);
+    FIRSTPERIODO("Periodo.first", 1, 15),
+    SECONDPERIODO("Periodo.second", 16, 30);
 
     private int initDay;
     private int endDay;
@@ -21,7 +19,7 @@ public enum Periodo {
     private Date endDate;
     private String resourceKey;
 
-    private Periodo(String resourceKey,int initDay, int endDay) {
+    private Periodo(String resourceKey, int initDay, int endDay) {
         this.initDay = initDay;
         this.endDay = endDay;
         this.resourceKey = resourceKey;
@@ -44,23 +42,20 @@ public enum Periodo {
     }
 
     public int getEndDay(int mount, int year) {
-        if((mount == 1 || mount == 3 || mount ==5 || mount ==7 || mount ==8 || mount ==10 || mount ==12) && (resourceKey == "Periodo.second"))
-        return endDay +1;
+        if ((mount == 1 || mount == 3 || mount == 5 || mount == 7 || mount == 8 || mount == 10 || mount == 12) && (resourceKey == "Periodo.second"))
+            return endDay + 1;
 
-        if(mount == 2)
-        {
-          if(isBisiesto(year))
-          {
-              return 28;
-          }
+        if (mount == 2) {
+            if (isBisiesto(year)) {
+                return 28;
+            }
             return 29;
         }
         return endDay;
     }
 
-    private boolean isBisiesto(int year)
-    {
-        if (year %4 == 0 && (year% 100 != 0 || year% 400 == 0)) {
+    private boolean isBisiesto(int year) {
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
             return true;
         }
 
@@ -74,5 +69,9 @@ public enum Periodo {
 
     public void setEndDay(int endDay) {
         this.endDay = endDay;
+    }
+
+    public String getPeriodoLiteral() {
+        return (resourceKey == "Periodo.first") ? " Primera Quincena " : " Segunda Quincena ";
     }
 }

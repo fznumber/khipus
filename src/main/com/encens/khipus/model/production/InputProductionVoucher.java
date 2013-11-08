@@ -21,19 +21,22 @@ import javax.persistence.*;
 @EntityListeners(CompanyListener.class)
 public class InputProductionVoucher implements BaseModel {
     @Id
-    @Column(name = "IDVALEINSUMOSREQUERIDOS",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDVALEINSUMOSREQUERIDOS", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "InputProductionVoucher_Generator")
     private Long id;
 
     @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double amount;
 
+    @Column(name = "PRECIOCOSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double priceCostTotal = 0.0;
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @Version
@@ -90,5 +93,13 @@ public class InputProductionVoucher implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Double getPriceCostTotal() {
+        return priceCostTotal;
+    }
+
+    public void setPriceCostTotal(Double priceCostTotal) {
+        this.priceCostTotal = priceCostTotal;
     }
 }

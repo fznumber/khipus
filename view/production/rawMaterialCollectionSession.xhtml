@@ -5,6 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 xmlns:rich="http://richfaces.org/rich"
                 template="/layout/template.xhtml">
 
@@ -24,10 +25,12 @@
     <ui:define name="body">
         <h:form id="rawMaterialCollectionSessionForm">
             <div class="buttons">
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.create}" value="#{messages['Common.save']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.create}"
+                                 value="#{messages['Common.save']}"
                                  styleClass="button"
                                  rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.update}" value="#{messages['Common.save']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.update}"
+                                 value="#{messages['Common.save']}"
                                  styleClass="button"
                                  rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
@@ -36,7 +39,8 @@
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.cancel}" value="#{messages['Common.cancel']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.cancel}"
+                                 value="#{messages['Common.cancel']}"
                                  styleClass="button" immediate="true"/>
             </div>
 
@@ -54,9 +58,11 @@
 
                 <h:panelGrid columns="2" width="100%">
                     <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['RawMaterialCollectionSession.productiveZoneName']}</ui:define>
-                        <h:inputText id="productiveZone" value="#{rawMaterialCollectionSession.fullNameOfProductiveZone}" styleClass="input"
-                                     maxlength="150" tabindex="1" required="true" >
+                        <ui:define
+                                name="label">#{messages['RawMaterialCollectionSession.productiveZoneName']}</ui:define>
+                        <h:inputText id="productiveZone"
+                                     value="#{rawMaterialCollectionSession.fullNameOfProductiveZone}" styleClass="input"
+                                     maxlength="150" tabindex="1" required="true">
                         </h:inputText>
                         <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                                          title="#{messages['RawMaterialCollectionSession.selectProductiveZone']}"
@@ -67,12 +73,13 @@
                     </s:decorate>
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialCollectionSession.date']}</ui:define>
-                        <rich:calendar value="#{rawMaterialCollectionSession.date}" required="true" />
+                        <rich:calendar value="#{rawMaterialCollectionSession.date}" required="true"/>
                     </s:decorate>
                     <c:choose>
                         <c:when test="#{!rawMaterialCollectionSessionAction.managed}">
                             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                                <ui:define name="label">#{messages['RawMaterialCollectionSession.rawMaterial']}</ui:define>
+                                <ui:define
+                                        name="label">#{messages['RawMaterialCollectionSession.rawMaterial']}</ui:define>
                                 <h:selectOneMenu value="#{rawMaterialCollectionSession.metaProduct}"
                                                  styleClass="input" required="true" tabindex="2">
                                     <s:selectItems value="#{collectableProductList}"
@@ -85,21 +92,24 @@
                         </c:when>
                         <c:otherwise>
                             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                                <ui:define name="label">#{messages['RawMaterialCollectionSession.rawMaterial']}</ui:define>
-                                <h:inputText value="#{rawMaterialCollectionSession.metaProduct.fullNameRawMaterial}" styleClass="input"
-                                             maxlength="150" tabindex="1" required="false" readonly="true" >
+                                <ui:define
+                                        name="label">#{messages['RawMaterialCollectionSession.rawMaterial']}</ui:define>
+                                <h:inputText value="#{rawMaterialCollectionSession.metaProduct.fullNameRawMaterial}"
+                                             styleClass="input"
+                                             maxlength="150" tabindex="1" required="false" readonly="true">
                                 </h:inputText>
                             </s:decorate>
                         </c:otherwise>
                     </c:choose>
                     <s:decorate id="totalAmountField" template="/include/viewField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialCollectionSession.totalAmount']}</ui:define>
-                        <h:outputText value="#{rawMaterialCollectionSessionAction.totalAmount}" />
+                        <h:outputText value="#{rawMaterialCollectionSessionAction.totalAmount}"/>
                     </s:decorate>
                 </h:panelGrid>
 
-                <rich:dataTable id="collectedRawMaterialList" value="#{rawMaterialCollectionSession.collectedRawMaterialList}"
-                                var="collectedRawMaterialItem" width="100%" columnsWidth="25%,25%,25%" >
+                <rich:dataTable id="collectedRawMaterialList"
+                                value="#{rawMaterialCollectionSession.collectedRawMaterialList}"
+                                var="collectedRawMaterialItem" width="100%" columnsWidth="25%,25%,25%">
                     <f:facet name="header">
                         <rich:columnGroup>
                             <rich:column>
@@ -127,19 +137,22 @@
                         <h:outputText value="#{collectedRawMaterialItem.rawMaterialProducer.firstName}"/>
                     </rich:column>
                     <rich:column>
-                        <h:inputText id="totalAmount" value="#{collectedRawMaterialItem.amount}" required="true" style="width:95%;">
-                            <a4j:support ajaxSingle="true" event="onblur" reRender="totalAmountField" />
+                        <h:inputText id="totalAmount" value="#{collectedRawMaterialItem.amount}" required="true"
+                                     style="width:95%;">
+                            <a4j:support ajaxSingle="true" event="onblur" reRender="totalAmountField"/>
                         </h:inputText>
-                        <rich:message for="totalAmount" styleClass="single-error" />
+                        <rich:message for="totalAmount" styleClass="single-error"/>
                     </rich:column>
                 </rich:dataTable>
             </rich:panel>
 
             <div class="buttons">
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.create}" value="#{messages['Common.save']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.create}"
+                                 value="#{messages['Common.save']}"
                                  styleClass="button"
                                  rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.update}" value="#{messages['Common.save']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.update}"
+                                 value="#{messages['Common.save']}"
                                  styleClass="button"
                                  rendered="#{rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
@@ -148,7 +161,8 @@
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
-                <h:commandButton action="#{rawMaterialCollectionSessionAction.cancel}" value="#{messages['Common.cancel']}"
+                <h:commandButton action="#{rawMaterialCollectionSessionAction.cancel}"
+                                 value="#{messages['Common.cancel']}"
                                  styleClass="button" immediate="true"/>
             </div>
         </h:form>
@@ -174,8 +188,8 @@
         <rich:jQuery selector="#name" query="focus()" timing="onload"/>
 
         <s:decorate id="productiveZoneModalPanelContainer" template="/production/searchProductiveZoneModalPanel.xhtml">
-            <ui:param name="listTitle" value="#{messages['RawMaterialCollectionSession.searchProductiveZone']}" />
-            <ui:param name="searchPanelTitle" value="#{messages['RawMaterialCollectionSession.searchProductiveZone']}" />
+            <ui:param name="listTitle" value="#{messages['RawMaterialCollectionSession.searchProductiveZone']}"/>
+            <ui:param name="searchPanelTitle" value="#{messages['RawMaterialCollectionSession.searchProductiveZone']}"/>
             <ui:param name="dialogId" value="productiveZoneModalPanel"/>
             <ui:define name="assignButton">
                 <a4j:commandButton id="assignButton"

@@ -10,6 +10,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
 
@@ -30,16 +31,16 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public ProductionPlanning find(long id) {
         String query = "ProductionPlanning.widthProductionOrderAndProductCompositionAndProcessedProductFind";
-        ProductionPlanning pp = (ProductionPlanning)getEntityManager().createNamedQuery(query)
-                                                                       .setParameter("id", id)
-                                                                       .getSingleResult();
+        ProductionPlanning pp = (ProductionPlanning) getEntityManager().createNamedQuery(query)
+                .setParameter("id", id)
+                .getSingleResult();
         return pp;
     }
 
     @Override
     protected Object preUpdate(Object entity) {
         try {
-            ProductionPlanning planning = (ProductionPlanning)entity;
+            ProductionPlanning planning = (ProductionPlanning) entity;
             executeMathematicalFormulas(planning);
             createVouchersForProductionInputs(planning);
             createVouchersForProductionOutputs(planning);
@@ -50,7 +51,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     private void executeMathematicalFormulas(ProductionPlanning planning) throws IOException, ProductCompositionException {
-        for(ProductionOrder po : planning.getProductionOrderList()) {
+        for (ProductionOrder po : planning.getProductionOrderList()) {
             evaluatorMathematicalExpressionsService.executeMathematicalFormulas(po);
         }
     }
@@ -59,11 +60,11 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         if (planning.getState() != EXECUTED)
             return;
 
-        for(ProductionOrder po : planning.getProductionOrderList()) {
+        for (ProductionOrder po : planning.getProductionOrderList()) {
             if (po.getInputProductionVoucherList().size() > 0)
                 continue;
 
-            for(ProductionIngredient pi : po.getProductComposition().getProductionIngredientList()) {
+            for (ProductionIngredient pi : po.getProductComposition().getProductionIngredientList()) {
                 InputProductionVoucher voucher = new InputProductionVoucher();
                 voucher.setProductionOrder(po);
                 voucher.setMetaProduct(pi.getMetaProduct());
@@ -77,15 +78,30 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         if (planning.getState() != EXECUTED)
             return;
 
-        for(ProductionOrder po : planning.getProductionOrderList()) {
+        for (ProductionOrder po : planning.getProductionOrderList()) {
             if (po.getOutputProductionVoucherList().size() > 0)
                 continue;
 
             OutputProductionVoucher voucher = new OutputProductionVoucher();
             voucher.setProductionOrder(po);
-            voucher.setProducedAmount(po.getProducingAmount());
+            voucher.setProducedAmount(po.getExpendAmount());
             voucher.setProcessedProduct(po.getProductComposition().getProcessedProduct());
             po.getOutputProductionVoucherList().add(voucher);
         }
     }
+
+    public BigDecimal getMountInWarehouse(MetaProduct metaProduct) {
+        return (BigDecimal) getEntityManager()
+                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .setParameter("productItem", metaProduct.getProductItem())
+                .getSingleResult();
+    }
+
+    public BigDecimal getMountInWarehouse(Long id) {
+        return (BigDecimal) getEntityManager()
+                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem.id = :id")
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
 }

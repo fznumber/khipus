@@ -39,14 +39,33 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "CODIGO", length = 50, nullable = false)
     private String code;
 
-    @Column(name = "CANTIDADPRODUCIR", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private Double producingAmount;
+    @Column(name = "ESTADOORDEN", length = 20, nullable = true)
+    @Enumerated(EnumType.STRING)
+    private ProductionPlanningState estateOrder = ProductionPlanningState.PENDING;
+
+    @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    private Double expendAmount;
 
     @Column(name = "PESOCONTENEDOR", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double containerWeight;
 
-    @Column(name = "TEORICOOBTENIDO", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private Double supposedAmount;
+    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    private Double producedAmount;
+
+    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceMaterial = 0.0;
+
+    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceInput = 0.0;
+
+    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalPriceJourney = 0.0;
+
+    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double totalCostProduction = 0.0;
+
+    @Transient
+    private Double milk;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
@@ -63,6 +82,10 @@ public class ProductionOrder implements BaseModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OutputProductionVoucher> outputProductionVoucherList = new ArrayList<OutputProductionVoucher>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
@@ -108,12 +131,12 @@ public class ProductionOrder implements BaseModel {
         this.company = company;
     }
 
-    public Double getProducingAmount() {
-        return producingAmount;
+    public Double getExpendAmount() {
+        return expendAmount;
     }
 
-    public void setProducingAmount(Double producingAmount) {
-        this.producingAmount = producingAmount;
+    public void setExpendAmount(Double producingAmount) {
+        this.expendAmount = producingAmount;
     }
 
     public List<InputProductionVoucher> getInputProductionVoucherList() {
@@ -140,15 +163,93 @@ public class ProductionOrder implements BaseModel {
         this.containerWeight = containerWeight;
     }
 
-    public Double getSupposedAmount() {
-        return supposedAmount;
+    public Double getProducedAmount() {
+        return producedAmount;
     }
 
-    public void setSupposedAmount(Double supposedAmount) {
-        this.supposedAmount = supposedAmount;
+    public void setProducedAmount(Double supposedAmount) {
+        this.producedAmount = supposedAmount;
+    }
+
+
+    public Double getMilk() {
+        return milk;
+    }
+
+    public void setMilk(Double milk) {
+        this.milk = milk;
+    }
+
+    public Double getMountMilk() {
+        Double mount = 0.0;
+        if (this.productComposition != null) {
+            List<ProductionIngredient> ingredients = this.productComposition.getProductionIngredientList();
+
+            for (ProductionIngredient ingredient : ingredients) {
+                if (ingredient.getMetaProduct().getName().compareTo("LECHE CRUDA") == 0) {
+                    mount = ingredient.getAmount();
+                }
+            }
+        }
+        return mount;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+
+        if (orderMaterials == null) orderMaterials = new ArrayList<OrderMaterial>();
+
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orders) {
+        orderMaterials.clear();
+        if (orders != null) {
+            this.orderMaterials.addAll(orders);
+        }
+    }
+
+    public Double getTotalPriceMaterial() {
+        return totalPriceMaterial;
+    }
+
+    public void setTotalPriceMaterial(Double totalPriceMaterial) {
+        this.totalPriceMaterial = totalPriceMaterial;
+    }
+
+    public Double getTotalPriceInput() {
+        return totalPriceInput;
+    }
+
+    public void setTotalPriceInput(Double totalPriceInput) {
+        this.totalPriceInput = totalPriceInput;
+    }
+
+    public Double getTotalPriceJourney() {
+        return totalPriceJourney;
+    }
+
+    public void setTotalPriceJourney(Double totalPriceJourney) {
+        this.totalPriceJourney = totalPriceJourney;
+    }
+
+    public Double getTotalCostProduction() {
+        return totalCostProduction;
+    }
+
+    public void setTotalCostProduction(Double totalCostProduction) {
+        this.totalCostProduction = totalCostProduction;
     }
 
     public String getOrderProduct() {
         return this.code + " " + this.productComposition.getProcessedProduct().getProductItem().getName();
+
+    }
+
+    public ProductionPlanningState getEstateOrder() {
+        return estateOrder;
+    }
+
+    public void setEstateOrder(ProductionPlanningState estateOrder) {
+        this.estateOrder = estateOrder;
     }
 }

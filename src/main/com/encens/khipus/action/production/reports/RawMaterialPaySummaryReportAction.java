@@ -3,7 +3,6 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
-import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.GeneratedPayrollType;
 import com.encens.khipus.model.employees.Gestion;
@@ -19,8 +18,10 @@ import org.jboss.seam.annotations.*;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -77,18 +78,22 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
         dateIni = Calendar.getInstance();
         dateEnd = Calendar.getInstance();
-        dateIni.set(gestion.getYear(),month.getValue(),periodo.getInitDay());
-        dateEnd.set(gestion.getYear(),month.getValue(),periodo.getEndDay(month.getValue()+1,periodo.getEndDay()));
+        dateIni.set(gestion.getYear(), month.getValue(), periodo.getInitDay());
+        dateEnd.set(gestion.getYear(), month.getValue(), periodo.getEndDay(month.getValue() + 1, periodo.getEndDay()));
         sdf.setCalendar(dateIni);
         sdf.setCalendar(dateEnd);
 
-        addSummaryTotal(reportParameters);
+        try {
+            addSummaryTotal(reportParameters);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         log.debug("generating expenseBudgetReport......................................");
 
-        reportParameters.put("reportTitle",messages.get("Report.titleGeneral"));
-        reportParameters.put("period",messages.get("Report.period"));
-        reportParameters.put("startDate",df.format(dateIni.getTime()));
-        reportParameters.put("endDate",df.format(dateEnd.getTime()));
+        reportParameters.put("reportTitle", messages.get("Report.titleGeneral"));
+        reportParameters.put("period", messages.get("Report.period"));
+        reportParameters.put("startDate", df.format(dateIni.getTime()));
+        reportParameters.put("endDate", df.format(dateEnd.getTime()));
 
         super.generateReport(
                 "rawMaterialPaySummaryReportAction",
@@ -99,18 +104,25 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
                 reportParameters);
     }
 
-    private void addSummaryTotal(HashMap<String, Object> params) {
+    private void addSummaryTotal(HashMap<String, Object> params) throws ParseException {
         //discounts = rawMaterialPayRollService.getDiscounts(dateIni.getTime(),dateEnd.getTime(),null,null);
-        DecimalFormat df = new DecimalFormat("#0.00");
-        discounts = rawMaterialPayRollService.getDiscounts(dateIni,dateEnd,zone,metaProduct);
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
-        summaryTotal = rawMaterialPayRollService.getSumaryTotal(dateIni,dateEnd,zone,metaProduct);
+        Date startDate = dateFormat.parse(dateFormat.format(dateIni.getTime()));
+        Date endDate = dateFormat.parse(dateFormat.format(dateEnd.getTime()));
+
+        discounts = rawMaterialPayRollService.getDiscounts(startDate, endDate, zone, metaProduct);
+
+        summaryTotal = rawMaterialPayRollService.getSumaryTotal(startDate, endDate, zone, metaProduct);
 
         Double totalMoneyCollected = discounts.mount;
-        Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
-        Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, dateIni, dateEnd, metaProduct);
-        Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, dateIni, dateEnd, metaProduct);
+        Double totalDifferencesMoney = rawMaterialPayRollService.getTotalMoneyDiff(discounts.unitPrice, startDate, endDate, metaProduct);
+        Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, startDate, endDate, metaProduct);
+        Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, startDate, endDate, metaProduct);
         Double totalMoneyBalance = totalMoneyCollected + totalDifferencesMoney;
+
+        Double total = totalMoneyBalance + discounts.otherIncome;
         params.put("total_collected", df.format(discounts.collected));
         params.put("diff_total", df.format(diffTotal));
         params.put("price_unit", df.format(discounts.unitPrice));
@@ -118,12 +130,12 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("difference_money", df.format(totalDifferencesMoney));
         params.put("total_money", df.format(totalMoneyBalance));
         params.put("weight_balance_total", df.format(balanceWeightTotal));
-        params.put("total_other_incom", df.format(totalMoneyBalance + discounts.otherIncome));
+        params.put("total_other_incom", df.format(total));
 
         //discounts
         Double totalDiscount = discounts.alcohol + discounts.concentrated + discounts.yogurt
-                             + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention
-                             + discounts.otherDiscount ;
+                + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention
+                + discounts.otherDiscount;
         //Double liquidPay = totalMoney - totalDifferences;
         params.put("alcohol", df.format(discounts.alcohol));
         params.put("concentrated", df.format(discounts.concentrated));
@@ -134,9 +146,17 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("retention", df.format(discounts.retention));
         params.put("otrosDescuentos", df.format(discounts.otherDiscount));
         params.put("otrosIngresos", df.format(discounts.otherIncome));
-        params.put("ajuste", df.format(discounts.adjustment));
+        Double iue, it;
+        iue = discounts.retention * 0.625;
+        //it = discounts.retention * 0.375;
+        it = discounts.retention - iue;
+        params.put("iue", df.format(iue));
+        params.put("it", df.format(it));
         params.put("total_differences", df.format(totalDiscount));
-        params.put("liquid_pay", df.format(discounts.liquid));
+        //todo: modificar ajustar el prorrateo
+        Double totalLiquid = total - totalDiscount;
+        //params.put("liquid_pay", df.format(discounts.liquid));
+        params.put("liquid_pay", df.format(totalLiquid));
 
     }
 
