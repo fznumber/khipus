@@ -272,7 +272,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
                 <s:decorate id="materialSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.producedAmount}"/>
+                    <h:outputText value="#{productionOrderForPlanning.producedAmount}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="estateOrderField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -287,27 +289,37 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:div>
                 <s:decorate id="producingAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.amountObtained'] }</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.expendAmount}"/>
+                    <h:outputText value="#{productionOrderForPlanning.expendAmount}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="totalPriceMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.totalPriceMaterial']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.totalPriceMaterial}"/>
+                    <h:outputText value="#{productionOrderForPlanning.totalPriceMaterial}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="totalPriceInputField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.totalPriceInput']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.totalPriceInput}"/>
+                    <h:outputText value="#{productionOrderForPlanning.totalPriceInput}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="totalPriceJourneyField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.totalPriceJourney']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.totalPriceJourney}"/>
+                    <h:outputText value="#{productionOrderForPlanning.totalPriceJourney}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="totalCostProductionField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.totalCostProduction']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.totalCostProduction}"/>
+                    <h:outputText value="#{productionOrderForPlanning.totalCostProduction}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </s:decorate>
 
                 <s:decorate id="unitCostMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -331,6 +343,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <a4j:commandButton action="#{productionPlanningAction.closeDetail}" ajaxSingle="true"
                                    value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
                                    reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
+                <h:commandButton
+                        action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning)}"
+                        value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
+                        styleClass="button"
+                        rendered="#{productionPlanningAction.managed}"
+                        tabindex="1"/>
+
             </s:div>
 
         </h:panelGrid>
@@ -372,7 +391,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </rich:column>
 
             <rich:column>
-                <h:outputText value="#{inputProductionItem.metaProduct.productItem.unitCost}"/>
+                <h:outputText value="#{inputProductionItem.metaProduct.productItem.unitCost}">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:outputText>
             </rich:column>
 
 

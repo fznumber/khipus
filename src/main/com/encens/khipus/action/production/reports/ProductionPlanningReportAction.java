@@ -42,7 +42,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     private List<ProductionPlanningAction.Consolidated> consolidatedsIN;
     private List<ProductionOrder> productionOrders;
     private ProductionPlanning productionPlanning;
-
+    private ProductionOrder productionOrder;
 
     private String date;
     private String state;
@@ -60,6 +60,70 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         super.generateSqlReport("incomeByInvoiceReport", "/production/reports/productionPlanningReportprub.jrxml", "titulo prueba", params);
     }*/
+
+    public void generateReportByOrder(ProductionOrder order)
+    {
+        productionOrder = order;
+        log.debug("Generate ProductionPlannigReportAction........");
+        TypedReportData typedReportData;
+        String templatePath = "/production/reports/productionPlanningReportprub.jrxml";
+        String fileName = "OrdenProduccion";
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        date = sdf.format(productionPlanning.getDate());
+        state = getEstate(productionPlanning.getState());
+        Map params = new HashMap();
+
+        params.putAll(getCommonDocumentParamsInfo());
+        setReportFormat(ReportFormat.PDF);
+
+
+        String query = " select nombre, codigo, cod_med  " +
+                " from metaproductoproduccion mp " +
+                " inner join WISE.inv_articulos ia " +
+                " on ia.cod_art = mp.codigo " +
+                " where idmetaproductoproduccion in ( ";
+        boolean band = true;
+        for (ProductionPlanningAction.Consolidated consolidated : consolidatedsIN) {
+            query += (band ? " " : ",") + consolidated.getIdMeta().toString();
+            band = false;
+        }
+        query += " )";
+
+        typedReportData = getReport(
+                fileName
+                , templatePath
+                , query
+                , params
+                , "OrderProductionByDayReportAction"
+        );
+
+        JasperPrint jasperPrint = typedReportData.getJasperPrint();
+
+        for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
+            int contName = 7;
+            int contUnidad = 9;
+            int contCod = 8;
+            int cantidad = 10;
+
+            for (ProductionPlanningAction.Consolidated consolidated : consolidatedsIN) {
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contName))).setText(consolidated.getName());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contUnidad))).setText(consolidated.getUnit());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(contCod))).setText(consolidated.getCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(cantidad))).setText(String.format("%.2f", consolidated.getAmount()));
+                contName += 4;
+                contUnidad += 4;
+                contCod += 4;
+                cantidad += 4;
+            }
+        }
+        try {
+            typedReportData.setJasperPrint(jasperPrint);
+            GenerationReportData generationReportData = new GenerationReportData(typedReportData);
+            generationReportData.exportReport();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void addProductionOrderPlanningDetailSubReport(Map mainReportParams) {
         log.debug("Generating productionOrderPlanningDetailSubReport.............................");
@@ -243,21 +307,14 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
     }
     */
-    /*
     @Override
     protected String getEjbql()
     {
-        " select nombre, codigo, cod_med  " +
-                " from metaproductoproduccion mp " +
-                " inner join WISE.inv_articulos ia " +
-                " on ia.cod_art = mp.codigo " +
-                " where idmetaproductoproduccion in (
         String sql = " SELECT metaProduct.name, metaProduct.code   " +
                 " FROM MetaProduct metaProduct  " +
                 " inner join ";
         return sql;
     }
-    */
 
 /*
     @Create

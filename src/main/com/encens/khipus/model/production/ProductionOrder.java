@@ -50,7 +50,7 @@ public class ProductionOrder implements BaseModel {
     private Double containerWeight;
 
     @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private Double producedAmount;
+    private Double producedAmount = 0.0;
 
     @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
     private Double totalPriceMaterial = 0.0;

@@ -83,7 +83,17 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="6" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.OrderProductionByDayReport.name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.productionPlanningReport.material}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="374" y="0" width="88" height="33"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.productionPlanningReport.amount}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -118,6 +128,16 @@
 					<font fontName="SansSerif" size="6"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="374" y="0" width="88" height="20"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["monto"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -174,6 +194,12 @@
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA["Responsable: "+$P{userLoginParam}]]></textFieldExpression>
 			</textField>
+			<subreport isUsingCache="true">
+				<reportElement positionType="Float" x="0" y="18" width="578" height="36"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{INCOMEBYCONCEPTSUBREPORT}]]></subreportExpression>
+			</subreport>
 		</band>
 	</summary>
 </jasperReport>
