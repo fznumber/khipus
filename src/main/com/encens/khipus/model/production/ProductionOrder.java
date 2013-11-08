@@ -44,14 +44,18 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "CODIGO", length = 50, nullable = false)
     private String code;
 
-    @Column(name = "CANTIDADPRODUCIR", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private Double producingAmount;
+    @Column(name = "ESTADOORDEN", length = 20, nullable = true)
+    @Enumerated(EnumType.STRING)
+    private ProductionPlanningState estateOrder = ProductionPlanningState.PENDING;
+
+    @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    private Double expendAmount;
 
     @Column(name = "PESOCONTENEDOR", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double containerWeight;
 
-    @Column(name = "TEORICOOBTENIDO", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private Double supposedAmount;
+    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    private Double producedAmount;
 
     @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
     private Double totalPriceMaterial = 0.0;
@@ -132,12 +136,12 @@ public class ProductionOrder implements BaseModel {
         this.company = company;
     }
 
-    public Double getProducingAmount() {
-        return producingAmount;
+    public Double getExpendAmount() {
+        return expendAmount;
     }
 
-    public void setProducingAmount(Double producingAmount) {
-        this.producingAmount = producingAmount;
+    public void setExpendAmount(Double producingAmount) {
+        this.expendAmount = producingAmount;
     }
 
     public List<InputProductionVoucher> getInputProductionVoucherList() {
@@ -164,12 +168,12 @@ public class ProductionOrder implements BaseModel {
         this.containerWeight = containerWeight;
     }
 
-    public Double getSupposedAmount() {
-        return supposedAmount;
+    public Double getProducedAmount() {
+        return producedAmount;
     }
 
-    public void setSupposedAmount(Double supposedAmount) {
-        this.supposedAmount = supposedAmount;
+    public void setProducedAmount(Double supposedAmount) {
+        this.producedAmount = supposedAmount;
     }
 
 
@@ -248,5 +252,13 @@ public class ProductionOrder implements BaseModel {
     public String getOrderProduct() {
         return this.code + " " + this.productComposition.getProcessedProduct().getProductItem().getName();
 
+    }
+
+    public ProductionPlanningState getEstateOrder() {
+        return estateOrder;
+    }
+
+    public void setEstateOrder(ProductionPlanningState estateOrder) {
+        this.estateOrder = estateOrder;
     }
 }

@@ -1,7 +1,5 @@
 package com.encens.khipus.service.production;
 
-import com.encens.khipus.exception.ConcurrencyException;
-import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
@@ -10,9 +8,6 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -89,7 +84,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
 
             OutputProductionVoucher voucher = new OutputProductionVoucher();
             voucher.setProductionOrder(po);
-            voucher.setProducedAmount(po.getProducingAmount());
+            voucher.setProducedAmount(po.getExpendAmount());
             voucher.setProcessedProduct(po.getProductComposition().getProcessedProduct());
             po.getOutputProductionVoucherList().add(voucher);
         }
