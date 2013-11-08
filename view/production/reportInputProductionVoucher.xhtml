@@ -19,22 +19,27 @@
         table {
             font-size: 1em;
         }
+
         .label {
             font-weight: bold;
             padding-left: 20px;
         }
+
         td {
             height: 2.4em;
         }
+
         .data-line {
             border-bottom: 1px dotted #616161;
         }
+
         .report-container {
             -moz-border-radius: 15px;
             border-radius: 15px;
             background-color: #EDEADD;
             padding: 10px;
         }
+
         .report-title {
             text-align: center;
             color: #578BB8;
@@ -42,17 +47,19 @@
             font-size: 1.2em;
             margin-bottom: 5px;
         }
-        .order-table{
-            border-collapse:collapse;
+
+        .order-table {
+            border-collapse: collapse;
             width: 100%;
         }
 
-        .order-table-header{
-            text-align:left;
-            background:none repeat scroll 0 0 #E5E5E5;
-            border-bottom:1px solid #BBBBBB;
-            padding:16px;
+        .order-table-header {
+            text-align: left;
+            background: none repeat scroll 0 0 #E5E5E5;
+            border-bottom: 1px solid #BBBBBB;
+            padding: 16px;
         }
+
         .order-table-row {
             border-bottom: 1px solid #616161;
         }
@@ -72,26 +79,46 @@
             </div>
             <table style="width:100%;">
                 <tr>
-                    <td><div class="label">#{messages['ProductionOrder.report.order']}</div></td>
-                    <td><div class="data-line">#{productionOrderReporter.productionOrder.code}</div></td>
-                    <td><div class="label">#{messages['ProductionOrder.report.date']}:</div></td>
-                    <td><div class="data-line">#{productionOrderReporter.productionOrder.productionPlanning.date}</div></td>
+                    <td>
+                        <div class="label">#{messages['ProductionOrder.report.order']}</div>
+                    </td>
+                    <td>
+                        <div class="data-line">#{productionOrderReporter.productionOrder.code}</div>
+                    </td>
+                    <td>
+                        <div class="label">#{messages['ProductionOrder.report.date']}:</div>
+                    </td>
+                    <td>
+                        <div class="data-line">#{productionOrderReporter.productionOrder.productionPlanning.date}</div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><div class="label">#{messages['ProductionOrder.report.processedProduct']}:</div></td>
-                    <td colspan="3"><div class="data-line">#{productionOrderReporter.productionOrder.productComposition.fullNameOfProcessedProduct}</div></td>
+                    <td>
+                        <div class="label">#{messages['ProductionOrder.report.processedProduct']}:</div>
+                    </td>
+                    <td colspan="3">
+                        <div class="data-line">#{productionOrderReporter.productionOrder.productComposition.fullNameOfProcessedProduct}</div>
+                    </td>
                 </tr>
                 <tr>
-                    <td><div class="label">#{messages['ProductionOrder.report.producingAmount']}:</div></td>
-                    <td colspan="3"><div class="data-line">#{productionOrderReporter.productionOrder.expendAmount}</div></td>
-                </tr>
-                <tr>
-                    <td colspan="4"><div class="label"></div></td>
+                    <td>
+                        <div class="label">#{messages['ProductionOrder.report.producingAmount']}:</div>
+                    </td>
+                    <td colspan="3">
+                        <div class="data-line">#{productionOrderReporter.productionOrder.expendAmount}</div>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <h:dataTable headerClass="order-table-header" styleClass="order-table" rowClasses="order-table-row" width="100%"
-                                     value="#{productionOrderReporter.productionOrder.inputProductionVoucherList}" var="inputVoucher">
+                        <div class="label"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <h:dataTable headerClass="order-table-header" styleClass="order-table"
+                                     rowClasses="order-table-row" width="100%"
+                                     value="#{productionOrderReporter.productionOrder.inputProductionVoucherList}"
+                                     var="inputVoucher">
                             <h:column>
                                 <f:facet name="header">#{messages['ProductionOrder.report.input.name']}</f:facet>
                                 #{inputVoucher.metaProduct.name}

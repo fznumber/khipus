@@ -229,7 +229,7 @@ public class GenericReportAction implements Serializable {
      * @param params             A map of params
      */
     public TypedReportData getReport(String reportId, String reportTemplatePath,
-                               String defaultReportTitle, Map params) {
+                                     String defaultReportTitle, Map params) {
         TypedReportData typedReportData = new TypedReportData();
         log.debug("Generating report........................");
         String reportTitleString = getReportTitle();
@@ -256,7 +256,7 @@ public class GenericReportAction implements Serializable {
         return typedReportData;
     }
 
-    public TypedReportData getReport(String reportId, String reportTemplatePath,String query, Map params,String defaultReportTitle ) {
+    public TypedReportData getReport(String reportId, String reportTemplatePath, String query, Map params, String defaultReportTitle) {
 
         TypedReportData typedReportData = new TypedReportData();
         log.debug("Generating sql report........................");

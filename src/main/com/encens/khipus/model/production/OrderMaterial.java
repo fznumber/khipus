@@ -32,7 +32,7 @@ import javax.persistence.*;
 public class OrderMaterial implements BaseModel {
 
     @Id
-    @Column(name = "IDORDENMATERIAL",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDORDENMATERIAL", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "OrderMaterial_Generator")
     private Long id;
 
@@ -66,11 +66,11 @@ public class OrderMaterial implements BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Long getId() {

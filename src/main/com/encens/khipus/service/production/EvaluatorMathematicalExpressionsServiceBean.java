@@ -78,17 +78,16 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         calculateMathematicalFormula(map);
     }
 
-    public BigDecimal getMountInWarehouse(MetaProduct metaProduct)
-    {
+    public BigDecimal getMountInWarehouse(MetaProduct metaProduct) {
         BigDecimal result = null;
-        try{
-        result =   (BigDecimal)getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
-                .setParameter("productItem", metaProduct.getProductItem())
-                .getSingleResult();
+        try {
+            result = (BigDecimal) getEntityManager()
+                    .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                    .setParameter("productItem", metaProduct.getProductItem())
+                    .getSingleResult();
             return result;
-        }catch (NoResultException nre){
-            return (result == null)? new BigDecimal(0):result;
+        } catch (NoResultException nre) {
+            return (result == null) ? new BigDecimal(0) : result;
         }
     }
 
@@ -274,7 +273,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         public void setResult(double result) {
             pi.setAmount(result);
             BigDecimal mount = getMountInWarehouse(pi.getMetaProduct());
-            pi.setMountWareHouse((mount==null) ? new BigDecimal(0) : mount);
+            pi.setMountWareHouse((mount == null) ? new BigDecimal(0) : mount);
         }
 
         public double getResult() {

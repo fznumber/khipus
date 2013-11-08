@@ -7,11 +7,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,17 +180,13 @@ public class ProductionOrder implements BaseModel {
         this.milk = milk;
     }
 
-    public Double getMountMilk()
-    {
+    public Double getMountMilk() {
         Double mount = 0.0;
-        if(this.productComposition != null)
-        {
+        if (this.productComposition != null) {
             List<ProductionIngredient> ingredients = this.productComposition.getProductionIngredientList();
 
-            for(ProductionIngredient ingredient : ingredients)
-            {
-                if(ingredient.getMetaProduct().getName().compareTo("LECHE CRUDA") == 0)
-                {
+            for (ProductionIngredient ingredient : ingredients) {
+                if (ingredient.getMetaProduct().getName().compareTo("LECHE CRUDA") == 0) {
                     mount = ingredient.getAmount();
                 }
             }
@@ -205,15 +196,15 @@ public class ProductionOrder implements BaseModel {
 
     public List<OrderMaterial> getOrderMaterials() {
 
-        if(orderMaterials == null) orderMaterials = new ArrayList<OrderMaterial>();
+        if (orderMaterials == null) orderMaterials = new ArrayList<OrderMaterial>();
 
         return orderMaterials;
     }
 
     public void setOrderMaterials(List<OrderMaterial> orders) {
         orderMaterials.clear();
-        if (orders != null){
-        this.orderMaterials.addAll(orders);
+        if (orders != null) {
+            this.orderMaterials.addAll(orders);
         }
     }
 
@@ -247,8 +238,8 @@ public class ProductionOrder implements BaseModel {
 
     public void setTotalCostProduction(Double totalCostProduction) {
         this.totalCostProduction = totalCostProduction;
-	}
-	
+    }
+
     public String getOrderProduct() {
         return this.code + " " + this.productComposition.getProcessedProduct().getProductItem().getName();
 

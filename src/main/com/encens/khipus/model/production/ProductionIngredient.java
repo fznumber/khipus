@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class ProductionIngredient implements com.encens.khipus.model.BaseModel {
 
     @Id
-    @Column(name = "IDINGREDIENTEPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDINGREDIENTEPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductIngredient_Generator")
     private Long id;
 
@@ -34,11 +34,11 @@ public class ProductionIngredient implements com.encens.khipus.model.BaseModel {
     private String mathematicalFormula;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductComposition productComposition;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @Column(name = "INGREDIENTEVERIFICABLE", nullable = true, length = 20)

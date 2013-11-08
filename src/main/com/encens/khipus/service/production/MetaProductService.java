@@ -1,7 +1,6 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.model.production.MetaProduct;
-import com.encens.khipus.model.warehouse.ProductItem;
 
 import javax.ejb.Local;
 
