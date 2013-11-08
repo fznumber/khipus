@@ -204,6 +204,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         setPriceCostInput();
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
+        if(productionPlanning.getId() != null)
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
 
         clearFormulation();
         disableEditingFormula();
@@ -353,6 +357,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         addMaterial = false;
         //productionOrderMaterial = order;
         productionOrder = order;
+        setTotalsMaterials(productionOrder);
+        setTotalsInputs(productionOrder);
+        setTotalHour(productionOrder);
+        setTotalCostProducticionAndUnitPrice(productionOrder);
         //orderMaterials = new ArrayList<OrderMaterial>();
         //orderMaterials.addAll(order.getOrderMaterials());
 
@@ -447,7 +455,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
         productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
         addMaterial = false;
-
+        if(productionPlanning.getId() != null)
         if (update() != Outcome.SUCCESS) {
             return;
         }
