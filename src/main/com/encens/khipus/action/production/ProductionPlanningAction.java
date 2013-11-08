@@ -11,6 +11,7 @@ import com.encens.khipus.service.production.EmployeeTimeCardService;
 import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
 import com.encens.khipus.service.production.ProcessedProductService;
 import com.encens.khipus.service.production.ProductionPlanningService;
+import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -596,7 +597,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             totalInput += (ingredient.getMetaProduct().getProductItem().getUnitCost().doubleValue()) * ingredient.getAmount();
         }
 
-        productionOrder.setTotalPriceInput(totalInput);
+        productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput,2, RoundUtil.RoundMode.SYMMETRIC));
     }
 
     public void setTotalsMaterials(ProductionOrder productionOrder) {
@@ -604,7 +605,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (OrderMaterial material : productionOrder.getOrderMaterials()) {
             totalMaterial += material.getPriceTotal();
         }
-        productionOrder.setTotalPriceMaterial(totalMaterial);
+        productionOrder.setTotalPriceMaterial(RoundUtil.getRoundValue(totalMaterial,2, RoundUtil.RoundMode.SYMMETRIC));
     }
 
     public ProductComposition getProductComposition() {
