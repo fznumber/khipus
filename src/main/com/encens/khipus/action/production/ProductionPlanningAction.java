@@ -583,8 +583,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney();
         productionOrder.setTotalCostProduction(total);
         Double priceUnit = 0.0;
-        if (productionOrder.getExpendAmount() > 0.0)
-            priceUnit = total / productionOrder.getExpendAmount();
+        if (productionOrder.getProducedAmount() > 0.0)
+            priceUnit = total / productionOrder.getProducedAmount();
 
         productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
     }
