@@ -146,8 +146,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </h:selectOneMenu>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['ProductionPlanning.producingAmount']}</ui:define>
-            <h:inputText value="#{productionOrderForPlanning.producedAmount}"
+            <ui:define name="label">#{messages['ProductionPlanning.espendingAmount']}</ui:define>
+            <h:inputText value="#{productionOrderForPlanning.expendAmount}"
                          required="true" styleClass="input" tabindex="5"
                          disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
@@ -272,7 +272,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
                 <s:decorate id="materialSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.producedAmount}">
+                    <h:outputText value="#{productionOrderForPlanning.expendAmount}">
                         <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                     </h:outputText>
                 </s:decorate>
@@ -289,7 +289,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:div>
                 <s:decorate id="producingAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.amountObtained'] }</ui:define>
-                    <h:outputText value="#{productionOrderForPlanning.expendAmount}">
+                    <h:outputText value="#{productionOrderForPlanning.producedAmount}">
                         <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                     </h:outputText>
                 </s:decorate>
@@ -504,7 +504,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
             <s:decorate id="processedProductSuppAmountField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-                <h:outputText value="#{productionOrderMaterialForPlanning.producedAmount}"/>
+                <h:outputText value="#{productionOrderMaterialForPlanning.expendAmount}"/>
             </s:decorate>
 
             <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -651,7 +651,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
-            <h:outputText value="#{productionOrderForPlanning.producedAmount}">
+            <h:outputText value="#{productionOrderForPlanning.expendAmount}">
             </h:outputText>
         </s:decorate>
         <s:decorate id="estateOrdField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -661,7 +661,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">#{messages['ProductionOrder.producingAmount']}</ui:define>
+            <ui:define name="label">Cantidad Producida:</ui:define>
             <h:inputText value="#{productionOrderForPlanning.producedAmount}"
                          required="false" readonly="false" maxlength="500" styleClass="input">
             </h:inputText>
