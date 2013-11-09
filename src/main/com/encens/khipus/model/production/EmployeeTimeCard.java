@@ -56,7 +56,7 @@ public class EmployeeTimeCard implements BaseModel {
     @JoinColumn(name = "IDEMPLEADO", nullable = false, updatable = false)
     private Employee employee;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDORDENPRODUCCION", nullable = true, updatable = false)
     private ProductionOrder productionOrder;
 
