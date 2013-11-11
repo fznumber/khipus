@@ -350,6 +350,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         rendered="#{productionPlanningAction.managed}"
                         tabindex="1"/>
 
+                <h:commandButton
+                        action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
+                        value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+                        styleClass="button"
+                        rendered="#{productionPlanningAction.managed}"
+                        tabindex="1"/>
+
             </s:div>
 
         </h:panelGrid>
