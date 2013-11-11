@@ -455,6 +455,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int position = productionPlanning.getProductionOrderList().indexOf(productionOrder);
         productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
         productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
+
+        setTotalsMaterials(productionOrder);
+        setTotalsInputs(productionOrder);
+        setTotalHour(productionOrder);
+        setTotalCostProducticionAndUnitPrice(productionOrder);
+
         addMaterial = false;
         if(productionPlanning.getId() != null)
         if (update() != Outcome.SUCCESS) {
@@ -492,6 +498,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             totalProducer += outputProductionVoucher.getProducedAmount();
         }
         productionOrder.setExpendAmount(totalProducer);*/
+        setTotalsMaterials(productionOrder);
+        setTotalsInputs(productionOrder);
+        setTotalHour(productionOrder);
+        setTotalCostProducticionAndUnitPrice(productionOrder);
         if (update() != Outcome.SUCCESS) {
             return;
         }
