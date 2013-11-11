@@ -9,6 +9,7 @@ import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.util.MessageUtils;
+import com.encens.khipus.util.RoundUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -20,6 +21,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
     private String date;
     private String state;
+    private Double unitPrice;
 
     public void generateReportByOrder(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order)
     {
@@ -119,6 +122,77 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         }
     }
 
+    public void generateReportSummary(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order, BigDecimal price)
+    {
+        productionOrder = order;
+        productionPlanning = planning;
+        ingredientList = ingredients;
+        orderMaterials = materials;
+        unitPrice = price.doubleValue();
+        log.debug("Generate ProductionPlannigReportAction........");
+        TypedReportData typedReportData;
+        String templatePath = "/production/reports/productionOrderSummaryReport.jrxml";
+        String fileName = "Orden_Produccion_Summary";
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        date = sdf.format(productionPlanning.getDate());
+        state = getEstate(productionPlanning.getState());
+        Map params = new HashMap();
+
+        params.putAll(getCommonDocumentParamsInfo());
+
+        String query = "select IA.COD_ART, MP.NOMBRE , IA.COD_MED \n" +
+                "from INGREDIENTEPRODUCCION IP\n" +
+                "INNER JOIN METAPRODUCTOPRODUCCION MP\n" +
+                "ON IP.IDMETAPRODUCTOPRODUCCION=MP.IDMETAPRODUCTOPRODUCCION \n" +
+                "INNER JOIN WISE.INV_ARTICULOS IA \n" +
+                "ON MP.COD_ART=IA.COD_ART\n" +
+                "WHERE IP.IDINGREDIENTEPRODUCCION IN ( ";
+
+        boolean band = true;
+        for (ProductionIngredient ingredient: ingredients) {
+            query += (band ? " " : ",") + ingredient.getId().toString();
+            band = false;
+        }
+        query += " )";
+        setReportFormat(ReportFormat.PDF);
+
+        addProductionOrderMaterialDetailSubReport(params);
+        addProductionOrderMaterialSummaryDetailSubReport(params);
+        typedReportData = getReport(
+                fileName
+                , templatePath
+                , query
+                , params
+                , "Orden_Materiales_Insumos"
+        );
+
+        JasperPrint jasperPrint = typedReportData.getJasperPrint();
+
+        for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
+            int codeCount = 14;
+            int nameCount = 13;
+            int unitCount = 12;
+            int mountCount = 15;
+
+            for (ProductionIngredient ingredient : ingredientList) {
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(ingredient.getMetaProduct().getProductItem().getProductItemCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(ingredient.getMetaProduct().getName());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", ingredient.getAmount()));
+                codeCount += 4;
+                nameCount += 4;
+                unitCount += 4;
+                mountCount += 4;
+            }
+        }
+        try {
+            typedReportData.setJasperPrint(jasperPrint);
+            GenerationReportData generationReportData = new GenerationReportData(typedReportData);
+            generationReportData.exportReport();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /*@Override
     protected String getEjbql()
     {
@@ -133,6 +207,34 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     public void init() {
         restrictions = new String[]{"productionIngredient = #{ingredients}"};
     }*/
+
+    private void addProductionOrderMaterialSummaryDetailSubReport(Map mainReportParams) {
+        log.debug("Generating productionOrderMaterialDetailSubReport.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String sql = "SELECT op.cantidadproducida, op.cantidadesperada, op.preciototalmaterial, \n" +
+                "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, \n" +
+                "       "+ RoundUtil.getRoundValue(unitPrice,2, RoundUtil.RoundMode.SYMMETRIC).toString()+" as precioUnitario\n" +
+                "FROM ordenproduccion OP\n" +
+                "WHERE op.idordenproduccion = " + productionOrder.getId().toString();
+
+        //generate the sub report
+
+        String subReportKey = "ORDERMATERIALSUMMARYSUBREPORT";
+        TypedReportData subReportData = super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderMaterialSummaryDetailSubReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
+    }
 
     private void addProductionOrderMaterialDetailSubReport(Map mainReportParams) {
         log.debug("Generating productionOrderMaterialDetailSubReport.............................");
