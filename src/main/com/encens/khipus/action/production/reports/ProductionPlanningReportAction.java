@@ -64,7 +64,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         String fileName = "Orden_Produccion";
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(productionPlanning.getDate());
-        state = getEstate(productionPlanning.getState());
+        state = getEstate(order.getEstateOrder());
         Map params = new HashMap();
 
         params.putAll(getCommonDocumentParamsInfo());
@@ -135,7 +135,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         String fileName = "Orden_Produccion_Summary";
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(productionPlanning.getDate());
-        state = getEstate(productionPlanning.getState());
+        state = getEstate(productionOrder.getEstateOrder());
         Map params = new HashMap();
 
         params.putAll(getCommonDocumentParamsInfo());
@@ -163,7 +163,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 , templatePath
                 , query
                 , params
-                , "Orden_Materiales_Insumos"
+                , "RESUMEN_GENERAL_ORDEN_PRODUCCIÓN"
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
@@ -404,13 +404,13 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         String estateLiteral = "";
 
         if (statePlaning == ProductionPlanningState.EXECUTED)
-            estateLiteral = MessageUtils.getMessage("ProductionPlanning.makeExecuted");
+            estateLiteral = MessageUtils.getMessage("ProductionPlanning.state.executed");
 
         if (statePlaning == ProductionPlanningState.FINALIZED)
-            estateLiteral = MessageUtils.getMessage("productionPlanningAction.makeFinalized");
+            estateLiteral = MessageUtils.getMessage("ProductionPlanning.state.finalized");
 
         if (statePlaning == ProductionPlanningState.PENDING)
-            estateLiteral = MessageUtils.getMessage("ProductionPlanning.makePending");
+            estateLiteral = MessageUtils.getMessage("ProductionPlanning.state.pending");
 
         return estateLiteral;
     }

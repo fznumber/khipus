@@ -54,7 +54,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.OrderProductionByDayReport.amountHeavy}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{Report.OrderProductionByDayReport.amountUsed}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="460" y="0" width="74" height="12"/>
