@@ -81,6 +81,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         }
         query += " )";
         setReportFormat(ReportFormat.PDF);
+
         addProductionOrderMaterialDetailSubReport(params);
         typedReportData = getReport(
                 fileName
@@ -142,18 +143,29 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "from ordenmaterial om\n" +
                 "inner join WISE.INV_ARTICULOS IA \n" +
                 "ON om.COD_ART=IA.COD_ART\n" +
-                "where om.idordenproduccion in ( ";
+                "inner join ordenproduccion op\n" +
+                "on op.idordenproduccion = om.idordenproduccion\n" +
+                "where IA.COD_ART in ( ";
 
         boolean band = true;
         for (OrderMaterial orderMaterial : orderMaterials) {
-            sql += (band ? " " : ",") + orderMaterial.getId().toString();
+            sql += (band ? " " : ",") + orderMaterial.getProductItem().getProductItemCode().toString();
             band = false;
         }
-        sql += " )";
+        sql += " )\n" +
+               " and op.idordenproduccion = " + productionOrder.getId().toString();
 
         //generate the sub report
-        String subReportKey = "ORDERMATERIALSUBREPORT";
+        if(orderMaterials.size()==0)
+            sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada \n" +
+                    "from ordenmaterial om\n" +
+                    "inner join WISE.INV_ARTICULOS IA \n" +
+                    "ON om.COD_ART=IA.COD_ART\n" +
+                    "inner join ordenproduccion op\n" +
+                    "on op.idordenproduccion = om.idordenproduccion\n" +
+                    " where op.idordenproduccion = 0 ";
 
+        String subReportKey = "ORDERMATERIALSUBREPORT";
         TypedReportData subReportData = super.generateSqlSubReport(
                 subReportKey,
                 "/production/reports/productionOrderMaterialDetailSubReport.jrxml",
@@ -165,6 +177,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         //add in main report params
         mainReportParams.putAll(subReportData.getReportParams());
         mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
     }
 
     private void addProductionOrderPlanningDetailSubReport(Map mainReportParams) {
