@@ -49,9 +49,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     private String date;
     private String state;
 
-    public void generateReportByOrder(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning)
+    public void generateReportByOrder(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order)
     {
-        //productionOrder = order;
+        productionOrder = order;
         productionPlanning = planning;
         ingredientList = ingredients;
         orderMaterials = materials;
@@ -87,16 +87,16 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 , templatePath
                 , query
                 , params
-                , "productionPlanningReport"
+                , "Orden_Materiales_Insumos"
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
 
         for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
-            int codeCount = 9;
-            int nameCount = 8;
-            int unitCount = 7;
-            int mountCount = 10;
+            int codeCount = 14;
+            int nameCount = 13;
+            int unitCount = 12;
+            int mountCount = 15;
 
             for (ProductionIngredient ingredient : ingredientList) {
                 ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(ingredient.getMetaProduct().getProductItem().getProductItemCode());
@@ -308,6 +308,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
         paramMap.put("dateParam", date);
         paramMap.put("estate", state);
+        paramMap.put("nameProduct",productionOrder.getProductComposition().getProcessedProduct().getName());
+        paramMap.put("codeProduct",productionOrder.getProductComposition().getProcessedProduct().getCode());
+        paramMap.put("numOrder",productionOrder.getCode());
         return paramMap;
     }
 

@@ -344,7 +344,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                    value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
                                    reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
                 <h:commandButton
-                        action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderMaterials,productionPlanning)}"
+                        action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
                         value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
                         styleClass="button"
                         rendered="#{productionPlanningAction.managed}"
