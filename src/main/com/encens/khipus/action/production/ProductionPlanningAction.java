@@ -456,16 +456,22 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getProductionOrderList().get(position).getOrderMaterials().clear();
         productionPlanning.getProductionOrderList().get(position).setOrderMaterials(orderMaterials);
 
-        setTotalsMaterials(productionOrder);
-        setTotalsInputs(productionOrder);
-        setTotalHour(productionOrder);
-        setTotalCostProducticionAndUnitPrice(productionOrder);
+
 
         addMaterial = false;
         if(productionPlanning.getId() != null)
+        {
+            setTotalsMaterials(productionOrder);
+            setTotalsInputs(productionOrder);
+            setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(productionOrder);
+
         if (update() != Outcome.SUCCESS) {
             return;
         }
+
+        }
+        orderMaterials.clear();
     }
 
     public void removeMaterial(OrderMaterial instance) {
