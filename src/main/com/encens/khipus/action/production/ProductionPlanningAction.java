@@ -204,6 +204,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return aux;
     }
 
+    public Boolean verifAmount(ProductionIngredient ingredient){
+        Boolean band= true;
+
+        if(ingredient.getMountWareHouse().doubleValue() < ingredient.getAmount())
+        {
+            band = false;
+            dispobleBalance = false;
+        }
+
+        return band;
+    }
+
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
@@ -212,13 +224,25 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
         productionOrder.setProducedAmount(productionOrder.getExpendAmount());
-        if(productionPlanning.getId() != null)
+        if(productionPlanning.getId() != null && !verifySotck(productionOrder))
         if (update() != Outcome.SUCCESS) {
             return;
         }
 
         clearFormulation();
         disableEditingFormula();
+    }
+
+    private Boolean verifySotck(ProductionOrder order)
+    { Boolean band = false;
+        for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
+            BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct().getProductItem());
+            if (ingredient.getAmount() > mountWareHouse.doubleValue()) {
+                addMessageError(ingredient.getMetaProduct().getProductItem().getName(), mountWareHouse.doubleValue());
+                band = true;
+            }
+        }
+        return band;
     }
 
     public void setPriceCostInput() {
@@ -265,6 +289,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void addMessageError(Consolidated consolidated, Double mount) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", consolidated.getName(), mount);
+    }
+
+    public void addMessageError(String name , Double mount) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", name, mount);
     }
 
     public void evaluateExpressionActionListener(ActionEvent e) {
@@ -510,13 +538,23 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
         //para que no afecte en el calculo de las formulas
         setProducedAmountWithExpendAmount(planning);
-        if (planning.getId() != null)
+
+        if (planning.getId() != null && verifySotckByProductionPlannig(planning))
             if (update() != Outcome.SUCCESS) {
                 return;
             }
         setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
+    }
+
+    private Boolean verifySotckByProductionPlannig(ProductionPlanning planning){
+        Boolean band = true;
+            for(ProductionOrder order: planning.getProductionOrderList())
+            {
+                band = verifySotck(order);
+            }
+        return band;
     }
 
     public void updateProducedAmount() {
