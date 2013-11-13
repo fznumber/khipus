@@ -2,6 +2,8 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.ArticleEstate;
+import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.warehouse.ProductItem;
 
 import javax.ejb.Local;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
 @Local
 public interface ArticleEstateService extends GenericService {
 
-    public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList);
+    /*public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList);*/
 
+    public Boolean existArticleEstate(ProductItem articleEstate);
 }

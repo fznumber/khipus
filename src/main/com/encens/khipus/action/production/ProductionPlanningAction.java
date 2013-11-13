@@ -7,10 +7,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
-import com.encens.khipus.service.production.EmployeeTimeCardService;
-import com.encens.khipus.service.production.EvaluatorMathematicalExpressionsService;
-import com.encens.khipus.service.production.ProcessedProductService;
-import com.encens.khipus.service.production.ProductionPlanningService;
+import com.encens.khipus.service.production.*;
 import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -44,7 +41,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private FormulaState formulaState = FormulaState.NONE;
 
-    private Boolean dispobleBalance = false;
+    private Boolean dispobleBalance = true;
     private Boolean addMaterial = false;
     private Boolean showMaterialDetail = false;
     private Boolean showInputDetail = false;
@@ -60,6 +57,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ProductionOrderCodeGenerator productionOrderCodeGenerator;
     @In
     private EmployeeTimeCardService employeeTimeCardService;
+    @In
+    private ArticleEstateService articleEstateService;
+
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
 
@@ -206,7 +206,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public Boolean verifAmount(ProductionIngredient ingredient){
         Boolean band= true;
-
+        if(!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))
         if(ingredient.getMountWareHouse().doubleValue() < ingredient.getAmount())
         {
             band = false;
