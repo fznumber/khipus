@@ -1,5 +1,11 @@
 package com.encens.khipus.service.production;
 
+import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.production.ArticleEstate;
+
+import javax.ejb.Local;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Diego
@@ -7,5 +13,9 @@ package com.encens.khipus.service.production;
  * Time: 19:11
  * To change this template use File | Settings | File Templates.
  */
-public class ArticleEstateService {
+@Local
+public interface ArticleEstateService extends GenericService {
+
+    public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList);
+
 }

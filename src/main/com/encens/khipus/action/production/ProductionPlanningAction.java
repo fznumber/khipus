@@ -61,6 +61,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @In
     private EmployeeTimeCardService employeeTimeCardService;
     private ProductionOrder totalsMaterials;
+    private ProductionPlanning producedAmountWithExpendAmoutn;
 
     @Override
     protected GenericService getService() {
@@ -131,6 +132,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public List<Consolidated> getConsolidatedInputs() {
         try {
             ProductionPlanning productionPlanning = getInstance();
+
             Map<Long, Consolidated> consolidated = new HashMap<Long, Consolidated>();
             for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
                 evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
@@ -174,9 +176,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void productCompositionSelected(ActionEvent e) {
         try {
-            productionOrder.setExpendAmount(productComposition.getProducingAmount());
+            //productionOrder.setExpendAmount(productComposition.getProducingAmount());
+            productionOrder.setExpendAmount(productComposition.getSupposedAmount());
             productionOrder.setContainerWeight(productComposition.getContainerWeight());
-            productionOrder.setProducedAmount(productComposition.getSupposedAmount());
+            //productionOrder.setProducedAmount(productComposition.getSupposedAmount());
+            productionOrder.setProducedAmount(productionOrder.getExpendAmount());
             productionOrder.setProductComposition(productComposition);
             evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
         } catch (Exception ex) {
@@ -187,6 +191,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public Boolean verifMount(ProductionIngredient productionIngredient) {
         Boolean aux = true;
+
         if (productionIngredient.getVerifiably() != null) {
             if ((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0)) {
                 aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
@@ -203,8 +208,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         ProductionPlanning productionPlanning = getInstance();
         setPriceCostInput();
+
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
+        productionOrder.setProducedAmount(productionOrder.getExpendAmount());
         if(productionPlanning.getId() != null)
         if (update() != Outcome.SUCCESS) {
             return;
@@ -233,7 +240,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
 
             if (band) {
-                getService().create(getInstance());
+                ProductionPlanning productionPlanning = getInstance();
+                //setZeroProducedAmount(productionPlanning);
+                getService().create(productionPlanning);
                 addCreatedMessage();
                 return Outcome.SUCCESS;
             } else {
@@ -245,6 +254,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             return Outcome.REDISPLAY;
         }
     }
+
+    /*private void setZeroProducedAmount(ProductionPlanning planning)
+    {
+        for(ProductionOrder productionOrder:planning.getProductionOrderList() )
+        {
+            productionOrder.setProducedAmount(0.0);
+        }
+    }*/
 
     public void addMessageError(Consolidated consolidated, Double mount) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", consolidated.getName(), mount);
@@ -489,9 +506,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (evaluateMathematicalExpression() == false) {
             return;
         }
-        if (update() != Outcome.SUCCESS) {
-            return;
-        }
+        ProductionPlanning planning = getInstance();
+        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
+        //para que no afecte en el calculo de las formulas
+        setProducedAmountWithExpendAmount(planning);
+        if (planning.getId() != null)
+            if (update() != Outcome.SUCCESS) {
+                return;
+            }
         setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
@@ -658,6 +680,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         if (outputForRemove != null) {
             productionOrder.getOutputProductionVoucherList().remove(outputForRemove);
+        }
+    }
+
+    public void setProducedAmountWithExpendAmount(ProductionPlanning planning) {
+
+        for(ProductionOrder order : planning.getProductionOrderList())
+        {
+             order.setProducedAmount(order.getExpendAmount());
         }
     }
 

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "MATERIALPRODUCCION")
 @DiscriminatorValue("MATERIALPRODUCCION")
 @PrimaryKeyJoinColumns(value = {
-        @PrimaryKeyJoinColumn(name = "IDMATERIALPRODUCCION", referencedColumnName = "IDMETAPRODUCTOPRODUCCION")})
+@PrimaryKeyJoinColumn(name = "IDMATERIALPRODUCCION", referencedColumnName = "IDMETAPRODUCTOPRODUCCION")})
 public class ProductionMaterial extends MetaProduct {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

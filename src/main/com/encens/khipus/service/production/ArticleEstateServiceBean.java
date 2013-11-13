@@ -1,5 +1,16 @@
 package com.encens.khipus.service.production;
 
+import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.production.ArticleEstate;
+import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.Name;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Diego
@@ -7,5 +18,20 @@ package com.encens.khipus.service.production;
  * Time: 19:23
  * To change this template use File | Settings | File Templates.
  */
-public class ArticleEstateServiceBean {
+@Name("articleEstateService")
+@AutoCreate
+@Stateless
+public class ArticleEstateServiceBean extends ExtendedGenericServiceBean implements ArticleEstateService {
+
+    @In(value = "#{entityManager}")
+    private EntityManager em;
+
+    @Override
+    public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList) {
+        List<ArticleEstate> estateList = new ArrayList<ArticleEstate>();
+        estateList = (List<ArticleEstate>)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE ArticleEstate.productItemList = :articleEstateList")
+                     .setParameter("articleEstateList",articleEstateList)
+                     .getResultList();
+        return estateList;
+    }
 }
