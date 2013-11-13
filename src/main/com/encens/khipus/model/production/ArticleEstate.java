@@ -48,12 +48,12 @@ public class ArticleEstate implements BaseModel {
     @Length(max = 2)
     private String companyNumber;
 
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
             @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART")
     })
-    private List<ProductItem> productItemList;
+    private ProductItem productItem;
 
     public Long getId() {
         return id;
@@ -95,11 +95,11 @@ public class ArticleEstate implements BaseModel {
         this.companyNumber = companyNumber;
     }
 
-    public List<ProductItem> getProductItem() {
-        return productItemList;
+    public ProductItem getProductItem() {
+        return productItem;
     }
 
-    public void setProductItem(List<ProductItem> productItemList) {
-        this.productItemList = productItemList;
+    public void setProductItem(ProductItem productItem) {
+        this.productItem = productItem;
     }
 }

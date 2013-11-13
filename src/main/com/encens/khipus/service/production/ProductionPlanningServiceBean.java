@@ -3,6 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.warehouse.ProductItem;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -94,6 +95,13 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         return (BigDecimal) getEntityManager()
                 .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", metaProduct.getProductItem())
+                .getSingleResult();
+    }
+
+    public BigDecimal getMountInWarehouse(ProductItem productItem) {
+        return (BigDecimal) getEntityManager()
+                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .setParameter("productItem", productItem)
                 .getSingleResult();
     }
 

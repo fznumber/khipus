@@ -204,7 +204,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             </h:outputText>
                         </rich:column>
                         <rich:column
-                                styleClass="#{productionPlanningAction.verifMount(productionIngredientItem)?'labelAlarm':'labelInfo'}">
+                                styleClass="#{productionPlanningAction.verifAmount(productionIngredientItem)?'labelInfo':'labelAlarm'}">
                             <h:outputText value="#{productionIngredientItem.mountWareHouse}">
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
@@ -217,7 +217,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonAdd']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED' and !productionPlanningAction.dispobleBalance}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
 
                         <!--<a4j:commandButton id="createInnerButton" action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
                                          styleClass="button"
@@ -228,7 +228,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and !productionPlanningAction.dispobleBalance}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
                         <a4j:commandButton id="removeInnerButton" action="#{productionPlanningAction.removeFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonRemove']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
