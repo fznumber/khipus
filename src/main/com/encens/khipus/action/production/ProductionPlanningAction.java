@@ -189,7 +189,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    public Boolean verifMount(ProductionIngredient productionIngredient) {
+  /*  public Boolean verifMount(ProductionIngredient productionIngredient) {
         Boolean aux = true;
 
         if (productionIngredient.getVerifiably() != null) {
@@ -202,7 +202,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         dispobleBalance = aux;
         return aux;
-    }
+    }*/
 
     public Boolean verifAmount(ProductionIngredient ingredient){
         Boolean band= true;
@@ -237,6 +237,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     { Boolean band = false;
         for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
             BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct().getProductItem());
+            if(!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))
             if (ingredient.getAmount() > mountWareHouse.doubleValue()) {
                 addMessageError(ingredient.getMetaProduct().getProductItem().getName(), mountWareHouse.doubleValue());
                 band = true;
@@ -352,7 +353,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void select(ProductionOrder productionOrder) {
 
         cancelFormulation();
-        dispobleBalance = false;
+        //dispobleBalance = false;
         existingFormulation = new Formulation();
         existingFormulation.producingAmount = productionOrder.getExpendAmount();
         existingFormulation.productComposition = productionOrder.getProductComposition();
