@@ -28,6 +28,15 @@ import java.util.List;
         @PrimaryKeyJoinColumn(name = "IDPRODUCTORMATERIAPRIMA", referencedColumnName = "IDPERSONA")})
 public class RawMaterialProducer extends Person {
 
+    @Column(name = "LICENCIAIMPUESTOS2011", length = 200, nullable = true)
+    private String codeTaxLicence2011;
+
+    @Column(name = "FECHAINIIMPUESTO2011", columnDefinition = "DATE", nullable = true)
+    private Date startDateTaxLicence2011;
+
+    @Column(name = "FECHAFINIMPUESTO2011", columnDefinition = "DATE",nullable = true)
+    private Date expirationDateTaxLicence2011;
+
     @Column(name = "LICENCIAIMPUESTOS", length = 200, nullable = true)
     private String codeTaxLicence;
 
@@ -116,6 +125,30 @@ public class RawMaterialProducer extends Person {
 
     public void setStartDateTaxLicence(Date startDateTaxLicence) {
         this.startDateTaxLicence = startDateTaxLicence;
+    }
+
+    public String getCodeTaxLicence2011() {
+        return codeTaxLicence2011;
+    }
+
+    public void setCodeTaxLicence2011(String codeTaxLicence2011) {
+        this.codeTaxLicence2011 = codeTaxLicence2011;
+    }
+
+    public Date getExpirationDateTaxLicence2011() {
+        return expirationDateTaxLicence2011;
+    }
+
+    public void setExpirationDateTaxLicence2011(Date expirationDateTaxLicence2011) {
+        this.expirationDateTaxLicence2011 = expirationDateTaxLicence2011;
+    }
+
+    public Date getStartDateTaxLicence2011() {
+        return startDateTaxLicence2011;
+    }
+
+    public void setStartDateTaxLicence2011(Date startDateTaxLicence2011) {
+        this.startDateTaxLicence2011 = startDateTaxLicence2011;
     }
 }
 

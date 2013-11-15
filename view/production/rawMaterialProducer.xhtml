@@ -179,6 +179,28 @@
         </s:decorate>
     </app:fieldset>
     <rich:spacer height="10" />
+
+    <app:fieldset id="taxFieldSet2011" title="#{messages['RawMaterialProducer.taxLicense2011']}">
+        <s:decorate id="codeTaxLicenseField2011" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['RawMaterialProducer.codeTaxLicense']}</ui:define>
+            <h:inputText id="codeTaxLicense2011" value="#{rawMaterialProducer.codeTaxLicence2011}"
+                         styleClass="input" disabled="true" required="false" maxlength="150" tabindex="10">
+            </h:inputText>
+        </s:decorate>
+        <s:decorate id="startDateTaxLicenseField2011" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['RawMaterialProducer.startDateTaxLicense']}</ui:define>
+            <rich:calendar showWeekDaysBar="false" showFooter="true" disabled="true"
+                           value="#{rawMaterialProducer.startDateTaxLicence2011}"
+                           popup="true"/>
+        </s:decorate>
+        <s:decorate id="expirationDateTaxLicenseField2011" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['RawMaterialProducer.expirationDateTaxLicense']}</ui:define>
+            <rich:calendar showWeekDaysBar="false" showFooter="true" disabled="true"
+                           value="#{rawMaterialProducer.expirationDateTaxLicence2011}"
+                           popup="true"/>
+        </s:decorate>
+    </app:fieldset>
+
     <app:fieldset id="taxFieldSet" title="#{messages['RawMaterialProducer.taxLicense']}">
         <s:decorate id="codeTaxLicenseField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialProducer.codeTaxLicense']}</ui:define>

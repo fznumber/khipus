@@ -121,7 +121,8 @@ public class ProductiveZone implements BaseModel {
     }
 
     public String getFullName() {
-        return "GAB-" + getNumber() + " " + getName() + "(" + getGroup() + ")";
+        //return "GAB-" + getNumber() + " " + getName() + "(" + getGroup() + ")";
+        return getNumber() + "-" + getName();
     }
 
     public void setFullName(String fullName) {

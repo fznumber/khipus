@@ -16,5 +16,40 @@ ADD CONSTRAINT fk_INV_ARTICULOS_ESTADO FOREIGN KEY (NO_CIA,COD_ART) REFERENCES W
 --
 INSERT  INTO ESTADOARTICULO (IDESTADOARTICULO,COD_ART,NO_CIA,ESTADO,DESCRIPCION,IDCOMPANIA)
   VALUES (1,'100','01','NOVERIFICABLE','ESTE ARTICULO NO DEBE SER BERIFICADO',1); 
-delete estadoarticulo;  
+--delete estadoarticulo;  
 --COMMIT
+--
+
+/*alter table PRODUCTORMATERIAPRIMA add (
+                                        LICENCIAIMPUESTOS2011 VARCHAR2(200 BYTE) NULL,
+                                        FECHAINIIMPUESTO2011 DATE NULL,
+                                        FECHAFINIMPUESTO2011 DATE NULL
+                                      );
+
+SELECT pe.nombres, pe.apellidopaterno ,pe.apellidomaterno,pm.fechaexpiralicenciaimpuesto FROM productormateriaprima PM
+INNER JOIN persona PE
+ON pm.idproductormateriaprima = pe.idpersona
+WHERE pm.fechaexpiralicenciaimpuesto <> to_date('31/12/2013','DD/MM/YYYY');
+*/
+
+--SELECT * FROM PERSONA;
+--COMMIT                     
+--backup de la tabla
+create table productormateriaprima_tmp as 
+select * from productormateriaprima;
+--copiar a los campos auxiliares
+UPDATE PRODUCTORMATERIAPRIMA PM
+SET  LICENCIAIMPUESTOS2011 = pm.licenciaimpuestos
+    ,FECHAINIIMPUESTO2011 = pm.fechainicialicenciaimpuesto
+    ,FECHAFINIMPUESTO2011 = pm.fechaexpiralicenciaimpuesto;
+--cambiar la fecha al 31 de octubre    
+UPDATE PRODUCTORMATERIAPRIMA PM
+SET  pm.fechafinimpuesto2011 = to_date('31/10/2013','DD/MM/YYYY')
+WHERE pm.fechaexpiralicenciaimpuesto = to_date('31/12/2013','DD/MM/YYYY');    
+--borrar los campos anteriores
+UPDATE PRODUCTORMATERIAPRIMA PM
+SET  pm.licenciaimpuestos = null
+    ,pm.fechainicialicenciaimpuesto = null
+    ,pm.fechaexpiralicenciaimpuesto = null;
+--commit    
+--select * from PRODUCTORMATERIAPRIMA;

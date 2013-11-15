@@ -71,6 +71,15 @@
                             #{messages['Person.firstName']}
                         </app:commandSortHeader>
                     </rich:column>
+
+                    <rich:column>
+                        <app:commandSortHeader sortProperty="rawMaterialProducer.productiveZone.name"
+                                               rawMaterialProducerDataModel="#{rawMaterialProducerDataModel}"
+                                               reRender="rawMaterialProducerList, dataScroller">
+                            #{messages['Person.GAB']}
+                        </app:commandSortHeader>
+                    </rich:column>
+
                     <rich:column styleClass="center">
                         #{messages['Common.select']}
                     </rich:column>
@@ -84,6 +93,9 @@
             </rich:column>
             <rich:column>
                 <h:outputText value="#{rawMaterialProducerItem.firstName}"/>
+            </rich:column>
+            <rich:column>
+                <h:outputText value="#{rawMaterialProducerItem.productiveZone.fullName}"/>
             </rich:column>
             <rich:column styleClass="center">
                 <ui:insert name="assignButton"/>

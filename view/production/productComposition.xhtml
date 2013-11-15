@@ -32,7 +32,7 @@
         <s:defaultAction/>
     </h:commandButton>
 
-    <h:commandButton action="#{productCompositionAction.update}" value="#{messages['Common.save.update']}"
+    <h:commandButton action="#{productCompositionAction.update}" value="#{messages['Common.save']}"
                      styleClass="button"
                      rendered="#{productCompositionAction.managed and s:hasPermission('PRODUCTCOMPOSITION','UPDATE')}"
                      tabindex="2"/>
@@ -109,7 +109,7 @@
                     <a4j:support event="onblur" ajaxSingle="true"
                                  actionListener="#{productCompositionAction.mathematicalFormulaActionListener}"
                                  reRender="formPanel"/>
-                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                   <!-- <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>-->
                 </h:inputText>
                 <h:outputText value=" [#{messages['ProductComposition.defaultContainerWeight']}]"/>
             </s:decorate>
