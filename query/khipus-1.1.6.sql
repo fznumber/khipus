@@ -14,17 +14,13 @@ Create table ESTADOARTICULO (
 ALTER TABLE ESTADOARTICULO
 ADD CONSTRAINT fk_INV_ARTICULOS_ESTADO FOREIGN KEY (NO_CIA,COD_ART) REFERENCES WISE.INV_ARTICULOS(NO_CIA,COD_ART);
 --
-INSERT  INTO ESTADOARTICULO (IDESTADOARTICULO,COD_ART,NO_CIA,ESTADO,DESCRIPCION,IDCOMPANIA)
-  VALUES (1,'100','01','NOVERIFICABLE','ESTE ARTICULO NO DEBE SER BERIFICADO',1); 
+--INSERT  INTO ESTADOARTICULO (IDESTADOARTICULO,COD_ART,NO_CIA,ESTADO,DESCRIPCION,IDCOMPANIA)
+--  VALUES (1,'100','01','NOVERIFICABLE','ESTE ARTICULO NO DEBE SER BERIFICADO',1); 
 --delete estadoarticulo;  
 --COMMIT
 --
 
-/*alter table PRODUCTORMATERIAPRIMA add (
-                                        LICENCIAIMPUESTOS2011 VARCHAR2(200 BYTE) NULL,
-                                        FECHAINIIMPUESTO2011 DATE NULL,
-                                        FECHAFINIMPUESTO2011 DATE NULL
-                                      );
+/*
 
 SELECT pe.nombres, pe.apellidopaterno ,pe.apellidomaterno,pm.fechaexpiralicenciaimpuesto FROM productormateriaprima PM
 INNER JOIN persona PE
@@ -37,7 +33,13 @@ WHERE pm.fechaexpiralicenciaimpuesto <> to_date('31/12/2013','DD/MM/YYYY');
 --backup de la tabla
 create table productormateriaprima_tmp as 
 select * from productormateriaprima;
---copiar a los campos auxiliares
+--crear los nuevos cambios
+alter table PRODUCTORMATERIAPRIMA add (
+                                        LICENCIAIMPUESTOS2011 VARCHAR2(200 BYTE) NULL,
+                                        FECHAINIIMPUESTO2011 DATE NULL,
+                                        FECHAFINIMPUESTO2011 DATE NULL
+                                      );
+--copiar a los campos auxiliare
 UPDATE PRODUCTORMATERIAPRIMA PM
 SET  LICENCIAIMPUESTOS2011 = pm.licenciaimpuestos
     ,FECHAINIIMPUESTO2011 = pm.fechainicialicenciaimpuesto
