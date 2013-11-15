@@ -93,7 +93,7 @@
                                     #{messages['ProductionOrder.code']}
                                 </rich:column>
                                 <rich:column>
-                                    #{messages['ProductionOrder.expectedAmount']}
+                                    #{messages['ProductionOrder.expectedAmountList']}
                                 </rich:column>
                                 <rich:column>
                                     #{messages['ProductionOrder.estateOrderProduction']}
@@ -118,7 +118,7 @@
                         </rich:column>
                         <rich:column>
                             <h:outputText
-                                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
                                     value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
                         </rich:column>
                     </rich:dataTable>

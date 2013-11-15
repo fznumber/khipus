@@ -543,7 +543,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
                     <a4j:commandButton id="addProductItemCommandButton"
                                        action="#{productItemSearchDataModel.reset()}"
-                                       value="#{messages['WarehouseVoucher.button.addProductItem']}"
+                                       value="#{messages['ProductionPlanning.addMaterial']}"
                                        styleClass="button"
                                        immediate="true"
                                        oncomplete="Richfaces.showModalPanel('productItemsListModalPanel');"
@@ -684,88 +684,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
         </s:div>
     </h:panelGrid>
-    <!--esta es la parte para agregar un vale de insumo requerido. Ya no sera usada-->
-    <!--<s:div rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'PENDING'}">
-        <table style="width:100%">
-            <tr>
-                <td style="width:70%">
-                    &lt;!&ndash;<a4j:commandButton ajaxSingle="true" immediate="true"
-                                       tabindex="2" value="#{messages['Common.add']}"
-                                       title="#{messages['ProductionPlanning.selectProcessedProduct']}"
-                                       onclick="Richfaces.showModalPanel('resultProcessedProductListModalPanel');"
-                                       rendered="#{productionOrderForPlanning.estateOrder == 'EXECUTED'}">
-                    </a4j:commandButton>&ndash;&gt;
-                   &lt;!&ndash; <rich:dataTable value="#{productionOrderForPlanning.outputProductionVoucherList}"
-                                    var="outputProductionVoucherItem"
-                                    id="OutputProductionVoucherList" style="width:100%" columnsWidth="30%,20%,40%">
-                        <f:facet name="header">
-                            <rich:columnGroup>
-                                <rich:column>
-                                    #{messages['ProductionOrder.processedProduct.name']}
-                                </rich:column>
-                                <rich:column>
-                                    #{messages['OutputProductionVoucher.producedAmount']}
-                                </rich:column>
-                                <rich:column>
-                                    #{messages['OutputProductionVoucher.observations']}
-                                </rich:column>
-                                <rich:column styleClass="center" rendered="#{productionOrderForPlanning.estateOrder == 'EXECUTED'}">
-                                    #{messages['Common.action']}
-                                </rich:column>
-                            </rich:columnGroup>
-                        </f:facet>
-                        <rich:column>
-                            <h:outputText value="#{outputProductionVoucherItem.processedProduct.fullName}"/>
-                        </rich:column>
-                        <rich:column>
-                            <c:choose>
-                                <c:when test="#{productionOrderForPlanning.estateOrder != 'FINALIZED'}">
-                                    <h:inputText id="outputVoucherProducerAmount"
-                                                 value="#{outputProductionVoucherItem.producedAmount}"
-                                                 required="true" style="width:95%;">
-                                        <a4j:support event="onblur" ajaxSingle="true"/>
-                                    </h:inputText>
-                                    <rich:message for="outputVoucherProducerAmount" styleClass="errors"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <h:outputText value="#{outputProductionVoucherItem.producedAmount}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </rich:column>
-                        <rich:column>
-                            <c:choose>
-                                <c:when test="#{productionOrderForPlanning.estateOrder != 'FINALIZED'}">
-                                    <h:inputTextarea value="#{outputProductionVoucherItem.observations}"
-                                                     style="width:95%;">
-                                        <a4j:support event="onblur" ajaxSingle="true"/>
-                                    </h:inputTextarea>
-                                </c:when>
-                                <c:otherwise>
-                                    <h:outputText value="#{outputProductionVoucherItem.observations}"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </rich:column>
-                        <rich:column rendered="#{productionOrderForPlanning.estateOrder == 'EXECUTED'}">
-                            <a4j:commandLink value="#{messages['Common.remove']}" reRender="OutputProductionVoucherList"
-                                             action="#{productionPlanningAction.removeOutputProductionVoucher(outputProductionVoucherItem)}"/>
-                        </rich:column>
-                    </rich:dataTable>&ndash;&gt;
-                </td>
-                <td style="width:30%; vertical-align: bottom; text-align: right;">
-                    <s:div>
-                        <a4j:commandButton action="#{productionPlanningAction.updateProducedAmount}"
-                                           value="#{messages['ProductionPlanning.innerButtonUpdate']}"
-                                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionOrderForPlanning.estateOrder == 'EXECUTED'}"/>
-                        <rich:spacer width="10"/>
-                        <a4j:commandButton action="#{productionPlanningAction.cancelFormulation}" ajaxSingle="true"
-                                           value="#{messages['ProductionPlanning.innerButtonCancel']}"
-                                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
-                    </s:div>
-                </td>
-            </tr>
-        </table>
-    </s:div>-->
+
 </a4j:region>
 </h:panelGroup>
 </rich:panel>
@@ -822,7 +741,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </rich:column>
         <rich:column>
             <h:outputText
-                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
                     value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
         </rich:column>
         <rich:column styleClass="center">

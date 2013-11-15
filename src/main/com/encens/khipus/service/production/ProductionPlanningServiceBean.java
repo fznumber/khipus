@@ -9,6 +9,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -92,17 +93,27 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     public BigDecimal getMountInWarehouse(MetaProduct metaProduct) {
+        try{
         return (BigDecimal) getEntityManager()
                 .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", metaProduct.getProductItem())
                 .getSingleResult();
+        }catch (NoResultException e)
+        {
+            return new BigDecimal(0.0);
+        }
     }
 
     public BigDecimal getMountInWarehouse(ProductItem productItem) {
+        try{
         return (BigDecimal) getEntityManager()
                 .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", productItem)
                 .getSingleResult();
+        }catch(NoResultException e)
+        {
+            return new BigDecimal(0.0);
+        }
     }
 
     public BigDecimal getMountInWarehouse(Long id) {

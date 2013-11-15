@@ -258,6 +258,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         try {
             for (Consolidated consolidated : consolidateds) {
                 BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(consolidated.getProduct());
+                if(!articleEstateService.existArticleEstate(consolidated.getProduct().getProductItem()))  //si lo encuentra en la lista no lo toma encuenta
                 if (consolidated.getAmount() > mountWareHouse.doubleValue()) {
                     addMessageError(consolidated, mountWareHouse.doubleValue());
                     band = false;
@@ -326,6 +327,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectProcessedProduct(ProcessedProduct processedProduct) {
+        dispobleBalance = true;
         try {
             this.processedProduct = processedProductService.find(processedProduct.getId());
             this.productComposition = new ProductComposition();
@@ -518,6 +520,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         }
         orderMaterials.clear();
+        selectedProductItems.clear();
     }
 
     public void removeMaterial(OrderMaterial instance) {
