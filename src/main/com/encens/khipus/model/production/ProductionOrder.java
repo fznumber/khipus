@@ -87,6 +87,10 @@ public class ProductionOrder implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderInput> orderInputs = new ArrayList<OrderInput>();
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
@@ -171,7 +175,6 @@ public class ProductionOrder implements BaseModel {
         this.producedAmount = supposedAmount;
     }
 
-
     public Double getMilk() {
         return milk;
     }
@@ -251,5 +254,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setEstateOrder(ProductionPlanningState estateOrder) {
         this.estateOrder = estateOrder;
+    }
+
+    public List<OrderInput> getOrderInputs() {
+        return orderInputs;
+    }
+
+    public void setOrderInputs(List<OrderInput> orderInputs) {
+        this.orderInputs = orderInputs;
     }
 }

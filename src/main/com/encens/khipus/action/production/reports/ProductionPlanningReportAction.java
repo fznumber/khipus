@@ -47,16 +47,18 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     private List<OrderMaterial> orderMaterials;
     private ProductionPlanning productionPlanning;
     private ProductionOrder productionOrder;
+    private List<OrderInput> orderInputs;
 
     private String date;
     private String state;
     private Double unitPrice;
 
-    public void generateReportByOrder(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order)
+    public void generateReportByOrder(List<ProductionIngredient> ingredients, List<OrderInput> inputs,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order)
     {
         productionOrder = order;
         productionPlanning = planning;
         ingredientList = ingredients;
+        orderInputs = inputs;
         orderMaterials = materials;
         log.debug("Generate ProductionPlannigReportAction........");
         TypedReportData typedReportData;
@@ -102,11 +104,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
             int unitCount = 12;
             int mountCount = 15;
 
-            for (ProductionIngredient ingredient : ingredientList) {
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(ingredient.getMetaProduct().getProductItem().getProductItemCode());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(ingredient.getMetaProduct().getName());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", ingredient.getAmount()));
+            for (OrderInput input : orderInputs) {
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(input.getProductItem().getProductItemCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(input.getProductItem().getName());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(input.getProductItem().getUsageMeasureCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", input.getAmount()));
                 codeCount += 4;
                 nameCount += 4;
                 unitCount += 4;
@@ -122,11 +124,12 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         }
     }
 
-    public void generateReportSummary(List<ProductionIngredient> ingredients,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order, BigDecimal price)
+    public void generateReportSummary(List<ProductionIngredient> ingredients,List<OrderInput> inputs,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order, BigDecimal price)
     {
         productionOrder = order;
         productionPlanning = planning;
         ingredientList = ingredients;
+        orderInputs = inputs;
         orderMaterials = materials;
         unitPrice = price.doubleValue();
         log.debug("Generate ProductionPlannigReportAction........");
@@ -174,11 +177,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
             int unitCount = 12;
             int mountCount = 15;
 
-            for (ProductionIngredient ingredient : ingredientList) {
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(ingredient.getMetaProduct().getProductItem().getProductItemCode());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(ingredient.getMetaProduct().getName());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(ingredient.getMetaProduct().getProductItem().getUsageMeasureCode());
-                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", ingredient.getAmount()));
+            for (OrderInput input : orderInputs) {
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(input.getProductItem().getProductItemCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(input.getProductItem().getName());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(input.getProductItem().getUsageMeasureCode());
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", input.getAmount()));
                 codeCount += 4;
                 nameCount += 4;
                 unitCount += 4;

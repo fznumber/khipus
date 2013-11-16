@@ -173,7 +173,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <table style="width:100%">
             <tr>
                 <td style="width:70%">
-                    <rich:dataTable value="#{productCompositionForPlanning.productionIngredientList}"
+                    <rich:dataTable value="#{productionOrderForPlanning.orderInputs}"
                                     var="productionIngredientItem"
                                     id="productionIngredientList" styleClass="formRow" width="100%">
                         <f:facet name="header">
@@ -193,10 +193,10 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
-                            <h:outputText value="#{productionIngredientItem.metaProduct.name}"/>
+                            <h:outputText value="#{productionIngredientItem.productItem.name}"/>
                         </rich:column>
                         <rich:column>
-                            <h:outputText value="#{productionIngredientItem.metaProduct.productItem.usageMeasureCode}"/>
+                            <h:outputText value="#{productionIngredientItem.productItem.usageMeasureCode}"/>
                         </rich:column>
                         <rich:column>
                             <h:outputText value="#{productionIngredientItem.amount}">
@@ -204,8 +204,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             </h:outputText>
                         </rich:column>
                         <rich:column
-                                styleClass="#{productionPlanningAction.verifAmount(productionIngredientItem)?'labelInfo':'labelAlarm'}">
-                            <h:outputText value="#{productionIngredientItem.mountWareHouse}">
+                                styleClass="#{productionPlanningAction.verifAmountInput(productionIngredientItem)?'labelInfo':'labelAlarm'}">
+                            <h:outputText value="#{productionIngredientItem.amountStock}">
                                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
                         </rich:column>
@@ -344,14 +344,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                    value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
                                    reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"/>
                 <h:commandButton
-                        action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
+                        action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
                         value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
                         styleClass="button"
                         rendered="#{productionPlanningAction.managed}"
                         tabindex="1"/>
 
                 <h:commandButton
-                        action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
+                        action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
                         value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
                         styleClass="button"
                         rendered="#{productionPlanningAction.managed}"
@@ -363,7 +363,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     </app:fieldset>
     <!--region detalle Insumos-->
     <app:fieldset id="inputDetailProducts" title="#{messages['MovementDetail.detailInput']}">
-        <rich:dataTable value="#{productionOrderForPlanning.productComposition.productionIngredientList}"
+        <rich:dataTable value="#{productionOrderForPlanning.orderInputs}"
                         var="inputProductionItem"
                         id="productionIngredientDetailList" styleClass="formRow" width="100%">
             <f:facet name="header">
@@ -384,11 +384,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </f:facet>
 
             <rich:column>
-                <h:outputText value="#{inputProductionItem.metaProduct.name}"/>
+                <h:outputText value="#{inputProductionItem.productItem.name}"/>
             </rich:column>
 
             <rich:column>
-                <h:outputText value="#{inputProductionItem.metaProduct.productItem.usageMeasureCode}"/>
+                <h:outputText value="#{inputProductionItem.productItem.usageMeasureCode}"/>
             </rich:column>
 
             <rich:column>
@@ -398,7 +398,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </rich:column>
 
             <rich:column>
-                <h:outputText value="#{inputProductionItem.metaProduct.productItem.unitCost}">
+                <h:outputText value="#{inputProductionItem.productItem.unitCost}">
                     <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
@@ -781,8 +781,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </c:if>-->
         </rich:column>
     </rich:dataTable>
-
-    <rich:dataTable value="#{productionPlanningAction.consolidatedInputs}" var="consolidatedItem" id="consolidatedList"
+   <!--la tabla con el total de insumos requeridos para la orden del dia ya no sera tomada encuenta-->
+    <!--<rich:dataTable value="#{productionPlanningAction.consolidatedInputs}" var="consolidatedItem" id="consolidatedList"
                     width="100%">
         <f:facet name="header">
             <rich:columnGroup>
@@ -798,9 +798,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.productionInput.amount']}
                 </rich:column>
-                <!--<rich:column>
+                &lt;!&ndash;<rich:column>
                     #{messages['ProductionOrder.productionInput.amountWareHouse']}
-                </rich:column>-->
+                </rich:column>&ndash;&gt;
             </rich:columnGroup>
         </f:facet>
         <rich:column>
@@ -817,7 +817,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
             </h:outputText>
         </rich:column>
-    </rich:dataTable>
+    </rich:dataTable>-->
 </h:panelGrid>
 
 

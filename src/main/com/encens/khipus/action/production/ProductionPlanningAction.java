@@ -135,7 +135,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
             Map<Long, Consolidated> consolidated = new HashMap<Long, Consolidated>();
             for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
-                evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
+                //evaluatorMathematicalExpressionsService.executeMathematicalFormulas(order);
+                evaluatorMathematicalExpressionsService.excuteFormulate(order,order.getContainerWeight(),order.getExpendAmount());
                 for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
                     Consolidated aux = consolidated.get(ingredient.getMetaProduct().getId());
                     if (aux == null) {
@@ -180,9 +181,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setExpendAmount(productComposition.getSupposedAmount());
             productionOrder.setContainerWeight(productComposition.getContainerWeight());
             //productionOrder.setProducedAmount(productComposition.getSupposedAmount());
-            productionOrder.setProducedAmount(productionOrder.getExpendAmount());
+            //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
             productionOrder.setProductComposition(productComposition);
-            evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
+            evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productComposition.getContainerWeight(),productionOrder.getExpendAmount());
+            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+
         } catch (Exception ex) {
             log.error("Exception caught", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
@@ -216,14 +219,26 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
+    public Boolean verifAmountInput(OrderInput orderInput){
+        Boolean band= true;
+        if(!articleEstateService.existArticleEstate(orderInput.getProductItem()))
+            if(orderInput.getAmountStock().doubleValue() < orderInput.getAmount())
+            {
+                band = false;
+                dispobleBalance = false;
+            }
+
+        return band;
+    }
+
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
-        setPriceCostInput();
+        //setPriceCostInput();
 
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
-        productionOrder.setProducedAmount(productionOrder.getExpendAmount());
+        //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
         if(productionPlanning.getId() != null && !verifySotck(productionOrder))
         if (update() != Outcome.SUCCESS) {
             return;
@@ -246,11 +261,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
-    public void setPriceCostInput() {
+/*    public void setPriceCostInput() {
         for (InputProductionVoucher inputProductionVoucher : productionOrder.getInputProductionVoucherList()) {
             inputProductionVoucher.setPriceCostTotal(inputProductionVoucher.getAmount() * ((BigDecimal) (inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
         }
-    }
+    }*/
 
     @End
     public String create(List<Consolidated> consolidateds) {
@@ -303,7 +318,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private boolean evaluateMathematicalExpression() {
         try {
-            evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
+            //evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
+            evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productionOrder.getProductComposition().getContainerWeight(),productionOrder.getProductComposition().getSupposedAmount());
+            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
             return true;
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -312,9 +329,27 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
+    private void setInputs(List<ProductionIngredient> productionIngredientList) {
+
+        productionOrder.getOrderInputs().clear();
+        for(ProductionIngredient ingredient :productionOrder.getProductComposition().getProductionIngredientList())
+        {
+            OrderInput input = new OrderInput();
+            input.setProductItem(ingredient.getMetaProduct().getProductItem());
+            input.setProductionOrder(productionOrder);
+            input.setAmount(ingredient.getAmount());
+            input.setAmountStock(ingredient.getMountWareHouse());
+            input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
+            input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
+            productionOrder.getOrderInputs().add(input);
+        }
+
+    }
+
+
     public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
-        setPriceCostInput();
+        //setPriceCostInput();
         for (ProductionOrder po : productionPlanning.getProductionOrderList()) {
             if (po.getCode().equals(productionOrder.getCode())) {
                 productionPlanning.getProductionOrderList().remove(po);
@@ -343,7 +378,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
             OutputProductionVoucher outputProductionVoucher = new OutputProductionVoucher();
             outputProductionVoucher.setProcessedProduct(processedProduct);
-            outputProductionVoucher.setProducedAmount(0.0);
+            //outputProductionVoucher.setProducedAmount(0.0);
             outputProductionVoucher.setProductionOrder(productionOrder);
             productionOrder.getOutputProductionVoucherList().add(outputProductionVoucher);
         } catch (Exception ex) {
@@ -541,13 +576,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductionPlanning planning = getInstance();
         //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
         //para que no afecte en el calculo de las formulas
-        setProducedAmountWithExpendAmount(planning);
+        //setProducedAmountWithExpendAmount(planning);
 
-        if (planning.getId() != null && verifySotckByProductionPlannig(planning))
+        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
+        if (planning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
             }
-        setPriceCostInput();
+        //setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
     }
@@ -672,9 +708,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void setTotalsInputs(ProductionOrder productionOrder) {
         Double totalInput = 0.0;
 
-
-        for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
-            totalInput += (ingredient.getMetaProduct().getProductItem().getUnitCost().doubleValue()) * ingredient.getAmount();
+        for (OrderInput input : productionOrder.getOrderInputs()) {
+            totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
         }
 
         productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput,2, RoundUtil.RoundMode.SYMMETRIC));
@@ -725,13 +760,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    public void setProducedAmountWithExpendAmount(ProductionPlanning planning) {
+    /*public void setProducedAmountWithExpendAmount(ProductionPlanning planning) {
 
         for(ProductionOrder order : planning.getProductionOrderList())
         {
              order.setProducedAmount(order.getExpendAmount());
         }
-    }
+    }*/
 
     public static class Consolidated {
         private double amount;
