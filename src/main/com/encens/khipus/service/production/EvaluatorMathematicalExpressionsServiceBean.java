@@ -56,7 +56,19 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         map.addProductionIngredient(productionOrder.getProductComposition().getProductionIngredientList());
         map.addLiteralEquation(amountVariable, productionOrder.getExpendAmount());
         map.addLiteralEquation(containerVariable, productionOrder.getContainerWeight());
-        map.addLiteralEquation(supposedVariable, productionOrder.getProducedAmount());
+        map.addLiteralEquation(supposedVariable, productionOrder.getExpendAmount());
+
+        calculateMathematicalFormula(map);
+    }
+
+    @Override
+    public void excuteFormulate(ProductionOrder productionOrder, Double formulateContainer, Double formulateSupposed) throws ProductCompositionException, IOException {
+
+        EquationMap map = new EquationMap();
+        map.addProductionIngredient(productionOrder.getProductComposition().getProductionIngredientList());
+        map.addLiteralEquation(amountVariable, productionOrder.getExpendAmount());
+        map.addLiteralEquation(containerVariable, formulateContainer);
+        map.addLiteralEquation(supposedVariable, formulateSupposed);
 
         calculateMathematicalFormula(map);
     }
