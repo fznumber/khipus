@@ -18,7 +18,8 @@ import java.util.List;
 @Local
 public interface ArticleEstateService extends GenericService {
 
-    /*public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList);*/
+    public Boolean verifyEstate(ProductItem productItem, String compare );
 
     public Boolean existArticleEstate(ProductItem articleEstate);
+
 }

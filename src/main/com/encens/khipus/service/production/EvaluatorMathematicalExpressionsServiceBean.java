@@ -2,10 +2,7 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
-import com.encens.khipus.model.production.MetaProduct;
-import com.encens.khipus.model.production.ProductComposition;
-import com.encens.khipus.model.production.ProductionIngredient;
-import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.util.RoundUtil;
 import com.encens.khipus.util.TopologicalSorting;
 import de.congrace.exp4j.Calculable;
@@ -42,6 +39,9 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     @In("#{messages['ProductComposition.defaultSupposedAmount']}")
     private String supposedVariable;
 
+    @In
+    private ArticleEstateService articleEstateService;
+
     Pattern variablePattern;
 
     @Create
@@ -71,6 +71,48 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         map.addLiteralEquation(supposedVariable, formulateSupposed);
 
         calculateMathematicalFormula(map);
+    }
+
+    @Override
+    public Double excuteParemeterized(ProductionOrder productionOrder, Double containerWeight, Double supposedAmount)throws ProductCompositionException, IOException{
+
+        return (72.4181 * getParameterized(productionOrder.getOrderInputs()).getAmount())/100;
+    }
+
+    @Override
+    public void excuteParemeterizadFormulate(ProductionOrder productionOrder, Double formulateContainer, Double formulateSupposed) throws ProductCompositionException, IOException{
+
+        EquationMap map = new EquationMap();
+
+        map.addProductionIngredient(filterParameterized(productionOrder.getProductComposition().getProductionIngredientList()));
+        map.addLiteralEquation(amountVariable, productionOrder.getExpendAmount());
+        map.addLiteralEquation(containerVariable, formulateContainer);
+        map.addLiteralEquation(supposedVariable, formulateSupposed);
+
+        calculateMathematicalFormula(map);
+    }
+
+    public OrderInput getParameterized(List<OrderInput> inputs)
+    {
+
+        for(OrderInput input: inputs)
+        {
+            if(articleEstateService.verifyEstate(input.getProductItem(),"PARAMETRIZABLE"))
+                return input;
+        }
+
+        return null;
+    }
+
+    public List<ProductionIngredient> filterParameterized(List<ProductionIngredient> ingredients)
+    {
+        List<ProductionIngredient> productionIngredients = new ArrayList<ProductionIngredient>();
+        for(ProductionIngredient ingredient: ingredients)
+        {
+            if(!articleEstateService.verifyEstate(ingredient.getMetaProduct().getProductItem(),"PARAMETRIZABLE"))
+                productionIngredients.add(ingredient);
+        }
+        return productionIngredients;
     }
 
     private void calculateMathematicalFormula(EquationMap map) throws ProductCompositionException, IOException {

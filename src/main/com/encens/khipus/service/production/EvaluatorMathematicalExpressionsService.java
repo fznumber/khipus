@@ -15,4 +15,8 @@ public interface EvaluatorMathematicalExpressionsService {
     void executeMathematicalFormulas(ProductionOrder productionOrder) throws ProductCompositionException, IOException;
 
     public void excuteFormulate(ProductionOrder productionOrder, Double formulateContainer, Double formulateSupposed) throws ProductCompositionException, IOException;
+
+    public void excuteParemeterizadFormulate(ProductionOrder productionOrder, Double formulateContainer, Double formulateSupposed) throws ProductCompositionException, IOException;
+
+    public Double excuteParemeterized(ProductionOrder productionOrder, Double containerWeight, Double supposedAmount)throws ProductCompositionException, IOException;
 }

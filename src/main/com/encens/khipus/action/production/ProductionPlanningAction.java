@@ -1,6 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -14,6 +15,7 @@ import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
 
 import javax.faces.event.ActionEvent;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -231,6 +233,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
+    public Boolean isParameterized(ProductItem productItem){
+        return articleEstateService.verifyEstate(productItem,"PARAMETRIZABLE");
+    }
+
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
@@ -316,9 +322,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         evaluateMathematicalExpression();
     }
 
+    public void evaluateParameterizedExpressionActionListener(ActionEvent e) {
+        try {
+            productionOrder.getProductComposition().setContainerWeight(evaluatorMathematicalExpressionsService.excuteParemeterized(productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount()));
+        } catch (ProductCompositionException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        evaluateParameterizedExpression();
+    }
+
+    private boolean evaluateParameterizedExpression() {
+        try {
+            evaluatorMathematicalExpressionsService.excuteParemeterizadFormulate(productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
+            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            return true;
+        } catch (Exception ex) {
+            log.error("Exception caught", ex);
+            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+            return false;
+        }
+    }
+
     private boolean evaluateMathematicalExpression() {
         try {
-            //evaluatorMathematicalExpressionsService.executeMathematicalFormulas(productionOrder);
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productionOrder.getProductComposition().getContainerWeight(),productionOrder.getProductComposition().getSupposedAmount());
             setInputs(productionOrder.getProductComposition().getProductionIngredientList());
             return true;
