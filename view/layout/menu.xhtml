@@ -1062,6 +1062,13 @@
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
+                   rendered="#{s:hasPermission('EMPLOYEETIMECARD','VIEW')}">
+        <s:link view="/production/employeeTimeCardList.xhtml"
+                value="#{messages['menu.production.employeeTimeCard']}"
+                propagation="none"/>
+    </rich:menuItem>
+    <rich:menuItem submitMode="none"
+                   styleClass="main-menu-item"
                    rendered="#{s:hasPermission('DELIVERPRODUCTIONTRANSFERLOG','VIEW')}">
         <s:link view="/production/productionTransferLogList.xhtml"
                 value="#{messages['menu.production.planification.productionTransferLog']}"
