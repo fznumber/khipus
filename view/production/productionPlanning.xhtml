@@ -199,9 +199,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             <h:outputText value="#{productionIngredientItem.productItem.usageMeasureCode}"/>
                         </rich:column>
                         <rich:column>
-                            <h:outputText value="#{productionIngredientItem.amount}">
-                                <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
-                            </h:outputText>
+                            <h:inputText value="#{productionIngredientItem.amount}"
+                                         styleClass="input"
+                                         disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem.productItem)}">
+                                <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
+                                                 actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
+                            </h:inputText>
                         </rich:column>
                         <rich:column
                                 styleClass="#{productionPlanningAction.verifAmountInput(productionIngredientItem)?'labelInfo':'labelAlarm'}">
@@ -428,9 +431,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             #{messages['MovementDetail.amountRequired']}
                         </th>
                         <th class="rich-table-headercell">
-                            #{messages['MovementDetail.unitRequired']}
-                        </th>
-                        <th class="rich-table-headercell">
                             #{messages['MovementDetail.amountUsed']}
                         </th>
                         <th class="rich-table-headercell">
@@ -457,9 +457,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             </td>
                             <td class="rich-table-cell">
                                 <h:outputText value="#{instance.amountRequired}"/>
-                            </td>
-                            <td class="rich-table-cell">
-                                <h:outputText value="#{instance.amountRequiredUnit}"/>
                             </td>
                             <td class="rich-table-cell">
                                 <h:outputText value="#{instance.amountUsed}"/>
@@ -781,43 +778,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </c:if>-->
         </rich:column>
     </rich:dataTable>
-   <!--la tabla con el total de insumos requeridos para la orden del dia ya no sera tomada encuenta-->
-    <!--<rich:dataTable value="#{productionPlanningAction.consolidatedInputs}" var="consolidatedItem" id="consolidatedList"
-                    width="100%">
-        <f:facet name="header">
-            <rich:columnGroup>
-                <rich:column>
-                    #{messages['ProductionOrder.productionInput.name']}
-                </rich:column>
-                <rich:column>
-                    #{messages['ProductionOrder.productionInput.measureUnit']}
-                </rich:column>
-                <rich:column>
-                    #{messages['ProductionOrder.productionInput.code']}
-                </rich:column>
-                <rich:column>
-                    #{messages['ProductionOrder.productionInput.amount']}
-                </rich:column>
-                &lt;!&ndash;<rich:column>
-                    #{messages['ProductionOrder.productionInput.amountWareHouse']}
-                </rich:column>&ndash;&gt;
-            </rich:columnGroup>
-        </f:facet>
-        <rich:column>
-            <h:outputText value="#{consolidatedItem.product.name}"/>
-        </rich:column>
-        <rich:column>
-            <h:outputText value="#{consolidatedItem.product.productItem.usageMeasureCode}"/>
-        </rich:column>
-        <rich:column>
-            <h:outputText value="#{consolidatedItem.product.code}"/>
-        </rich:column>
-        <rich:column>
-            <h:outputText value="#{consolidatedItem.amount}">
-                <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
-            </h:outputText>
-        </rich:column>
-    </rich:dataTable>-->
+
 </h:panelGrid>
 
 

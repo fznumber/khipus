@@ -28,15 +28,6 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
     @In(value = "#{entityManager}")
     private EntityManager em;
 
-    /*@Override
-    public List<ArticleEstate> findArticleEstate(List<ArticleEstate> articleEstateList) {
-        List<ArticleEstate> estateList = new ArrayList<ArticleEstate>();
-        estateList = (List<ArticleEstate>)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE ArticleEstate.productItemList = :articleEstateList")
-                     .setParameter("articleEstateList",articleEstateList)
-                     .getResultList();
-        return estateList;
-    }*/
-
     @Override
     public Boolean existArticleEstate(ProductItem productItem)
     {
@@ -45,6 +36,24 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
         ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
                                 .setParameter("productItem",productItem)
                                 .getSingleResult();
+            band = estate.getEstate().equals("NOVERIFICABLE") ;
+
+        }catch (NoResultException e)
+        {
+            return false;
+        }
+        return band;
+    }
+
+    @Override
+    public Boolean verifyEstate(ProductItem productItem, String compare )
+    {
+        Boolean band = true;
+        try{
+            ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
+                    .setParameter("productItem",productItem)
+                    .getSingleResult();
+            band =  estate.getEstate().equals(compare) ;
         }catch (NoResultException e)
         {
             return false;
