@@ -6,4 +6,6 @@ import javax.ejb.Local;
 public interface ProductionOrderCodeGeneratorService {
 
     public int findLasCounter(String seed);
+
+    public int getCounterCode();
 }

@@ -35,6 +35,7 @@ public class ProductionOrderCodeGenerator {
     }
 
     private String createCode() {
+        counter = productionOrderCodeGeneratorService.getCounterCode();
         counter += 1;
         return String.format(format, last.getTime(), last.getTime(), counter);
     }
