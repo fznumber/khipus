@@ -232,10 +232,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                                            rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
-                        <a4j:commandButton id="removeInnerButton" action="#{productionPlanningAction.removeFormulation}"
+                        <a4j:commandButton
                                            value="#{messages['ProductionPlanning.innerButtonRemove']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED'}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
+                            <rich:componentControl for="deleteOrderConfirmation" event="onclick" disableDefault="true" operation="show"/>
+                        </a4j:commandButton>
                         <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}"
                                            ajaxSingle="true"
                                            value="#{messages['ProductionPlanning.innerButtonCancel']}"
@@ -817,7 +819,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 -->
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
-                         rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                         rendered="#{ProductionPlanning.deleteOrder.confirmation.estateOrder eq 'PENDING' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
                          tabindex="3">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
         </h:commandButton>
@@ -827,6 +829,27 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     </s:div>
 </div>
 </h:form>
+
+<s:decorate template="/include/modalDialog.xhtml"
+            rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}">
+    <ui:param name="dialogId" value="deleteOrderConfirmation"/>
+    <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
+    <ui:define name="dialogContent">
+        <p>
+            <h:outputFormat value="#{messages['ProductionPlanning.deleteOrder.confirmation']}">
+                <f:param value="#{productionOrderForPlanning.productComposition.processedProduct.name}"/>
+            </h:outputFormat>
+        </p>
+    </ui:define>
+    <ui:define name="dialogOption">
+        <a4j:commandButton action="#{productionPlanningAction.removeFormulation}"
+                           value="#{messages['Common.delete']}"
+                           immediate="true"
+                           rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                           styleClass="button"/>
+    </ui:define>
+</s:decorate>
 
 <s:decorate template="/include/modalDialog.xhtml"
             rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}">
