@@ -601,8 +601,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if (material.getAmountUsed() > 0) {
                 Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
                 //Double total = (material.getAmountUsed() - amountReturn) * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
-                Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
-                material.setAmountReturned(amountReturn);
+                //Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
+                Double total = material.getAmountUsed() * RoundUtil.getRoundValue(((BigDecimal) material.getProductItem().getUnitCost()).doubleValue(),2,RoundUtil.RoundMode.SYMMETRIC);
+                material.setAmountReturned(RoundUtil.getRoundValue(amountReturn,2, RoundUtil.RoundMode.SYMMETRIC));
                 material.setPriceTotal(total);
 
             }
@@ -777,12 +778,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
     }
-
+    //Note: el valor del precio unitario es del tipo bigdecimal por lo que tiene una gran cantidad de decimales
+    // si tomamos todos los decimales es mas exacto el valor pero si se redondea sale como en excel
     public void setTotalsInputs(ProductionOrder productionOrder) {
         Double totalInput = 0.0;
 
         for (OrderInput input : productionOrder.getOrderInputs()) {
-            totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
+            totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
         }
 
         productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput,2, RoundUtil.RoundMode.SYMMETRIC));
