@@ -203,7 +203,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                          styleClass="input"
                                          disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem.productItem)}">
                                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
-                                                 actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener}"/>
+                                                 actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
                         </rich:column>
                         <rich:column
@@ -431,9 +431,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             #{messages['MovementDetail.amountRequired']}
                         </th>
                         <th class="rich-table-headercell">
-                            #{messages['MovementDetail.unitRequired']}
-                        </th>
-                        <th class="rich-table-headercell">
                             #{messages['MovementDetail.amountUsed']}
                         </th>
                         <th class="rich-table-headercell">
@@ -460,9 +457,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             </td>
                             <td class="rich-table-cell">
                                 <h:outputText value="#{instance.amountRequired}"/>
-                            </td>
-                            <td class="rich-table-cell">
-                                <h:outputText value="#{instance.amountRequiredUnit}"/>
                             </td>
                             <td class="rich-table-cell">
                                 <h:outputText value="#{instance.amountUsed}"/>

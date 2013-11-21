@@ -74,9 +74,22 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     }
 
     @Override
-    public Double excuteParemeterized(ProductionOrder productionOrder, Double containerWeight, Double supposedAmount)throws ProductCompositionException, IOException{
+    public Double excuteParemeterized(OrderInput input, ProductionOrder productionOrder, Double containerWeight, Double supposedAmount)throws ProductCompositionException, IOException{
 
-        return (72.4181 * getParameterized(productionOrder.getOrderInputs()).getAmount())/100;
+        return RoundUtil.getRoundValue(input.getAmount() * 100 /getPorcentaje(input),2, RoundUtil.RoundMode.SYMMETRIC);
+    }
+
+    @Override
+    public Double getAmountExpected(Double expectedOld, Double containerOld, Double containerNew)throws ProductCompositionException, IOException{
+
+        Double percentage = containerNew * 100 / containerOld;
+        return RoundUtil.getRoundValue( expectedOld * (percentage/100),2, RoundUtil.RoundMode.SYMMETRIC);
+    }
+
+    private Double getPorcentaje(OrderInput input)
+    {
+        String[] parts = input.getMathematicalFormula().split("\\*");
+        return (Double)Double.parseDouble(parts[0]);
     }
 
     @Override

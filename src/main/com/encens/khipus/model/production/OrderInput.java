@@ -30,6 +30,9 @@ public class OrderInput implements BaseModel {
     @Column(name = "CANTIDADSTOCK", nullable = false, columnDefinition = "NUMBER(24,0)")
     private BigDecimal amountStock;
 
+    @Column(name = "FORMULAMATEMATICA", nullable = false, length = 500)
+    private String mathematicalFormula;
+
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
     private String productItemCode;
 
@@ -102,5 +105,13 @@ public class OrderInput implements BaseModel {
 
     public void setCompanyNumber(String companyNumber) {
         this.companyNumber = companyNumber;
+    }
+
+    public String getMathematicalFormula() {
+        return mathematicalFormula;
+    }
+
+    public void setMathematicalFormula(String mathematicalFormula) {
+        this.mathematicalFormula = mathematicalFormula;
     }
 }
