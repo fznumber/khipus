@@ -1,6 +1,8 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
@@ -416,23 +418,38 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-
-    public void removeFormulation() {
+    @End
+    public String removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
         //setPriceCostInput();
+        String result = Outcome.FAIL;
         for (ProductionOrder po : productionPlanning.getProductionOrderList()) {
             if (po.getCode().equals(productionOrder.getCode())) {
                 productionPlanning.getProductionOrderList().remove(po);
+                result = deleteOrder(po);
                 clearFormulation();
                 break;
             }
         }
-       /* if(productionPlanning.getId() != null )
-        if (update() != Outcome.SUCCESS) {
-            return;
-        }*/
         disableEditingFormula();
+        return result;
     }
+
+    public String deleteOrder(ProductionOrder order) {
+        try {
+            getService().delete(order);
+            addDeletedMessage();
+        } catch (ConcurrencyException e) {
+            entryNotFoundLog();
+            addDeleteConcurrencyMessage();
+        } catch (ReferentialIntegrityException e) {
+            referentialIntegrityLog();
+            addDeleteReferentialIntegrityMessage();
+        }
+
+        return Outcome.SUCCESS;
+    }
+
 
     public void selectProcessedProduct(ProcessedProduct processedProduct) {
         dispobleBalance = true;
@@ -514,10 +531,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         addMaterial = false;
         //productionOrderMaterial = order;
         productionOrder = order;
+        if(productionOrder.getId() != null){
         setTotalsMaterials(productionOrder);
         setTotalsInputs(productionOrder);
         setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
+        }
         //orderMaterials = new ArrayList<OrderMaterial>();
         //orderMaterials.addAll(order.getOrderMaterials());
 
