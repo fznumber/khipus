@@ -8,6 +8,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,8 +49,11 @@ public class OrderMaterial implements BaseModel {
     @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountReturned = 0.0;
 
-    @Column(name = "PRECIOTOTAL", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double priceTotal = 0.0;
+    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal costTotal = new BigDecimal(0.0);
+
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal costUnit = new BigDecimal(0.0);
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
     private String productItemCode;
@@ -153,11 +157,19 @@ public class OrderMaterial implements BaseModel {
         this.company = company;
     }
 
-    public Double getPriceTotal() {
-        return priceTotal;
+    public BigDecimal getCostTotal() {
+        return costTotal;
     }
 
-    public void setPriceTotal(Double priceTotal) {
-        this.priceTotal = priceTotal;
+    public void setCostTotal(BigDecimal costTotal) {
+        this.costTotal = costTotal;
+    }
+
+    public BigDecimal getCostUnit() {
+        return costUnit;
+    }
+
+    public void setCostUnit(BigDecimal costUnit) {
+        this.costUnit = costUnit;
     }
 }

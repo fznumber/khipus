@@ -7,6 +7,7 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -36,9 +37,11 @@ public class ProductionOrderCodeGeneratorServiceBean implements ProductionOrderC
 
     @Override
     public int getCounterCode(){
+        try{
         List<ProductionOrder> datas = entityManager.createQuery("SELECT productionOrder FROM ProductionOrder productionOrder ORDER BY productionOrder.id DESC ")
                                       .getResultList();
-        String[] array =datas.get(0).getCode().split("\\-");
+        if(datas.size() > 0)
+        {String[] array =datas.get(0).getCode().split("\\-");
         String aux = array[0];
         String monthOrder = aux.substring(aux.length() - 2);
         int val = Integer.parseInt(array[1]);
@@ -46,5 +49,12 @@ public class ProductionOrderCodeGeneratorServiceBean implements ProductionOrderC
             val = 0;
 
         return val;
+        }else
+        {
+            return 0;
+        }
+        }catch (NoResultException e){
+        return 0;
+        }
     }
 }

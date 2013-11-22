@@ -199,21 +199,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-  /*  public Boolean verifMount(ProductionIngredient productionIngredient) {
-        Boolean aux = true;
-
-        if (productionIngredient.getVerifiably() != null) {
-            if ((productionIngredient.getVerifiably().compareTo("VERIFICABLE") == 0)) {
-                aux = (productionIngredient.getMountWareHouse().doubleValue() < productionIngredient.getAmount());
-            }
-        } else {
-            aux = false;
-
-        }
-        dispobleBalance = aux;
-        return aux;
-    }*/
-
     public Boolean verifAmount(ProductionIngredient ingredient){
         Boolean band= true;
         if(!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))
@@ -250,6 +235,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
+        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
         if(productionPlanning.getId() != null && !verifySotck(productionOrder))
         if (update() != Outcome.SUCCESS) {
             return;
@@ -257,6 +243,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         clearFormulation();
         disableEditingFormula();
+    }
+
+    public void setInputs()
+    {
+
     }
 
     private Boolean verifySotck(ProductionOrder order)
@@ -271,12 +262,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         return band;
     }
-
-/*    public void setPriceCostInput() {
-        for (InputProductionVoucher inputProductionVoucher : productionOrder.getInputProductionVoucherList()) {
-            inputProductionVoucher.setPriceCostTotal(inputProductionVoucher.getAmount() * ((BigDecimal) (inputProductionVoucher.getMetaProduct().getProductItem().getUnitCost())).doubleValue());
-        }
-    }*/
 
     @End
     public String create(List<Consolidated> consolidateds) {
@@ -392,6 +377,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
             input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
             input.setMathematicalFormula(ingredient.getMathematicalFormula());
+            BigDecimal costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+            input.setCostUnit(costUnit);
+            input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
             productionOrder.getOrderInputs().add(input);
         }
     }
@@ -411,6 +399,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
                 input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
                 input.setMathematicalFormula(ingredient.getMathematicalFormula());
+                BigDecimal costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+                input.setCostUnit(costUnit);
+                input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
                 productionOrder.getOrderInputs().add(input);
             }else{
                 productionOrder.getOrderInputs().add(inputParameterize);
@@ -619,11 +610,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (OrderMaterial material : orderMaterials) {
             if (material.getAmountUsed() > 0) {
                 Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
-                //Double total = (material.getAmountUsed() - amountReturn) * ((BigDecimal)material.getProductItem().getUnitCost()).doubleValue();
-                //Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
-                Double total = material.getAmountUsed() * RoundUtil.getRoundValue(((BigDecimal) material.getProductItem().getUnitCost()).doubleValue(),2,RoundUtil.RoundMode.SYMMETRIC);
+                //el precio unitario sin redondear
+                Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
                 material.setAmountReturned(RoundUtil.getRoundValue(amountReturn,2, RoundUtil.RoundMode.SYMMETRIC));
-                material.setPriceTotal(total);
+                material.setCostUnit(material.getProductItem().getUnitCost());
+                material.setCostTotal(new BigDecimal(total));
 
             }
         }
@@ -672,6 +663,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //setProducedAmountWithExpendAmount(planning);
 
         //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
+        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
         if (planning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -803,7 +795,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Double totalInput = 0.0;
 
         for (OrderInput input : productionOrder.getOrderInputs()) {
-            totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
+            //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
+            totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
         }
 
         productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput,2, RoundUtil.RoundMode.SYMMETRIC));
@@ -812,7 +805,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void setTotalsMaterials(ProductionOrder productionOrder) {
         Double totalMaterial = 0.0;
         for (OrderMaterial material : productionOrder.getOrderMaterials()) {
-            totalMaterial += material.getPriceTotal();
+            totalMaterial += material.getCostTotal().doubleValue();
         }
         productionOrder.setTotalPriceMaterial(RoundUtil.getRoundValue(totalMaterial,2, RoundUtil.RoundMode.SYMMETRIC));
     }

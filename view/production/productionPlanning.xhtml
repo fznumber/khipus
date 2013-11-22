@@ -385,6 +385,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <rich:column>
                         #{messages['ProductionOrder.unitPriceCost']}
                     </rich:column>
+                    <rich:column>
+                        #{messages['ProductionOrder.costTotal']}
+                    </rich:column>
                 </rich:columnGroup>
             </f:facet>
 
@@ -403,11 +406,16 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </rich:column>
 
             <rich:column>
-                <h:outputText value="#{inputProductionItem.productItem.unitCost}">
+                <h:outputText value="#{inputProductionItem.costUnit}">
                     <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                 </h:outputText>
             </rich:column>
 
+            <rich:column>
+                <h:outputText value="#{inputProductionItem.costTotal}">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:outputText>
+            </rich:column>
 
         </rich:dataTable>
     </app:fieldset>
@@ -467,11 +475,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                 <h:outputText value="#{instance.amountReturned}"/>
                             </td>
                             <td class="rich-table-cell">
-                                <h:outputText value="#{instance.productItem.unitCost}"/>
+                                <h:outputText value="#{instance.costUnit}"/>
                             </td>
 
                             <td class="rich-table-cell">
-                                <h:outputText value="#{instance.priceTotal}"/>
+                                <h:outputText value="#{instance.costTotal}"/>
                             </td>
                         </tr>
 

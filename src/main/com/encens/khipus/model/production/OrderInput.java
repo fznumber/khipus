@@ -30,6 +30,12 @@ public class OrderInput implements BaseModel {
     @Column(name = "CANTIDADSTOCK", nullable = false, columnDefinition = "NUMBER(24,0)")
     private BigDecimal amountStock;
 
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
+    private BigDecimal costUnit = new BigDecimal(0.0);
+
+    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,6)")
+    private BigDecimal costTotal = new BigDecimal(0.0);
+
     @Column(name = "FORMULAMATEMATICA", nullable = false, length = 500)
     private String mathematicalFormula;
 
@@ -113,5 +119,21 @@ public class OrderInput implements BaseModel {
 
     public void setMathematicalFormula(String mathematicalFormula) {
         this.mathematicalFormula = mathematicalFormula;
+    }
+
+    public BigDecimal getCostUnit() {
+        return costUnit;
+    }
+
+    public void setCostUnit(BigDecimal costUnit) {
+        this.costUnit = costUnit;
+    }
+
+    public BigDecimal getCostTotal() {
+        return costTotal;
+    }
+
+    public void setCostTotal(BigDecimal costTotal) {
+        this.costTotal = costTotal;
     }
 }
