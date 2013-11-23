@@ -172,20 +172,26 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
 
         for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
-            int codeCount = 14;
-            int nameCount = 13;
-            int unitCount = 12;
-            int mountCount = 15;
+            int codeCount = 16;
+            int nameCount = 15;
+            int unitCount = 14;
+            int mountCount = 17;
+            int costUnit = 18;
+            int totalcost = 19;
 
             for (OrderInput input : orderInputs) {
                 ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(codeCount))).setText(input.getProductItem().getProductItemCode());
                 ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(nameCount))).setText(input.getProductItem().getName());
                 ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(unitCount))).setText(input.getProductItem().getUsageMeasureCode());
                 ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(mountCount))).setText(String.format("%.2f", input.getAmount()));
-                codeCount += 4;
-                nameCount += 4;
-                unitCount += 4;
-                mountCount += 4;
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(costUnit))).setText(String.format("%.2f", input.getCostUnit()));
+                ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(i))).getElements().get(totalcost))).setText(String.format("%.2f", input.getCostTotal()));
+                codeCount += 6;
+                nameCount += 6;
+                unitCount += 6;
+                mountCount += 6;
+                costUnit += 6;
+                totalcost += 6;
             }
         }
         try {
@@ -239,12 +245,44 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
     }
 
+    private void addProductionOrderHoursDetailSubReport(Map mainReportParams) {
+        log.debug("Generating ProductionOrderHoursDetailSub.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String sql = "SELECT pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre , te.horainicio, te.horafin \n" +
+                "      , 11 as num_horas\n" +
+                "      , 10 as total \n" +
+                "FROM tarjetatiempoempleado te\n" +
+                "inner join empleado em\n" +
+                "on em.idempleado = te.idempleado\n" +
+                "inner join  tipotareaprod tt\n" +
+                "on tt.idtipotareaprod = te.idtipotareaprod\n" +
+                "inner join persona pe\n" +
+                "on pe.idpersona = em.idempleado\n" +
+                "where te.IDORDENPRODUCCION = " + productionOrder.getId().toString();
+
+        String subReportKey = "ORDERHOURSUBREPORT";
+        TypedReportData subReportData = super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderHoursDetailSubReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
+    }
+
     private void addProductionOrderMaterialDetailSubReport(Map mainReportParams) {
         log.debug("Generating productionOrderMaterialDetailSubReport.............................");
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada \n" +
+        String sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada,om.COSTOUNITARIO ,om.COSTOTOTAL \n" +
                 "from ordenmaterial om\n" +
                 "inner join WISE.INV_ARTICULOS IA \n" +
                 "ON om.COD_ART=IA.COD_ART\n" +
