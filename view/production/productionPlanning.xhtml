@@ -682,7 +682,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </s:decorate>
         <s:div>
             <a4j:commandButton action="#{productionPlanningAction.updateProducedAmount}"
-                               value="#{messages['ProductionPlanning.innerButtonUpdate']}"
+                               value="#{messages['ProductionPlanning.saveCantProducer']}"
                                reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                                rendered="#{productionOrderForPlanning.estateOrder == 'EXECUTED'}"/>
             <rich:spacer width="10"/>
