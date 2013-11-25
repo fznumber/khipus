@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="611" pageHeight="791" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28">
 	<property name="ireport.zoom" value="1.771561000000001"/>
 	<property name="ireport.x" value="23"/>
-	<property name="ireport.y" value="144"/>
+	<property name="ireport.y" value="257"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="userLoginParam" class="java.lang.String"/>
@@ -280,7 +280,7 @@
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="139">
+		<band height="208">
 			<subreport isUsingCache="true">
 				<reportElement positionType="Float" x="0" y="31" width="527" height="36"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
@@ -313,6 +313,12 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Costos de producción"]]></textFieldExpression>
 			</textField>
+			<subreport isUsingCache="true">
+				<reportElement positionType="Float" x="0" y="136" width="527" height="36"/>
+				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ORDERHOURSUBREPORT}]]></subreportExpression>
+			</subreport>
 		</band>
 	</summary>
 </jasperReport>
