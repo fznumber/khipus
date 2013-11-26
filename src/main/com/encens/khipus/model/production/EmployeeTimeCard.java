@@ -48,6 +48,9 @@ public class EmployeeTimeCard implements BaseModel {
     @Temporal(TemporalType.TIME)
     private Date endTime;
 
+    @Column(name = "COSTOPORHORA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double costPerHour;
+
     @Column(name = "DESCRIPCION", nullable = true)
     @Lob
     private String description;
@@ -130,5 +133,13 @@ public class EmployeeTimeCard implements BaseModel {
 
     public void setProductionTaskType(ProductionTaskType productionTaskType) {
         this.productionTaskType = productionTaskType;
+    }
+
+    public Double getCostPerHour() {
+        return costPerHour;
+    }
+
+    public void setCostPerHour(Double costPerHour) {
+        this.costPerHour = costPerHour;
     }
 }

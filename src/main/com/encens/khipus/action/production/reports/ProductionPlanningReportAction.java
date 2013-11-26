@@ -161,6 +161,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         addProductionOrderMaterialDetailSubReport(params);
         addProductionOrderMaterialSummaryDetailSubReport(params);
+        addProductionOrderHoursDetailSubReport(params);
         typedReportData = getReport(
                 fileName
                 , templatePath
@@ -250,17 +251,25 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String sql = "SELECT pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre , te.horainicio, te.horafin \n" +
-                "      , 11 as num_horas\n" +
-                "      , 10 as total \n" +
+        String sql = "SELECT distinct pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre \n" +
+                "       ,to_char(te.horainicio,'HH24:MI') as horainicio\n" +
+                "       ,to_char(te.horafin,'HH24:MI') as  horafin \n" +
+                "       ,24 * (te.horafin - te.horainicio ) as num_horas\n" +
+                "       ,nvl(te.costoporhora,0.0) as costoporhora\n" +
+                "       ,(\n" +
+                "       select nvl( sum(COSTOPORHORA),0.0) FROM tarjetatiempoempleado               \n" +
+                "       where idordenproduccion = "+ productionOrder.getId().toString()+"\n" +
+                "       ) as total \n" +
                 "FROM tarjetatiempoempleado te\n" +
-                "inner join empleado em\n" +
+                "inner join empleado em \n" +
                 "on em.idempleado = te.idempleado\n" +
                 "inner join  tipotareaprod tt\n" +
                 "on tt.idtipotareaprod = te.idtipotareaprod\n" +
                 "inner join persona pe\n" +
                 "on pe.idpersona = em.idempleado\n" +
-                "where te.IDORDENPRODUCCION = " + productionOrder.getId().toString();
+                "where te.IDORDENPRODUCCION = "+ productionOrder.getId().toString()+"\n" +
+                "group by pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre,te.horainicio, te.horafin, te.costoporhora\n" +
+                "order by pe.nombres, pe.apellidopaterno, pe.apellidomaterno" ;
 
         String subReportKey = "ORDERHOURSUBREPORT";
         TypedReportData subReportData = super.generateSqlSubReport(
