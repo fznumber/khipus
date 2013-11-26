@@ -314,11 +314,21 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Costos de producción"]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
-				<reportElement positionType="Float" x="0" y="136" width="527" height="36"/>
+				<reportElement positionType="Float" x="0" y="145" width="527" height="36"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ORDERHOURSUBREPORT}]]></subreportExpression>
 			</subreport>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="133" width="527" height="12"/>
+				<box padding="1">
+					<pen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Mano de obra directa"]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

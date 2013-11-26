@@ -269,7 +269,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "on pe.idpersona = em.idempleado\n" +
                 "where te.IDORDENPRODUCCION = "+ productionOrder.getId().toString()+"\n" +
                 "group by pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre,te.horainicio, te.horafin, te.costoporhora\n" +
-                "order by pe.nombres, pe.apellidopaterno, pe.apellidomaterno; " ;
+                "order by pe.nombres, pe.apellidopaterno, pe.apellidomaterno" ;
 
         String subReportKey = "ORDERHOURSUBREPORT";
         TypedReportData subReportData = super.generateSqlSubReport(
