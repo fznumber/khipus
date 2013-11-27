@@ -32,4 +32,6 @@ public class EmployeeTimeCardDataModel extends QueryDataModel<Long, EmployeeTime
     public List<String> getRestrictions() {
         return Arrays.asList(RESTRICTIONS);
     }*/
+
+
 }

@@ -5,6 +5,8 @@ import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.JobContract;
 import com.encens.khipus.model.production.EmployeeTimeCard;
 import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.production.ProductionTaskType;
+import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.annotations.AutoCreate;
@@ -13,9 +15,11 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -78,6 +82,29 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         Double costPerHour = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8);
 
         return costPerHour;
+    }
+
+    @Override
+    public List<Group> getGroupsProduction()
+    {
+            try {
+                return em.createNativeQuery("SELECT * FROM CONFIGRUPO WHERE TIPO = 'AREA_PRODUCTOS'  ")
+                        .getResultList();
+            } catch (NoResultException e) {
+                return new ArrayList<Group>();
+            }
+
+    }
+    @Override
+    public List<ProductionTaskType> getTaskTypeGroup(Group group)
+    {
+        try{
+            return em.createNativeQuery("SELECT * FROM TIPOTAREAPROD WHERE COD_GRU = "+group.getGroupCode())
+                    .getResultList();
+        }catch (NoResultException e)
+        {
+            return new ArrayList<ProductionTaskType>();
+        }
     }
 
 }
