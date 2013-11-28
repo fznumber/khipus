@@ -192,6 +192,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setProductComposition(productComposition);
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productComposition.getContainerWeight(),productionOrder.getExpendAmount());
             setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            dispobleBalance = true;
 
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -468,7 +469,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    public void select(ProductionOrder productionOrder) {
+    public void selectModifiIput(ProductionOrder productionOrder) {
 
         cancelFormulation();
         //dispobleBalance = false;
@@ -518,6 +519,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectDetail(ProductionOrder order) {
+        productionOrder = null;
         disableEditingFormula();
         addMaterial = false;
         //productionOrderMaterial = order;
@@ -702,29 +704,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void cancelFormulation() {
-        if (existingFormulation != null) {
-            productionOrder.setProductComposition(existingFormulation.productComposition);
-            productionOrder.setExpendAmount(existingFormulation.producingAmount);
-            existingFormulation = null;
-        }
 
         disableEditingFormula();
 
-        if (productionOrder.getId() != null) {
-
-            List<OutputProductionVoucher> fakeVouchers = new ArrayList<OutputProductionVoucher>();
-            for (OutputProductionVoucher voucher : productionOrder.getOutputProductionVoucherList()) {
-                if (voucher.getId() == null) {
-                    fakeVouchers.add(voucher);
-                }
-            }
-
-            for (OutputProductionVoucher voucher : fakeVouchers) {
-                productionOrder.getOutputProductionVoucherList().remove(voucher);
-            }
-            if (productionOrder.getOutputProductionVoucherList().size() != 0)
-                productionPlanningService.refresh(productionOrder);
-        }
         dispobleBalance = true;
         addMaterial = false;
         showInputDetail = false;
