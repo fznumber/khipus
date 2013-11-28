@@ -370,7 +370,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             Double container = evaluatorMathematicalExpressionsService.excuteParemeterized(input,productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
             //productionOrder.getProductComposition().setContainerWeight(container);
             productionOrder.setContainerWeight(container);
-            productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
+            //productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
+            productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(productionOrder.getProductComposition().getSupposedAmount(),productionOrder.getProductComposition().getContainerWeight(),container));
 
         } catch (ProductCompositionException e1) {
             e1.printStackTrace();
@@ -397,7 +398,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if(containerOld != null)
             {
                 productionOrder.setContainerWeight(containerOld);
-                productionOrder.getProductComposition().setContainerWeight(containerOld);
+              //  productionOrder.getProductComposition().setContainerWeight(containerOld);
             }
 
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productionOrder.getProductComposition().getContainerWeight(),productionOrder.getProductComposition().getSupposedAmount());
