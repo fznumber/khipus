@@ -33,6 +33,7 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
     @Create
     public void init() {
         sortProperty = "productionPlanning.date";
+        sortAsc = false;
     }
 
     @Override

@@ -192,6 +192,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setProductComposition(productComposition);
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productComposition.getContainerWeight(),productionOrder.getExpendAmount());
             setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            dispobleBalance = true;
 
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -230,12 +231,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
-        //setPriceCostInput();
+
 
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
+        if(productionOrder.getOrderInputs().size() == 0)
         setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+
         if(productionPlanning.getId() != null && !verifySotck(productionOrder))
         if (update() != Outcome.SUCCESS) {
             return;
@@ -245,9 +248,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         disableEditingFormula();
     }
 
-    public void setInputs()
-    {
+    public void updateFormulation() {
+        if (evaluateMathematicalExpression() == false) {
+            return;
+        }
+        ProductionPlanning planning = getInstance();
+        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
+        //para que no afecte en el calculo de las formulas
+        //setProducedAmountWithExpendAmount(planning);
 
+        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
+        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+        if (planning.getId() != null && !verifySotck(productionOrder))
+            if (update() != Outcome.SUCCESS) {
+                return;
+            }
+        //setPriceCostInput();
+        existingFormulation = null;
+        disableEditingFormula();
     }
 
     private Boolean verifySotck(ProductionOrder order)
@@ -271,7 +289,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(consolidated.getProduct());
                 if(!articleEstateService.existArticleEstate(consolidated.getProduct().getProductItem()))  //si lo encuentra en la lista no lo toma encuenta
                 if (consolidated.getAmount() > mountWareHouse.doubleValue()) {
-                    addMessageError(consolidated, mountWareHouse.doubleValue());
+                    //addMessageError(consolidated, mountWareHouse.doubleValue());
                     band = false;
                 }
             }
@@ -279,6 +297,34 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if (band) {
                 ProductionPlanning productionPlanning = getInstance();
                 //setZeroProducedAmount(productionPlanning);
+                getService().create(productionPlanning);
+                addCreatedMessage();
+                return Outcome.SUCCESS;
+            } else {
+                return Outcome.REDISPLAY;
+            }
+
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        }
+    }
+
+    @End
+    public String createNewPlannig() {
+        Boolean band = true;
+        try {
+            for (OrderInput input: productionOrder.getOrderInputs()) {
+                BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(input.getProductItem());
+                if(!articleEstateService.existArticleEstate(input.getProductItem()))  //si lo encuentra en la lista no lo toma encuenta
+                    if (input.getAmount() > mountWareHouse.doubleValue()) {
+                        addMessageError(input, mountWareHouse.doubleValue());
+                        band = false;
+                    }
+            }
+
+            if (band) {
+                ProductionPlanning productionPlanning = getInstance();
                 getService().create(productionPlanning);
                 addCreatedMessage();
                 return Outcome.SUCCESS;
@@ -300,8 +346,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }*/
 
-    public void addMessageError(Consolidated consolidated, Double mount) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", consolidated.getName(), mount);
+    public void addMessageError(OrderInput input, Double mount) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", input.getProductItem().getName(), mount);
     }
 
     public void addMessageError(String name , Double mount) {
@@ -322,9 +368,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             containerOld = productionOrder.getContainerWeight();
 
             Double container = evaluatorMathematicalExpressionsService.excuteParemeterized(input,productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
-            productionOrder.getProductComposition().setContainerWeight(container);
+            //productionOrder.getProductComposition().setContainerWeight(container);
             productionOrder.setContainerWeight(container);
-            productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
+            //productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
+            productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(productionOrder.getProductComposition().getSupposedAmount(),productionOrder.getProductComposition().getContainerWeight(),container));
 
         } catch (ProductCompositionException e1) {
             e1.printStackTrace();
@@ -351,7 +398,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if(containerOld != null)
             {
                 productionOrder.setContainerWeight(containerOld);
-                productionOrder.getProductComposition().setContainerWeight(containerOld);
+              //  productionOrder.getProductComposition().setContainerWeight(containerOld);
             }
 
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder,productionOrder.getProductComposition().getContainerWeight(),productionOrder.getProductComposition().getSupposedAmount());
@@ -468,7 +515,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    public void select(ProductionOrder productionOrder) {
+    public void selectModifiIput(ProductionOrder productionOrder) {
 
         cancelFormulation();
         //dispobleBalance = false;
@@ -518,7 +565,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectDetail(ProductionOrder order) {
-        disableEditingFormula();
+        cancelFormulation();
         addMaterial = false;
         //productionOrderMaterial = order;
         productionOrder = order;
@@ -653,25 +700,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder = new ProductionOrder();
     }
 
-    public void updateFormulation() {
-        if (evaluateMathematicalExpression() == false) {
-            return;
-        }
-        ProductionPlanning planning = getInstance();
-        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
-        //para que no afecte en el calculo de las formulas
-        //setProducedAmountWithExpendAmount(planning);
 
-        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
-        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
-        if (planning.getId() != null && !verifySotck(productionOrder))
-            if (update() != Outcome.SUCCESS) {
-                return;
-            }
-        //setPriceCostInput();
-        existingFormulation = null;
-        disableEditingFormula();
-    }
 
     private Boolean verifySotckByProductionPlannig(ProductionPlanning planning){
         Boolean band = true;
@@ -707,24 +736,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setExpendAmount(existingFormulation.producingAmount);
             existingFormulation = null;
         }
-
         disableEditingFormula();
 
-        if (productionOrder.getId() != null) {
-
-            List<OutputProductionVoucher> fakeVouchers = new ArrayList<OutputProductionVoucher>();
-            for (OutputProductionVoucher voucher : productionOrder.getOutputProductionVoucherList()) {
-                if (voucher.getId() == null) {
-                    fakeVouchers.add(voucher);
-                }
-            }
-
-            for (OutputProductionVoucher voucher : fakeVouchers) {
-                productionOrder.getOutputProductionVoucherList().remove(voucher);
-            }
-            if (productionOrder.getOutputProductionVoucherList().size() != 0)
-                productionPlanningService.refresh(productionOrder);
-        }
         dispobleBalance = true;
         addMaterial = false;
         showInputDetail = false;
