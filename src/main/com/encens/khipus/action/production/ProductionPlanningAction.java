@@ -231,12 +231,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
-        //setPriceCostInput();
+
 
         productionPlanning.getProductionOrderList().add(productionOrder);
         productionOrder.setProductionPlanning(productionPlanning);
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
+        if(productionOrder.getOrderInputs().size() == 0)
         setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+
         if(productionPlanning.getId() != null && !verifySotck(productionOrder))
         if (update() != Outcome.SUCCESS) {
             return;
@@ -246,9 +248,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         disableEditingFormula();
     }
 
-    public void setInputs()
-    {
+    public void updateFormulation() {
+        if (evaluateMathematicalExpression() == false) {
+            return;
+        }
+        ProductionPlanning planning = getInstance();
+        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
+        //para que no afecte en el calculo de las formulas
+        //setProducedAmountWithExpendAmount(planning);
 
+        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
+        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+        if (planning.getId() != null && !verifySotck(productionOrder))
+            if (update() != Outcome.SUCCESS) {
+                return;
+            }
+        //setPriceCostInput();
+        existingFormulation = null;
+        disableEditingFormula();
     }
 
     private Boolean verifySotck(ProductionOrder order)
@@ -272,7 +289,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(consolidated.getProduct());
                 if(!articleEstateService.existArticleEstate(consolidated.getProduct().getProductItem()))  //si lo encuentra en la lista no lo toma encuenta
                 if (consolidated.getAmount() > mountWareHouse.doubleValue()) {
-                    addMessageError(consolidated, mountWareHouse.doubleValue());
+                    //addMessageError(consolidated, mountWareHouse.doubleValue());
                     band = false;
                 }
             }
@@ -280,6 +297,34 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if (band) {
                 ProductionPlanning productionPlanning = getInstance();
                 //setZeroProducedAmount(productionPlanning);
+                getService().create(productionPlanning);
+                addCreatedMessage();
+                return Outcome.SUCCESS;
+            } else {
+                return Outcome.REDISPLAY;
+            }
+
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        }
+    }
+
+    @End
+    public String createNewPlannig() {
+        Boolean band = true;
+        try {
+            for (OrderInput input: productionOrder.getOrderInputs()) {
+                BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(input.getProductItem());
+                if(!articleEstateService.existArticleEstate(input.getProductItem()))  //si lo encuentra en la lista no lo toma encuenta
+                    if (input.getAmount() > mountWareHouse.doubleValue()) {
+                        addMessageError(input, mountWareHouse.doubleValue());
+                        band = false;
+                    }
+            }
+
+            if (band) {
+                ProductionPlanning productionPlanning = getInstance();
                 getService().create(productionPlanning);
                 addCreatedMessage();
                 return Outcome.SUCCESS;
@@ -301,8 +346,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }*/
 
-    public void addMessageError(Consolidated consolidated, Double mount) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", consolidated.getName(), mount);
+    public void addMessageError(OrderInput input, Double mount) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", input.getProductItem().getName(), mount);
     }
 
     public void addMessageError(String name , Double mount) {
@@ -323,7 +368,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             containerOld = productionOrder.getContainerWeight();
 
             Double container = evaluatorMathematicalExpressionsService.excuteParemeterized(input,productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
-            productionOrder.getProductComposition().setContainerWeight(container);
+            //productionOrder.getProductComposition().setContainerWeight(container);
             productionOrder.setContainerWeight(container);
             productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
 
@@ -519,8 +564,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void selectDetail(ProductionOrder order) {
-        productionOrder = null;
-        disableEditingFormula();
+        cancelFormulation();
         addMaterial = false;
         //productionOrderMaterial = order;
         productionOrder = order;
@@ -655,25 +699,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder = new ProductionOrder();
     }
 
-    public void updateFormulation() {
-        if (evaluateMathematicalExpression() == false) {
-            return;
-        }
-        ProductionPlanning planning = getInstance();
-        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
-        //para que no afecte en el calculo de las formulas
-        //setProducedAmountWithExpendAmount(planning);
 
-        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
-        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
-        if (planning.getId() != null && !verifySotck(productionOrder))
-            if (update() != Outcome.SUCCESS) {
-                return;
-            }
-        //setPriceCostInput();
-        existingFormulation = null;
-        disableEditingFormula();
-    }
 
     private Boolean verifySotckByProductionPlannig(ProductionPlanning planning){
         Boolean band = true;
@@ -704,7 +730,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void cancelFormulation() {
-
+        if (existingFormulation != null) {
+            productionOrder.setProductComposition(existingFormulation.productComposition);
+            productionOrder.setExpendAmount(existingFormulation.producingAmount);
+            existingFormulation = null;
+        }
         disableEditingFormula();
 
         dispobleBalance = true;

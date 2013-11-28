@@ -136,12 +136,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </h:inputText>
         </s:decorate>
 
-        <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.containerWeight']}</ui:define>
             <h:inputText value="#{productionOrderForPlanning.containerWeight}"
                          required="false" styleClass="input" tabindex="5" readonly="true"/>
         </s:decorate>
--->
        <!-- <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.totalWeight']}</ui:define>
             <h:inputText value="#{productionPlanningAction.totalWeight}"
@@ -775,37 +774,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
 <div class="buttons">
     <s:div id="ruleBotton2">
-        <!--<h:commandButton
-                action="#{productionPlanningReportAction.generateReport(productionPlanningAction.consolidatedInputs,productionPlanning)}"
-                value="#{messages['ProductionPlanning.generateDocumnt']}"
-                rendered="#{productionPlanningAction.managed}"
-                styleClass="button"
-                tabindex="1"/>-->
 
-        <!--&lt;!&ndash;<h:commandButton action="#{productionPlanningAction.makeFinalized}"
-                         value="#{messages['ProductionPlanning.makeFinalized']}"
-                         styleClass="button"
-                         rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
-        <h:commandButton action="#{productionPlanningAction.makeExecuted}"
-                         value="#{messages['ProductionPlanning.makeExecuted']}"
-                         styleClass="button"
-                         rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>-->
-
-        <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}" value="#{messages['Common.save']}"
+        <h:commandButton action="#{productionPlanningAction.createNewPlannig()}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{!productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="1">
             <s:defaultAction/>
         </h:commandButton>
 
-<!--
-        <h:commandButton action="#{productionPlanningAction.update}" value="#{messages['Common.update']}"
-                         styleClass="button"
-                         rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                         tabindex="2"/>
--->
         <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{ProductionPlanning.deleteOrder.confirmation.estateOrder eq 'PENDING' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
