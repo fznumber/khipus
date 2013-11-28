@@ -109,7 +109,7 @@
                     <a4j:support event="onblur" ajaxSingle="true"
                                  actionListener="#{productCompositionAction.mathematicalFormulaActionListener}"
                                  reRender="formPanel"/>
-                   <!-- <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>-->
+                    <!-- <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>-->
                 </h:inputText>
                 <h:outputText value=" [#{messages['ProductComposition.defaultContainerWeight']}]"/>
             </s:decorate>
@@ -146,7 +146,6 @@
 
             <rich:dataTable value="#{productComposition.productionIngredientList}" var="ingredientItem"
                             id="productCompositionList"
-                            rows="#{sessionUser.rowsPerPage}"
                             width="100%" columnsWidth="15%,10%,10%,10%,35%,10%,10%">
                 <f:facet name="header">
                     <rich:columnGroup>
