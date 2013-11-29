@@ -451,6 +451,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
                 productionOrder.getOrderInputs().add(input);
             }else{
+                inputParameterize.setCostTotal(new BigDecimal(inputParameterize.getCostUnit().doubleValue()*inputParameterize.getAmount()));
                 productionOrder.getOrderInputs().add(inputParameterize);
             }
         }
