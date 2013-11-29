@@ -78,17 +78,17 @@
 
                 <H:outputLabel>AREA</H:outputLabel>
                 <div class="buttons">
-                    <h:commandButton action="#{employeeTimeCardAction.selectArea('UHT')}" value="#{messages['EmployeeTimeCard.area.uht']}"
+                    <h:commandButton action="#{employeeTimeCardAction.groupUHT}" value="#{messages['EmployeeTimeCard.area.uht']}"
                                      styleClass="button"
                                      tabindex="1">
                     </h:commandButton>
                     <rich:spacer width="20"/>
-                    <h:commandButton action="#{employeeTimeCardAction.selectArea('YOGURT')}" value="#{messages['EmployeeTimeCard.area.yogurt']}"
+                    <h:commandButton action="#{employeeTimeCardAction.selectGroupYogurt}" value="#{messages['EmployeeTimeCard.area.yogurt']}"
                                      styleClass="button"
                                      tabindex="1">
                     </h:commandButton>
                     <rich:spacer width="20"/>
-                    <h:commandButton action="#{employeeTimeCardAction.selectArea('QUESOS')}" value="#{messages['EmployeeTimeCard.area.chees']}"
+                    <h:commandButton action="#{employeeTimeCardAction.groupChees}" value="#{messages['EmployeeTimeCard.area.chees']}"
                                      styleClass="button"
                                      tabindex="1">
                     </h:commandButton>
@@ -97,7 +97,7 @@
                 <s:decorate id="productionTaskTypeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['EmployeeTimeCard.taskType']}</ui:define>
                     <h:selectOneMenu id="productionTaskType" value="#{employeeTimeCardAction.productionTaskType}"
-                                     styleClass="input" required="true"
+                                     styleClass="input" required="false"
                                      tabindex="7">
                         <s:selectItems value="#{employeeTimeCardAction.productionTaskTypesSelectede}" var="productionTaskType"
                                        label="#{productionTaskType.name }"

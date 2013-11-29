@@ -1,6 +1,7 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.model.employees.Employee;
+import com.encens.khipus.model.production.ConfigGroup;
 import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.production.ProductionTaskType;
 import com.encens.khipus.model.warehouse.Group;
@@ -18,7 +19,7 @@ public interface EmployeeTimeCardService {
 
     public Double getCostPerHour(Employee employee);
 
-    public List<Group> getGroupsProduction();
-
     public List<ProductionTaskType> getTaskTypeGroup(Group group);
+
+    public List<ConfigGroup> getConfigGroupsProduction();
 }

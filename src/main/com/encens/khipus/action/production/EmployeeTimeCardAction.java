@@ -3,10 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.model.employees.Employee;
-import com.encens.khipus.model.production.EmployeeTimeCard;
-import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.production.ProductionPlanning;
-import com.encens.khipus.model.production.ProductionTaskType;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.EmployeeService;
 import com.encens.khipus.service.production.EmployeeTimeCardService;
@@ -63,30 +60,6 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private ProductionPlanning productionPlanning;
-
-    public EmployeeTimeCardAction()
-    {
-
-       List<Group> groups = employeeTimeCardService.getGroupsProduction();
-        for(Group group:groups)
-        {
-            if(group.getFullName().compareTo("PRODUCTOS LACTEOS") == 0)
-            {
-                groupYogurt = group;
-                productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(group);
-            }
-            if(group.getFullName().compareTo("PRODUCTOS UHT") == 0)
-            {
-                groupYogurt = group;
-                productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(group);
-            }
-            if(group.getFullName().compareTo("PRODUCTOS QUESOS") == 0)
-            {
-                groupYogurt = group;
-                productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(group);
-            }
-        }
-    }
 
     @Factory(value = "employeeTimeCard", scope = ScopeType.STATELESS)
     public EmployeeTimeCard initEmployeeTimeCard() {
@@ -204,6 +177,22 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     public void setGroupUHT(Group groupUHT) {
         this.groupUHT = groupUHT;
+    }
+
+    public void selectGroupYogurt()
+    {
+        if(groupYogurt == null)
+        {
+            List<ConfigGroup> groups = employeeTimeCardService.getConfigGroupsProduction();
+            for(ConfigGroup configGroup:groups)
+            {
+                if(configGroup.getGroup().getFullName().compareTo("PRODUCTOS LACTEOS") == 0)
+                {
+                    groupYogurt = configGroup.getGroup();
+                }
+            }
+        }
+        productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(groupYogurt);
     }
 
     public Group getGroupYogurt() {

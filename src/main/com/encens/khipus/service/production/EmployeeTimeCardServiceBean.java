@@ -3,6 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.JobContract;
+import com.encens.khipus.model.production.ConfigGroup;
 import com.encens.khipus.model.production.EmployeeTimeCard;
 import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.production.ProductionTaskType;
@@ -85,26 +86,29 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     }
 
     @Override
-    public List<Group> getGroupsProduction()
-    {
-            try {
-                return em.createNativeQuery("SELECT * FROM CONFIGRUPO WHERE TIPO = 'AREA_PRODUCTOS'  ")
-                        .getResultList();
-            } catch (NoResultException e) {
-                return new ArrayList<Group>();
-            }
-
-    }
-    @Override
     public List<ProductionTaskType> getTaskTypeGroup(Group group)
     {
         try{
-            return em.createNativeQuery("SELECT * FROM TIPOTAREAPROD WHERE COD_GRU = "+group.getGroupCode())
+            return em.createNativeQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType WHERE COD_GRU = "+group.getGroupCode())
                     .getResultList();
         }catch (NoResultException e)
         {
             return new ArrayList<ProductionTaskType>();
         }
+    }
+
+    @Override
+    public List<ConfigGroup> getConfigGroupsProduction() {
+        List<ConfigGroup> groups = new ArrayList<ConfigGroup>();
+        try {
+            groups =  em.createQuery("SELECT configGroup FROM ConfigGroup configGroup WHERE configGroup.type = :type")
+                    .setParameter("type","AREA_PRODUCTOS")
+                    .getResultList();
+        } catch (NoResultException e) {
+            return new ArrayList<ConfigGroup>();
+        }
+
+        return groups;
     }
 
 }
