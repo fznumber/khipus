@@ -110,7 +110,7 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             timeCard.setEmployee(employeeSelect);
             timeCard.setSubGroupCode(subGroup.getSubGroupCode());
             timeCard.setCompany(currentUser.getCompany());
-            timeCard.setCompanyNumber(subGroup.getc)
+            timeCard.setCompanyNumber("01");
             getService().create(timeCard);
             addCreatedMessage();
         } catch (EntryDuplicatedException e) {
