@@ -16,8 +16,8 @@
 <ui:param name="selectedTab" value="products"/>
 <ui:define name="body">
 
-    <h:form id="employeeTimeCardForm">
 
+    <h:form id="employeeTimeCardForm">
         <rich:panel id="formPanel">
 
             <f:facet name="header">
@@ -52,20 +52,20 @@
                              border="0"
                              columnClasses="width50percent, width50percent">
 
-                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                    <s:decorate id="numberIdentifiedField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['EmployeeTimeCard.numberIdentified']}</ui:define>
                         <h:inputText id="numberIdentified" value="#{employeeTimeCardAction.ci}"
-                                     maxlength="100" tabindex="5" styleClass="input">
+                                     maxlength="100" tabindex="5" styleClass="input" required="true">
+                            <a4j:support event="onblur" ajaxSingle="true"
+                                         actionListener="#{employeeTimeCardAction.searchEmployeed}"
+                                         reRender="nameEmployee"/>
                         </h:inputText>
-                        <a4j:commandButton action="#{employeeTimeCardAction.searchEmployeed}" reRender="emmployeedDatasFields"
-                                           styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                           tabindex="6">
-                            <s:defaultAction/>
-                        </a4j:commandButton>
+
                     </s:decorate>
 
-                    <s:decorate styleClass="formRow">
-                        <h:outputText value="#{employeeTimeCardAction.nameEmployeed}">
+
+                    <s:decorate styleClass="formRow" id= "nameEmployee">
+                        <h:outputText value="#{employeeChoise.fullName}">
                         </h:outputText>
                     </s:decorate>
 
@@ -73,40 +73,92 @@
             </app:fieldset>
 
 
+
             <app:fieldset id="detailArea" title = "#{messages['EmployeeTimeCard.areaDates']}">
 
 
                 <H:outputLabel>AREA</H:outputLabel>
-                <div class="buttons">
-                    <h:commandButton action="#{employeeTimeCardAction.groupUHT}" value="#{messages['EmployeeTimeCard.area.uht']}"
-                                     styleClass="button"
-                                     tabindex="1">
-                    </h:commandButton>
-                    <rich:spacer width="20"/>
-                    <h:commandButton action="#{employeeTimeCardAction.selectGroupYogurt}" value="#{messages['EmployeeTimeCard.area.yogurt']}"
-                                     styleClass="button"
-                                     tabindex="1">
-                    </h:commandButton>
-                    <rich:spacer width="20"/>
-                    <h:commandButton action="#{employeeTimeCardAction.groupChees}" value="#{messages['EmployeeTimeCard.area.chees']}"
-                                     styleClass="button"
-                                     tabindex="1">
-                    </h:commandButton>
-                </div>
+                <!--<div class="buttons">
+
+                    <h:selectOneRadio
+
+                    <h:panelGrid columns="3">
+
+                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
+                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
+                        </h:commandButton>
+
+                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
+                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
+                        </h:commandButton>
+
+                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
+                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
+                        </h:commandButton>
+
+                    </h:panelGrid>
+
+                </div>-->
+
+                <s:decorate id="searchTypeField" template="/include/inputField.xhtml" styleClass="formRow">
+
+                    <h:selectOneRadio id="groupSelect"
+                                      value="#{employeeTimeCardAction.selectGroup}"
+                                      layout="pageDirection"
+                                      tabindex="9">
+                        <s:selectItems value="#{employeeTimeCardAction.groupList}"
+                                       var="group"
+                                       label="#{group.name}"/>
+                        <a4j:support event="onchange" reRender="detailArea" action="#{employeeTimeCardAction.setSubGroupTask}"
+                                     ajaxSingle="true"/>
+                        <s:convertEntity/>
+                    </h:selectOneRadio>
+
+                </s:decorate>
 
                 <s:decorate id="productionTaskTypeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['EmployeeTimeCard.taskType']}</ui:define>
                     <h:selectOneMenu id="productionTaskType" value="#{employeeTimeCardAction.productionTaskType}"
-                                     styleClass="input" required="false"
+                                     styleClass="input" required="true"
                                      tabindex="7">
-                        <s:selectItems value="#{employeeTimeCardAction.productionTaskTypesSelectede}" var="productionTaskType"
+                        <s:selectItems value="#{productionTaskTypeList}" var="productionTaskType"
                                        label="#{productionTaskType.name }"
                                        noSelectionLabel="" hideNoSelectionLabel="false"/>
                         <s:convertEntity/>
                     </h:selectOneMenu>
                 </s:decorate>
 
+
+                <s:decorate id="subGroupsField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['EmployeeTimeCard.subGroups']}</ui:define>
+                    <h:selectOneMenu id="subGroups" value="#{employeeTimeCardAction.subGroup}"
+                                     styleClass="input" required="true"
+                                     tabindex="8">
+                        <s:selectItems value="#{subGroupListProduction}" var="subGroup"
+                                       label="#{subGroup.name }"
+                                       noSelectionLabel="" hideNoSelectionLabel="false"/>
+                        <s:convertEntity/>
+                    </h:selectOneMenu>
+                </s:decorate>
+
+
             </app:fieldset>
+
+            <div class="buttons">
+
+                <h:commandButton action="#{employeeTimeCardAction.register}" value="#{messages['EmployeeTimeCard.register']}"
+                                 styleClass="button"
+                                 tabindex="1">
+                </h:commandButton>
+
+                <a4j:commandLink ajaxSingle="true" immediate="true"
+                                 value="#{messages['EmployeeTimeCard.register']}"
+                                 action="#{employeeTimeCardAction.register}"
+                                 reRender="employeeTimeCardForm"/>
+                <rich:spacer width="5"/>
+            </div>
+
+
 
         </rich:panel>
 

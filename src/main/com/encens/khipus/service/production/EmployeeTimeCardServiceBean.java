@@ -41,8 +41,8 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     public BigDecimal costProductionOrder(ProductionOrder productionOrder) {
 
         ArrayList employeeTimeCardList = new ArrayList<EmployeeTimeCard>();
-        employeeTimeCardList = (ArrayList<EmployeeTimeCard>) em.createNamedQuery("EmployeeTimeCard.findEmployeeTimeCardByProductionOrder").setParameter("productionOrder", productionOrder).getResultList();
-
+        //employeeTimeCardList = (ArrayList<EmployeeTimeCard>) em.createNamedQuery("EmployeeTimeCard.findEmployeeTimeCardByProductionOrder").setParameter("productionOrder", productionOrder).getResultList();
+        employeeTimeCardList = (ArrayList<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard").getResultList();
         double totalMinutes = 0;
         double totalCost = 0;
 
@@ -88,13 +88,17 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public List<ProductionTaskType> getTaskTypeGroup(Group group)
     {
+        List<ProductionTaskType> taskTypes = new ArrayList<ProductionTaskType>();
         try{
-            return em.createNativeQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType WHERE COD_GRU = "+group.getGroupCode())
-                    .getResultList();
+            taskTypes = em.createQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType WHERE productionTaskType.group = :grupo")
+                        .setParameter("grupo", group)
+                        .getResultList();
         }catch (NoResultException e)
         {
             return new ArrayList<ProductionTaskType>();
         }
+
+        return taskTypes;
     }
 
     @Override
@@ -109,6 +113,59 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         }
 
         return groups;
+    }
+
+    @Override
+    public List<ProductionTaskType> getTaskType() {
+        List<ProductionTaskType> taskTypes = new ArrayList<ProductionTaskType>();
+        try{
+            taskTypes = em.createQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType")
+                    .getResultList();
+        }catch (NoResultException e)
+        {
+            return new ArrayList<ProductionTaskType>();
+        }
+
+        return taskTypes;
+    }
+
+    @Override
+    public Date getLastMark(Employee employeeSelect) {
+        Date dateRegister = new Date();
+            try{
+
+               List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.endTime desc")
+                                    .setParameter("employee",employeeSelect)
+                                    .getResultList();
+                if(resultList.get(0).getProductionTaskType().getName().compareTo("FINALIZADO") != 0)
+                    dateRegister = resultList.get(0).getEndTime();
+
+            }catch(NoResultException e)
+            {
+                return new Date();
+            }
+
+        return dateRegister;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public EmployeeTimeCard getLastEmployeeTimeCard(Employee employeeSelect) {
+        EmployeeTimeCard employeeTimeCard = null;
+        try{
+
+            List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.endTime desc")
+                    .setParameter("employee",employeeSelect)
+                    .getResultList();
+            if(resultList.size() > 0)
+            if(resultList.get(0).getProductionTaskType().getName().compareTo("FINALIZADO") != 0 )
+                employeeTimeCard = resultList.get(0);
+
+        }catch(NoResultException e)
+        {
+            return null;
+        }
+
+        return employeeTimeCard;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }
