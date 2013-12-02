@@ -48,8 +48,6 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
         for (int i = 0; i < employeeTimeCardList.size(); i++) {
             Employee employee = ((EmployeeTimeCard) employeeTimeCardList.get(i)).getEmployee();
-            System.out.println(". . . . . EMP: " + employee.getFullName());
-
             Date startTime = ((EmployeeTimeCard) employeeTimeCardList.get(i)).getStartTime();
             Date endTime = ((EmployeeTimeCard) employeeTimeCardList.get(i)).getEndTime();
 
@@ -58,22 +56,20 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
             diffMinutes = diffMinutes - 1;
             totalMinutes = totalMinutes + diffMinutes;
-
-            System.out.println(". . . . . Hrs: " + startTime.toString() + " " + endTime.toString() + ". . ." + diffHours);
-            System.out.println(". . . . . Mns: " + startTime.toString() + " " + endTime.toString() + ". . ." + diffMinutes);
-
             JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
-
-            System.out.println(". . . . . SALARY: " + jobContract.getJob().getSalary().getBasicAmount());
             double basicMinute = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8) / 60;
-            System.out.println(". . . . . Salary Long: " + jobContract.getJob().getSalary().getBasicAmount().longValue());
-            System.out.println(". . . . . Basic Minute: " + basicMinute);
             totalCost = totalCost + (diffMinutes * basicMinute);
-            System.out.println(". . . . . COST REG: " + (diffMinutes * basicMinute));
         }
 
-        System.out.println(". . . . . COST: " + (new BigDecimal(totalCost)).toString());
         return new BigDecimal(totalCost);
+    }
+
+    @Override
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder)
+    {
+        BigDecimal cost = new BigDecimal(0.0);
+
+        return cost;
     }
 
     @Override

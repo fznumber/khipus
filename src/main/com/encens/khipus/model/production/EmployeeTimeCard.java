@@ -61,7 +61,8 @@ public class EmployeeTimeCard implements BaseModel {
     @JoinColumn(name = "IDEMPLEADO", nullable = false, updatable = false)
     private Employee employee;
 
-    @Column(name = "NO_CIA", insertable = false, updatable = false)
+    //@Column(name = "NO_CIA", insertable = false, updatable = false)
+    @Column(name = "NO_CIA", nullable = false , insertable = true, updatable = true)
     @Length(max = 2)
     private String companyNumber;
 
