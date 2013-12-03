@@ -42,16 +42,20 @@ public class EmployeeTimeCard implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "EmployeeTimeCard.tableGenerator")
     private Long id;
 
+    @Column(name = "FECHA", nullable = true)
+    @Temporal(TemporalType.DATE)
+    private Date date;
+
     @Column(name = "HORAINICIO", nullable = true)
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startTime;
 
     @Column(name = "HORAFIN", nullable = true)
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endTime;
 
     @Column(name = "FINJORNADA", nullable = true)
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDay;
 
     @Column(name = "COSTOPORHORA", nullable = true, columnDefinition = "NUMBER(16,2)")
@@ -196,5 +200,13 @@ public class EmployeeTimeCard implements BaseModel {
 
     public void setEndDay(Date endDay) {
         this.endDay = endDay;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

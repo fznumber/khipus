@@ -9,6 +9,7 @@ import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.production.ProductionTaskType;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -75,10 +76,10 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
                    try{
                        timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +
                                                   "where employeeTimeCard.subGroup =:subGroup " +
-                                                  "and employeeTimeCard.startTime between  :dateIni and :endDate " +
+                                                  "and employeeTimeCard.date between  :dateIni and :endDate " +
                                                   "order by employeeTimeCard.employee.id ")
                        .setParameter("dateIni",dateOrder, TemporalType.DATE)
-                       .setParameter("endDate", calendar.getTime())
+                       .setParameter("endDate", calendar.getTime(),TemporalType.DATE)
                        .setParameter("subGroup", productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())
                        .getResultList();
                    }catch(NoResultException e){
@@ -208,11 +209,11 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         EmployeeTimeCard employeeTimeCard = null;
         try{
 
-            List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.endTime desc")
+            List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.startTime desc")
                     .setParameter("employee",employeeSelect)
                     .getResultList();
             if(resultList.size() > 0)
-            if(resultList.get(0).getProductionTaskType().getName().compareTo("FINALIZADO") != 0 )
+            if(resultList.get(0).getProductionTaskType().getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) != 0 )
                 employeeTimeCard = resultList.get(0);
 
         }catch(NoResultException e)
