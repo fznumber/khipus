@@ -5,8 +5,10 @@ import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.admin.Company;
 import com.encens.khipus.model.employees.Employee;
+import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
+import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,10 +27,10 @@ import java.util.Date;
         pkColumnValue = "employeeTimeCard",
         allocationSize = Constants.SEQUENCE_ALLOCATION_SIZE)
 
-@NamedQueries(
+/*@NamedQueries(
         {
                 @NamedQuery(name = "EmployeeTimeCard.findEmployeeTimeCardByProductionOrder", query = "select e from EmployeeTimeCard e where e.productionOrder=:productionOrder ")
-        })
+        })*/
 @Entity
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
@@ -40,13 +42,17 @@ public class EmployeeTimeCard implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "EmployeeTimeCard.tableGenerator")
     private Long id;
 
-    @Column(name = "HORAINICIO", nullable = false, updatable = false)
+    @Column(name = "HORAINICIO", nullable = true)
     @Temporal(TemporalType.TIME)
     private Date startTime;
 
-    @Column(name = "HORAFIN", nullable = false, updatable = false)
+    @Column(name = "HORAFIN", nullable = true)
     @Temporal(TemporalType.TIME)
     private Date endTime;
+
+    @Column(name = "FINJORNADA", nullable = true)
+    @Temporal(TemporalType.TIME)
+    private Date endDay;
 
     @Column(name = "COSTOPORHORA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double costPerHour;
@@ -59,9 +65,26 @@ public class EmployeeTimeCard implements BaseModel {
     @JoinColumn(name = "IDEMPLEADO", nullable = false, updatable = false)
     private Employee employee;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDORDENPRODUCCION", nullable = true, updatable = false)
-    private ProductionOrder productionOrder;
+    //@Column(name = "NO_CIA", insertable = false, updatable = false)
+    @Column(name = "NO_CIA", nullable = false , insertable = true, updatable = true)
+    @Length(max = 2)
+    private String companyNumber;
+
+    @Column(name = "COD_GRU", nullable = false, updatable = true, insertable = true, length = 3)
+    @Length(max = 3)
+    private String groupCode;
+
+    @Column(name = "COD_SUB", nullable = false, updatable = true, insertable = true, length = 3)
+    @Length(max = 3)
+    private String subGroupCode;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", nullable = false, updatable = false, insertable = false),
+            @JoinColumn(name = "COD_GRU", nullable = false, updatable = false, insertable = false),
+            @JoinColumn(name = "COD_SUB", nullable = false, updatable = false, insertable = false)
+    })
+    private SubGroup subGroup;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDTIPOTAREAPROD", nullable = false, updatable = false)
@@ -119,14 +142,6 @@ public class EmployeeTimeCard implements BaseModel {
         this.company = company;
     }
 
-    public ProductionOrder getProductionOrder() {
-        return productionOrder;
-    }
-
-    public void setProductionOrder(ProductionOrder productionOrder) {
-        this.productionOrder = productionOrder;
-    }
-
     public ProductionTaskType getProductionTaskType() {
         return productionTaskType;
     }
@@ -141,5 +156,45 @@ public class EmployeeTimeCard implements BaseModel {
 
     public void setCostPerHour(Double costPerHour) {
         this.costPerHour = costPerHour;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getSubGroupCode() {
+        return subGroupCode;
+    }
+
+    public void setSubGroupCode(String subGroupCode) {
+        this.subGroupCode = subGroupCode;
+    }
+
+    public SubGroup getSubGroup() {
+        return subGroup;
+    }
+
+    public void setSubGroup(SubGroup subGroup) {
+        this.subGroup = subGroup;
+    }
+
+    public Date getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(Date endDay) {
+        this.endDay = endDay;
     }
 }
