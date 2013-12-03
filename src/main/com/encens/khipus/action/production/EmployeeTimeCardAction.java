@@ -11,6 +11,7 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.service.employees.EmployeeService;
 import com.encens.khipus.service.production.EmployeeTimeCardService;
+import com.encens.khipus.util.Constants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.faces.FacesMessages;
@@ -88,10 +89,23 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
         return getInstance();
     }
 
+    @Factory(value = "subGroupsChoise", scope = ScopeType.STATELESS)
+    public SubGroup[] getAdministrativeEventType() {
+
+            if(subGroups != null) {
+                SubGroup[] aux = new SubGroup[subGroups.size()];
+                aux = subGroups.toArray(aux);
+                setSubGroups(subGroups);
+                return aux;
+            }else{
+                return new SubGroup[0];
+            }
+    }
+
     public void register() {
         try {
             searchEmployeed();
-            EmployeeTimeCard timeCard = getInstance();
+            EmployeeTimeCard timeCard = new EmployeeTimeCard();
             timeCard.setCostPerHour(employeeTimeCardService.getCostPerHour(employeeSelect));
             timeCard.setProductionTaskType(productionTaskType);
             timeCard.setSubGroup(subGroup);
@@ -101,22 +115,26 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             {
                 try {
                     lastMark.setEndTime(new Date());
+                    if(productionTaskType.getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) == 0)
+                        lastMark.setEndDay(new Date());
+
                     getService().update(lastMark);
                 } catch (ConcurrencyException e) {
                     e.printStackTrace();
                 }
             }
 
-            if(productionTaskType.getName().compareTo("FINALIZAR") != 0)//poner esta cadena como constante
+            if(productionTaskType.getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) != 0)
             {
-
-            timeCard.setGroupCode(subGroup.getGroupCode());
-            timeCard.setEmployee(employeeSelect);
-            timeCard.setSubGroupCode(subGroup.getSubGroupCode());
-            timeCard.setCompany(currentUser.getCompany());
-            timeCard.setCompanyNumber("01");
-            getService().create(timeCard);
-            addCreatedMessage();
+                timeCard.setDate(new Date());
+                timeCard.setStartTime(new Date());
+                timeCard.setGroupCode(subGroup.getGroupCode());
+                timeCard.setEmployee(employeeSelect);
+                timeCard.setSubGroupCode(subGroup.getSubGroupCode());
+                timeCard.setCompany(currentUser.getCompany());
+                timeCard.setCompanyNumber("01");
+                getService().create(timeCard);
+                addCreatedMessage();
             }
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
@@ -263,7 +281,7 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
     public void setSubGroupTask()
     {
         productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(selectGroup);
-        subGroups = selectGroup.getSubGroupList();
+        setSubGroups(selectGroup.getSubGroupList());
     }
 
     public Group getGroupYogurt() {

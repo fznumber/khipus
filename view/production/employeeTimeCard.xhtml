@@ -78,27 +78,6 @@
 
 
                 <H:outputLabel>AREA</H:outputLabel>
-                <!--<div class="buttons">
-
-                    <h:selectOneRadio
-
-                    <h:panelGrid columns="3">
-
-                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
-                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
-                        </h:commandButton>
-
-                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
-                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
-                        </h:commandButton>
-
-                        <h:commandButton value="#{messages['EmployeeTimeCard.area.yogurt']}">
-                            <a4j:support event="onclick" actionListener="#{employeeTimeCardAction.selectGroupYogurt}" reRender="detailArea"/>
-                        </h:commandButton>
-
-                    </h:panelGrid>
-
-                </div>-->
 
                 <s:decorate id="searchTypeField" template="/include/inputField.xhtml" styleClass="formRow">
 
@@ -109,7 +88,7 @@
                         <s:selectItems value="#{employeeTimeCardAction.groupList}"
                                        var="group"
                                        label="#{group.name}"/>
-                        <a4j:support event="onchange" reRender="detailArea" action="#{employeeTimeCardAction.setSubGroupTask}"
+                        <a4j:support event="onchange" reRender="subGroupsField" action="#{employeeTimeCardAction.setSubGroupTask}"
                                      ajaxSingle="true"/>
                         <s:convertEntity/>
                     </h:selectOneRadio>
@@ -134,12 +113,24 @@
                     <h:selectOneMenu id="subGroups" value="#{employeeTimeCardAction.subGroup}"
                                      styleClass="input" required="true"
                                      tabindex="8">
-                        <s:selectItems value="#{subGroupListProduction}" var="subGroup"
+                        <s:selectItems value="#{subGroupQueryProduction}" var="subGroup"
                                        label="#{subGroup.name }"
                                        noSelectionLabel="" hideNoSelectionLabel="false"/>
                         <s:convertEntity/>
                     </h:selectOneMenu>
                 </s:decorate>
+
+               <!-- <s:decorate id="subGroupsField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['EmployeeTimeCard.subGroups']}</ui:define>
+                    <h:selectOneMenu id="subGroups" value="#{employeeTimeCardAction.subGroup}"
+                                     styleClass="input" required="true"
+                                     tabindex="8">
+                        <s:selectItems value="#{subGroupsChoise}" var="subGroup"
+                                       label="#{subGroup.name }"
+                                       noSelectionLabel="" hideNoSelectionLabel="false"/>
+                        <s:convertEntity/>
+                    </h:selectOneMenu>
+                </s:decorate>-->
 
 
             </app:fieldset>
