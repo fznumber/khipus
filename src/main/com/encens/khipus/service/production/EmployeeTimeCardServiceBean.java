@@ -17,8 +17,10 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -64,12 +66,69 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         return new BigDecimal(totalCost);
     }
 
-    @Override
-    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder)
+    public List<EmployeeTimeCard> getEmployeesWorkingInDay(Date dateOrder,ProductionOrder productionOrder)
     {
-        BigDecimal cost = new BigDecimal(0.0);
+     List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateOrder);
+        calendar.add(Calendar.DATE,1);
+                   try{
+                       timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +
+                                                  "where employeeTimeCard.subGroup =:subGroup " +
+                                                  "and employeeTimeCard.startTime between  :dateIni and :endDate " +
+                                                  "order by employeeTimeCard.employee.id ")
+                       .setParameter("dateIni",dateOrder, TemporalType.DATE)
+                       .setParameter("endDate", calendar.getTime())
+                       .setParameter("subGroup", productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())
+                       .getResultList();
+                   }catch(NoResultException e){
+                       return null;
+                   }
 
-        return cost;
+        return timeCards;
+    }
+
+    @Override
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder)
+    {
+
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        double totalMinutes = 0;
+        double totalCost = 0;
+        Employee employeeCurrent = null;
+        Boolean band = true;
+        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
+        for (EmployeeTimeCard employeeTimeCard: timeCards) {
+
+            Employee employee = employeeTimeCard.getEmployee();
+            if(employeeCurrent == null)
+            employeeCurrent = employee;
+
+            Date startTime = employeeTimeCard.getStartTime();
+            Date endTime = employeeTimeCard.getEndTime();
+
+            if(employeeTimeCard.getEndDay() == endTime)
+            {
+                band = false;
+            }
+            if(employeeCurrent != employee)
+            {
+              band = true;
+              employeeCurrent = null;
+            }
+            if(band)
+            {
+                long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
+                diffHours = diffHours - 1;
+                long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
+                diffMinutes = diffMinutes - 1;
+                totalMinutes = totalMinutes + diffMinutes;
+                JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+                double basicMinute = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8) / 60;
+                totalCost = totalCost + (diffMinutes * basicMinute);
+            }
+        }
+        return new BigDecimal(totalCost);
     }
 
     @Override
@@ -163,5 +222,6 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
         return employeeTimeCard;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 
 }

@@ -96,16 +96,22 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             timeCard.setProductionTaskType(productionTaskType);
             timeCard.setSubGroup(subGroup);
             EmployeeTimeCard lastMark = employeeTimeCardService.getLastEmployeeTimeCard(employeeSelect);
-            if(lastMark != null)
+
+            if(lastMark != null )
             {
                 try {
                     lastMark.setEndTime(new Date());
                     getService().update(lastMark);
                 } catch (ConcurrencyException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    e.printStackTrace();
                 }
             }
-            timeCard.setStartTime(new Date());
+
+            if(productionTaskType.getName().compareTo("FINALIZAR") == 0)//poner esta cadena como constante
+                timeCard.setEndDay(new Date());
+            else
+                timeCard.setStartTime(new Date());
+
             timeCard.setGroupCode(subGroup.getGroupCode());
             timeCard.setEmployee(employeeSelect);
             timeCard.setSubGroupCode(subGroup.getSubGroupCode());

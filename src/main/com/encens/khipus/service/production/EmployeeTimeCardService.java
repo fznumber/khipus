@@ -31,5 +31,5 @@ public interface EmployeeTimeCardService {
 
     public EmployeeTimeCard getLastEmployeeTimeCard(Employee employeeSelect);
 
-    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder);
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder);
 }
