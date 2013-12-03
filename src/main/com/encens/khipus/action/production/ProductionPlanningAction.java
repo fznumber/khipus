@@ -228,6 +228,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return articleEstateService.verifyEstate(productItem,"PARAMETRIZABLE");
     }
 
+    public Boolean isNotCountAs(ProductItem productItem)
+    {
+        return  articleEstateService.verifyEstate(productItem,"NOCONTABILLIZABLE");
+    }
+
     public void addFormulation() {
 
         ProductionPlanning productionPlanning = getInstance();
@@ -810,6 +815,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         for (OrderInput input : productionOrder.getOrderInputs()) {
             //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
+            if(!isNotCountAs(input.getProductItem()))
             totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
         }
 
