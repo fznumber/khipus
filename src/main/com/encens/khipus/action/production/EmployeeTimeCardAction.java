@@ -107,10 +107,8 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
                 }
             }
 
-            if(productionTaskType.getName().compareTo("FINALIZAR") == 0)//poner esta cadena como constante
-                timeCard.setEndDay(new Date());
-            else
-                timeCard.setStartTime(new Date());
+            if(productionTaskType.getName().compareTo("FINALIZAR") != 0)//poner esta cadena como constante
+            {
 
             timeCard.setGroupCode(subGroup.getGroupCode());
             timeCard.setEmployee(employeeSelect);
@@ -119,6 +117,7 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             timeCard.setCompanyNumber("01");
             getService().create(timeCard);
             addCreatedMessage();
+            }
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
         }
