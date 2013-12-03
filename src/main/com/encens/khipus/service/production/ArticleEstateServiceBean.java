@@ -33,8 +33,11 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
     {
         Boolean band = true;
         try{
-        ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
+        ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate " +
+                                                " WHERE articleEstate.productItem = :productItem " +
+                                                " and articleEstate.estate = :estate")
                                 .setParameter("productItem",productItem)
+                                .setParameter("estate","NOVERIFICABLE")
                                 .getSingleResult();
             band = estate.getEstate().equals("NOVERIFICABLE") ;
 
@@ -50,8 +53,11 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
     {
         Boolean band = true;
         try{
-            ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
+            ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate " +
+                                    "WHERE articleEstate.productItem = :productItem " +
+                                    "AND articleEstate.estate = :estate ")
                     .setParameter("productItem",productItem)
+                    .setParameter("estate",compare)
                     .getSingleResult();
             band =  estate.getEstate().equals(compare) ;
         }catch (NoResultException e)
