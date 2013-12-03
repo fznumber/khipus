@@ -42,6 +42,7 @@ CREATE TABLE EOS.TARJETATIEMPOEMPLEADO
   HORAINICIO                    DATE                         NULL,
   HORAFIN                       DATE                         NULL,
   FINJORNADA                    DATE                         NULL,
+  FECHA                         DATE                         NULL,
   DESCRIPCION                   CLOB,
   COSTOPORHORA	                number(16,2)                 null,
   IDEMPLEADO                    NUMBER(24)                   NOT NULL,  

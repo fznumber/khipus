@@ -140,6 +140,8 @@ public final class Constants {
     public static final String RK_PATTERNS_INTEGER_NUMBER = "patterns.integerNumber";
     public static final String VIEW_PERMISSION = "VIEW";
 
+    //Employee Time Card
+    public static final String EMPLOYEE_CARD_FINALIZE = "FINALIZAR";
     private Constants() {
     }
 }
