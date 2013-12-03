@@ -221,7 +221,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             return null;
         }
 
-        return employeeTimeCard;  //To change body of implemented methods use File | Settings | File Templates.
+        return employeeTimeCard;
     }
 
 

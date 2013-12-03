@@ -135,10 +135,19 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
                 timeCard.setCompanyNumber("01");
                 getService().create(timeCard);
                 addCreatedMessage();
+                 cleanFrom();
+
             }
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
         }
+    }
+
+    private void cleanFrom() {
+        subGroup = null;
+        selectGroup = null;
+        employeeSelect = null;
+        ci = "";
     }
 
     public void createAndNew() {
