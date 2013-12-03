@@ -39,9 +39,9 @@ INSERT INTO CONFIGRUPO ( IDCONFIGRUPO,TIPO,NO_CIA,COD_GRU,VERSION,IDCOMPANIA) VA
 CREATE TABLE EOS.TARJETATIEMPOEMPLEADO
 (
   IDTARJETATIEMPOEMPLEADO       NUMBER(24)                   NOT NULL,
-  HORAINICIO                    DATE                         NULL,
-  HORAFIN                       DATE                         NULL,
-  FINJORNADA                    DATE                         NULL,
+  HORAINICIO                    TIMESTAMP                         NULL,
+  HORAFIN                       TIMESTAMP                         NULL,
+  FINJORNADA                    TIMESTAMP                         NULL,
   FECHA                         DATE                         NULL,
   DESCRIPCION                   CLOB,
   COSTOPORHORA	                number(16,2)                 null,
