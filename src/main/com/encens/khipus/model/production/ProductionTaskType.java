@@ -3,7 +3,10 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.warehouse.Group;
+import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Filter;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
@@ -37,6 +40,19 @@ public class ProductionTaskType implements BaseModel {
     @NotNull
     private Company company;
 
+    @Column(name = "COD_GRU", insertable = false, updatable = false, nullable = false)
+    private String groupCode;
+
+    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = false)
+    @Length(max = 2)
+    private String companyNumber;
+
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
+            @JoinColumn(name = "COD_GRU", referencedColumnName = "COD_GRU")
+    })
+    private Group group;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -72,5 +88,29 @@ public class ProductionTaskType implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
+    }
+
+    public void setGroupCode(String groupCode) {
+        this.groupCode = groupCode;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }
