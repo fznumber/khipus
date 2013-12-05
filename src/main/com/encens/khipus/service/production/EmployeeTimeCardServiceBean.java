@@ -99,37 +99,70 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         Employee employeeCurrent = null;
         Boolean band = true;
         timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
+        List<Employee> notTake = new ArrayList<Employee>();
         for (EmployeeTimeCard employeeTimeCard: timeCards) {
-
-            Employee employee = employeeTimeCard.getEmployee();
-            if(employeeCurrent == null)
-            employeeCurrent = employee;
 
             Date startTime = employeeTimeCard.getStartTime();
             Date endTime = employeeTimeCard.getEndTime();
 
-            if(employeeTimeCard.getEndDay() == endTime)
-            {
-                band = false;
-            }
-            if(employeeCurrent != employee)
-            {
-              band = true;
-              employeeCurrent = null;
-            }
-            if(band)
+
+
+            if(!notTake.contains(employeeTimeCard.getEmployee()))
             {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
                 diffMinutes = diffMinutes - 1;
                 totalMinutes = totalMinutes + diffMinutes;
-                JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+                JobContract jobContract = jobContractService.lastJobContractByEmployee(employeeTimeCard.getEmployee());
                 double basicMinute = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8) / 60;
                 totalCost = totalCost + (diffMinutes * basicMinute);
             }
+
+            if(employeeTimeCard.getEndDay() != null)
+            {
+                band = false;
+                notTake.add(employeeTimeCard.getEmployee());
+            }
+
         }
         return new BigDecimal(totalCost);
+    }
+
+    @Override
+    public List<EmployeeTimeCard> getLastTimesCards() {
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        try{
+            timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard order by employeeTimeCard.startTime desc")
+                                                   .setMaxResults(8)
+                                                   .getResultList();
+
+        }catch(NoResultException e)
+        {
+            return new ArrayList<EmployeeTimeCard>();
+        }
+
+        return timeCards;
+    }
+
+    @Override
+    public List<EmployeeTimeCard> getLastTimesCardsEmployee(Employee employeeSelect) {
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        try{
+            if(employeeSelect != null)
+            timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard " +
+                    " where employeeTimeCard.employee = :employeeSelect " +
+                    " order by employeeTimeCard.startTime desc")
+                    .setParameter("employeeSelect",employeeSelect)
+                    .setMaxResults(8)
+                    .getResultList();
+
+        }catch(NoResultException e)
+        {
+            return new ArrayList<EmployeeTimeCard>();
+        }
+
+        return timeCards;
     }
 
     @Override

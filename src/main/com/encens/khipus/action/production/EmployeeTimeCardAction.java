@@ -72,12 +72,20 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     private List<Group> groupList = new ArrayList<Group>();
 
+    private List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+
     private SubGroup subGroup;
+
+    private Boolean choiseGroup = false;
 
     private ProductionTaskType productionTaskType;
 
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private ProductionPlanning productionPlanning;
+
+    private Boolean finalize = false;
+
+    private int band = 0;
 
     @Factory(value = "employeeChoise", scope = ScopeType.STATELESS)
     public Employee initEmployee() {
@@ -102,7 +110,23 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             }
     }
 
+    public void finalizeRegister(){
+        try {
+            searchEmployeed();
+            EmployeeTimeCard lastMark = employeeTimeCardService.getLastEmployeeTimeCard(employeeSelect);
+            lastMark.setEndTime(new Date());
+            lastMark.setEndDay(new Date());
+            getService().update(lastMark);
+        } catch (ConcurrencyException e) {
+            e.printStackTrace();
+        } catch (EntryDuplicatedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        cleanFrom();
+    }
+
     public void register() {
+
         try {
             searchEmployeed();
             EmployeeTimeCard timeCard = new EmployeeTimeCard();
@@ -114,30 +138,28 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             if(lastMark != null )
             {
                 try {
-                    lastMark.setEndTime(new Date());
                     if(productionTaskType.getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) == 0)
                         lastMark.setEndDay(new Date());
 
+                    lastMark.setEndTime(new Date());
                     getService().update(lastMark);
                 } catch (ConcurrencyException e) {
                     e.printStackTrace();
                 }
             }
-
             if(productionTaskType.getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) != 0)
-            {
-                timeCard.setDate(new Date());
+            {  timeCard.setDate(new Date());
                 timeCard.setStartTime(new Date());
                 timeCard.setGroupCode(subGroup.getGroupCode());
                 timeCard.setEmployee(employeeSelect);
                 timeCard.setSubGroupCode(subGroup.getSubGroupCode());
-                timeCard.setCompany(currentUser.getCompany());
+                timeCard.setCompany(employeeSelect.getCompany());
                 timeCard.setCompanyNumber("01");
                 getService().create(timeCard);
                 addCreatedMessage();
+            }
                  cleanFrom();
 
-            }
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
         }
@@ -146,8 +168,11 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
     private void cleanFrom() {
         subGroup = null;
         selectGroup = null;
-        employeeSelect = null;
+        //employeeSelect = null;
+        productionTaskType = null;
         ci = "";
+        choiseGroup = false;
+        nameEmployeed = "";
     }
 
     public void createAndNew() {
@@ -170,8 +195,10 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
             employeeSelect = employeeList.get(0);
             nameEmployeed = employeeSelect.getFullName();
         }
-        else
+        else{
             addNoFoundCIMessage();
+            cleanFrom();
+        }
     }
 
     protected void addNoFoundCIMessage() {
@@ -290,6 +317,7 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
     public void setSubGroupTask()
     {
         productionTaskTypesSelectede = employeeTimeCardService.getTaskTypeGroup(selectGroup);
+        choiseGroup = true;
         setSubGroups(selectGroup.getSubGroupList());
     }
 
@@ -348,5 +376,50 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     public void setGroupList(List<Group> groupList) {
         this.groupList = groupList;
+    }
+
+    public void selectTypeTask()
+    {
+        if(productionTaskType.getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE)==0)
+        {
+            finalize = true;
+        }else{
+            finalize = false;
+        }
+    }
+
+    public List<EmployeeTimeCard> getTimeCards() {
+        //timeCards = employeeTimeCardService.getLastTimesCards();
+        timeCards = employeeTimeCardService.getLastTimesCardsEmployee(employeeSelect);
+        return timeCards;
+    }
+
+    public void setTimeCards(List<EmployeeTimeCard> timeCards) {
+        this.timeCards = timeCards;
+    }
+
+    public Boolean getFinalize() {
+        return finalize;
+    }
+
+    public void setFinalize(Boolean finalize) {
+        this.finalize = finalize;
+    }
+
+    public Boolean getChoiseGroup() {
+        return choiseGroup;
+    }
+
+    public void setChoiseGroup(Boolean choiseGroup) {
+        this.choiseGroup = choiseGroup;
+    }
+
+    public int getBand() {
+        band ++;
+        return band;
+    }
+
+    public void setBand(int band) {
+        this.band = band;
     }
 }

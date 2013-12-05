@@ -47,7 +47,7 @@ CREATE TABLE EOS.TARJETATIEMPOEMPLEADO
   COSTOPORHORA	                number(16,2)                 null,
   IDEMPLEADO                    NUMBER(24)                   NOT NULL,  
   IDTIPOTAREAPROD               NUMBER(24)                   NOT NULL,
-  IDCOMPANIA                    NUMBER(24)                   NOT NULL,  
+  IDCOMPANIA                    NUMBER(24)                   NOT NULL,    
   NO_CIA	                      VARCHAR2(2 BYTE)             NOT NULL,
   COD_SUB	                      VARCHAR2(3 BYTE)             NOT NULL,
   COD_GRU	                      VARCHAR2(3 BYTE)             NOT NULL
