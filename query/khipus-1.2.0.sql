@@ -14,7 +14,7 @@ Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('5','ETIQUETADO','0','1','01','6');
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('6','CONTROL PRODUCTO TERMINADO','0','1','01','6');
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('7','SUPERVISION','0','1','01','6');
-Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('10','OTROS','0','1','01','6');
+Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('10','FINALIZAR','0','1','01','6');
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('3','ESTERILIZADO','0','1','01','6');
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('1','PREPARADO EQUIPOS','0','1','01','6');
 Insert into EOS.TIPOTAREAPROD (IDTIPOTAREAPROD,NOMBRE,VERSION,IDCOMPANIA,no_cia,cod_gru) values ('8','LIMPIEZA EQUIPO','0','1','01','6');
@@ -47,7 +47,7 @@ CREATE TABLE EOS.TARJETATIEMPOEMPLEADO
   COSTOPORHORA	                number(16,2)                 null,
   IDEMPLEADO                    NUMBER(24)                   NOT NULL,  
   IDTIPOTAREAPROD               NUMBER(24)                   NOT NULL,
-  IDCOMPANIA                    NUMBER(24)                   NOT NULL,  
+  IDCOMPANIA                    NUMBER(24)                   NOT NULL,    
   NO_CIA	                      VARCHAR2(2 BYTE)             NOT NULL,
   COD_SUB	                      VARCHAR2(3 BYTE)             NOT NULL,
   COD_GRU	                      VARCHAR2(3 BYTE)             NOT NULL
