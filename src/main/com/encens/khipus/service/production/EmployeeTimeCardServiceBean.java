@@ -11,6 +11,7 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -89,47 +90,107 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         return timeCards;
     }
 
-    @Override
-    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder)
-    {
+    private Double getCostDayBySubGroup(List<EmployeeTimeCard> timeCards) {
 
-        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        List<Employee> notTake = new ArrayList<Employee>();
         double totalMinutes = 0;
         double totalCost = 0;
-        Employee employeeCurrent = null;
         Boolean band = true;
-        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
-        for (EmployeeTimeCard employeeTimeCard: timeCards) {
 
-            Employee employee = employeeTimeCard.getEmployee();
-            if(employeeCurrent == null)
-            employeeCurrent = employee;
+        for (EmployeeTimeCard employeeTimeCard: timeCards) {
 
             Date startTime = employeeTimeCard.getStartTime();
             Date endTime = employeeTimeCard.getEndTime();
 
-            if(employeeTimeCard.getEndDay() == endTime)
-            {
-                band = false;
-            }
-            if(employeeCurrent != employee)
-            {
-              band = true;
-              employeeCurrent = null;
-            }
-            if(band)
+
+
+            if(!notTake.contains(employeeTimeCard.getEmployee()))
             {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
                 diffMinutes = diffMinutes - 1;
                 totalMinutes = totalMinutes + diffMinutes;
-                JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+                JobContract jobContract = jobContractService.lastJobContractByEmployee(employeeTimeCard.getEmployee());
                 double basicMinute = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8) / 60;
                 totalCost = totalCost + (diffMinutes * basicMinute);
             }
+
+            if(employeeTimeCard.getEndDay() != null)
+            {
+                band = false;
+                notTake.add(employeeTimeCard.getEmployee());
+            }
+
         }
+
+        return totalCost;
+    }
+    public Double getPorcent(Double totalDay,Double totalOrder)
+    {
+        return RoundUtil.getRoundValue((totalOrder*100)/totalDay,2, RoundUtil.RoundMode.SYMMETRIC);
+    }
+
+    @Override
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder, Double totalVolumDay)
+    {
+
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        Double totalMinutes = 0.0;
+        Double totalCost = 0.0;
+        Boolean band = true;
+        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
+        Double costDayBySubGroup = getCostDayBySubGroup(timeCards);
+        Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
+
+        totalCost = getPorcent(totalVolumDay,totalVolumeOrder);
+
         return new BigDecimal(totalCost);
+    }
+
+    private Double getTotalVolumeOrder(ProductionOrder productionOrder) {
+        Double total = productionOrder.getProducedAmount();
+        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getProductItem().getUsageMeasureCode();
+            if(unitMeasure == "KG" || unitMeasure == "LT" )
+              total =  productionOrder.getProducedAmount() * 1000;
+
+        return total;
+    }
+
+    @Override
+    public List<EmployeeTimeCard> getLastTimesCards() {
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        try{
+            timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard order by employeeTimeCard.startTime desc")
+                                                   .setMaxResults(8)
+                                                   .getResultList();
+
+        }catch(NoResultException e)
+        {
+            return new ArrayList<EmployeeTimeCard>();
+        }
+
+        return timeCards;
+    }
+
+    @Override
+    public List<EmployeeTimeCard> getLastTimesCardsEmployee(Employee employeeSelect) {
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        try{
+            if(employeeSelect != null)
+            timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard " +
+                    " where employeeTimeCard.employee = :employeeSelect " +
+                    " order by employeeTimeCard.startTime desc")
+                    .setParameter("employeeSelect",employeeSelect)
+                    .setMaxResults(8)
+                    .getResultList();
+
+        }catch(NoResultException e)
+        {
+            return new ArrayList<EmployeeTimeCard>();
+        }
+
+        return timeCards;
     }
 
     @Override
@@ -221,7 +282,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             return null;
         }
 
-        return employeeTimeCard;  //To change body of implemented methods use File | Settings | File Templates.
+        return employeeTimeCard;
     }
 
 

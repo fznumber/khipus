@@ -862,19 +862,12 @@
     s:hasPermission('PRODUCT','VIEW') or
     s:hasPermission('PRODUCTTYPE','VIEW') or
     s:hasPermission('PRODUCTSTATE','VIEW') or
-    s:hasPermission('PRODUCTDISCOUNTRULE','VIEW') or
-    s:hasPermission('EMPLOYEETIMECARD','VIEW')}">
+    s:hasPermission('PRODUCTDISCOUNTRULE','VIEW') }">
 <h:panelGrid columns="6" cellpadding="0" cellspacing="0" border="0"
              columnClasses="tab-separator,tab-separator,tab-separator,tab-separator,tab-separator,tab-separator">
 <s:link view="/products/productList.xhtml"
         value="#{messages['menu.products.products']}"
         rendered="#{s:hasPermission('PRODUCT','VIEW')}"
-        styleClass="tab-cell"
-        propagation="none"/>
-
-<s:link view="/production/employeeTimeCardList.xhtml"
-        value="#{messages['menu.production.employeeTimeCard']}"
-        rendered="#{s:hasPermission('EMPLOYEETIMECARD','VIEW')}"
         styleClass="tab-cell"
         propagation="none"/>
 
