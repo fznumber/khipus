@@ -10,8 +10,6 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,33 +27,35 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
     private EntityManager em;
 
     @Override
-    public Boolean existArticleEstate(ProductItem productItem)
-    {
+    public Boolean existArticleEstate(ProductItem productItem) {
         Boolean band = true;
-        try{
-        ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
-                                .setParameter("productItem",productItem)
-                                .getSingleResult();
-            band = estate.getEstate().equals("NOVERIFICABLE") ;
+        try {
+            ArticleEstate estate = (ArticleEstate) em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate " +
+                    " WHERE articleEstate.productItem = :productItem " +
+                    " and articleEstate.estate = :estate")
+                    .setParameter("productItem", productItem)
+                    .setParameter("estate", "NOVERIFICABLE")
+                    .getSingleResult();
+            band = estate.getEstate().equals("NOVERIFICABLE");
 
-        }catch (NoResultException e)
-        {
+        } catch (NoResultException e) {
             return false;
         }
         return band;
     }
 
     @Override
-    public Boolean verifyEstate(ProductItem productItem, String compare )
-    {
+    public Boolean verifyEstate(ProductItem productItem, String compare) {
         Boolean band = true;
-        try{
-            ArticleEstate estate = (ArticleEstate)em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate WHERE articleEstate.productItem = :productItem")
-                    .setParameter("productItem",productItem)
+        try {
+            ArticleEstate estate = (ArticleEstate) em.createQuery("SELECT articleEstate FROM ArticleEstate articleEstate " +
+                    "WHERE articleEstate.productItem = :productItem " +
+                    "AND articleEstate.estate = :estate ")
+                    .setParameter("productItem", productItem)
+                    .setParameter("estate", compare)
                     .getSingleResult();
-            band =  estate.getEstate().equals(compare) ;
-        }catch (NoResultException e)
-        {
+            band = estate.getEstate().equals(compare);
+        } catch (NoResultException e) {
             return false;
         }
         return band;

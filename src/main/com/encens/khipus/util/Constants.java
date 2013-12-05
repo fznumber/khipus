@@ -147,6 +147,9 @@ public final class Constants {
     public static final String WAREHOUSE_YOGURT_PRODUCT = "PRODUCTO YOGURT";
     public static final String WAREHOUSE_CHEESE_PRODUCT = "PRODUCTO QUESO";
 
+    //Employee Time Card
+    public static final String EMPLOYEE_CARD_FINALIZE = "FINALIZAR";
+
     private Constants() {
     }
 }

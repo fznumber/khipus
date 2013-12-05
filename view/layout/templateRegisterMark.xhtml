@@ -22,8 +22,6 @@
 <body id="body">
 <div id="bodyContainer" class="bodyContainer">
 
-            <ui:include src="header.xhtml"/>
-
 
     <div class="body">
 
@@ -45,11 +43,6 @@
         <ui:include src="/layout/footerPowered.xhtml"/>
     </c:otherwise>
 </c:choose>
-<c:if test="#{identity.loggedIn}">
-    <iframe id="administrativeNotificationPanelFrame"
-            src="#{request.contextPath}/admin/administrativeNotificationPanel;jsessionid=#{facesContext.externalContext.request.session.id}"
-            style="visibility:hidden;position:absolute;top:0;left:0;border:0;z-index:-1;background-color: transparent;"
-            width="0" height="0" frameborder="0"></iframe>
-</c:if>
+
 </body>
 </html>

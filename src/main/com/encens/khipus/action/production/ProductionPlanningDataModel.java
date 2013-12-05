@@ -33,11 +33,12 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
     @Create
     public void init() {
         sortProperty = "productionPlanning.date";
+        sortAsc = false;
     }
 
     @Override
     public String getEjbql() {
-        return  "select productionPlanning " +
+        return "select productionPlanning " +
                 "from ProductionPlanning productionPlanning " +
                 "left join fetch productionPlanning.productionOrderList productionOrder " +
                 "left join fetch productionOrder.productComposition productComposition " +
@@ -65,13 +66,28 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         private Date startDate;
         private Date endDate;
 
-        public String getOrder() { return order; }
-        public void setOrder(String order) { this.order = order; }
+        public String getOrder() {
+            return order;
+        }
 
-        public Date getStartDate() { return startDate; }
-        public void setStartDate(Date startDate) { this.startDate = startDate; }
+        public void setOrder(String order) {
+            this.order = order;
+        }
 
-        public Date getEndDate() { return endDate; }
-        public void setEndDate(Date endDate) { this.endDate = endDate; }
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
+        }
+
+        public Date getEndDate() {
+            return endDate;
+        }
+
+        public void setEndDate(Date endDate) {
+            this.endDate = endDate;
+        }
     }
 }
