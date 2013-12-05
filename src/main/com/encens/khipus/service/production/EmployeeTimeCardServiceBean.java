@@ -11,6 +11,7 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -89,17 +90,13 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         return timeCards;
     }
 
-    @Override
-    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder)
-    {
+    private Double getCostDayBySubGroup(List<EmployeeTimeCard> timeCards) {
 
-        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        List<Employee> notTake = new ArrayList<Employee>();
         double totalMinutes = 0;
         double totalCost = 0;
-        Employee employeeCurrent = null;
         Boolean band = true;
-        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
-        List<Employee> notTake = new ArrayList<Employee>();
+
         for (EmployeeTimeCard employeeTimeCard: timeCards) {
 
             Date startTime = employeeTimeCard.getStartTime();
@@ -126,7 +123,38 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             }
 
         }
+
+        return totalCost;
+    }
+    public Double getPorcent(Double totalDay,Double totalOrder)
+    {
+        return RoundUtil.getRoundValue((totalOrder*100)/totalDay,2, RoundUtil.RoundMode.SYMMETRIC);
+    }
+
+    @Override
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder, Double totalVolumDay)
+    {
+
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+        Double totalMinutes = 0.0;
+        Double totalCost = 0.0;
+        Boolean band = true;
+        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
+        Double costDayBySubGroup = getCostDayBySubGroup(timeCards);
+        Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
+
+        totalCost = getPorcent(totalVolumDay,totalVolumeOrder);
+
         return new BigDecimal(totalCost);
+    }
+
+    private Double getTotalVolumeOrder(ProductionOrder productionOrder) {
+        Double total = productionOrder.getProducedAmount();
+        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getProductItem().getUsageMeasureCode();
+            if(unitMeasure == "KG" || unitMeasure == "LT" )
+              total =  productionOrder.getProducedAmount() * 1000;
+
+        return total;
     }
 
     @Override
