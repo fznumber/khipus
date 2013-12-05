@@ -140,12 +140,13 @@ public final class Constants {
     public static final String RK_PATTERNS_INTEGER_NUMBER = "patterns.integerNumber";
     public static final String VIEW_PERMISSION = "VIEW";
 
-    //For Product Warehouse
+    //For Production Warehouse
     public static final String WAREHOUSE_PRODUCT = "PRODUCTOS LACTEOS";
+    public static final String WAREHOUSE_PRODUCTION_INPUT = "INSUMOS DE PRODUCCION";
 
-    public static final String WAREHOUSE_UHT_PRODUCT = "PRODUCTO UHT";
-    public static final String WAREHOUSE_YOGURT_PRODUCT = "PRODUCTO YOGURT";
-    public static final String WAREHOUSE_CHEESE_PRODUCT = "PRODUCTO QUESO";
+    public static final String WAREHOUSE_UHT_PRODUCT = "UHT";
+    public static final String WAREHOUSE_YOGURT_PRODUCT = "YOGURT";
+    public static final String WAREHOUSE_CHEESE_PRODUCT = "QUESO";
 
     //Employee Time Card
     public static final String EMPLOYEE_CARD_FINALIZE = "FINALIZAR";

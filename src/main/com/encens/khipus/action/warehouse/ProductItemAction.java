@@ -113,20 +113,24 @@ public class ProductItemAction extends GenericAction<ProductItem> {
 
     private void createProductionItem(ProductItem productItem) {
 
-        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_PRODUCT)) {
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_UHT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_YOGURT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_CHEESE_PRODUCT)) {
             processedProductService.createProductionProduct(getInstance());
         }
-        if (productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")) {
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_PRODUCTION_INPUT)) {
             productionInputService.createProductionInput(getInstance());
         }
     }
 
     private void updateProductionItem(ProductItem productItem) {
 
-        if (productItem.getSubGroup().getGroup().getName().equals("PRODUCTOS LACTEOS")) {
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_UHT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_YOGURT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_CHEESE_PRODUCT)) {
             processedProductService.updateProductionProduct(productItem);
         }
-        if (productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")) {
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_PRODUCTION_INPUT)) {
             productionInputService.updateProductionInput(getInstance());
         }
     }

@@ -784,7 +784,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setTotalHour(ProductionOrder productionOrder) {
-        productionOrder.setTotalPriceJourney(((BigDecimal) (employeeTimeCardService.getCostProductionOrder(productionOrder, getInstance().getDate()))).doubleValue());
+        productionOrder.setTotalPriceJourney(((BigDecimal) (employeeTimeCardService.getCostProductionOrder(productionOrder, getInstance().getDate(), 0.0))).doubleValue());
     }
 
     public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder) {
