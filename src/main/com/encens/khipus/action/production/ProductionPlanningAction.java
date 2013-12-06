@@ -66,9 +66,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private EmployeeTimeCardService employeeTimeCardService;
     @In
     private ArticleEstateService articleEstateService;
+    @In
+    private IndirectCostsService indirectCostsService;
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
+    private Double totalVolumProductionPlaning;
 
     @Override
     protected GenericService getService() {
@@ -226,9 +229,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return articleEstateService.verifyEstate(productItem, "PARAMETRIZABLE");
     }
 
-    public Boolean isNotCountAs(ProductItem productItem)
-    {
-        return  articleEstateService.verifyEstate(productItem,"NOCONTABILLIZABLE");
+    public Boolean isNotCountAs(ProductItem productItem) {
+        return articleEstateService.verifyEstate(productItem, "NOCONTABILLIZABLE");
     }
 
     public void addFormulation() {
@@ -572,6 +574,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalHour(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
@@ -588,6 +591,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
@@ -608,6 +612,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
@@ -674,6 +679,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionPlanning.getId() != null) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
 
@@ -715,6 +721,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setExpendAmount(totalProducer);*/
         setTotalsMaterials(productionOrder);
         setTotalsInputs(productionOrder);
+        setTotalIndiRectCost(productionOrder);
         setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
         if (update() != Outcome.SUCCESS) {
@@ -753,6 +760,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalHour(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         String outcome = update();
@@ -773,6 +781,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalHour(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         String outcome = update();
@@ -785,11 +794,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setTotalHour(ProductionOrder productionOrder) {
-        productionOrder.setTotalPriceJourney(((BigDecimal) (employeeTimeCardService.getCostProductionOrder(productionOrder,getInstance().getDate()))).doubleValue());
+        productionOrder.setTotalPriceJourney(((BigDecimal) (employeeTimeCardService.getCostProductionOrder(productionOrder, getInstance().getDate(), getTotalVolumProductionPlaning(productionOrder)))).doubleValue());
     }
 
     public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder) {
-        Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney();
+        Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney() + productionOrder.getTotalIndirectCosts();
         productionOrder.setTotalCostProduction(total);
         Double priceUnit = 0.0;
         if (productionOrder.getProducedAmount() > 0.0)
@@ -798,15 +807,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
     }
 
-    //Note: el valor del precio unitario es del tipo bigdecimal por lo que tiene una gran cantidad de decimales
-    // si tomamos todos los decimales es mas exacto el valor pero si se redondea sale como en excel
+    public void setTotalIndiRectCost(ProductionOrder productionOrder) {
+        productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder)));
+    }
+
     public void setTotalsInputs(ProductionOrder productionOrder) {
         Double totalInput = 0.0;
 
         for (OrderInput input : productionOrder.getOrderInputs()) {
             //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
-            if(!isNotCountAs(input.getProductItem()))
-            totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
+            if (!isNotCountAs(input.getProductItem()))
+                totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
         }
 
         productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
@@ -857,13 +868,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    /*public void setProducedAmountWithExpendAmount(ProductionPlanning planning) {
-
-        for(ProductionOrder order : planning.getProductionOrderList())
-        {
-             order.setProducedAmount(order.getExpendAmount());
+    public Double getTotalVolumProductionPlaning(ProductionOrder productionOrder) {
+        Double total = 0.0;
+        for (ProductionOrder order : getInstance().getProductionOrderList()) {
+            if (productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup().getGroup() == order.getProductComposition().getProcessedProduct().getProductItem().getSubGroup().getGroup())
+                total += employeeTimeCardService.getTotalVolumeOrder(order);
         }
-    }*/
+        return total;
+    }
 
     public static class Consolidated {
         private double amount;

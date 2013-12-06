@@ -24,14 +24,17 @@
         <h:form id="processedProductForm">
             <div class="buttons">
                 <h:commandButton action="#{processedProductAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','CREATE')}">
+                                 styleClass="button"
+                                 rendered="#{!processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','CREATE')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{processedProductAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -69,23 +72,44 @@
 
                 <s:decorate id="descriptionField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProcessedProduct.description']}</ui:define>
-                    <h:inputText id="description" value="#{processedProduct.description}" styleClass="input" required="false"
+                    <h:inputText id="description" value="#{processedProduct.description}" styleClass="input"
+                                 required="false"
                                  maxlength="100" tabindex="3">
                         <a4j:support event="onblur" reRender="descriptionField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="unidMeasureField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProcessedProduct.unidMeasure']}</ui:define>
+                    <h:inputText id="unidMeasure" value="#{processedProduct.unidMeasure}" styleClass="input"
+                                 required="false"
+                                 maxlength="100" tabindex="4">
+                        <a4j:support event="onblur" reRender="unidMeasureField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="amountField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProcessedProduct.amount']}</ui:define>
+                    <h:inputText id="amount" value="#{processedProduct.amount}" styleClass="input" required="false"
+                                 maxlength="100" tabindex="5">
+                        <a4j:support event="onblur" reRender="amountField"/>
                     </h:inputText>
                 </s:decorate>
             </rich:panel>
 
             <div class="buttons">
                 <h:commandButton action="#{processedProductAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','CREATE')}">
+                                 styleClass="button"
+                                 rendered="#{!processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','CREATE')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{processedProductAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{processedProductAction.managed and s:hasPermission('PROCESSEDPRODUCT','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

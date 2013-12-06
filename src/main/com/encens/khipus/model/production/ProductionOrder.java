@@ -61,6 +61,9 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(24,0)")
     private Double totalPriceJourney = 0.0;
 
+    @Column(name = "TOTALCOSTOINDIRECTO", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalIndirectCosts = 0.0;
+
     @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(24,0)")
     private Double totalCostProduction = 0.0;
 
@@ -262,5 +265,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setOrderInputs(List<OrderInput> orderInputs) {
         this.orderInputs = orderInputs;
+    }
+
+    public Double getTotalIndirectCosts() {
+        return totalIndirectCosts;
+    }
+
+    public void setTotalIndirectCosts(Double totalIndirectCosts) {
+        this.totalIndirectCosts = totalIndirectCosts;
     }
 }

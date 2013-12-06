@@ -15,7 +15,6 @@ import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.fill.JRTemplatePrintText;
 import org.jboss.seam.ScopeType;
-import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -23,7 +22,6 @@ import org.jboss.seam.annotations.Scope;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +51,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
     private String state;
     private Double unitPrice;
 
-    public void generateReportByOrder(List<ProductionIngredient> ingredients, List<OrderInput> inputs,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order)
-    {
+    public void generateReportByOrder(List<ProductionIngredient> ingredients, List<OrderInput> inputs, List<OrderMaterial> materials, ProductionPlanning planning, ProductionOrder order) {
         productionOrder = order;
         productionPlanning = planning;
         ingredientList = ingredients;
@@ -80,7 +77,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "WHERE IP.IDINGREDIENTEPRODUCCION IN ( ";
 
         boolean band = true;
-        for (ProductionIngredient ingredient: ingredients) {
+        for (ProductionIngredient ingredient : ingredients) {
             query += (band ? " " : ",") + ingredient.getId().toString();
             band = false;
         }
@@ -124,8 +121,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         }
     }
 
-    public void generateReportSummary(List<ProductionIngredient> ingredients,List<OrderInput> inputs,List<OrderMaterial> materials ,ProductionPlanning planning,ProductionOrder order, BigDecimal price)
-    {
+    public void generateReportSummary(List<ProductionIngredient> ingredients, List<OrderInput> inputs, List<OrderMaterial> materials, ProductionPlanning planning, ProductionOrder order, BigDecimal price) {
         productionOrder = order;
         productionPlanning = planning;
         ingredientList = ingredients;
@@ -152,7 +148,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "WHERE IP.IDINGREDIENTEPRODUCCION IN ( ";
 
         boolean band = true;
-        for (ProductionIngredient ingredient: ingredients) {
+        for (ProductionIngredient ingredient : ingredients) {
             query += (band ? " " : ",") + ingredient.getId().toString();
             band = false;
         }
@@ -161,7 +157,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         addProductionOrderMaterialDetailSubReport(params);
         addProductionOrderMaterialSummaryDetailSubReport(params);
-        addProductionOrderHoursDetailSubReport(params);
+        //addProductionOrderHoursDetailSubReport(params);
         typedReportData = getReport(
                 fileName
                 , templatePath
@@ -224,8 +220,8 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         Map<String, Object> params = new HashMap<String, Object>();
 
         String sql = "SELECT op.cantidadproducida, op.cantidadesperada, op.preciototalmaterial, \n" +
-                "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, \n" +
-                "       "+ RoundUtil.getRoundValue(unitPrice,2, RoundUtil.RoundMode.SYMMETRIC).toString()+" as precioUnitario\n" +
+                "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, op.totalcostoindirecto, \n" +
+                "       " + RoundUtil.getRoundValue(unitPrice, 2, RoundUtil.RoundMode.SYMMETRIC).toString() + " as precioUnitario\n" +
                 "FROM ordenproduccion OP\n" +
                 "WHERE op.idordenproduccion = " + productionOrder.getId().toString();
 
@@ -258,7 +254,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "       ,nvl(te.costoporhora,0.0) as costoporhora\n" +
                 "       ,(\n" +
                 "       select nvl( sum(COSTOPORHORA),0.0) FROM tarjetatiempoempleado               \n" +
-                "       where idordenproduccion = "+ productionOrder.getId().toString()+"\n" +
+                "       where idordenproduccion = " + productionOrder.getId().toString() + "\n" +
                 "       ) as total \n" +
                 "FROM tarjetatiempoempleado te\n" +
                 "inner join empleado em \n" +
@@ -267,9 +263,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "on tt.idtipotareaprod = te.idtipotareaprod\n" +
                 "inner join persona pe\n" +
                 "on pe.idpersona = em.idempleado\n" +
-                "where te.IDORDENPRODUCCION = "+ productionOrder.getId().toString()+"\n" +
+                "where te.IDORDENPRODUCCION = " + productionOrder.getId().toString() + "\n" +
                 "group by pe.nombres, pe.apellidopaterno, pe.apellidomaterno, tt.nombre,te.horainicio, te.horafin, te.costoporhora\n" +
-                "order by pe.nombres, pe.apellidopaterno, pe.apellidomaterno" ;
+                "order by pe.nombres, pe.apellidopaterno, pe.apellidomaterno";
 
         String subReportKey = "ORDERHOURSUBREPORT";
         TypedReportData subReportData = super.generateSqlSubReport(
@@ -305,10 +301,10 @@ public class ProductionPlanningReportAction extends GenericReportAction {
             band = false;
         }
         sql += " )\n" +
-               " and op.idordenproduccion = " + productionOrder.getId().toString();
+                " and op.idordenproduccion = " + productionOrder.getId().toString();
 
         //generate the sub report
-        if(orderMaterials.size()==0)
+        if (orderMaterials.size() == 0)
             sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada \n" +
                     "from ordenmaterial om\n" +
                     "inner join WISE.INV_ARTICULOS IA \n" +
@@ -473,9 +469,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
         paramMap.put("dateParam", date);
         paramMap.put("estate", state);
-        paramMap.put("nameProduct",productionOrder.getProductComposition().getProcessedProduct().getName());
-        paramMap.put("codeProduct",productionOrder.getProductComposition().getProcessedProduct().getCode());
-        paramMap.put("numOrder",productionOrder.getCode());
+        paramMap.put("nameProduct", productionOrder.getProductComposition().getProcessedProduct().getName());
+        paramMap.put("codeProduct", productionOrder.getProductComposition().getProcessedProduct().getCode());
+        paramMap.put("numOrder", productionOrder.getCode());
         return paramMap;
     }
 

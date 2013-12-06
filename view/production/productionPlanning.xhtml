@@ -302,6 +302,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </h:outputText>
             </s:decorate>
 
+            <s:decorate id="totalIndirectCostsField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['ProductionOrder.totalIndirectCosts']}</ui:define>
+                <h:outputText value="#{productionOrderForPlanning.totalIndirectCosts}">
+                    <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                </h:outputText>
+            </s:decorate>
+
             <s:decorate id="totalCostProductionField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.totalCostProduction']}</ui:define>
                 <h:outputText value="#{productionOrderForPlanning.totalCostProduction}">

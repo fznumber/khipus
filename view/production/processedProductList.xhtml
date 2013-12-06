@@ -12,8 +12,8 @@
     <ui:param name="bodyWidth" value="100%"/>
 
     <style type="text/css">
-        .special tr[id]{
-            display:none;
+        .special tr[id] {
+            display: none;
         }
     </style>
     <ui:param name="selectedTab" value="products"/>
@@ -49,8 +49,9 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" view="/production/processedProduct.xhtml" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('PROCESSEDPRODUCT','CREATE')}" />
+                <s:button value="#{messages['Common.new']}" view="/production/processedProduct.xhtml"
+                          styleClass="button"
+                          propagation="none" rendered="#{s:hasPermission('PROCESSEDPRODUCT','CREATE')}"/>
             </div>
             <rich:dataTable value="#{processedProductDataModel}" var="processedProductItem" id="processedProductList"
                             rows="#{sessionUser.rowsPerPage}"
@@ -59,22 +60,31 @@
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="processedProduct.name" dataModel="#{processedProductDataModel}"
+                            <app:commandSortHeader sortProperty="processedProduct.name"
+                                                   dataModel="#{processedProductDataModel}"
                                                    reRender="processedProductList, dataScroller">
                                 #{messages['ProcessedProduct.name']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="processedProduct.code" dataModel="#{processedProductDataModel}"
+                            <app:commandSortHeader sortProperty="processedProduct.code"
+                                                   dataModel="#{processedProductDataModel}"
                                                    reRender="processedProductList, dataScroller">
                                 #{messages['ProcessedProduct.code']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="processedProduct.description" dataModel="#{processedProductDataModel}"
+                            <app:commandSortHeader sortProperty="processedProduct.description"
+                                                   dataModel="#{processedProductDataModel}"
                                                    reRender="processedProductList, dataScroller">
                                 #{messages['ProcessedProduct.description']}
                             </app:commandSortHeader>
+                        </rich:column>
+                        <rich:column>
+                            #{messages['ProcessedProduct.unidMeasure']}
+                        </rich:column>
+                        <rich:column>
+                            #{messages['ProcessedProduct.amount']}
                         </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
@@ -91,6 +101,12 @@
                 <rich:column>
                     <h:outputText value="#{processedProductItem.description}"/>
                 </rich:column>
+                <rich:column>
+                    <h:outputText value="#{processedProductItem.unidMeasure}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{processedProductItem.amount}"/>
+                </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
                                    action="#{processedProductAction.select(processedProductItem)}">
@@ -100,13 +116,16 @@
             <app:dataScroller id="dataScroller" for="processedProductList" dataModel="#{processedProductDataModel}"/>
 
 
-            <rich:jQuery selector="#processedProductList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
-            <rich:jQuery selector="#processedProductList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+            <rich:jQuery selector="#processedProductList tr"
+                         query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+            <rich:jQuery selector="#processedProductList tr"
+                         query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" view="/production/processedProduct.xhtml" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('PROCESSEDPRODUCT','CREATE')}" />
+                <s:button value="#{messages['Common.new']}" view="/production/processedProduct.xhtml"
+                          styleClass="button"
+                          propagation="none" rendered="#{s:hasPermission('PROCESSEDPRODUCT','CREATE')}"/>
             </div>
 
         </h:form>

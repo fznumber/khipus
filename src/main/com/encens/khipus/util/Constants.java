@@ -141,7 +141,11 @@ public final class Constants {
     public static final String VIEW_PERMISSION = "VIEW";
 
     //Employee Time Card
-    public static final String EMPLOYEE_CARD_FINALIZE = "FINALIZAR";
+    public static final String EMPLOYEE_CARD_FINALIZE = "FIN DE JORNADA";
+
+    //Indirect Cost
+    public static final String INDIRECT_COST_TYPE_GENERAL = "GENERAL";
+
     private Constants() {
     }
 }
