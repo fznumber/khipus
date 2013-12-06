@@ -128,6 +128,9 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     }
     public Double getPorcent(Double totalDay,Double totalOrder)
     {
+        if(totalDay == 0.0)
+            return 0.0;
+
         return RoundUtil.getRoundValue((totalOrder*100)/totalDay,2, RoundUtil.RoundMode.SYMMETRIC);
     }
 
@@ -136,24 +139,28 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     {
 
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
-        Double totalMinutes = 0.0;
         Double totalCost = 0.0;
-        Boolean band = true;
         timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
         Double costDayBySubGroup = getCostDayBySubGroup(timeCards);
         Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
 
-        totalCost = getPorcent(totalVolumDay,totalVolumeOrder);
+        totalCost = costDayBySubGroup * getPorcent(totalVolumDay,totalVolumeOrder)/100;
 
         return new BigDecimal(totalCost);
     }
 
-    private Double getTotalVolumeOrder(ProductionOrder productionOrder) {
+    @Override
+    public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         Double total = productionOrder.getProducedAmount();
-        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getProductItem().getUsageMeasureCode();
-            if(unitMeasure == "KG" || unitMeasure == "LT" )
-              total =  productionOrder.getProducedAmount() * 1000;
+        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
+        Double amount = 0.0;
+        if(productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
+        amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
 
+            if(unitMeasure == "KG" || unitMeasure == "LT" )
+                amount =  productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+
+        total = amount * productionOrder.getProducedAmount();
         return total;
     }
 

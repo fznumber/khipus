@@ -36,4 +36,6 @@ public interface EmployeeTimeCardService {
     public List<EmployeeTimeCard> getLastTimesCards();
 
     public List<EmployeeTimeCard> getLastTimesCardsEmployee(Employee employeeSelect);
+
+    public Double getTotalVolumeOrder(ProductionOrder productionOrder);
 }

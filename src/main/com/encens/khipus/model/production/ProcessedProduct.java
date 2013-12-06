@@ -3,6 +3,7 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.warehouse.ProductItem;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,12 @@ public class ProcessedProduct extends MetaProduct {
     @OneToMany(mappedBy = "processedProduct", fetch = FetchType.LAZY)
     private List<ProductComposition> productCompositionList = new ArrayList<ProductComposition>();
 
+    @Column(name = "UNIDADMEDIDATE", nullable = true, columnDefinition = "VARCHAR(4)")
+    private String unidMeasure;
+
+    @Column(name = "CANTIDAD", nullable = true, columnDefinition = "NUMBER(7,2)")
+    private Double amount;
+
     public List<ProductComposition> getProductCompositionList() {
         return productCompositionList;
     }
@@ -66,5 +73,21 @@ public class ProcessedProduct extends MetaProduct {
 
     public void setFullName(String fullName) {
 
+    }
+
+    public String getUnidMeasure() {
+        return unidMeasure;
+    }
+
+    public void setUnidMeasure(String unidMeasure) {
+        this.unidMeasure = unidMeasure;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 }

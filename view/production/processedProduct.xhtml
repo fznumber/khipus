@@ -74,6 +74,22 @@
                         <a4j:support event="onblur" reRender="descriptionField"/>
                     </h:inputText>
                 </s:decorate>
+
+                <s:decorate id="unidMeasureField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProcessedProduct.unidMeasure']}</ui:define>
+                    <h:inputText id="unidMeasure" value="#{processedProduct.unidMeasure}" styleClass="input" required="false"
+                                 maxlength="100" tabindex="4">
+                        <a4j:support event="onblur" reRender="unidMeasureField"/>
+                    </h:inputText>
+                </s:decorate>
+
+                <s:decorate id="amountField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProcessedProduct.amount']}</ui:define>
+                    <h:inputText id="amount" value="#{processedProduct.amount}" styleClass="input" required="false"
+                                 maxlength="100" tabindex="5">
+                        <a4j:support event="onblur" reRender="amountField"/>
+                    </h:inputText>
+                </s:decorate>
             </rich:panel>
 
             <div class="buttons">
