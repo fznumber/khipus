@@ -11,7 +11,6 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -127,7 +126,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         if (totalDay == 0.0)
             return 0.0;
 
-        return RoundUtil.getRoundValue((totalOrder * 100) / totalDay, 2, RoundUtil.RoundMode.SYMMETRIC);
+        return (totalOrder * 100) / totalDay;
     }
 
     @Override

@@ -2,10 +2,9 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.warehouse.Group;
+import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -53,30 +52,33 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         if (totalDay == 0.0)
             return 0.0;
 
-        return RoundUtil.getRoundValue((totalOrder * 100) / totalDay, 2, RoundUtil.RoundMode.SYMMETRIC);
+        return (totalOrder * 100) / totalDay;
     }
 
     @Override
-    public Double getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay) {
+    public Double getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay) {
         Double totalCost = 0.0;
 
         Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
         Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
-        Double totalCostIndirectByGroup = getTotalCostIndirectByGroup(productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup().getGroup());
-        Double costGeneral = totalCostIndirectGeneral * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
+        Double totalCostIndirectByGroup = getTotalCostIndirectByGroup(productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup());
+        Double costGeneral = totalCostIndirectGeneral * getPorcent(totalVolumGeneralDay, totalVolumeOrder) / 100;
         Double costByGroup = totalCostIndirectByGroup * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
         totalCost = costGeneral + costByGroup;
         return totalCost;
     }
 
     @Override
-    public Double getTotalCostIndirectByGroup(Group group) {
+    public Double getTotalCostIndirectByGroup(SubGroup subGroup) {
         BigDecimal total = new BigDecimal(0.0);
         try {
 
             total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group = :group ")
-                    .setParameter("group", group)
+                    //" where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group.id = :id ")
+                    //.setParameter("id",subGroup.getGroupCode())
+                    //.setParameter("id","8")
+                    .setParameter("group", subGroup.getGroup())
                     .setParameter("month", DateUtils.getCurrentMonth(new Date()) - 1)
                     .setParameter("year", DateUtils.getCurrentYear(new Date()))
                     .getSingleResult();

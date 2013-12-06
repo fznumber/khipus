@@ -2,7 +2,7 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.warehouse.Group;
+import com.encens.khipus.model.warehouse.SubGroup;
 
 import javax.ejb.Local;
 
@@ -16,9 +16,9 @@ import javax.ejb.Local;
 @Local
 public interface IndirectCostsService extends GenericService {
 
-    public Double getTotalCostIndirectByGroup(Group group);
+    public Double getTotalCostIndirectByGroup(SubGroup subGroup);
 
     public Double getTotalCostIndirectGeneral();
 
-    public Double getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay);
+    public Double getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay);
 }
