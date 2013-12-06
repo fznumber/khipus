@@ -821,7 +821,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder)
     {
-      productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder,getTotalVolumProductionPlaning(productionOrder)));
+      productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder,getTotalVolumProductionPlaning(productionOrder),getTotalVolumGeneralProductionPlaning(productionOrder)));
     }
     public void setTotalsInputs(ProductionOrder productionOrder) {
         Double totalInput = 0.0;
@@ -878,6 +878,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (outputForRemove != null) {
             productionOrder.getOutputProductionVoucherList().remove(outputForRemove);
         }
+    }
+
+    public Double getTotalVolumGeneralProductionPlaning(ProductionOrder productionOrder) {
+        Double total = 0.0;
+        for(ProductionOrder order: getInstance().getProductionOrderList())
+        {
+                total += employeeTimeCardService.getTotalVolumeOrder(order);
+        }
+        return total;
     }
 
     public Double getTotalVolumProductionPlaning(ProductionOrder productionOrder) {

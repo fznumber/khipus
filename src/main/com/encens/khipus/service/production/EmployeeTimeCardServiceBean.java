@@ -131,7 +131,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         if(totalDay == 0.0)
             return 0.0;
 
-        return RoundUtil.getRoundValue((totalOrder*100)/totalDay,2, RoundUtil.RoundMode.SYMMETRIC);
+        return (totalOrder*100)/totalDay;
     }
 
     @Override
