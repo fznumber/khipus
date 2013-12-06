@@ -161,7 +161,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         addProductionOrderMaterialDetailSubReport(params);
         addProductionOrderMaterialSummaryDetailSubReport(params);
-        addProductionOrderHoursDetailSubReport(params);
+        //addProductionOrderHoursDetailSubReport(params);
         typedReportData = getReport(
                 fileName
                 , templatePath
@@ -224,7 +224,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         Map<String, Object> params = new HashMap<String, Object>();
 
         String sql = "SELECT op.cantidadproducida, op.cantidadesperada, op.preciototalmaterial, \n" +
-                "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, \n" +
+                "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, op.totalcostoindirecto, \n" +
                 "       "+ RoundUtil.getRoundValue(unitPrice,2, RoundUtil.RoundMode.SYMMETRIC).toString()+" as precioUnitario\n" +
                 "FROM ordenproduccion OP\n" +
                 "WHERE op.idordenproduccion = " + productionOrder.getId().toString();

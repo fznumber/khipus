@@ -76,6 +76,12 @@
                                 #{messages['ProcessedProduct.description']}
                             </app:commandSortHeader>
                         </rich:column>
+                        <rich:column>
+                                #{messages['ProcessedProduct.unidMeasure']}
+                        </rich:column>
+                        <rich:column>
+                                #{messages['ProcessedProduct.amount']}
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -90,6 +96,12 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{processedProductItem.description}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{processedProductItem.unidMeasure}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{processedProductItem.amount}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
