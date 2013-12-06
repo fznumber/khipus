@@ -2,7 +2,6 @@ package com.encens.khipus.action.warehouse;
 
 import com.encens.khipus.action.SessionUser;
 import com.encens.khipus.action.common.FunctionAction;
-import com.encens.khipus.action.production.ProcessedProductAction;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
@@ -11,9 +10,6 @@ import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.finances.CashAccount;
-import com.encens.khipus.model.finances.CompanyConfiguration;
-import com.encens.khipus.model.production.ProcessedProduct;
-import com.encens.khipus.model.production.ProductionInput;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemState;
 import com.encens.khipus.model.warehouse.SubGroup;
@@ -115,22 +111,26 @@ public class ProductItemAction extends GenericAction<ProductItem> {
         }
     }
 
-    private void createProductionItem(ProductItem productItem){
+    private void createProductionItem(ProductItem productItem) {
 
-        if(productItem.getSubGroup().getGroup().getName().equals("PRODUCTOS LACTEOS")){
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_UHT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_YOGURT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_CHEESE_PRODUCT)) {
             processedProductService.createProductionProduct(getInstance());
         }
-        if(productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")){
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_PRODUCTION_INPUT)) {
             productionInputService.createProductionInput(getInstance());
         }
     }
 
-    private void updateProductionItem(ProductItem productItem){
+    private void updateProductionItem(ProductItem productItem) {
 
-        if(productItem.getSubGroup().getGroup().getName().equals("PRODUCTOS LACTEOS")){
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_UHT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_YOGURT_PRODUCT) ||
+                productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_CHEESE_PRODUCT)) {
             processedProductService.updateProductionProduct(productItem);
         }
-        if(productItem.getSubGroup().getGroup().getName().equals("INSUMOS DE PRODUCCION")){
+        if (productItem.getSubGroup().getGroup().getName().equals(Constants.WAREHOUSE_PRODUCTION_INPUT)) {
             productionInputService.updateProductionInput(getInstance());
         }
     }

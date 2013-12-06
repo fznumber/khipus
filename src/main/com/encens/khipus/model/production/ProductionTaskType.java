@@ -4,7 +4,6 @@ import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
 import com.encens.khipus.model.warehouse.Group;
-import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;

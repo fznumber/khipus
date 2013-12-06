@@ -1,9 +1,6 @@
 package com.encens.khipus.model.production;
 
-import com.encens.khipus.model.warehouse.ProductItem;
-
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +13,12 @@ import java.util.List;
  */
 
 @NamedQueries({
-    @NamedQuery(name = "ProcessedProduct.withProductCompositionFind",
+        @NamedQuery(name = "ProcessedProduct.withProductCompositionFind",
                 query = "select processedProduct " +
                         "from ProcessedProduct processedProduct " +
                         "left join fetch processedProduct.productCompositionList " +
                         "where processedProduct.id = :id"),
-    @NamedQuery(name = "ProcessedProduct.findByCode",
+        @NamedQuery(name = "ProcessedProduct.findByCode",
                 query = "SELECT p FROM ProcessedProduct p WHERE p.code =:code")
 })
 
@@ -34,7 +31,7 @@ public class ProcessedProduct extends MetaProduct {
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     @OneToMany(mappedBy = "processedProduct", fetch = FetchType.LAZY)

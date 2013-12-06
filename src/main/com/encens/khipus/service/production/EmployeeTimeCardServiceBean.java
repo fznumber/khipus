@@ -11,7 +11,6 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -68,24 +67,23 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         return new BigDecimal(totalCost);
     }
 
-    public List<EmployeeTimeCard> getEmployeesWorkingInDay(Date dateOrder,ProductionOrder productionOrder)
-    {
-     List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
+    public List<EmployeeTimeCard> getEmployeesWorkingInDay(Date dateOrder, ProductionOrder productionOrder) {
+        List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dateOrder);
-        calendar.add(Calendar.DATE,1);
-                   try{
-                       timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +
-                                                  "where employeeTimeCard.subGroup =:subGroup " +
-                                                  "and employeeTimeCard.date between  :dateIni and :endDate " +
-                                                  "order by employeeTimeCard.employee.id ")
-                       .setParameter("dateIni",dateOrder, TemporalType.DATE)
-                       .setParameter("endDate", calendar.getTime(),TemporalType.DATE)
-                       .setParameter("subGroup", productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())
-                       .getResultList();
-                   }catch(NoResultException e){
-                       return null;
-                   }
+        calendar.add(Calendar.DATE, 1);
+        try {
+            timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +
+                    "where employeeTimeCard.subGroup =:subGroup " +
+                    "and employeeTimeCard.date between  :dateIni and :endDate " +
+                    "order by employeeTimeCard.employee.id ")
+                    .setParameter("dateIni", dateOrder, TemporalType.DATE)
+                    .setParameter("endDate", calendar.getTime(), TemporalType.DATE)
+                    .setParameter("subGroup", productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())
+                    .getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
 
         return timeCards;
     }
@@ -97,15 +95,13 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         double totalCost = 0;
         Boolean band = true;
 
-        for (EmployeeTimeCard employeeTimeCard: timeCards) {
+        for (EmployeeTimeCard employeeTimeCard : timeCards) {
 
             Date startTime = employeeTimeCard.getStartTime();
             Date endTime = employeeTimeCard.getEndTime();
 
 
-
-            if(!notTake.contains(employeeTimeCard.getEmployee()))
-            {
+            if (!notTake.contains(employeeTimeCard.getEmployee())) {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
@@ -116,8 +112,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
                 totalCost = totalCost + (diffMinutes * basicMinute);
             }
 
-            if(employeeTimeCard.getEndDay() != null)
-            {
+            if (employeeTimeCard.getEndDay() != null) {
                 band = false;
                 notTake.add(employeeTimeCard.getEmployee());
             }
@@ -126,25 +121,24 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
         return totalCost;
     }
-    public Double getPorcent(Double totalDay,Double totalOrder)
-    {
-        if(totalDay == 0.0)
+
+    public Double getPorcent(Double totalDay, Double totalOrder) {
+        if (totalDay == 0.0)
             return 0.0;
 
-        return (totalOrder*100)/totalDay;
+        return (totalOrder * 100) / totalDay;
     }
 
     @Override
-    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder, Double totalVolumDay)
-    {
+    public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder, Double totalVolumDay) {
 
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
         Double totalCost = 0.0;
-        timeCards = getEmployeesWorkingInDay(dateOrder,productionOrder);
+        timeCards = getEmployeesWorkingInDay(dateOrder, productionOrder);
         Double costDayBySubGroup = getCostDayBySubGroup(timeCards);
         Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
 
-        totalCost = costDayBySubGroup * getPorcent(totalVolumDay,totalVolumeOrder)/100;
+        totalCost = costDayBySubGroup * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
 
         return new BigDecimal(totalCost);
     }
@@ -154,11 +148,11 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         Double total = productionOrder.getProducedAmount();
         String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
         Double amount = 0.0;
-        if(productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
-        amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
+        if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
+            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
 
-            if(unitMeasure == "KG" || unitMeasure == "LT" )
-                amount =  productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+        if (unitMeasure == "KG" || unitMeasure == "LT")
+            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
         total = amount * productionOrder.getProducedAmount();
         return total;
@@ -167,13 +161,12 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public List<EmployeeTimeCard> getLastTimesCards() {
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
-        try{
+        try {
             timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard order by employeeTimeCard.startTime desc")
-                                                   .setMaxResults(8)
-                                                   .getResultList();
+                    .setMaxResults(8)
+                    .getResultList();
 
-        }catch(NoResultException e)
-        {
+        } catch (NoResultException e) {
             return new ArrayList<EmployeeTimeCard>();
         }
 
@@ -183,17 +176,16 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public List<EmployeeTimeCard> getLastTimesCardsEmployee(Employee employeeSelect) {
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
-        try{
-            if(employeeSelect != null)
-            timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard " +
-                    " where employeeTimeCard.employee = :employeeSelect " +
-                    " order by employeeTimeCard.startTime desc")
-                    .setParameter("employeeSelect",employeeSelect)
-                    .setMaxResults(8)
-                    .getResultList();
+        try {
+            if (employeeSelect != null)
+                timeCards = (List<EmployeeTimeCard>) em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard EmployeeTimeCard " +
+                        " where employeeTimeCard.employee = :employeeSelect " +
+                        " order by employeeTimeCard.startTime desc")
+                        .setParameter("employeeSelect", employeeSelect)
+                        .setMaxResults(8)
+                        .getResultList();
 
-        }catch(NoResultException e)
-        {
+        } catch (NoResultException e) {
             return new ArrayList<EmployeeTimeCard>();
         }
 
@@ -201,8 +193,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     }
 
     @Override
-    public Double getCostPerHour(Employee employee)
-    {
+    public Double getCostPerHour(Employee employee) {
         JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
         Double costPerHour = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8);
 
@@ -210,15 +201,13 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     }
 
     @Override
-    public List<ProductionTaskType> getTaskTypeGroup(Group group)
-    {
+    public List<ProductionTaskType> getTaskTypeGroup(Group group) {
         List<ProductionTaskType> taskTypes = new ArrayList<ProductionTaskType>();
-        try{
+        try {
             taskTypes = em.createQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType WHERE productionTaskType.group = :grupo")
-                        .setParameter("grupo", group)
-                        .getResultList();
-        }catch (NoResultException e)
-        {
+                    .setParameter("grupo", group)
+                    .getResultList();
+        } catch (NoResultException e) {
             return new ArrayList<ProductionTaskType>();
         }
 
@@ -229,8 +218,8 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     public List<ConfigGroup> getConfigGroupsProduction() {
         List<ConfigGroup> groups = new ArrayList<ConfigGroup>();
         try {
-            groups =  em.createQuery("SELECT configGroup FROM ConfigGroup configGroup WHERE configGroup.type = :type")
-                    .setParameter("type","AREA_PRODUCTOS")
+            groups = em.createQuery("SELECT configGroup FROM ConfigGroup configGroup WHERE configGroup.type = :type")
+                    .setParameter("type", "AREA_PRODUCTOS")
                     .getResultList();
         } catch (NoResultException e) {
             return new ArrayList<ConfigGroup>();
@@ -242,11 +231,10 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public List<ProductionTaskType> getTaskType() {
         List<ProductionTaskType> taskTypes = new ArrayList<ProductionTaskType>();
-        try{
+        try {
             taskTypes = em.createQuery("SELECT productionTaskType FROM ProductionTaskType productionTaskType")
                     .getResultList();
-        }catch (NoResultException e)
-        {
+        } catch (NoResultException e) {
             return new ArrayList<ProductionTaskType>();
         }
 
@@ -256,18 +244,17 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public Date getLastMark(Employee employeeSelect) {
         Date dateRegister = new Date();
-            try{
+        try {
 
-               List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.endTime desc")
-                                    .setParameter("employee",employeeSelect)
-                                    .getResultList();
-                if(resultList.get(0).getProductionTaskType().getName().compareTo("FINALIZADO") != 0)
-                    dateRegister = resultList.get(0).getEndTime();
+            List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.endTime desc")
+                    .setParameter("employee", employeeSelect)
+                    .getResultList();
+            if (resultList.get(0).getProductionTaskType().getName().compareTo("FINALIZADO") != 0)
+                dateRegister = resultList.get(0).getEndTime();
 
-            }catch(NoResultException e)
-            {
-                return new Date();
-            }
+        } catch (NoResultException e) {
+            return new Date();
+        }
 
         return dateRegister;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -275,17 +262,16 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public EmployeeTimeCard getLastEmployeeTimeCard(Employee employeeSelect) {
         EmployeeTimeCard employeeTimeCard = null;
-        try{
+        try {
 
             List<EmployeeTimeCard> resultList = em.createQuery("SELECT employeeTimeCard FROM EmployeeTimeCard employeeTimeCard WHERE employeeTimeCard.employee = :employee order by employeeTimeCard.startTime desc")
-                    .setParameter("employee",employeeSelect)
+                    .setParameter("employee", employeeSelect)
                     .getResultList();
-            if(resultList.size() > 0)
-            if(resultList.get(0).getProductionTaskType().getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) != 0 )
-                employeeTimeCard = resultList.get(0);
+            if (resultList.size() > 0)
+                if (resultList.get(0).getProductionTaskType().getName().compareTo(Constants.EMPLOYEE_CARD_FINALIZE) != 0)
+                    employeeTimeCard = resultList.get(0);
 
-        }catch(NoResultException e)
-        {
+        } catch (NoResultException e) {
             return null;
         }
 

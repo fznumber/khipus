@@ -1,14 +1,10 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
-import com.encens.khipus.model.production.ArticleEstate;
 import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.warehouse.Group;
-import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -35,31 +31,28 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     private EntityManager em;
 
     @Override
-    public Double getTotalCostIndirectGeneral()
-    {
+    public Double getTotalCostIndirectGeneral() {
         BigDecimal total = new BigDecimal(0.0);
-            try{
+        try {
 
-                total = (BigDecimal)em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
-                        " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
-                        .setParameter("month", DateUtils.getCurrentMonth(new Date()) - 1)
-                        .setParameter("year", DateUtils.getCurrentYear(new Date()))
-                        .setParameter("type", Constants.INDIRECT_COST_TYPE_GENERAL)
-                .getSingleResult();
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
+                    " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
+                    .setParameter("month", DateUtils.getCurrentMonth(new Date()) - 1)
+                    .setParameter("year", DateUtils.getCurrentYear(new Date()))
+                    .setParameter("type", Constants.INDIRECT_COST_TYPE_GENERAL)
+                    .getSingleResult();
 
-            }catch (NoResultException e)
-            {
-                total = new BigDecimal(0.0);
-            }
-        return total.doubleValue()/30;
+        } catch (NoResultException e) {
+            total = new BigDecimal(0.0);
+        }
+        return total.doubleValue() / 30;
     }
 
-    public Double getPorcent(Double totalDay,Double totalOrder)
-    {
-        if(totalDay == 0.0)
+    public Double getPorcent(Double totalDay, Double totalOrder) {
+        if (totalDay == 0.0)
             return 0.0;
 
-        return (totalOrder*100)/totalDay;
+        return (totalOrder * 100) / totalDay;
     }
 
     @Override
@@ -69,46 +62,44 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
         Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
         Double totalCostIndirectByGroup = getTotalCostIndirectByGroup(productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup());
-        Double costGeneral = totalCostIndirectGeneral * getPorcent(totalVolumGeneralDay,totalVolumeOrder)/100;
-        Double costByGroup = totalCostIndirectByGroup * getPorcent(totalVolumDay,totalVolumeOrder)/100;
+        Double costGeneral = totalCostIndirectGeneral * getPorcent(totalVolumGeneralDay, totalVolumeOrder) / 100;
+        Double costByGroup = totalCostIndirectByGroup * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
         totalCost = costGeneral + costByGroup;
         return totalCost;
     }
 
     @Override
-    public Double getTotalCostIndirectByGroup(SubGroup subGroup)
-    {
+    public Double getTotalCostIndirectByGroup(SubGroup subGroup) {
         BigDecimal total = new BigDecimal(0.0);
-        try{
+        try {
 
-            total = (BigDecimal)em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group = :group ")
                     //" where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group.id = :id ")
                     //.setParameter("id",subGroup.getGroupCode())
                     //.setParameter("id","8")
-                    .setParameter("group",subGroup.getGroup())
+                    .setParameter("group", subGroup.getGroup())
                     .setParameter("month", DateUtils.getCurrentMonth(new Date()) - 1)
-                    .setParameter("year",DateUtils.getCurrentYear(new Date()))
+                    .setParameter("year", DateUtils.getCurrentYear(new Date()))
                     .getSingleResult();
 
 
-        }catch(NoResultException e)
-        {
+        } catch (NoResultException e) {
             total = new BigDecimal(0.0);
         }
 
-        return total.doubleValue()/30;
+        return total.doubleValue() / 30;
     }
 
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         Double total = productionOrder.getProducedAmount();
         String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
         Double amount = 0.0;
-        if(productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
+        if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
 
-        if(unitMeasure == "KG" || unitMeasure == "LT" )
-            amount =  productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+        if (unitMeasure == "KG" || unitMeasure == "LT")
+            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
         total = amount * productionOrder.getProducedAmount();
         return total;

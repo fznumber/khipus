@@ -56,18 +56,18 @@
     <factory name="productionTaskTypeList" value="#{productionTaskTypeQuery}"/>
     <framework:entity-query name="productionTaskTypeQuery"
                             ejbql="select productionTaskType from ProductionTaskType productionTaskType ">
-            <framework:restrictions>
-                <value>productionTaskType.group = #{employeeTimeCardAction.selectGroup} </value>
-            </framework:restrictions>
-     </framework:entity-query>
+        <framework:restrictions>
+            <value>productionTaskType.group = #{employeeTimeCardAction.selectGroup}</value>
+        </framework:restrictions>
+    </framework:entity-query>
 
 
     <factory name="subGroupListProduction" value="#{subGroupQueryProduction}"/>
     <framework:entity-query name="subGroupQueryProduction"
                             ejbql="select subGroup from SubGroup subGroup">
-            <framework:restrictions>
-                <value>subGroup.group = #{employeeTimeCardAction.selectGroup}</value>
-            </framework:restrictions>
+        <framework:restrictions>
+            <value>subGroup.group = #{employeeTimeCardAction.selectGroup}</value>
+        </framework:restrictions>
     </framework:entity-query>
 
 </components>
