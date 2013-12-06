@@ -47,7 +47,7 @@
                                  maxlength="100" tabindex="5" styleClass="input" required="true">
                         <a4j:support event="onblur" ajaxSingle="true"
                                      actionListener="#{employeeTimeCardAction.searchEmployeed}"
-                                     reRender="nameEmployee,detailArea,employeeTimeCards"/>
+                                     reRender="nameEmployee,detailArea,employeeTimeCards,erroCI"/>
                     </h:inputText>
 
                 </s:decorate>
@@ -57,6 +57,13 @@
                             style="font-size: 13px; color: blue;text-align:center; padding-top: 5px;"
                             styleClass="formRow">
                     <h:outputText value="#{employeeTimeCardAction.nameEmployeed}">
+                    </h:outputText>
+                </s:decorate>
+
+                <s:decorate id="erroCI"
+                            style="font-size: 13px; color: red;text-align:center; padding-top: 5px;"
+                            styleClass="formRow">
+                    <h:outputText value="#{employeeTimeCardAction.ci_invalid}">
                     </h:outputText>
                 </s:decorate>
 

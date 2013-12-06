@@ -86,6 +86,8 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     private int band = 0;
 
+    private String ci_invalid = "";
+
     @Factory(value = "employeeChoise", scope = ScopeType.STATELESS)
     public Employee initEmployee() {
         return employeeSelect;
@@ -154,12 +156,12 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
                 timeCard.setCompany(employeeSelect.getCompany());
                 timeCard.setCompanyNumber("01");
                 getService().create(timeCard);
-                addCreatedMessage();
+                //addCreatedMessage();
             }
             cleanFrom();
 
         } catch (EntryDuplicatedException e) {
-            addDuplicatedMessage();
+            //addDuplicatedMessage();
         }
     }
 
@@ -190,8 +192,10 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
         if (employeeList.size() > 0) {
             employeeSelect = employeeList.get(0);
             nameEmployeed = employeeSelect.getFullName();
+            ci_invalid = "";
         } else {
-            addNoFoundCIMessage();
+            //addNoFoundCIMessage();
+            ci_invalid = "No se encuentra la cédula de identidad que ingreso por favor intentelo de nuevo";
             cleanFrom();
         }
     }
@@ -407,5 +411,13 @@ public class EmployeeTimeCardAction extends GenericAction<EmployeeTimeCard> {
 
     public void setBand(int band) {
         this.band = band;
+    }
+
+    public String getCi_invalid() {
+        return ci_invalid;
+    }
+
+    public void setCi_invalid(String ci_invalid) {
+        this.ci_invalid = ci_invalid;
     }
 }
