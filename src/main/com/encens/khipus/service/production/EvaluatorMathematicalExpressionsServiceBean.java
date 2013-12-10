@@ -149,7 +149,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         BigDecimal result = null;
         try {
             result = (BigDecimal) getEntityManager()
-                    .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                    .createQuery("SELECT  sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                     .setParameter("productItem", metaProduct.getProductItem())
                     .getSingleResult();
             return result;

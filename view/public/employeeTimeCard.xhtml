@@ -44,7 +44,7 @@
                 <s:decorate id="numberIdentifiedField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['EmployeeTimeCard.numberIdentified']}</ui:define>
                     <h:inputText id="numberIdentified" value="#{employeeTimeCardAction.ci}"
-                                 maxlength="100" tabindex="5" styleClass="input" required="true">
+                                 maxlength="100" tabindex="5" styleClass="input" required="true" autocomplete="off">
                         <a4j:support event="onblur" ajaxSingle="true"
                                      actionListener="#{employeeTimeCardAction.searchEmployeed}"
                                      reRender="nameEmployee,detailArea,employeeTimeCards,erroCI"/>

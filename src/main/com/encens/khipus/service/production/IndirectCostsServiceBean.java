@@ -87,6 +87,8 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         } catch (NoResultException e) {
             total = new BigDecimal(0.0);
         }
+        if (total == null )
+            total = new BigDecimal(0.0);
 
         return total.doubleValue() / 30;
     }
