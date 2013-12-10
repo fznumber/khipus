@@ -95,7 +95,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     public BigDecimal getMountInWarehouse(MetaProduct metaProduct) {
         try{
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", metaProduct.getProductItem())
                 .getSingleResult();
         }catch (NoResultException e)
@@ -107,7 +107,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     public BigDecimal getMountInWarehouse(ProductItem productItem) {
         try{
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", productItem)
                 .getSingleResult();
         }catch(NoResultException e)
@@ -118,7 +118,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
 
     public BigDecimal getMountInWarehouse(Long id) {
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem.id = :id")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem.id = :id")
                 .setParameter("id", id)
                 .getSingleResult();
     }

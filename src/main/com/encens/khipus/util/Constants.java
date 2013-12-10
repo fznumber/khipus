@@ -154,6 +154,9 @@ public final class Constants {
     //Indirect Cost
     public static final String INDIRECT_COST_TYPE_GENERAL = "GENERAL";
 
+    //Production diari
+    public static  final String ESTATE_ARTICLE_COMPOSITE = "COMPUESTO";
+
     private Constants() {
     }
 }

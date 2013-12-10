@@ -11,6 +11,7 @@ import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
 import com.encens.khipus.service.production.*;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -427,7 +428,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
             input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
             input.setMathematicalFormula(ingredient.getMathematicalFormula());
-            BigDecimal costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+            BigDecimal costUnit;
+
+            if(articleEstateService.verifyEstate(ingredient.getMetaProduct().getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
+                costUnit = getCostUnitProdComposite(ingredient);
+            else
+                costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+
             input.setCostUnit(costUnit);
             input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
             productionOrder.getOrderInputs().add(input);
@@ -446,15 +453,53 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
                 input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
                 input.setMathematicalFormula(ingredient.getMathematicalFormula());
-                BigDecimal costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+                BigDecimal costUnit;
+
+                if(articleEstateService.verifyEstate(ingredient.getMetaProduct().getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
+                costUnit = getCostUnitProdComposite(ingredient);
+                else
+                costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+
                 input.setCostUnit(costUnit);
                 input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
                 productionOrder.getOrderInputs().add(input);
             } else {
+
+                if(articleEstateService.verifyEstate(inputParameterize.getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
+                    inputParameterize.setCostUnit(getCostUnitProdComposite(ingredient));
+
                 inputParameterize.setCostTotal(new BigDecimal(inputParameterize.getCostUnit().doubleValue() * inputParameterize.getAmount()));
                 productionOrder.getOrderInputs().add(inputParameterize);
             }
         }
+    }
+
+    private BigDecimal getCostUnitProdComposite(ProductionIngredient ingredient) {
+
+        List<ProductionIngredient> aux = new ArrayList<ProductionIngredient>();
+
+        ProductComposition composition = processedProductService.getProductComposite(ingredient.getMetaProduct().getId());
+        aux = composition.getProductionIngredientList();
+        try {
+            evaluatorMathematicalExpressionsService.excuteFormulate(aux,ingredient.getAmount(),composition.getContainerWeight(),composition.getSupposedAmount());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ProductCompositionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        Double totalcost = calculateCostTotal(aux);
+        aux = null;
+        return new BigDecimal(totalcost/ingredient.getAmount());
+    }
+
+    private Double calculateCostTotal(List<ProductionIngredient> ingredients)
+    {
+        Double costTotal = 0.0;
+        for(ProductionIngredient ingredient : ingredients){
+            costTotal += ingredient.getAmount() * ingredient.getMetaProduct().getProductItem().getUnitCost().doubleValue();
+        }
+
+        return costTotal;
     }
 
     @End
