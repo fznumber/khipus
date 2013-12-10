@@ -778,6 +778,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </rich:column>
     </rich:dataTable>
 
+    <rich:jQuery selector="#productionOrderList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+    <rich:jQuery selector="#productionOrderList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+
 </h:panelGrid>
 
 

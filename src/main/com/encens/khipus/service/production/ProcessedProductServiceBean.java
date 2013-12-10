@@ -78,8 +78,9 @@ public class ProcessedProductServiceBean extends GenericServiceBean implements P
         ProductComposition composition = new ProductComposition();
         try {
 
-            composition = (ProductComposition) em.createQuery("select composite from ProductComposition composite where composite.processedProduct.id = :id")
+            composition = (ProductComposition) em.createQuery("select composite from ProductComposition composite where composite.processedProduct.id = :id and composite.active = :estado")
                                                  .setParameter("id",id)
+                                                 .setParameter("estado",true)
                                                  .getSingleResult();
 
         }catch (NoResultException e){
