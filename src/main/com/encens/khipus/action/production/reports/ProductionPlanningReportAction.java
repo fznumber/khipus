@@ -222,7 +222,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
 
         String sql = "SELECT op.cantidadproducida, op.cantidadesperada, op.preciototalmaterial, \n" +
                 "       op.preciototalinsumo, op.preciototalmanoobra , op.costotoalproduccion, op.totalcostoindirecto, \n" +
-                "       " + RoundUtil.getRoundValue(unitPrice, 2, RoundUtil.RoundMode.SYMMETRIC).toString() + " as precioUnitario\n" +
+                "       " + RoundUtil.getRoundValue(unitPrice, 3, RoundUtil.RoundMode.SYMMETRIC).toString() + " as precioUnitario\n" +
                 "FROM ordenproduccion OP\n" +
                 "WHERE op.idordenproduccion = " + productionOrder.getId().toString();
 

@@ -149,7 +149,7 @@
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{costotoalproduccion}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.000" isBlankWhenNull="true">
 				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="455" y="0" width="65" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
