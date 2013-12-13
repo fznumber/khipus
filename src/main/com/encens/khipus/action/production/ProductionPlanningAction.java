@@ -4,26 +4,31 @@ import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.exception.production.ProductCompositionException;
+import com.encens.khipus.exception.warehouse.InventoryException;
+import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.production.*;
-import com.encens.khipus.model.warehouse.ProductItem;
-import com.encens.khipus.model.warehouse.ProductItemPK;
+import com.encens.khipus.model.warehouse.*;
+import com.encens.khipus.service.admin.BusinessUnitService;
+import com.encens.khipus.service.finances.CostCenterService;
 import com.encens.khipus.service.production.*;
+import com.encens.khipus.service.warehouse.InventoryService;
+import com.encens.khipus.service.warehouse.WarehouseService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.RoundUtil;
+import com.encens.khipus.util.warehouse.InventoryMessage;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
+import org.jboss.ws.metadata.wsdl.WSDLBindingOperationOutput;
 
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.*;
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
@@ -51,10 +56,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showMaterialDetail = false;
     private Boolean showInputDetail = false;
     private Boolean showDetailOrder = false;
+    private Boolean showProductionOrders = true;
 
     private Double expendOld;
     private Double containerOld;
 
+    @In
+    User currentUser;
     @In
     private ProductionPlanningService productionPlanningService;
     @In
@@ -69,6 +77,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ArticleEstateService articleEstateService;
     @In
     private IndirectCostsService indirectCostsService;
+    @In
+    protected WarehouseService warehouseService;
+    @In
+    protected CostCenterService costCenterService;
+    @In
+    protected BusinessUnitService businessUnitService;
+    @In
+    protected InventoryService inventoryService;
+
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
@@ -252,6 +269,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         clearFormulation();
         disableEditingFormula();
+        showProductionOrders = true;
     }
 
     public void updateFormulation() {
@@ -272,6 +290,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //setPriceCostInput();
         existingFormulation = null;
         disableEditingFormula();
+        showProductionOrders = true;
     }
 
     private Boolean verifySotck(ProductionOrder order) {
@@ -351,6 +370,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setProducedAmount(0.0);
         }
     }*/
+    public void addMessageCreateWarehouseVoucherInput()
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "WarehouseVoucher.generateVoucher");
+    }
+
+    public void addMessageVerifyMaterial()
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "ProductionPlanning.material.size");
+    }
 
     public void addMessageError(OrderInput input, Double mount) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "Common.message.errorMountWarehouse", input.getProductItem().getName(), mount);
@@ -492,6 +520,256 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return new BigDecimal(totalcost/ingredient.getAmount());
     }
 
+    public WarehouseVoucher createWarehouseVoucherInput(){
+        /*Crear el vale*/
+        WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
+        warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
+        warehouseVoucher.setDocumentCode("2");
+        warehouseVoucher.setDate(new Date());
+        warehouseVoucher.setState(WarehouseVoucherState.PEN);
+        warehouseVoucher.setWarehouseCode("1");
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
+        warehouseVoucher.setCostCenterCode("0111");
+        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("1"));
+        warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
+        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+
+        return warehouseVoucher;
+    }
+    public WarehouseVoucher createWarehouseVoucherMaterial(){
+
+        WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
+        warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
+        warehouseVoucher.setDocumentCode("2");
+        warehouseVoucher.setDate(new Date());
+        warehouseVoucher.setState(WarehouseVoucherState.PEN);
+        warehouseVoucher.setWarehouseCode("3");
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
+        warehouseVoucher.setCostCenterCode("0111");
+        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("3"));
+        warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
+        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+
+        return warehouseVoucher;
+    }
+
+    public WarehouseVoucher createWarehouseVoucherOrder(){
+
+        WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
+        warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
+        warehouseVoucher.setDocumentCode("1");
+        warehouseVoucher.setDate(new Date());
+        warehouseVoucher.setState(WarehouseVoucherState.PEN);
+        warehouseVoucher.setWarehouseCode("2");
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0112"));
+        warehouseVoucher.setCostCenterCode("0112");
+        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("2"));
+        warehouseVoucher.setDocumentType(productionPlanningService.getRecepcionDocumentType());
+        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+
+        return warehouseVoucher;
+    }
+
+    public InventoryMovement createInventoryMovement(String description){
+        InventoryMovement inventoryMovement = new InventoryMovement();
+        inventoryMovement.setDescription(description);
+
+        return inventoryMovement;
+    }
+
+    public void generateValeMaterial(){
+
+        if(productionOrder.getOrderMaterials().size() == 0)
+        {
+            addMessageVerifyMaterial();
+            return;
+        }
+
+        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
+        warehouseVoucher = createWarehouseVoucherMaterial();
+        InventoryMovement inventoryMovement = createInventoryMovement("egreso de materiales de prueba");
+        List<MovementDetail> movementDetails = generateMovementDetailMaterial(productionOrder.getOrderMaterials());
+
+        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+        Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+        List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+        try {
+            warehouseService.saveWarehouseVoucher(warehouseVoucher, inventoryMovement, movementDetails,
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+            addMessageCreateWarehouseVoucherInput();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+        }
+
+        addMaterial = false;
+        showProductionOrders = true;
+    }
+
+    public void generateValeOrder(){
+
+        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
+        warehouseVoucher = createWarehouseVoucherOrder();
+        InventoryMovement inventoryMovement = createInventoryMovement("egreso de materiales de prueba");
+        List<MovementDetail> movementDetails = generateMovementDetailOrder(productionOrder);
+
+        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+        Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+        List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+        try {
+            warehouseService.saveWarehouseVoucher(warehouseVoucher, inventoryMovement, movementDetails,
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+            addMessageCreateWarehouseVoucherInput();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return;
+        }
+
+        closeDetail();
+        showProductionOrders = true;
+
+    }
+
+    private List<MovementDetail> generateMovementDetailOrder(ProductionOrder productionOrder) {
+
+        List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
+
+        MovementDetail detail = new MovementDetail();
+        ProductItem item = productionOrder.getProductComposition().getProcessedProduct().getProductItem();
+        detail.setProductItemCode(item.getProductItemCode());
+        detail.setQuantity(new BigDecimal(productionOrder.getProducedAmount()));
+        detail.setProductItemAccount(item.getProductItemAccount());
+        detail.setMeasureCode(item.getUsageMeasureUnit().getMeasureUnitCode());
+        detail.setUnitCost(productionOrder.getUnitCost());
+        detail.setAmount(new BigDecimal(productionOrder.getTotalCostProduction()));
+        detail.setProductItem(item);
+        detail.setWarehouse(inventoryService.findWarehouseByItemArticle(item));
+        detail.setMeasureUnit(item.getUsageMeasureUnit());
+        movementDetails.add(detail);
+
+        return movementDetails;
+    }
+
+    public void generateValeInput(){
+
+        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
+        warehouseVoucher = createWarehouseVoucherInput();
+        InventoryMovement inventoryMovement = createInventoryMovement("egreso de insumos de prueba");
+
+        /*lista de insumos*/
+        List<MovementDetail> movementDetails = generateMovementDetailInput(productionOrder.getOrderInputs());
+        /*...*/
+        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+        Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+        List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+
+        try {
+            warehouseService.saveWarehouseVoucher(warehouseVoucher, inventoryMovement, movementDetails,
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+            addMessageCreateWarehouseVoucherInput();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return;
+        }
+
+        clearFormulation();
+        disableEditingFormula();
+        showProductionOrders = true;
+
+    }
+
+    public void addProductItemNotFoundMessage(String productItemName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "ProductItem.error.notFound", productItemName);
+    }
+
+    public void addInventoryMessages(List<InventoryMessage> messages) {
+        for (InventoryMessage message : messages) {
+            if (message.isNotFound()) {
+                facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                        "WarehouseVoucher.error.InventoryNotFound", message.getProductItem().getName());
+                continue;
+            }
+
+            if (message.isNotEnough()) {
+                facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                        "WarehouseVoucher.error.InventoryUnavailableProductItems", message.getProductItem().getName(),
+                        message.getAvailableQuantity());
+            }
+        }
+    }
+
+    private List<MovementDetail> generateMovementDetailMaterial(List<OrderMaterial> orderMaterials) {
+        List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
+
+        for(OrderMaterial material: orderMaterials)
+        {
+            if(!articleEstateService.verifyEstate(material.getProductItem(),Constants.ESTATE_ARTICLE_NOTVERIFY))
+            {
+                MovementDetail detail = new MovementDetail();
+                detail.setProductItemCode(material.getProductItemCode());
+                detail.setQuantity(new BigDecimal(material.getAmountUsed()));
+                detail.setProductItemAccount(material.getProductItem().getProductItemAccount());
+                detail.setMeasureCode(material.getProductItem().getUsageMeasureUnit().getMeasureUnitCode());
+                detail.setUnitCost(material.getCostUnit());
+                detail.setAmount(material.getCostTotal());
+                detail.setProductItem(material.getProductItem());
+                detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                detail.setMeasureUnit(material.getProductItem().getUsageMeasureUnit());
+                movementDetails.add(detail);
+            }
+
+        }
+
+        return movementDetails;
+    }
+
+    private List<MovementDetail> generateMovementDetailInput(List<OrderInput> orderInputs) {
+        List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
+        for(OrderInput input: orderInputs)
+        {
+            if(!articleEstateService.verifyEstate(input.getProductItem(),Constants.ESTATE_ARTICLE_NOTVERIFY))
+            {   /*if(!articleEstateService.verifyEstate(input.getProductItem(),Constants.ESTATE_ARTICLE_COMPOSITE))
+                { */
+                    MovementDetail detail = new MovementDetail();
+                    detail.setProductItemCode(input.getProductItemCode());
+                    detail.setQuantity(new BigDecimal(input.getAmount()));
+                    detail.setProductItemAccount(input.getProductItem().getProductItemAccount());
+                    detail.setMeasureCode(input.getProductItem().getUsageMeasureUnit().getMeasureUnitCode());
+                    detail.setUnitCost(input.getCostUnit());
+                    detail.setAmount(input.getCostTotal());
+                    detail.setProductItem(input.getProductItem());
+                    detail.setWarehouse(inventoryService.findWarehouseByItemArticle(input.getProductItem()));
+                    detail.setMeasureUnit(input.getProductItem().getUsageMeasureUnit());
+                    movementDetails.add(detail);
+
+                /*}else{
+                    ProductComposition composition = processedProductService.getProductComposite(ingredient.getMetaProduct().getId());
+                    movementDetails.addAll(generateMovementDetailInput(productionPlanningService. input.));
+                } */
+            }
+
+        }
+
+        return movementDetails;
+    }
+
     private Double calculateCostTotal(List<ProductionIngredient> ingredients)
     {
         Double costTotal = 0.0;
@@ -502,8 +780,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return costTotal;
     }
 
-    @End
-    public String removeFormulation() {
+    //@End
+    //public String removeFormulation() {
+    public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
         //setPriceCostInput();
         String result = Outcome.FAIL;
@@ -516,7 +795,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
         disableEditingFormula();
-        return result;
+        showProductionOrders = true;
+        //return result;
     }
 
     public String deleteOrder(ProductionOrder order) {
@@ -575,6 +855,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
+        showProductionOrders = false;
 
     }
 
@@ -598,6 +879,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderMaterials.addAll(order.getOrderMaterials());
 
         addMaterial = true;
+        showProductionOrders = false;
     }
 
     public void selectMaterialDetail(ProductionOrder order) {
@@ -608,6 +890,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderMaterials.addAll(order.getOrderMaterials());
 
         showMaterialDetail = true;
+        showProductionOrders = false;
     }
 
     public void selectDetail(ProductionOrder order) {
@@ -626,10 +909,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //orderMaterials.addAll(order.getOrderMaterials());
 
         showDetailOrder = true;
+        showProductionOrders = false;
     }
 
-    @End(ifOutcome = Outcome.SUCCESS)
-    public String makeExecutedOrder() {
+    //@End(ifOutcome = Outcome.SUCCESS)
+    //public String makeExecutedOrder() {
+    public void makeExecutedOrder() {
         //getInstance().setState(EXECUTED);
         productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
@@ -646,11 +931,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setEstateOrder(PENDING);
             //getInstance().setState(PENDING);
         }
-        return outcome;
+        disableEditingFormula();
+        //productionOrder = null;
+        showDetailOrder = false;
+        showProductionOrders = true;
+        //return outcome;
     }
 
-    @End(ifOutcome = Outcome.SUCCESS)
-    public String makeFinalizedOrder() {
+    //@End(ifOutcome = Outcome.SUCCESS)
+    //public String makeFinalizedOrder() {
+    public void makeFinalizedOrder() {
         //getInstance().setState(FINALIZED);
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
@@ -667,13 +957,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setEstateOrder(EXECUTED);
             //getInstance().setState(EXECUTED);
         }
-        return outcome;
+        showProductionOrders = true;
+        disableEditingFormula();
+        //productionOrder = null;
+        showDetailOrder = false;
     }
 
     public void closeDetail() {
         disableEditingFormula();
         //productionOrder = null;
         showDetailOrder = false;
+        showProductionOrders = true;
     }
 
     public void addProductItems(List<ProductItem> productItems) {
@@ -735,6 +1029,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         orderMaterials.clear();
         selectedProductItems.clear();
+        showProductionOrders = true;
     }
 
     public void removeMaterial(OrderMaterial instance) {
@@ -775,6 +1070,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         existingFormulation = null;
         disableEditingFormula();
+        showProductionOrders = true;
     }
 
     public void cancelFormulation() {
@@ -790,6 +1086,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showInputDetail = false;
         showMaterialDetail = false;
         showDetailOrder = false;
+        showProductionOrders = true;
     }
 
     private void disableEditingFormula() {
@@ -849,7 +1146,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionOrder.getProducedAmount() > 0.0)
             priceUnit = total / productionOrder.getProducedAmount();
 
-        productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
+        //productionOrder.getProductComposition().getProcessedProduct().getProductItem().setUnitCost(new BigDecimal(priceUnit));
+        //Todo: Revisar
+        productionOrder.setUnitCost(new BigDecimal(priceUnit));
     }
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder) {
@@ -1051,6 +1350,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderMaterials.clear();
         //productionOrder = null;
         addMaterial = false;
+        showProductionOrders = true;
     }
 
     public OrderMaterial getOrderMaterial() {
@@ -1091,5 +1391,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowDetailOrder(Boolean showDetailOrder) {
         this.showDetailOrder = showDetailOrder;
+    }
+
+    public Boolean getShowProductionOrders() {
+        return showProductionOrders;
+    }
+
+    public void setShowProductionOrders(Boolean showProductionOrders) {
+        this.showProductionOrders = showProductionOrders;
     }
 }

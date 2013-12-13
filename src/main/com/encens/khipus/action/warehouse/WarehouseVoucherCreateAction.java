@@ -98,6 +98,11 @@ public class WarehouseVoucherCreateAction extends WarehouseVoucherGeneralAction 
         }
     }
 
+    public void addProductItemNotFoundMessage(String productItemName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "ProductItem.error.notFound", productItemName);
+    }
+
     @Override
     public WarehouseVoucher getWarehouseVoucher() {
         warehouseVoucher.setState(WarehouseVoucherState.PEN);

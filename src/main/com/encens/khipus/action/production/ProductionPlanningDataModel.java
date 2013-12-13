@@ -38,11 +38,13 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
 
     @Override
     public String getEjbql() {
-        return "select productionPlanning " +
+        /*return "select productionPlanning " +
                 "from ProductionPlanning productionPlanning " +
                 "left join fetch productionPlanning.productionOrderList productionOrder " +
                 "left join fetch productionOrder.productComposition productComposition " +
-                "left join fetch productComposition.processedProduct ";
+                "left join fetch productComposition.processedProduct ";*/
+        return "select productionPlanning " +
+                "from ProductionPlanning productionPlanning " ;
     }
 
     @Override

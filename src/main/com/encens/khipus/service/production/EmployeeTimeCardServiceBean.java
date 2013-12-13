@@ -70,7 +70,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     public List<EmployeeTimeCard> getEmployeesWorkingInDay(Date dateOrder, ProductionOrder productionOrder) {
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dateOrder);
+        calendar.setTimeInMillis(dateOrder.getTime());
         calendar.add(Calendar.DATE, 1);
         try {
             timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +

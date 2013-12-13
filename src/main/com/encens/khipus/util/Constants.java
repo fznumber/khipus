@@ -156,6 +156,9 @@ public final class Constants {
 
     //Production diari
     public static  final String ESTATE_ARTICLE_COMPOSITE = "COMPUESTO";
+    public static  final String ESTATE_ARTICLE_PARAMETRIZE = "PARAMETRIZABLE";
+    public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
+
 
     private Constants() {
     }

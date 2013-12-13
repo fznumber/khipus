@@ -1,7 +1,9 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
+import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehousePK;
 
 import javax.ejb.Local;
@@ -22,4 +24,5 @@ public interface InventoryService extends GenericService {
      * @return the unitaryBalance quantity by ProductItemPK and WarehousePK
      */
     BigDecimal findUnitaryBalanceByProductItemAndArticle(WarehousePK warehouseId, ProductItemPK productItemId);
+    public Warehouse findWarehouseByItemArticle(ProductItem productItem);
 }

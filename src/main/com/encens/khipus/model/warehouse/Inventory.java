@@ -18,7 +18,10 @@ import java.math.BigDecimal;
                 query = "select sum(inventory.unitaryBalance) from Inventory inventory where inventory.id.companyNumber =:companyNumber and inventory.id.articleCode =:articleNumber"),
         @NamedQuery(name = "Inventory.findUnitaryBalanceByProductItemAndArticle",
                 query = "select inventory.unitaryBalance from Inventory inventory " +
-                        "where inventory.productItem.id=:productItemId and inventory.warehouse.id=:warehouseId")
+                        "where inventory.productItem.id=:productItemId and inventory.warehouse.id=:warehouseId"),
+        @NamedQuery(name = "Inventory.findWarehouseByItemArticle",
+        query = "select inventory.warehouse from Inventory inventory " +
+                "where inventory.productItem = :productItem")
 })
 
 @Entity
