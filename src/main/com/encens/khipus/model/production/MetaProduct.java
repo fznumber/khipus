@@ -110,7 +110,8 @@ public class MetaProduct implements Serializable, BaseModel {
     }
 
     public String getName() {
-        return this.code + '-' + name;
+        //return this.code + '-' + name;
+        return name;
     }
 
     public void setName(String name) {
