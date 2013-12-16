@@ -13,6 +13,7 @@ import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.admin.BusinessUnitService;
+import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.service.finances.CostCenterService;
 import com.encens.khipus.service.production.*;
 import com.encens.khipus.service.warehouse.InventoryService;
@@ -85,6 +86,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     protected BusinessUnitService businessUnitService;
     @In
     protected InventoryService inventoryService;
+    @In
+    protected JobContractService jobContractService;
 
 
     private ProductionOrder totalsMaterials;
@@ -530,9 +533,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         warehouseVoucher.setWarehouseCode("1");
         warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
         warehouseVoucher.setCostCenterCode("0111");
-        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("1"));
+        Warehouse warehouse = warehouseService.findWarehouseByCode("1");
+        warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
-        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setPetitionerJobContract(jobContractService.lastJobContractByEmployee(currentUser.getEmployee()));
+        warehouseVoucher.setResponsible(warehouse.getResponsible());
         warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
 
         return warehouseVoucher;

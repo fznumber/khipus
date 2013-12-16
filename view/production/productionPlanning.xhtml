@@ -203,10 +203,10 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                                            rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
 
-                        <!--<a4j:commandButton id="generateValeInputButton" action="#{productionPlanningAction.generateValeInput}"
+                        <a4j:commandButton id="generateValeInputButton" action="#{productionPlanningAction.generateValeInput}"
                                            value="#{messages['ProductionPlanning.generateVoucher']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
-                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>-->
+                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
 
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
@@ -342,14 +342,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     styleClass="button"
                     rendered="#{productionPlanningAction.managed}"/>
 
-<!--            <h:commandButton
-                    action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
-                    value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
-                    styleClass="button"
-                    rendered="#{productionPlanningAction.managed}"
-                    tabindex="1"/>-->
+            <!--            <h:commandButton
+                                action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
+                                value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+                                styleClass="button"
+                                rendered="#{productionPlanningAction.managed}"
+                                tabindex="1"/>-->
 
-               <h:commandButton
+            <h:commandButton
                     action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.unitCost)}"
                     value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
                     styleClass="button"
