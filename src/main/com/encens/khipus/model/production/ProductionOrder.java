@@ -53,20 +53,38 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double producedAmount = 0.0;
 
-    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceMaterial = 0.0;
 
-    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceInput = 0.0;
 
-    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceJourney = 0.0;
 
     @Column(name = "TOTALCOSTOINDIRECTO", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalIndirectCosts = 0.0;
 
-    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalCostProduction = 0.0;
+
+    @Column(name = "COSTOTOTALELFEC", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostELFEC = 0.0;
+
+    @Column(name = "COSTOTOTALYPFB", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostYPFB = 0.0;
+
+    @Column(name = "COSTOTOTALDEPREGRUPO", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostGROUP = 0.0;
+
+    @Column(name = "COSTOTOTALDEPREHERAMIENTAS", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostDepreciationTools = 0.0;
+
+    @Column(name = "COSTOTOTALMANOOBRAINIDIRECTA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostLabor = 0.0;
+
+    @Column(name = "COSTOTOTALMANOOBRAEVENTUAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    private Double totalCostLaborEventual = 0.0;
 
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
@@ -285,5 +303,53 @@ public class ProductionOrder implements BaseModel {
 
     public void setUnitCost(BigDecimal unitCost) {
         this.unitCost = unitCost;
+    }
+
+    public Double getTotalCostELFEC() {
+        return totalCostELFEC;
+    }
+
+    public void setTotalCostELFEC(Double totalCostELFEC) {
+        this.totalCostELFEC = totalCostELFEC;
+    }
+
+    public Double getTotalCostYPFB() {
+        return totalCostYPFB;
+    }
+
+    public void setTotalCostYPFB(Double totalCostYPFB) {
+        this.totalCostYPFB = totalCostYPFB;
+    }
+
+    public Double getTotalCostGROUP() {
+        return totalCostGROUP;
+    }
+
+    public void setTotalCostGROUP(Double totalCostGROUP) {
+        this.totalCostGROUP = totalCostGROUP;
+    }
+
+    public Double getTotalCostDepreciationTools() {
+        return totalCostDepreciationTools;
+    }
+
+    public void setTotalCostDepreciationTools(Double totalCostDepreciationTools) {
+        this.totalCostDepreciationTools = totalCostDepreciationTools;
+    }
+
+    public Double getTotalCostLabor() {
+        return totalCostLabor;
+    }
+
+    public void setTotalCostLabor(Double totalCostLabor) {
+        this.totalCostLabor = totalCostLabor;
+    }
+
+    public Double getTotalCostLaborEventual() {
+        return totalCostLaborEventual;
+    }
+
+    public void setTotalCostLaborEventual(Double totalCostLaborEventual) {
+        this.totalCostLaborEventual = totalCostLaborEventual;
     }
 }

@@ -26,13 +26,13 @@ import java.math.BigDecimal;
         allocationSize = 10)
 
 @Entity
-@Table(name = "COSTOSINDIRECTOS")
+@Table(name = "CONFCOSTOSINDIRECTOS")
 @Filter(name = Constants.COMPANY_FILTER_NAME)
 @EntityListeners(CompanyListener.class)
 public class IndirectCostsConifg implements BaseModel {
 
     @Id
-    @Column(name = "IDCOSTOSINDIRECTOS", nullable = false)
+    @Column(name = "IDCONFCOSTOSINDIRECTOS", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
     private Long id;
 
