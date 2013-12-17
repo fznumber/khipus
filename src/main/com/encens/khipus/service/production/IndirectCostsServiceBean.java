@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -33,12 +34,17 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     @Override
     public Double getTotalCostIndirectGeneral() {
         BigDecimal total = new BigDecimal(0.0);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date.getTime());
+        calendar.add(Calendar.MONTH, -1);
+
         try {
 
             total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
-                    .setParameter("month", DateUtils.getCurrentMonth(new Date()) - 1)
-                    .setParameter("year", DateUtils.getCurrentYear(new Date()))
+                    .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
+                    .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
                     .setParameter("type", Constants.INDIRECT_COST_TYPE_GENERAL)
                     .getSingleResult();
 

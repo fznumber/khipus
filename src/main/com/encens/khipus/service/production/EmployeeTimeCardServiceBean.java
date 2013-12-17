@@ -101,7 +101,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             Date endTime = employeeTimeCard.getEndTime();
 
 
-            if (!notTake.contains(employeeTimeCard.getEmployee())) {
+            if (!notTake.contains(employeeTimeCard.getEmployee()) && endTime != null) {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
