@@ -3,6 +3,7 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
  * @author Diego Loza
  * @version 1.2.1
  */
-@TableGenerator(name = "IndirectCosts.tableGenerator",
+@TableGenerator(name = "IndirectCostsConifg.tableGenerator",
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
@@ -28,11 +29,11 @@ import java.math.BigDecimal;
 @Table(name = "COSTOSINDIRECTOS")
 @Filter(name = Constants.COMPANY_FILTER_NAME)
 @EntityListeners(CompanyListener.class)
-public class IndirectCosts implements BaseModel {
+public class IndirectCostsConifg implements BaseModel {
 
     @Id
     @Column(name = "IDCOSTOSINDIRECTOS", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCosts.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
     private Long id;
 
     @Column(name = "NOMBRE", nullable = true)
@@ -61,6 +62,9 @@ public class IndirectCosts implements BaseModel {
     @Column(name = "COD_GRU", insertable = false, updatable = false, nullable = true)
     private String groupCode;
 
+    @Column(name = "CUENTA", insertable = true, updatable = true, nullable = true)
+    private String costAccount;
+
     @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = true)
     @Length(max = 2)
     private String companyNumber;
@@ -71,6 +75,13 @@ public class IndirectCosts implements BaseModel {
             @JoinColumn(name = "COD_GRU", referencedColumnName = "COD_GRU")
     })
     private Group group;
+
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
+            @JoinColumn(name = "CUENTA", referencedColumnName = "CUENTA")
+    })
+    private CashAccount cashAccount;
 
     public Long getId() {
         return id;
@@ -158,5 +169,21 @@ public class IndirectCosts implements BaseModel {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public String getCostAccount() {
+        return costAccount;
+    }
+
+    public void setCostAccount(String costAccount) {
+        this.costAccount = costAccount;
+    }
+
+    public CashAccount getCashAccount() {
+        return cashAccount;
+    }
+
+    public void setCashAccount(CashAccount cashAccount) {
+        this.cashAccount = cashAccount;
     }
 }
