@@ -194,7 +194,11 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
     @Override
     public Double getCostPerHour(Employee employee) {
+
         JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+        if(jobContract == null)
+            return 0.0;
+
         Double costPerHour = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8);
 
         return costPerHour;
