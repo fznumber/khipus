@@ -32,7 +32,7 @@ import java.util.Date;
                 @NamedQuery(name = "EmployeeTimeCard.findEmployeeTimeCardByProductionOrder", query = "select e from EmployeeTimeCard e where e.productionOrder=:productionOrder ")
         })*/
 @Entity
-@Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
+@Filter(name = Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
 @Table(schema = Constants.KHIPUS_SCHEMA, name = "TARJETATIEMPOEMPLEADO")
 public class EmployeeTimeCard implements BaseModel {
