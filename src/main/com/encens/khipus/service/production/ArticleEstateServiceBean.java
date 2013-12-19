@@ -3,6 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.ArticleEstate;
 import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.util.Constants;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -34,9 +35,9 @@ public class ArticleEstateServiceBean extends ExtendedGenericServiceBean impleme
                     " WHERE articleEstate.productItem = :productItem " +
                     " and articleEstate.estate = :estate")
                     .setParameter("productItem", productItem)
-                    .setParameter("estate", "NOVERIFICABLE")
+                    .setParameter("estate", Constants.ESTATE_ARTICLE_NOTVERIFY)
                     .getSingleResult();
-            band = estate.getEstate().equals("NOVERIFICABLE");
+            band = estate.getEstate().equals(Constants.ESTATE_ARTICLE_NOTVERIFY);
 
         } catch (NoResultException e) {
             return false;

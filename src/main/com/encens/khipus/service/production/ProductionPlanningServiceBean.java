@@ -4,6 +4,10 @@ import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.model.warehouse.WarehouseDocumentType;
+import com.encens.khipus.model.warehouse.WarehouseVoucherType;
+import com.encens.khipus.util.Constants;
+import com.encens.khipus.util.ValidatorUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -13,6 +17,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
 
@@ -95,7 +100,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     public BigDecimal getMountInWarehouse(MetaProduct metaProduct) {
         try{
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", metaProduct.getProductItem())
                 .getSingleResult();
         }catch (NoResultException e)
@@ -107,7 +112,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     public BigDecimal getMountInWarehouse(ProductItem productItem) {
         try{
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", productItem)
                 .getSingleResult();
         }catch(NoResultException e)
@@ -118,9 +123,37 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
 
     public BigDecimal getMountInWarehouse(Long id) {
         return (BigDecimal) getEntityManager()
-                .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem.id = :id")
+                .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem.id = :id")
                 .setParameter("id", id)
                 .getSingleResult();
+    }
+
+    @Override
+    public WarehouseDocumentType getDefaultDocumentType() {
+        List<WarehouseDocumentType> warehouseDocumentTypeList = getEntityManager()
+                .createNamedQuery("WarehouseDocumentType.findByType")
+                .setParameter("companyNumber", Constants.defaultCompanyNumber)
+                .setParameter("warehouseVoucherType", WarehouseVoucherType.C).getResultList();
+
+        if (!ValidatorUtil.isEmptyOrNull(warehouseDocumentTypeList)) {
+            return warehouseDocumentTypeList.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public WarehouseDocumentType getRecepcionDocumentType() {
+        List<WarehouseDocumentType> warehouseDocumentTypeList = getEntityManager()
+                .createNamedQuery("WarehouseDocumentType.findByType")
+                .setParameter("companyNumber", Constants.defaultCompanyNumber)
+                .setParameter("warehouseVoucherType", WarehouseVoucherType.R).getResultList();
+
+        if (!ValidatorUtil.isEmptyOrNull(warehouseDocumentTypeList)) {
+            return warehouseDocumentTypeList.get(0);
+        }
+
+        return null;
     }
 
 }

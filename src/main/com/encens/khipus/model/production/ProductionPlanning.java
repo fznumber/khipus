@@ -75,6 +75,7 @@ public class ProductionPlanning implements BaseModel {
 
     @OneToMany(mappedBy = "productionPlanning", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @OrderBy("code desc")
     private List<ProductionOrder> productionOrderList = new ArrayList<ProductionOrder>();
 
     public Company getCompany() {

@@ -74,6 +74,19 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
     }
 
     @Override
+    public void excuteFormulate(List<ProductionIngredient> ingredients, Double  expendAmount, Double container,Double supposed) throws IOException, ProductCompositionException {
+
+        EquationMap map = new EquationMap();
+        map.addProductionIngredient(ingredients);
+        map.addLiteralEquation(amountVariable, expendAmount);
+        map.addLiteralEquation(containerVariable, container);
+        map.addLiteralEquation(supposedVariable, supposed);
+
+        calculateMathematicalFormula(map);
+
+    }
+
+    @Override
     public Double excuteParemeterized(OrderInput input, ProductionOrder productionOrder, Double containerWeight, Double supposedAmount)throws ProductCompositionException, IOException{
 
         return RoundUtil.getRoundValue(input.getAmount() * 100 /getPorcentaje(input),2, RoundUtil.RoundMode.SYMMETRIC);
@@ -149,7 +162,7 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
         BigDecimal result = null;
         try {
             result = (BigDecimal) getEntityManager()
-                    .createQuery("SELECT inventory.unitaryBalance from Inventory inventory where inventory.productItem = :productItem")
+                    .createQuery("SELECT  sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                     .setParameter("productItem", metaProduct.getProductItem())
                     .getSingleResult();
             return result;

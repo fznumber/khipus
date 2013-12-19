@@ -38,6 +38,8 @@ public interface JobContractService extends GenericService {
 
     List<JobContract> load(List<Long> idList, EntityManager entityManager);
 
+    public JobContract getJobContract(Employee emloyee);
+
     @SuppressWarnings({"unchecked"})
     List<JobContract> findActiveByEmployeeAndDateRange(Employee emloyee, Date initDate, Date endDate, PayrollGenerationType payrollGenerationType);
 

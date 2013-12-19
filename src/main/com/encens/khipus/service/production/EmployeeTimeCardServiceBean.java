@@ -11,7 +11,6 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
-import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -71,7 +70,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     public List<EmployeeTimeCard> getEmployeesWorkingInDay(Date dateOrder, ProductionOrder productionOrder) {
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dateOrder);
+        calendar.setTimeInMillis(dateOrder.getTime());
         calendar.add(Calendar.DATE, 1);
         try {
             timeCards = em.createQuery("SELECT employeeTimeCard from EmployeeTimeCard employeeTimeCard " +
@@ -102,7 +101,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             Date endTime = employeeTimeCard.getEndTime();
 
 
-            if (!notTake.contains(employeeTimeCard.getEmployee())) {
+            if (!notTake.contains(employeeTimeCard.getEmployee()) && endTime != null) {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
@@ -124,31 +123,38 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     }
 
     public Double getPorcent(Double totalDay, Double totalOrder) {
-        return RoundUtil.getRoundValue((totalOrder * 100) / totalDay, 2, RoundUtil.RoundMode.SYMMETRIC);
+        if (totalDay == 0.0)
+            return 0.0;
+
+        return (totalOrder * 100) / totalDay;
     }
 
     @Override
     public BigDecimal getCostProductionOrder(ProductionOrder productionOrder, Date dateOrder, Double totalVolumDay) {
 
         List<EmployeeTimeCard> timeCards = new ArrayList<EmployeeTimeCard>();
-        Double totalMinutes = 0.0;
         Double totalCost = 0.0;
-        Boolean band = true;
         timeCards = getEmployeesWorkingInDay(dateOrder, productionOrder);
         Double costDayBySubGroup = getCostDayBySubGroup(timeCards);
         Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
 
-        totalCost = getPorcent(totalVolumDay, totalVolumeOrder);
+        totalCost = costDayBySubGroup * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
 
         return new BigDecimal(totalCost);
     }
 
-    private Double getTotalVolumeOrder(ProductionOrder productionOrder) {
+    @Override
+    public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         Double total = productionOrder.getProducedAmount();
-        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getProductItem().getUsageMeasureCode();
-        if (unitMeasure == "KG" || unitMeasure == "LT")
-            total = productionOrder.getProducedAmount() * 1000;
+        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
+        Double amount = 0.0;
+        if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
+            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
 
+        if (unitMeasure == "KG" || unitMeasure == "LT")
+            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+
+        total = amount * productionOrder.getProducedAmount();
         return total;
     }
 
@@ -188,7 +194,11 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
     @Override
     public Double getCostPerHour(Employee employee) {
+
         JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+        if(jobContract == null)
+            return 0.0;
+
         Double costPerHour = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8);
 
         return costPerHour;

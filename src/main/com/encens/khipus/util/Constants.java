@@ -149,7 +149,16 @@ public final class Constants {
     public static final String WAREHOUSE_CHEESE_PRODUCT = "QUESO";
 
     //Employee Time Card
-    public static final String EMPLOYEE_CARD_FINALIZE = "FINALIZAR";
+    public static final String EMPLOYEE_CARD_FINALIZE = "FIN DE JORNADA";
+
+    //Indirect Cost
+    public static final String INDIRECT_COST_TYPE_GENERAL = "GENERAL";
+
+    //Production diari
+    public static  final String ESTATE_ARTICLE_COMPOSITE = "COMPUESTO";
+    public static  final String ESTATE_ARTICLE_PARAMETRIZE = "PARAMETRIZABLE";
+    public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
+
 
     private Constants() {
     }

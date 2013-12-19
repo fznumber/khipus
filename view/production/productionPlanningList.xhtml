@@ -86,9 +86,9 @@
                                 <rich:column>
                                     #{messages['ProductionOrder.processedProduct.name']}
                                 </rich:column>
-                                <rich:column>
+                                <!--<rich:column>
                                     #{messages['ProductionOrder.processedProduct.code']}
-                                </rich:column>
+                                </rich:column>-->
                                 <rich:column>
                                     #{messages['ProductionOrder.code']}
                                 </rich:column>
@@ -101,12 +101,12 @@
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
-                            <h:outputText value="#{productionOrderItem.productComposition.processedProduct.name}"/>
+                            <h:outputText value="#{productionOrderItem.productComposition.processedProduct.nameCode}"/>
                         </rich:column>
 
-                        <rich:column>
+                        <!--<rich:column>
                             <h:outputText value="#{productionOrderItem.productComposition.processedProduct.code}"/>
-                        </rich:column>
+                        </rich:column>-->
                         <rich:column>
                             <h:outputText value="#{productionOrderItem.code}"/>
                         </rich:column>

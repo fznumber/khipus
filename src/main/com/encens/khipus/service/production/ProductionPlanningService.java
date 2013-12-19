@@ -4,6 +4,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.ProductionPlanning;
 import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
@@ -21,5 +22,9 @@ public interface ProductionPlanningService extends GenericService {
     public BigDecimal getMountInWarehouse(Long id);
 
     public BigDecimal getMountInWarehouse(ProductItem productItem);
+
+    public WarehouseDocumentType getDefaultDocumentType();
+
+    public WarehouseDocumentType getRecepcionDocumentType();
 
 }

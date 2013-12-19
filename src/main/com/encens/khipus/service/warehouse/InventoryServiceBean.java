@@ -1,7 +1,9 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.ProductItemPK;
+import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehousePK;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -41,5 +43,16 @@ public class InventoryServiceBean extends GenericServiceBean implements Inventor
             return BigDecimal.ZERO;
         }
     }
+    public Warehouse findWarehouseByItemArticle(ProductItem productItem){
+        try {
+            return (Warehouse) eventEm.createNamedQuery("Inventory.findWarehouseByItemArticle")
+                    .setParameter("productItem",productItem)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+
+    }
+
 
 }

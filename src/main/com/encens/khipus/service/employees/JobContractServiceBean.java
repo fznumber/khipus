@@ -80,6 +80,22 @@ public class JobContractServiceBean extends GenericServiceBean implements JobCon
         return result;
     }
 
+    @Override
+    public JobContract getJobContract(Employee emloyee) {
+
+        List<JobContract> result = new ArrayList<JobContract>();
+
+        try {
+            result = (ArrayList<JobContract>) em.createNamedQuery("JobContract.findJobContractByEmployee")
+                    .setParameter("employee", emloyee)
+                    .getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+        return result.get(0);
+    }
+
     public List<JobContract> getJobContractByEmployeeAndOrgUnit(Employee emloyee, OrganizationalUnit organizationalUnit) {
 
         ArrayList result = new ArrayList<JobContract>();

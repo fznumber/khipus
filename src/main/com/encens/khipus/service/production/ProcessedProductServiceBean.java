@@ -5,6 +5,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.production.ProcessedProduct;
+import com.encens.khipus.model.production.ProductComposition;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -13,6 +14,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 
@@ -69,6 +71,22 @@ public class ProcessedProductServiceBean extends GenericServiceBean implements P
             super.update(processedProduct);
         }catch (Exception e){}
 
+    }
+
+    @Override
+    public ProductComposition getProductComposite(Long id) {
+        ProductComposition composition = new ProductComposition();
+        try {
+
+            composition = (ProductComposition) em.createQuery("select composite from ProductComposition composite where composite.processedProduct.id = :id and composite.active = :estado")
+                                                 .setParameter("id",id)
+                                                 .setParameter("estado",true)
+                                                 .getSingleResult();
+
+        }catch (NoResultException e){
+            return null;
+        }
+        return composition;
     }
 }
 

@@ -32,9 +32,10 @@ public class InputsAndMaterialsDataModel extends QueryDataModel<Long, MetaProduc
 
     @Override
     public String getEjbql() {
-        return "select meta " +
+       /* return "select meta " +
                "from MetaProduct meta " +
-               "where meta not in (select processedProduct from ProcessedProduct processedProduct)";
+               "where meta not in (select processedProduct from ProcessedProduct processedProduct)";  */
+        return "SELECT meta FROM MetaProduct meta";
     }
 
     @Override
