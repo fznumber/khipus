@@ -31,21 +31,15 @@ import java.util.Date;
 
 @Entity
 @Table(name = "PEDIDOS",schema = Constants.CASHBOX_SCHEMA)
-@Filter(name = "companyFilter")
-@EntityListeners(CompanyListener.class)
+//@Filter(name = "companyFilter")
+//@EntityListeners(CompanyListener.class)
 public class CustomerOrder implements BaseModel {
 
     @EmbeddedId
     private CustomerOrderPK id = new CustomerOrderPK();
 
-    @Column(name = "PEDIDO", nullable = false)
-    private String order;
-
-    @Column(name = "ID", nullable = false)
-    private String orderID;
-
-    @Column(name = "ID1", nullable = false)
-    private Integer getOrderID1;
+    @Column(name = "ID1", nullable = false, insertable = false, updatable = false)
+    private Integer orderID1;
 
     @Column(name = "DESCRIPCION")
     private String description;
@@ -56,9 +50,13 @@ public class CustomerOrder implements BaseModel {
     @Column(name = "TIPO_PEDIDO")
     private String type;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     @Column(name = "FECHA_PEDIDO")
     private Date date;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "ID", columnDefinition = "VARCHAR2(20 BYTE)", nullable = false, updatable = false, insertable = false)
+    private ClientOrder clientOrder;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDEMPLEADO", nullable = false, updatable = false)
@@ -75,11 +73,11 @@ public class CustomerOrder implements BaseModel {
     @Column(name = "TOTAL")
     private BigDecimal total = BigDecimal.ZERO;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     @Column(name = "FECHA_ENTREGA")
     private Date dateDelicery;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal(value = TemporalType.DATE)
     @Column(name = "FECHA_A_PAGAR")
     private Date dateToPay;
 
@@ -103,28 +101,12 @@ public class CustomerOrder implements BaseModel {
         this.id = id;
     }
 
-    public String getOrder() {
-        return order;
+    public Integer getOrderID1() {
+        return orderID1;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
-    public String getOrderID() {
-        return orderID;
-    }
-
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
-
-    public Integer getGetOrderID1() {
-        return getOrderID1;
-    }
-
-    public void setGetOrderID1(Integer getOrderID1) {
-        this.getOrderID1 = getOrderID1;
+    public void setOrderID1(Integer orderID1) {
+        this.orderID1 = orderID1;
     }
 
     public String getDescription() {
