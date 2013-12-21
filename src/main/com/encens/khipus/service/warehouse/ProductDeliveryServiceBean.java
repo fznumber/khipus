@@ -79,35 +79,47 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
 
-        List<SoldProduct> soldProducts =
-                soldProductService.getSoldProducts(invoiceNumber,
-                        Constants.defaultCompanyNumber);
+        List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+
+        System.out.println(".....cant soldProducts: " + soldProducts.size());
 
         WarehouseDocumentType documentType = getFirstConsumptionType();
+        System.out.println("...getFirstConsumptionType: " + documentType.getFullName());
         if (null == documentType) {
             throw new WarehouseDocumentTypeNotFoundException("Warehouse document consumption type not found");
         }
 
         //always exist almost one sold product that will be delivery
+        System.out.println("...sold product delivery: " + soldProducts.get(0).getInvoiceNumber());
         SoldProduct firstSoldProduct = soldProducts.get(0);
 
+        System.out.println("...1.-Almacen: " + firstSoldProduct.getWarehouse().getFullName());
         Warehouse warehouse = firstSoldProduct.getWarehouse();
+        System.out.println("...2.-Almacen: " + warehouse.getFullName());
 
         CostCenter costCenter = findPublicCostCenter(warehouse);
+        System.out.println(".....costCenter: " + costCenter);
+
         if (null == costCenter) {
+            System.out.println("...............Cannot find a public Cost Center to complete the delivery....");
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
+        System.out.println("1.--------productItemStockChecker");
         productItemStockChecker(invoiceNumber, warehouse, costCenter);
+        System.out.println("2.--------productItemStockChecker");
 
+        System.out.println(("....1.-RESPONSABLE ALMACEN: " + warehouse.getResponsibleId()));
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
-
+        System.out.println(("....2.-RESPONSABLE ALMACEN: " + warehouse.getResponsibleId()));
 
         WarehouseVoucher warehouseVoucher = createWarehouseVoucher(documentType,
                 warehouse, responsible,
                 costCenter,
                 warehouseDescription,
                 soldProducts);
+
+        System.out.println("....Voucher create: " + warehouseVoucher.getNumber());
 
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
         Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();

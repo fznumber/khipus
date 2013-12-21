@@ -25,7 +25,7 @@ public class SoldProductDataModel extends QueryDataModel<Long, SoldProduct> {
 
     @Create
     public void init() {
-        sortProperty = "soldProduct.personalIdentification";
+        sortProperty = "soldProduct.invoiceNumber, soldProduct.names, soldProduct.firstName, soldProduct.secondName";
     }
 
     @Override
