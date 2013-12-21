@@ -3,5 +3,3 @@
 --Fecha de creacion: 12/12/2013
 alter table ordenproduccion add (COSTOUNITARIO	NUMBER(16,6)	null);
 --commit
-
-

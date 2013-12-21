@@ -1,6 +1,7 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
@@ -41,11 +42,55 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
 
         try {
 
-            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
                     .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
                     .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
                     .setParameter("type", Constants.INDIRECT_COST_TYPE_GENERAL)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            total = new BigDecimal(0.0);
+        }
+        return total.doubleValue() / 30;
+    }
+
+    public Double getTotalCostIndirectByAccount(CashAccount cashAccount) {
+        BigDecimal total = new BigDecimal(0.0);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date.getTime());
+        calendar.add(Calendar.MONTH, -1);
+
+        try {
+
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
+                    " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.cashAccount = :cashAccount")
+                    .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
+                    .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
+                    .setParameter("cashAccount", cashAccount)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            total = new BigDecimal(0.0);
+        }
+        return total.doubleValue() / 30;
+    }
+
+    public Double getTotalCostIndirectGeneral(String type) {
+        BigDecimal total = new BigDecimal(0.0);
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date.getTime());
+        calendar.add(Calendar.MONTH, -1);
+
+        try {
+
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
+                    " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
+                    .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
+                    .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
+                    .setParameter("type", type)
                     .getSingleResult();
 
         } catch (NoResultException e) {
@@ -79,7 +124,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         BigDecimal total = new BigDecimal(0.0);
         try {
 
-            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCosts indirectCosts" +
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group = :group ")
                     //" where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.group.id = :id ")
                     //.setParameter("id",subGroup.getGroupCode())
