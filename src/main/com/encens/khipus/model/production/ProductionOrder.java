@@ -53,20 +53,21 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double producedAmount = 0.0;
 
-    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceMaterial = 0.0;
 
-    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceInput = 0.0;
 
-    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceJourney = 0.0;
 
     @Column(name = "TOTALCOSTOINDIRECTO", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalIndirectCosts = 0.0;
 
-    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalCostProduction = 0.0;
+
 
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
@@ -101,6 +102,10 @@ public class ProductionOrder implements BaseModel {
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<IndirectCosts> productionOrders = new ArrayList<IndirectCosts>();
 
     public Long getId() {
         return id;
@@ -285,5 +290,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setUnitCost(BigDecimal unitCost) {
         this.unitCost = unitCost;
+    }
+
+    public List<IndirectCosts> getProductionOrders() {
+        return productionOrders;
+    }
+
+    public void setProductionOrders(List<IndirectCosts> productionOrders) {
+        this.productionOrders = productionOrders;
     }
 }
