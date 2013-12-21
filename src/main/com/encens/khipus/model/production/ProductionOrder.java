@@ -68,23 +68,6 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalCostProduction = 0.0;
 
-    @Column(name = "COSTOTOTALELFEC", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostELFEC = 0.0;
-
-    @Column(name = "COSTOTOTALYPFB", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostYPFB = 0.0;
-
-    @Column(name = "COSTOTOTALDEPREGRUPO", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostGROUP = 0.0;
-
-    @Column(name = "COSTOTOTALDEPREHERAMIENTAS", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostDepreciationTools = 0.0;
-
-    @Column(name = "COSTOTOTALMANOOBRAINIDIRECTA", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostLabor = 0.0;
-
-    @Column(name = "COSTOTOTALMANOOBRAEVENTUAL", nullable = true, columnDefinition = "NUMBER(16,2)")
-    private Double totalCostLaborEventual = 0.0;
 
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
@@ -119,6 +102,10 @@ public class ProductionOrder implements BaseModel {
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<IndirectCosts> productionOrders = new ArrayList<IndirectCosts>();
 
     public Long getId() {
         return id;
@@ -305,51 +292,11 @@ public class ProductionOrder implements BaseModel {
         this.unitCost = unitCost;
     }
 
-    public Double getTotalCostELFEC() {
-        return totalCostELFEC;
+    public List<IndirectCosts> getProductionOrders() {
+        return productionOrders;
     }
 
-    public void setTotalCostELFEC(Double totalCostELFEC) {
-        this.totalCostELFEC = totalCostELFEC;
-    }
-
-    public Double getTotalCostYPFB() {
-        return totalCostYPFB;
-    }
-
-    public void setTotalCostYPFB(Double totalCostYPFB) {
-        this.totalCostYPFB = totalCostYPFB;
-    }
-
-    public Double getTotalCostGROUP() {
-        return totalCostGROUP;
-    }
-
-    public void setTotalCostGROUP(Double totalCostGROUP) {
-        this.totalCostGROUP = totalCostGROUP;
-    }
-
-    public Double getTotalCostDepreciationTools() {
-        return totalCostDepreciationTools;
-    }
-
-    public void setTotalCostDepreciationTools(Double totalCostDepreciationTools) {
-        this.totalCostDepreciationTools = totalCostDepreciationTools;
-    }
-
-    public Double getTotalCostLabor() {
-        return totalCostLabor;
-    }
-
-    public void setTotalCostLabor(Double totalCostLabor) {
-        this.totalCostLabor = totalCostLabor;
-    }
-
-    public Double getTotalCostLaborEventual() {
-        return totalCostLaborEventual;
-    }
-
-    public void setTotalCostLaborEventual(Double totalCostLaborEventual) {
-        this.totalCostLaborEventual = totalCostLaborEventual;
+    public void setProductionOrders(List<IndirectCosts> productionOrders) {
+        this.productionOrders = productionOrders;
     }
 }

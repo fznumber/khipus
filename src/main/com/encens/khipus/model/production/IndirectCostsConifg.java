@@ -13,7 +13,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
- * Entity for Employee Time CArd
+ *
  *
  * @author Diego Loza
  * @version 1.2.1
@@ -22,64 +22,45 @@ import java.math.BigDecimal;
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
-        pkColumnValue = "COSTOSINDIRECTOS",
+        pkColumnValue = "COSTOSINDIRECTOSCONF",
         allocationSize = 10)
 
 @Entity
-@Table(name = "CONFCOSTOSINDIRECTOS")
+@Table(name = "COSTOSINDIRECTOSCONF")
 @Filter(name = Constants.COMPANY_FILTER_NAME)
 @EntityListeners(CompanyListener.class)
 public class IndirectCostsConifg implements BaseModel {
 
     @Id
-    @Column(name = "IDCONFCOSTOSINDIRECTOS", nullable = false)
+    @Column(name = "IDCOSTOSINDIRECTOSCONF", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
     private Long id;
-
-    @Column(name = "NOMBRE", nullable = true)
-    private String name;
-
-    @Column(name = "MES", nullable = false, columnDefinition = "NUMBER(2)")
-    private Integer month;
-
-    @Column(name = "ANIO", nullable = false, columnDefinition = "NUMBER(4)")
-    private Integer year;
-
-    @Column(name = "MONTOBS", nullable = false, columnDefinition = "NUMBER(16,2)")
-    private BigDecimal amountBs;
-
-    @Column(name = "TIPO", nullable = true)
-    private String type;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
-    @Version
-    @Column(name = "VERSION", nullable = false)
-    private long version;
-
     @Column(name = "COD_GRU", insertable = false, updatable = false, nullable = true)
     private String groupCode;
 
-    @Column(name = "CUENTA", insertable = true, updatable = true, nullable = true)
-    private String costAccount;
-
-    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = true)
+    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = false)
     @Length(max = 2)
     private String companyNumber;
 
+    @Column(name = "CUENTA", insertable = false, updatable = false, nullable = true)
+    @Length(max = 20)
+    private String account;
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
-            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
-            @JoinColumn(name = "COD_GRU", referencedColumnName = "COD_GRU")
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA",insertable = false, updatable = false),
+            @JoinColumn(name = "COD_GRU", referencedColumnName = "COD_GRU",insertable = false, updatable = false)
     })
     private Group group;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
-            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
-            @JoinColumn(name = "CUENTA", referencedColumnName = "CUENTA")
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA",insertable = false, updatable = false),
+            @JoinColumn(name = "CUENTA", referencedColumnName = "CUENTA",insertable = false, updatable = false)
     })
     private CashAccount cashAccount;
 
@@ -91,60 +72,12 @@ public class IndirectCostsConifg implements BaseModel {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getMonth() {
-        return month;
-    }
-
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public BigDecimal getAmountBs() {
-        return amountBs;
-    }
-
-    public void setAmountBs(BigDecimal amountBs) {
-        this.amountBs = amountBs;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public Company getCompany() {
         return company;
     }
 
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
     }
 
     public String getGroupCode() {
@@ -154,7 +87,6 @@ public class IndirectCostsConifg implements BaseModel {
     public void setGroupCode(String groupCode) {
         this.groupCode = groupCode;
     }
-
     public String getCompanyNumber() {
         return companyNumber;
     }
@@ -163,20 +95,20 @@ public class IndirectCostsConifg implements BaseModel {
         this.companyNumber = companyNumber;
     }
 
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
     public Group getGroup() {
         return group;
     }
 
     public void setGroup(Group group) {
         this.group = group;
-    }
-
-    public String getCostAccount() {
-        return costAccount;
-    }
-
-    public void setCostAccount(String costAccount) {
-        this.costAccount = costAccount;
     }
 
     public CashAccount getCashAccount() {
