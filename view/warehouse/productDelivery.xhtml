@@ -59,23 +59,25 @@
             <s:decorate id="invoideNumberField"
                         template="/include/inputField.xhtml"
                         styleClass="formRow">
-                <ui:define name="label">#{messages['ProductDelivery.invoiceNumber']}</ui:define>
+                <ui:define name="label">#{messages['ProductDelivery.documentNumber']}</ui:define>
 
-                <h:inputText id="orderNumberField"
+                <h:inputText id="invoiceNumber"
                              value="#{productDeliveryAction.orderNumber}"
                              maxlength="20"
                              styleClass="inputSmall"
                              tabindex="1"
                              required="true"
-                             autocomplete="off">
+                             autocomplete="off"
+                             rendered="#{!productDeliveryAction.managed}">
                     <a4j:support event="onblur"
                                  ajaxSingle="true"
                                  actionListener="#{productDeliveryAction.searchOrderNumber}"
-                                 reRender="invoiceNumber, orderNumberField, soldProductPanel, messageSearchOrder "/>
+                                 reRender="invoiceNumber, soldProductPanel, messageSearchOrder "/>
                 </h:inputText>
                 <a4j:commandButton id="searchButtonId"
                                    action="#{productDeliveryAction.searchOrderNumber}"
-                                   reRender="invoiceNumber, orderNumberField, soldProductPanel, messageSearchOrder "
+                                   reRender="invoiceNumber, soldProductPanel, messageSearchOrder "
+                                   rendered="#{!productDeliveryAction.managed}"
                                    styleClass="button"
                                    value="#{messages['Common.search']}"
                                    tabindex="2">
@@ -102,7 +104,7 @@
                                  immediate="true"
                                  title="#{messages['Common.clear']}"
                                  action="#{productDeliveryAction.cleanInvoiceNumber}"
-                                 reRender="invoiceNumber, orderNumberField, soldProductPanel, messageSearchOrder"
+                                 reRender="invoiceNumber, soldProductPanel, messageSearchOrder"
                                  rendered="#{!productDeliveryAction.managed}"
                                  tabindex="3">
                     <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
@@ -197,7 +199,7 @@
         </div>
     </h:form>
 
-    <s:decorate id="soldProductListModalPanelContainer" template="/warehouse/soldProductListModalPanel.xhtml">
+    <!--<s:decorate id="soldProductListModalPanelContainer" template="/warehouse/soldProductListModalPanel.xhtml">
         <ui:param name="containerId" value="soldProductListModalPanelContainer"/>
         <ui:param name="dialogId" value="soldProductListModalPanel"/>
         <ui:define name="assignButton">
@@ -209,7 +211,7 @@
                                reRender="invoiceNumber, soldProductPanel"
                                oncomplete="Richfaces.hideModalPanel('soldProductListModalPanel');"/>
         </ui:define>
-    </s:decorate>
+    </s:decorate>-->
 
 
     <!--Set selector Id to enable focus-->

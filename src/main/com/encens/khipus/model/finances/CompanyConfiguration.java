@@ -158,6 +158,18 @@ public class CompanyConfiguration {
     })
     private CashAccount warehouseNationalCurrencyTransientAccount1;
 
+    @Column(name = "CTATRANSALM2MN", length = 20, nullable = false)
+    @Length(max = 20)
+    @NotNull
+    private String warehouseNationalCurrencyTransientAccount2Code;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
+            @JoinColumn(name = "CTATRANSALM2MN", referencedColumnName = "CUENTA", nullable = false, updatable = false, insertable = false)
+    })
+    private CashAccount warehouseNationalCurrencyTransientAccount2;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
@@ -969,5 +981,21 @@ public class CompanyConfiguration {
                 ", balanceExchangeRateAccount=" + balanceExchangeRateAccount +
                 ", version=" + version +
                 '}';
+    }
+
+    public String getWarehouseNationalCurrencyTransientAccount2Code() {
+        return warehouseNationalCurrencyTransientAccount2Code;
+    }
+
+    public void setWarehouseNationalCurrencyTransientAccount2Code(String warehouseNationalCurrencyTransientAccount2Code) {
+        this.warehouseNationalCurrencyTransientAccount2Code = warehouseNationalCurrencyTransientAccount2Code;
+    }
+
+    public CashAccount getWarehouseNationalCurrencyTransientAccount2() {
+        return warehouseNationalCurrencyTransientAccount2;
+    }
+
+    public void setWarehouseNationalCurrencyTransientAccount2(CashAccount warehouseNationalCurrencyTransientAccount2) {
+        this.warehouseNationalCurrencyTransientAccount2 = warehouseNationalCurrencyTransientAccount2;
     }
 }

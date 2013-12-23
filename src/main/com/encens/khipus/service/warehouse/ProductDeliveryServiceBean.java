@@ -59,8 +59,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     }
 
     @SuppressWarnings(value = "unchecked")
-    public ProductDelivery create(String invoiceNumber,
-                                  String warehouseDescription)
+    public ProductDelivery create(String invoiceNumber, String warehouseDescription)
             throws InventoryException,
             WarehouseDocumentTypeNotFoundException,
             PublicCostCenterNotFound,
@@ -78,48 +77,28 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
-
         List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
-
-        System.out.println(".....cant soldProducts: " + soldProducts.size());
-
         WarehouseDocumentType documentType = getFirstConsumptionType();
-        System.out.println("...getFirstConsumptionType: " + documentType.getFullName());
+
         if (null == documentType) {
             throw new WarehouseDocumentTypeNotFoundException("Warehouse document consumption type not found");
         }
 
         //always exist almost one sold product that will be delivery
-        System.out.println("...sold product delivery: " + soldProducts.get(0).getInvoiceNumber());
         SoldProduct firstSoldProduct = soldProducts.get(0);
 
-        System.out.println("...1.-Almacen: " + firstSoldProduct.getWarehouse().getFullName());
         Warehouse warehouse = firstSoldProduct.getWarehouse();
-        System.out.println("...2.-Almacen: " + warehouse.getFullName());
-
         CostCenter costCenter = findPublicCostCenter(warehouse);
-        System.out.println(".....costCenter: " + costCenter);
+
 
         if (null == costCenter) {
-            System.out.println("...............Cannot find a public Cost Center to complete the delivery....");
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
-        System.out.println("1.--------productItemStockChecker");
         productItemStockChecker(invoiceNumber, warehouse, costCenter);
-        System.out.println("2.--------productItemStockChecker");
-
-        System.out.println(("....1.-RESPONSABLE ALMACEN: " + warehouse.getResponsibleId()));
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
-        System.out.println(("....2.-RESPONSABLE ALMACEN: " + warehouse.getResponsibleId()));
 
-        WarehouseVoucher warehouseVoucher = createWarehouseVoucher(documentType,
-                warehouse, responsible,
-                costCenter,
-                warehouseDescription,
-                soldProducts);
-
-        System.out.println("....Voucher create: " + warehouseVoucher.getNumber());
+        WarehouseVoucher warehouseVoucher = createWarehouseVoucher(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
 
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
         Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
@@ -134,7 +113,18 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         try {
             //approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(), getGlossMessage(warehouseVoucher, warehouseDescription), null, null, null);
-            approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(), getGlossMessage(warehouseVoucher, warehouseDescription), movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
+            /*approvalWarehouseVoucherService.approveWarehouseVoucher(warehouseVoucher.getId(),
+                                                                    getGlossMessage(warehouseVoucher, warehouseDescription),
+                                                                    movementDetailUnderMinimalStockMap,
+                                                                    movementDetailOverMaximumStockMap,
+                                                                    movementDetailWithoutWarnings);*/
+
+            approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
+                    getGlossMessage(warehouseVoucher, warehouseDescription),
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+
         } catch (WarehouseVoucherApprovedException e) {
             log.debug("This exception never happen because I create a pending WarehouseVoucher.");
         } catch (WarehouseVoucherNotFoundException e) {
@@ -142,7 +132,6 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         } catch (WarehouseVoucherEmptyException e) {
             log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
         }
-
         ProductDelivery productDelivery = new ProductDelivery();
         productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
         productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
@@ -314,7 +303,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         String voucherTypeName = MessageUtils.getMessage(warehouseVoucher.getDocumentType().getWarehouseVoucherType().getResourceKey());
         String documentName = warehouseVoucher.getDocumentType().getName();
         String sourceWarehouseName = warehouseVoucher.getWarehouse().getName();
-        gloss[0] = MessageUtils.getMessage("WarehouseVoucher.message.gloss", voucherTypeName, documentName, sourceWarehouseName, productCodes, dateString, warehouseVoucher.getNumber(), movementDescription);
+        gloss[0] = MessageUtils.getMessage("WarehouseVoucher.message.gloss", voucherTypeName, documentName, sourceWarehouseName, productCodes, dateString, Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, movementDescription);
+        System.out.println(warehouseVoucher.getNumber() + "----->>>>>>>>>>> gloss: " + gloss[0]);
         return gloss;
 
     }
