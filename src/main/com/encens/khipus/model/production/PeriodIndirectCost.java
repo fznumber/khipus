@@ -2,6 +2,7 @@ package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Cascade;
@@ -52,6 +53,10 @@ public class PeriodIndirectCost implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
+    private Company company;
+
     public Long getId() {
         return id;
     }
@@ -90,5 +95,13 @@ public class PeriodIndirectCost implements BaseModel {
 
     public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
         this.indirectCostses = indirectCostses;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

@@ -621,7 +621,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher = createWarehouseVoucherOrder();
-        InventoryMovement inventoryMovement = createInventoryMovement("egreso de materiales de prueba");
+        InventoryMovement inventoryMovement = createInventoryMovement("INGRESO DE OREDEN DE PRODUCCION - PRUEBA");
         List<MovementDetail> movementDetails = generateMovementDetailOrder(productionOrder);
 
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
@@ -907,7 +907,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            //setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
@@ -923,13 +923,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(EXECUTED);
         productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
-        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
-        }
+        //}
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -949,13 +949,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(FINALIZED);
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
-        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
-        }
+        //}
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -1157,7 +1157,28 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder) {
-        productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
+        if(productionOrder.getIndirectCostses() != null)
+            productionOrder.getIndirectCostses().clear();
+
+        productionOrder.getIndirectCostses().addAll(indirectCostsService.getCostTotalIndirect(
+                                                                                     productionOrder,
+                                                                                     getTotalVolumProductionPlaning(productionOrder),
+                                                                                     getTotalVolumGeneralProductionPlaning(productionOrder),
+                                                                                     indirectCostsService.getLastPeroidIndirectCost()
+                                                                                     )
+                                           );
+        setTotalIndirectCosts(productionOrder);
+        //productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
+    }
+
+    private void setTotalIndirectCosts(ProductionOrder productionOrder) {
+        Double total = 0.0;
+
+        for(IndirectCosts costs :productionOrder.getIndirectCostses())
+        {
+            total += costs.getAmountBs().doubleValue();
+        }
+        productionOrder.setTotalIndirectCosts(total);
     }
 
     public void setTotalsInputs(ProductionOrder productionOrder) {

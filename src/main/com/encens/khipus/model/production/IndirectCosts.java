@@ -42,11 +42,11 @@ public class IndirectCosts implements BaseModel {
     @Column(name = "MONTOBS", nullable = false, columnDefinition = "NUMBER(16,2)")
     private BigDecimal amountBs;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDPERIODOCOSTOINDIRECTO")
     private PeriodIndirectCost periodIndirectCost;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDORDENPRODUCCION")
     private ProductionOrder productionOrder;
 

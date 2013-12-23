@@ -357,11 +357,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     styleClass="button"
                     rendered="#{productionPlanningAction.managed}"/>
 
-            <!--<h:commandButton
+            <h:commandButton
                     action="#{productionPlanningAction.generateValeOrder}"
                     value="#{messages['ProductionPlanning.generateValeOrder']}"
                     styleClass="button"
-                    rendered="#{productionPlanningAction.managed}"/>-->
+                    rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED'}"/>
 
 
         </s:div>
