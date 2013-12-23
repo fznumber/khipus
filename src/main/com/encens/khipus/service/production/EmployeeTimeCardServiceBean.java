@@ -100,8 +100,8 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
             Date startTime = employeeTimeCard.getStartTime();
             Date endTime = employeeTimeCard.getEndTime();
 
-            if(endTime != null)
-            if (!notTake.contains(employeeTimeCard.getEmployee())) {
+
+            if (!notTake.contains(employeeTimeCard.getEmployee()) && endTime != null) {
                 long diffHours = DateUtils.differenceBetween(startTime, endTime, TimeUnit.HOURS);
                 diffHours = diffHours - 1;
                 long diffMinutes = DateUtils.differenceBetween(startTime, endTime, TimeUnit.MINUTES);
@@ -194,7 +194,11 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
 
     @Override
     public Double getCostPerHour(Employee employee) {
+
         JobContract jobContract = jobContractService.lastJobContractByEmployee(employee);
+        if(jobContract == null)
+            return 0.0;
+
         Double costPerHour = ((jobContract.getJob().getSalary().getBasicAmount().doubleValue() / 30) / 8);
 
         return costPerHour;

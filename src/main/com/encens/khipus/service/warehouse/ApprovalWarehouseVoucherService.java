@@ -35,10 +35,22 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
             ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
 
+    void approveWarehouseVoucherFromDeliveryProduct(WarehouseVoucherPK id, String[] gloss,
+                                                    Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                                    Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                                    List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
+            WarehouseVoucherApprovedException,
+            WarehouseVoucherNotFoundException,
+            WarehouseVoucherEmptyException,
+            ProductItemAmountException, InventoryUnitaryBalanceException,
+            InventoryProductItemNotFoundException, CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
+            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
+
     void approveWarehouseVoucherFromCollection(WarehouseVoucherPK id, String[] gloss,
-                                 Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
-                                 Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
-                                 List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
+                                               Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                               Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                               List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
             WarehouseVoucherApprovedException,
             WarehouseVoucherNotFoundException,
             WarehouseVoucherEmptyException,

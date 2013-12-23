@@ -105,7 +105,7 @@ public class ProductionOrder implements BaseModel {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<IndirectCosts> productionOrders = new ArrayList<IndirectCosts>();
+    private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
 
     public Long getId() {
         return id;
@@ -292,11 +292,15 @@ public class ProductionOrder implements BaseModel {
         this.unitCost = unitCost;
     }
 
-    public List<IndirectCosts> getProductionOrders() {
-        return productionOrders;
+    public List<IndirectCosts> getIndirectCostses() {
+
+            if(indirectCostses == null)
+                return new ArrayList<IndirectCosts>();
+
+        return indirectCostses;
     }
 
-    public void setProductionOrders(List<IndirectCosts> productionOrders) {
-        this.productionOrders = productionOrders;
+    public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
+        this.indirectCostses = indirectCostses;
     }
 }

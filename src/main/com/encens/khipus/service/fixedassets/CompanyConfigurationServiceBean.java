@@ -42,7 +42,8 @@ public class CompanyConfigurationServiceBean extends GenericServiceBean implemen
         } catch (CompanyConfigurationNotFoundException e) {
             log.debug("Cannot find the CompanyConfiguration.", e);
         }
-        return companyConfiguration != null ? companyConfiguration.getDefaultTreasuryUser().getOracleUser() : null;
+        //return companyConfiguration != null ? companyConfiguration.getDefaultTreasuryUser().getOracleUser() : null;
+        return companyConfiguration != null ? companyConfiguration.getDefaultTreasuryUser().getId() : null;
     }
 
     public String findDefaultAccountancyUserNumber() {

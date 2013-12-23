@@ -78,6 +78,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "WHERE IP.IDINGREDIENTEPRODUCCION IN ( ";
 
         boolean band = true;
+        if(ingredients.size() == 0)
+            query += "(0)";
+        else
         for (ProductionIngredient ingredient : ingredients) {
             query += (band ? " " : ",") + ingredient.getId().toString();
             band = false;
@@ -307,11 +310,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         //generate the sub report
         if (orderMaterials.size() == 0)
             sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada \n" +
-                    "from ordenmaterial om\n" +
+                    "from ordenmaterial om \n" +
                     "inner join WISE.INV_ARTICULOS IA \n" +
-                    "ON om.COD_ART=IA.COD_ART\n" +
-                    "inner join ordenproduccion op\n" +
-                    "on op.idordenproduccion = om.idordenproduccion\n" +
+                    "ON om.COD_ART=IA.COD_ART \n" +
+                    "inner join ordenproduccion op \n" +
+                    "on op.idordenproduccion = om.idordenproduccion \n" +
                     " where op.idordenproduccion = 0 ";
 
         String subReportKey = "ORDERMATERIALSUBREPORT";

@@ -59,7 +59,9 @@
 <f:facet name="header">
     <c:choose>
         <c:when test="#{productionPlanningAction.managed}">
-            #{messages['ProductionPlanning.edit']}
+            <h:outputFormat value="{0, date, dd-MM-yyyy}">
+                <f:param value="#{productionPlanning.date}"/>
+            </h:outputFormat>
         </c:when>
         <c:otherwise>
             #{messages['ProductionPlanning.new']}
@@ -318,7 +320,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="unitCostMaterialField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.costPriceObtained']}</ui:define>
                 <h:outputText
-                        value="#{productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost}"/>
+                        value="#{productionOrderForPlanning.unitCost}"/>
             </s:decorate>
         </s:div>
 
@@ -355,11 +357,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     styleClass="button"
                     rendered="#{productionPlanningAction.managed}"/>
 
-            <!--<h:commandButton
+            <h:commandButton
                     action="#{productionPlanningAction.generateValeOrder}"
                     value="#{messages['ProductionPlanning.generateValeOrder']}"
                     styleClass="button"
-                    rendered="#{productionPlanningAction.managed}"/>-->
+                    rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED'}"/>
 
 
         </s:div>
