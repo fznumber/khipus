@@ -5,7 +5,7 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:app="http://encens.com/products/khipus/facelets" xmlns:a="https://ajax4jsf.dev.java.net/ajax"
+                xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/template.xhtml">
 
     <ui:define name="pageTitle">#{messages['CollectionForm.list']}</ui:define>
@@ -47,7 +47,7 @@
                             var="collectionFormItem"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%"
-                            columnsWidth="15%, 12%, 12%, 12%, 12%, 12%, 10%, 15%">
+                            columnsWidth="20%, 20%, 20%, 20%, 20%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
@@ -68,7 +68,7 @@
                         <rich:column>
                             #{messages['CollectionForm.collectedAmount']}
                         </rich:column>
-                        <rich:column>
+                        <!--<rich:column>
                             #{messages['CollectionForm.availableAmount']}
                         </rich:column>
                         <rich:column>
@@ -76,7 +76,7 @@
                         </rich:column>
                         <rich:column>
                             #{messages['CollectionForm.remainingAmount']}
-                        </rich:column>
+                        </rich:column>-->
                         <rich:column>
                             #{messages['CollectionForm.state']}
                         </rich:column>
@@ -98,9 +98,11 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText
-                            value="#{collectedRawMaterialCalculator.calculateCollectedAmount(collectionFormItem)}"/>
+                            value="#{collectedRawMaterialCalculator.calculateCollectedAmount(collectionFormItem)}">
+                        <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </rich:column>
-                <rich:column>
+                <!--<rich:column>
                     <h:outputText
                             value="#{collectedRawMaterialCalculator.calculateAvailableAmount(collectionFormItem)}"/>
                 </rich:column>
@@ -109,7 +111,7 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{collectedRawMaterialCalculator.calculateRemainingAmount()}"/>
-                </rich:column>
+                </rich:column>-->
                 <rich:column>
                     <h:outputText value="#{messages[collectionFormItem.state.resourceKey]}"/>
                 </rich:column>
