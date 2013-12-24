@@ -1,7 +1,6 @@
 package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
-import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.NotNull;
@@ -19,8 +18,8 @@ import java.util.List;
  */
 
 @NamedQueries({
-    @NamedQuery(name = "ProductiveZone.findAll", query = "select productiveZone from ProductiveZone productiveZone"),
-    @NamedQuery(name = "ProductiveZone.findAllThatDoNotHavePayRollOnDate",
+        @NamedQuery(name = "ProductiveZone.findAll", query = "select productiveZone from ProductiveZone productiveZone"),
+        @NamedQuery(name = "ProductiveZone.findAllThatDoNotHavePayRollOnDate",
                 query = " SELECT productiveZone " +
                         " FROM ProductiveZone productiveZone " +
                         " WHERE NOT EXISTS ( " +
@@ -28,9 +27,9 @@ import java.util.List;
                         "  FROM RawMaterialPayRoll rawMaterialPayRoll " +
                         "  WHERE rawMaterialPayRoll.startDate = :startDate " +
                         "  and rawMaterialPayRoll.endDate = :endDate " +
-                        "  and rawMaterialPayRoll.productiveZone = productiveZone"  +
+                        "  and rawMaterialPayRoll.productiveZone = productiveZone" +
                         " )  "
-    )
+        )
 })
 
 @TableGenerator(name = "ProductiveZone_Generator",
@@ -47,14 +46,14 @@ import java.util.List;
 public class ProductiveZone implements BaseModel {
 
     @Id
-    @Column(name = "IDZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDZONAPRODUCTIVA", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductiveZone_Generator")
     private Long id;
 
     @Column(name = "NUMERO", nullable = false, length = 20)
     private String number;
 
-    @Column(name = "GRUPO", nullable = false, length = 20)
+    @Column(name = "GRUPO", nullable = true, length = 20)
     private String group;
 
     @Column(name = "NOMBRE", nullable = false, length = 200)
@@ -65,7 +64,7 @@ public class ProductiveZone implements BaseModel {
     private long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 
