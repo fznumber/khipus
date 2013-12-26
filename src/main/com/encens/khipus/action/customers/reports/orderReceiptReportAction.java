@@ -106,7 +106,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
         for(AccountItemServiceBean.ArticleReport articleReport: accountItems)
         {
-            printTextList.add(createCell(temp,articleReport.getName(),height));
+            //printTextList.add(createCell(temp,articleReport.getName(),height));
         }
 
         return printTextList;
