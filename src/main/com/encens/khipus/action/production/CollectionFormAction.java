@@ -1,8 +1,8 @@
 package com.encens.khipus.action.production;
 
-import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.action.warehouse.WarehouseVoucherCreateAction;
 import com.encens.khipus.action.warehouse.WarehouseVoucherUpdateAction;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.warehouse.InventoryException;
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.exception.warehouse.WarehouseVoucherApprovedException;
@@ -23,12 +23,13 @@ import com.encens.khipus.service.warehouse.MonthProcessService;
 import com.encens.khipus.service.warehouse.ProductItemService;
 import com.encens.khipus.service.warehouse.WarehousePurchaseOrderService;
 import com.encens.khipus.service.warehouse.WarehouseService;
+import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.MessageUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.log.Log;
 
 import javax.faces.event.ActionEvent;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -142,7 +143,7 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
 
     public double getTotalWeightedAmount() {
         double total = 0.0;
-        for(CollectionRecord record : getInstance().getCollectionRecordList()) {
+        for (CollectionRecord record : getInstance().getCollectionRecordList()) {
             total += record.getWeightedAmount();
         }
         return total;
@@ -150,7 +151,7 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
 
     public double getTotalRejectedAmount() {
         double total = 0.0;
-        for(CollectionRecord record : getInstance().getCollectionRecordList()) {
+        for (CollectionRecord record : getInstance().getCollectionRecordList()) {
             total += record.getRejectedAmount();
         }
         return total;
@@ -158,20 +159,20 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
 
     public double getTotalReceivedAmount() {
         double total = 0.0;
-        for(CollectionRecord record : getInstance().getCollectionRecordList()) {
+        for (CollectionRecord record : getInstance().getCollectionRecordList()) {
             total += record.getReceivedAmount();
         }
         return total;
     }
 
-    public void createVoucherApproved()throws InventoryException, ProductItemNotFoundException {
+    public String createVoucherApproved() throws InventoryException, ProductItemNotFoundException {
 
-        WarehouseDocumentType warehouseDocumentType  = collectionFormService.getFirstReceptionType();
+        WarehouseDocumentType warehouseDocumentType = collectionFormService.getFirstReceptionType();
         CostCenter publicCostCenter = costCenterService.findCostCenterByCode("0111");
         Warehouse warehouse = warehouseService.findWarehouseByCode("5");
         Employee responsible = warehouse.getResponsible();
-        String warehouseVoucherDescription = "VALE AUTOMATICO - ACOPIO DE LECHE";
-
+        String warehouseVoucherDescription = MessageUtils.getMessage("CollectionForm.warehouseVoucher.description") + DateUtils.format(getInstance().getDate(), MessageUtils.getMessage("patterns.date"));
+        System.out.println("______________________: " + warehouseVoucherDescription);
         //Create the WarehouseVoucher
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher.setDocumentType(warehouseDocumentType);
@@ -220,21 +221,20 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
             warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
         } catch (WarehouseVoucherApprovedException e) {
             log.debug("This exception never happen because I just created a new WarehouseVoucher" +
-                        " and his state is pending");
+                    " and his state is pending");
         } catch (WarehouseVoucherNotFoundException e) {
             log.debug("This exception never happen because I just created a new WarehouseVoucher");
         }
 
-        //System.out.println(">>>> Instancia WarehouseVoucher: " + warehouseVoucherUpdateAction.select(warehouseVoucher));
-        try{
+        try {
             warehouseVoucherUpdateAction.readWarehouseVoucher(warehouseVoucher.getId());
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
-        System.out.println(">>>> Update WarehouseVoucher: " + warehouseVoucherUpdateAction.approveFromCollection());
-
+        warehouseVoucherUpdateAction.approveFromCollection();
         getInstance().setState(CollectionFormState.APR);
         this.update();
-
+        return Outcome.SUCCESS;
     }
 
     public boolean isPending() {

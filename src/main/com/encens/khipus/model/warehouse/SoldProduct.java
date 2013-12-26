@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 @NamedQueries({
         @NamedQuery(name = "SoldProduct.findByInvoiceNumber",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
+        @NamedQuery(name = "SoldProduct.findByInvoiceNumberAndState",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.state=:state"),
         @NamedQuery(name = "SoldProduct.findByProductItem",
                 query = "select distinct(soldProduct.productItem) from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
         @NamedQuery(name = "SoldProduct.sunQuantitiesByProductItem",

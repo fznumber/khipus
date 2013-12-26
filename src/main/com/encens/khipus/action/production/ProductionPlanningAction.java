@@ -1,25 +1,34 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.action.SessionUser;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
+import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
+import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
+import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.exception.production.ProductCompositionException;
-import com.encens.khipus.exception.warehouse.InventoryException;
-import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
+import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.academics.ExecutorUnit;
+import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.admin.User;
+import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.admin.BusinessUnitService;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.service.finances.CostCenterService;
 import com.encens.khipus.service.production.*;
+import com.encens.khipus.service.warehouse.ApprovalWarehouseVoucherService;
 import com.encens.khipus.service.warehouse.InventoryService;
+import com.encens.khipus.service.warehouse.MovementDetailService;
 import com.encens.khipus.service.warehouse.WarehouseService;
-import com.encens.khipus.util.Constants;
-import com.encens.khipus.util.RoundUtil;
+import com.encens.khipus.util.*;
+import com.encens.khipus.util.query.QueryUtils;
 import com.encens.khipus.util.warehouse.InventoryMessage;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -50,6 +59,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
     private List<ProductItem> productItems = new ArrayList<ProductItem>();
 
+    // this map stores the MovementDetails that are under the minimal stock and the unitaryBalance of the Inventory
+    protected Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+    // this map stores the MovementDetails that are over the maximum stock and the unitaryBalance of the Inventory
+    protected Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+    // this list stores the MovementDetails that should not show warnings
+    protected List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+
     private FormulaState formulaState = FormulaState.NONE;
 
     private Boolean dispobleBalance = true;
@@ -62,6 +78,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Double expendOld;
     private Double containerOld;
 
+    private List<MovementDetail> movementDetailSelect;
+
+    private List<AccountOrderProduction> accountOrderProductions;
+
+    private WarehouseVoucher warehouseVoucherSelect;
+
+    private static final Integer SCALE = 6;
+
+    @In
+    private SessionUser sessionUser;
     @In
     User currentUser;
     @In
@@ -88,7 +114,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     protected InventoryService inventoryService;
     @In
     protected JobContractService jobContractService;
-
+    @In
+    private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
+    @In
+    private MovementDetailService movementDetailService;
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
@@ -523,6 +552,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return new BigDecimal(totalcost/ingredient.getAmount());
     }
 
+    public WarehouseVoucher createWarehouseVoucherMaterial(){
+
+        WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
+        warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
+        warehouseVoucher.setDocumentCode("2");
+        warehouseVoucher.setDate(new Date());
+        warehouseVoucher.setState(WarehouseVoucherState.PEN);
+        warehouseVoucher.setWarehouseCode("3");
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
+        warehouseVoucher.setCostCenterCode("0111");
+        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("3"));
+        warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
+        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+
+        return warehouseVoucher;
+    }
+
     public WarehouseVoucher createWarehouseVoucherInput(){
         /*Crear el vale*/
         WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
@@ -542,23 +589,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         return warehouseVoucher;
     }
-    public WarehouseVoucher createWarehouseVoucherMaterial(){
-
-        WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
-        warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
-        warehouseVoucher.setDocumentCode("2");
-        warehouseVoucher.setDate(new Date());
-        warehouseVoucher.setState(WarehouseVoucherState.PEN);
-        warehouseVoucher.setWarehouseCode("3");
-        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
-        warehouseVoucher.setCostCenterCode("0111");
-        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("3"));
-        warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
-        warehouseVoucher.setResponsible(currentUser.getEmployee());
-        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
-
-        return warehouseVoucher;
-    }
 
     public WarehouseVoucher createWarehouseVoucherOrder(){
 
@@ -570,9 +600,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         warehouseVoucher.setWarehouseCode("2");
         warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0112"));
         warehouseVoucher.setCostCenterCode("0112");
-        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("2"));
+        Warehouse warehouse = warehouseService.findWarehouseByCode("2");
+        warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDocumentType(productionPlanningService.getRecepcionDocumentType());
-        warehouseVoucher.setResponsible(currentUser.getEmployee());
+        warehouseVoucher.setResponsible(warehouse.getResponsible());
         warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
 
         return warehouseVoucher;
@@ -617,13 +648,232 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
     }
 
-    public void generateValeOrder(){
+    private String[] getGlossMessage(InventoryMovement inventoryMovement) {
+        WarehouseVoucher warehouseVoucher = warehouseVoucherSelect;
+        String gloss[] = new String[2];
+        String dateString = DateUtils.format(warehouseVoucher.getDate(), MessageUtils.getMessage("patterns.date"));
+        String productCodes = QueryUtils.toQueryParameter(movementDetailService.findDetailProductCodeByVoucher(warehouseVoucher));
+        String documentName = warehouseVoucher.getDocumentType().getName();
+        String sourceWarehouseName = warehouseVoucher.getWarehouse().getName();
+        String movementDescription = inventoryMovement.getDescription();
+
+        if (warehouseVoucher.isExecutorUnitTransfer()) {
+            String targetWarehouseName = warehouseVoucher.getWarehouse().getName();
+            gloss[0] = MessageUtils.getMessage("WarehouseVoucher.message.outTransferenceGloss", documentName, sourceWarehouseName, targetWarehouseName, productCodes, dateString, Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, movementDescription);
+            gloss[1] = MessageUtils.getMessage("WarehouseVoucher.message.inTransferenceGloss", documentName, sourceWarehouseName, targetWarehouseName, productCodes, dateString, Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, movementDescription);
+        } else {
+            String voucherTypeName = messages.get(warehouseVoucher.getDocumentType().getWarehouseVoucherType().getResourceKey());
+            gloss[0] = MessageUtils.getMessage("WarehouseVoucher.message.gloss", voucherTypeName, documentName, sourceWarehouseName, productCodes, dateString, Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, movementDescription);
+        }
+
+        return gloss;
+
+    }
+
+    public String generateVoucherOrderProduction(){
+
+        InventoryMovement inventoryMovement = createVale();
+        approvalVoucher(inventoryMovement);
+        productionOrder.setEstateOrder(TABULATED);
+        String outcome = update();
+
+        if (outcome != Outcome.SUCCESS) {
+            productionOrder.setEstateOrder(FINALIZED);
+            //getInstance().setState(PENDING);
+            return Outcome.FAIL;
+        }
+        closeDetail();
+        showProductionOrders = true;
+
+        return Outcome.SUCCESS;
+    }
+
+    private void addWarehouseVoucherApproveMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "WarehouseVoucher.message.approved");
+    }
+
+    /**
+     * Shows the warnings attribute according to the Maps and List mappings
+     */
+    public void showMovementDetailWarningMessages() {
+        for (Map.Entry<MovementDetail, BigDecimal> movementDetailBigDecimalEntry : movementDetailUnderMinimalStockMap.entrySet()) {
+            MovementDetail movementDetail = movementDetailBigDecimalEntry.getKey();
+            // if under minimal Stock
+            facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                    "MovementDetail.warning.underMinimalStock",
+                    movementDetail.getMovementType().equals(MovementDetailType.E) ? messages.get("Common.math.sum") : messages.get("Common.math.subtraction"),
+                    FormatUtils.formatNumber(movementDetailBigDecimalEntry.getValue(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    FormatUtils.formatNumber(movementDetail.getQuantity(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    movementDetail.getProductItem().getFullName(),
+                    FormatUtils.formatNumber(movementDetail.getProductItem().getMinimalStock(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    movementDetail.getWarehouse().getFullName());
+        }
+        for (Map.Entry<MovementDetail, BigDecimal> movementDetailBigDecimalEntry : movementDetailOverMaximumStockMap.entrySet()) {
+            MovementDetail movementDetail = movementDetailBigDecimalEntry.getKey();
+            // if over maximumStock
+            facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                    "MovementDetail.warning.overMaximumStock",
+                    movementDetail.getMovementType().equals(MovementDetailType.E) ? messages.get("Common.math.sum") : messages.get("Common.math.subtraction"),
+                    FormatUtils.formatNumber(movementDetailBigDecimalEntry.getValue(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    FormatUtils.formatNumber(movementDetail.getQuantity(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    movementDetail.getProductItem().getFullName(),
+                    FormatUtils.formatNumber(movementDetail.getProductItem().getMaximumStock(), messages.get("patterns.decimal6FNumber"), sessionUser.getLocale()),
+                    movementDetail.getWarehouse().getFullName());
+        }
+    }
+
+    public void approvalVoucher(InventoryMovement inventoryMovement){
+
+        try {
+            for (MovementDetail movementDetail : movementDetailSelect) {
+                buildValidateQuantityMappings(movementDetail);
+            }
+            approvalWarehouseVoucherService.approveWarehouseVoucherOrderProduction(
+                    warehouseVoucherSelect.getId(),
+                    getGlossMessage(inventoryMovement),
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings,
+                    accountOrderProductions);
+            addWarehouseVoucherApproveMessage();
+            showMovementDetailWarningMessages();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return ;
+        } catch (WarehouseVoucherApprovedException e) {
+            addWarehouseVoucherApprovedMessage();
+            return ;
+        } catch (WarehouseVoucherEmptyException e) {
+            addWarehouseVoucherEmptyException();
+            return ;
+        } catch (WarehouseVoucherNotFoundException e) {
+            addNotFoundMessage();
+            return ;
+        } catch (ProductItemAmountException e) {
+            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            return ;
+        } catch (InventoryUnitaryBalanceException e) {
+            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            return ;
+        } catch (InventoryProductItemNotFoundException e) {
+            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                    e.getProductItem(), e.getWarehouse());
+            return ;
+        } catch (CompanyConfigurationNotFoundException e) {
+            addCompanyConfigurationNotFoundErrorMessage();
+            return ;
+        } catch (FinancesExchangeRateNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return ;
+        } catch (FinancesCurrencyNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return ;
+        } catch (ConcurrencyException e) {
+            addUpdateConcurrencyMessage();
+            return ;
+        } catch (ReferentialIntegrityException e) {
+            addDeleteReferentialIntegrityMessage();
+            return ;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return ;
+        }
+    }
+
+    public void buildValidateQuantityMappings(MovementDetail movementDetail) throws ProductItemNotFoundException {
+        BigDecimal requiredQuantity = movementDetail.getQuantity();
+        if (null != requiredQuantity) {
+            ProductItem productItem = null;
+            try {
+                productItem = getService().findById(ProductItem.class, movementDetail.getProductItem().getId(), true);
+            } catch (EntryNotFoundException e) {
+                throw new ProductItemNotFoundException(productItem);
+            }
+            Warehouse warehouse = movementDetail.getWarehouse();
+            BigDecimal minimalStock = productItem.getMinimalStock();
+            BigDecimal maximumStock = productItem.getMaximumStock();
+            BigDecimal unitaryBalance = inventoryService.findUnitaryBalanceByProductItemAndArticle(warehouse.getId(), productItem.getId());
+            BigDecimal totalQuantity = movementDetail.getMovementType().equals(MovementDetailType.E) ?
+                    BigDecimalUtil.sum(unitaryBalance, requiredQuantity, SCALE) :
+                    BigDecimalUtil.subtract(unitaryBalance, requiredQuantity, SCALE);
+            // by default does not show warning until is verified
+            boolean showWarning = false;
+
+            if (null != minimalStock) {
+                // minimalStock is not null
+                int minimalComparison = totalQuantity.compareTo(minimalStock);
+                if (minimalComparison < 0) {
+                    // if under minimalStock
+                    this.movementDetailUnderMinimalStockMap.put(movementDetail, unitaryBalance);
+                    showWarning = true;
+                }
+            }
+            if (null != maximumStock) {
+                // maximumStock is not null
+                int maximumComparison = totalQuantity.compareTo(maximumStock);
+                if (maximumComparison > 0) {
+                    // if over maximumStock
+                    this.movementDetailOverMaximumStockMap.put(movementDetail, unitaryBalance);
+                    showWarning = true;
+                }
+            }
+            if (!showWarning) {
+                movementDetailWithoutWarnings.add(movementDetail);
+            }
+        }
+    }
+
+    protected void addFinancesExchangeRateNotFoundExceptionMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "PurchaseOrder.financesExchangeRateNotFound");
+    }
+
+    protected void addInventoryProductItemNotFoundErrorMessage(String executorUnitCode,
+                                                               ProductItem productItem,
+                                                               Warehouse warehouse) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "warehouseVoucher.approve.error.productItemNotFound",
+                productItem.getName(),
+                warehouse.getName(),
+                executorUnitCode);
+    }
+
+    protected void addInventoryUnitaryBalanceErrorMessage(BigDecimal availableUnitaryBalance,
+                                                          ProductItem productItem) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "warehouseVoucher.approve.error.notEnoughUnitaryBalance",
+                productItem.getName(),
+                availableUnitaryBalance);
+    }
+
+    public void addWarehouseVoucherApprovedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "WarehouseVoucher.error.approved");
+    }
+
+    protected void addWarehouseVoucherEmptyException() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "WarehouseVoucher.error.empty");
+    }
+
+    protected void addNotEnoughAmountMessage(ProductItem productItem,
+                                             BigDecimal availableAmount) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "WarehouseVoucher.approve.error.notEnoughAmount",
+                productItem.getName(),
+                availableAmount);
+    }
+
+    public InventoryMovement createVale(){
 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher = createWarehouseVoucherOrder();
-        InventoryMovement inventoryMovement = createInventoryMovement("egreso de materiales de prueba");
+        warehouseVoucherSelect = warehouseVoucher;
+        InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", productionOrder.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(productionOrder);
-
+        movementDetailSelect = movementDetails;
+        accountOrderProductions = generateMovementDetailOrderProduction(productionOrder);
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
         Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
         List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
@@ -635,15 +885,65 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             addMessageCreateWarehouseVoucherInput();
         } catch (InventoryException e) {
             addInventoryMessages(e.getInventoryMessages());
-            return;
+            return null;
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
-            return;
+            return null;
+        }
+        return inventoryMovement;
+    }
+
+    private List<AccountOrderProduction> generateMovementDetailOrderProduction(ProductionOrder order) {
+        List<AccountOrderProduction> accountOrderProductions = new ArrayList<AccountOrderProduction>();
+        accountOrderProductions.addAll(generateAccountOrderProductionsMaterial(order.getOrderMaterials()));
+        accountOrderProductions.addAll(generateAccountOrderProductionsInput(order.getOrderInputs()));
+        accountOrderProductions.addAll(generateAccountOrderProductionsIndirectCost(order.getIndirectCostses()));
+        return accountOrderProductions;
+    }
+
+    private List<AccountOrderProduction> generateAccountOrderProductionsIndirectCost(List<IndirectCosts> indirectCostses) {
+        List<AccountOrderProduction> accountOrderProductions = new ArrayList<AccountOrderProduction>();
+        for(IndirectCosts costs: indirectCostses)
+        {
+            AccountOrderProduction accountOrderProduction = new AccountOrderProduction();
+            accountOrderProduction.setCashAccount(costs.getCostsConifg().getCashAccount());
+            accountOrderProduction.setCostCenterCode(warehouseVoucherSelect.getCostCenterCode());
+            accountOrderProduction.setExecutorUnit(warehouseVoucherSelect.getExecutorUnit());
+            accountOrderProduction.setVoucherAmount(costs.getAmountBs());
+            accountOrderProductions.add(accountOrderProduction);
         }
 
-        closeDetail();
-        showProductionOrders = true;
+        return accountOrderProductions;
+    }
 
+    private List<AccountOrderProduction> generateAccountOrderProductionsMaterial(List<OrderMaterial> materials) {
+        List<AccountOrderProduction> accountOrderProductions = new ArrayList<AccountOrderProduction>();
+        for(OrderMaterial material: materials)
+        {
+            AccountOrderProduction accountOrderProduction = new AccountOrderProduction();
+            accountOrderProduction.setCashAccount(material.getProductItem().getCashAccount());
+            accountOrderProduction.setCostCenterCode(warehouseVoucherSelect.getCostCenterCode());
+            accountOrderProduction.setExecutorUnit(warehouseVoucherSelect.getExecutorUnit());
+            accountOrderProduction.setVoucherAmount(material.getCostTotal());
+            accountOrderProductions.add(accountOrderProduction);
+        }
+
+        return accountOrderProductions;
+    }
+
+    private List<AccountOrderProduction> generateAccountOrderProductionsInput(List<OrderInput> inputs) {
+        List<AccountOrderProduction> accountOrderProductions = new ArrayList<AccountOrderProduction>();
+        for(OrderInput orderInput: inputs)
+        {
+            AccountOrderProduction accountOrderProduction = new AccountOrderProduction();
+            accountOrderProduction.setCashAccount(orderInput.getProductItem().getCashAccount());
+            accountOrderProduction.setCostCenterCode(warehouseVoucherSelect.getCostCenterCode());
+            accountOrderProduction.setExecutorUnit(warehouseVoucherSelect.getExecutorUnit());
+            accountOrderProduction.setVoucherAmount(orderInput.getCostTotal());
+            accountOrderProductions.add(accountOrderProduction);
+        }
+
+        return accountOrderProductions;
     }
 
     private List<MovementDetail> generateMovementDetailOrder(ProductionOrder productionOrder) {
@@ -659,11 +959,51 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         detail.setUnitCost(productionOrder.getUnitCost());
         detail.setAmount(new BigDecimal(productionOrder.getTotalCostProduction()));
         detail.setProductItem(item);
-        detail.setWarehouse(inventoryService.findWarehouseByItemArticle(item));
+        detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
         detail.setMeasureUnit(item.getUsageMeasureUnit());
         movementDetails.add(detail);
 
         return movementDetails;
+    }
+
+    public class AccountOrderProduction{
+
+        private BusinessUnit executorUnit;
+        private String costCenterCode;
+        private CashAccount cashAccount;
+        private BigDecimal voucherAmount;
+
+        public BusinessUnit getExecutorUnit() {
+            return executorUnit;
+        }
+
+        public void setExecutorUnit(BusinessUnit executorUnit) {
+            this.executorUnit = executorUnit;
+        }
+
+        public String getCostCenterCode() {
+            return costCenterCode;
+        }
+
+        public void setCostCenterCode(String costCenterCode) {
+            this.costCenterCode = costCenterCode;
+        }
+
+        public CashAccount getCashAccount() {
+            return cashAccount;
+        }
+
+        public void setCashAccount(CashAccount cashAccount) {
+            this.cashAccount = cashAccount;
+        }
+
+        public BigDecimal getVoucherAmount() {
+            return voucherAmount;
+        }
+
+        public void setVoucherAmount(BigDecimal voucherAmount) {
+            this.voucherAmount = voucherAmount;
+        }
     }
 
     public void generateValeInput(){
@@ -719,7 +1059,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
     }
-
+    //TODO: Revisar el almacen de productos
     private List<MovementDetail> generateMovementDetailMaterial(List<OrderMaterial> orderMaterials) {
         List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
 
@@ -735,7 +1075,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 detail.setUnitCost(material.getCostUnit());
                 detail.setAmount(material.getCostTotal());
                 detail.setProductItem(material.getProductItem());
-                detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                //detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
                 detail.setMeasureUnit(material.getProductItem().getUsageMeasureUnit());
                 movementDetails.add(detail);
             }
@@ -760,7 +1101,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     detail.setUnitCost(input.getCostUnit());
                     detail.setAmount(input.getCostTotal());
                     detail.setProductItem(input.getProductItem());
-                    detail.setWarehouse(inventoryService.findWarehouseByItemArticle(input.getProductItem()));
+                    detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
                     detail.setMeasureUnit(input.getProductItem().getUsageMeasureUnit());
                     movementDetails.add(detail);
 
@@ -907,7 +1248,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            //setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
@@ -923,13 +1264,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(EXECUTED);
         productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
-        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
-        }
+        //}
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -949,13 +1290,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(FINALIZED);
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
-        for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
+        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalIndiRectCost(productionOrder);
             setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
-        }
+        //}
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -1157,7 +1498,28 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder) {
-        productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
+        if(productionOrder.getIndirectCostses() != null)
+            productionOrder.getIndirectCostses().clear();
+
+        productionOrder.getIndirectCostses().addAll(indirectCostsService.getCostTotalIndirect(
+                                                                                     productionOrder,
+                                                                                     getTotalVolumProductionPlaning(productionOrder),
+                                                                                     getTotalVolumGeneralProductionPlaning(productionOrder),
+                                                                                     indirectCostsService.getLastPeroidIndirectCost()
+                                                                                     )
+                                           );
+        setTotalIndirectCosts(productionOrder);
+        //productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
+    }
+
+    private void setTotalIndirectCosts(ProductionOrder productionOrder) {
+        Double total = 0.0;
+
+        for(IndirectCosts costs :productionOrder.getIndirectCostses())
+        {
+            total += costs.getAmountBs().doubleValue();
+        }
+        productionOrder.setTotalIndirectCosts(total);
     }
 
     public void setTotalsInputs(ProductionOrder productionOrder) {

@@ -46,7 +46,7 @@ public class InventoryServiceBean extends GenericServiceBean implements Inventor
     public Warehouse findWarehouseByItemArticle(ProductItem productItem){
         try {
             return (Warehouse) eventEm.createNamedQuery("Inventory.findWarehouseByItemArticle")
-                    .setParameter("productItem",productItem)
+                    .setParameter("productItemId",productItem.getId())
                     .getSingleResult();
         }catch (NoResultException e){
             return null;
