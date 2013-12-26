@@ -268,7 +268,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="estateOrderField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
                 <h:outputText
-                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
                         value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
             </s:decorate>
 
@@ -357,12 +357,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     styleClass="button"
                     rendered="#{productionPlanningAction.managed}"/>
 
-            <h:commandButton
-                    action="#{productionPlanningAction.generateValeOrder}"
+            <a4j:commandButton
                     value="#{messages['ProductionPlanning.generateValeOrder']}"
                     styleClass="button"
-                    rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED'}"/>
-
+                    rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED' and !(productionOrderForPlanning.estateOrder eq 'TABULATED')}">
+                <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
+                                       operation="show"/>
+            </a4j:commandButton>
 
         </s:div>
 
@@ -526,7 +527,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
                 <h:outputText
-                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
                         value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
             </s:decorate>
 
@@ -680,7 +681,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <s:decorate id="estateOrdField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
             <h:outputText
-                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
+                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
                     value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -832,6 +833,25 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            value="#{messages['Common.delete']}"
                            immediate="true"
                            rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
+                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+                           styleClass="button"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate template="/include/modalDialog.xhtml"
+            rendered="#{productionPlanningAction.managed}">
+    <ui:param name="dialogId" value="confirmationVoucher"/>
+    <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
+    <ui:define name="dialogContent">
+        <p>
+            <h:outputFormat value="#{messages['ProductionPlanning.generateVoucher.confirmation']}">
+            </h:outputFormat>
+        </p>
+    </ui:define>
+    <ui:define name="dialogOption">
+        <a4j:commandButton action="#{productionPlanningAction.generateVoucherOrderProduction}"
+                           value="#{messages['Common.confirm']}"
+                           immediate="true"
                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
                            styleClass="button"/>
     </ui:define>

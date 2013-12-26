@@ -30,14 +30,36 @@
           rendered="#{
             s:hasPermission('CASHBOX','VIEW') or
             s:hasPermission('CASHBOXTRANSACTION','VIEW') or
+            s:hasPermission('ORDER','VIEW') or
             s:hasPermission('BANKENTITY','VIEW') or
             s:hasPermission('CREDIT','VIEW') or
             s:hasPermission('DISCOUNTPOLICY','VIEW') or
             s:hasPermission('CUSTOMERDISCOUNTRULE','VIEW') or
             s:hasPermission('CUSTOMERCATEGORY','VIEW') or
             s:hasPermission('PARTNERCLUBCATEGORY','VIEW')}">
-    <h:panelGrid columns="2" cellpadding="0" cellspacing="0" border="0"
-                 columnClasses="tab-separator,tab-end-separator">
+    <h:panelGrid columns="3" cellpadding="0" cellspacing="0" border="0"
+                 columnClasses="tab-separator,tab-separator,tab-end-separator">
+
+        <rich:dropDownMenu value="#{messages['menu.customers.order']}"
+                           rendered="#{
+        s:hasPermission('ORDER','VIEW')}">
+
+            <rich:menuGroup value="#{messages['menu.customers.order.report']}" rendered="#{s:hasPermission('ORDERREPORT','VIEW') }">
+
+                <rich:menuItem submitMode="none"
+                               styleClass="main-menu-item"
+                               rendered="#{s:hasPermission('ORDERREPORTRECEIPT','VIEW')}">
+                    <s:link view="/customers/reports/orderReportReceipt.xhtml"
+                            value="#{messages['menu.customers.order.report.receipt']}"
+                            propagation="none"/>
+                </rich:menuItem>
+
+            </rich:menuGroup>
+
+        </rich:dropDownMenu>
+
+
+
         <rich:dropDownMenu value="#{messages['menu.customers.sales']}"
                            rendered="#{
         s:hasPermission('CASHBOX','VIEW') or

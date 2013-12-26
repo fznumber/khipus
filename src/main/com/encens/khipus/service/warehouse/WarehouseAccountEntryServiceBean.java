@@ -1,5 +1,6 @@
 package com.encens.khipus.service.warehouse;
 
+import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
@@ -588,6 +589,42 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                         gloss[0]);
             }
         }
+    }
+
+    @Override
+    public void createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
+                                                BusinessUnit executorUnit,
+                                                String costCenterCode,
+                                                String gloss,
+                                                List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions)
+            throws CompanyConfigurationNotFoundException {
+
+        CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+        BigDecimal voucherAmount = movementDetailService.sumWarehouseVoucherMovementDetailAmount(warehouseVoucher.getId().getCompanyNumber(), warehouseVoucher.getState(), warehouseVoucher.getId().getTransactionNumber());
+
+        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
+        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+
+        voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                executorUnit.getExecutorUnitCode(),
+                costCenterCode,
+                companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
+                voucherAmount,
+                FinancesCurrencyType.P,
+                BigDecimal.ONE));
+
+        for(ProductionPlanningAction.AccountOrderProduction accountOrderProduction :accountOrderProductions)
+        {
+            voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
+                    accountOrderProduction.getCostCenterCode(),
+                    accountOrderProduction.getCostCenterCode(),
+                    accountOrderProduction.getCashAccount(),
+                    accountOrderProduction.getVoucherAmount(),
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+        }
+
+        voucherService.create(voucherForGeneration);
     }
 
     private void createAccountEntryForReception(WarehouseVoucher warehouseVoucher,
