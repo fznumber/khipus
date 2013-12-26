@@ -670,13 +670,22 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     }
 
-    public void generateVoucherOrderProduction(){
+    public String generateVoucherOrderProduction(){
 
         InventoryMovement inventoryMovement = createVale();
         approvalVoucher(inventoryMovement);
+        productionOrder.setEstateOrder(TABULATED);
+        String outcome = update();
+
+        if (outcome != Outcome.SUCCESS) {
+            productionOrder.setEstateOrder(FINALIZED);
+            //getInstance().setState(PENDING);
+            return Outcome.FAIL;
+        }
         closeDetail();
         showProductionOrders = true;
 
+        return Outcome.SUCCESS;
     }
 
     private void addWarehouseVoucherApproveMessage() {
@@ -861,7 +870,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher = createWarehouseVoucherOrder();
         warehouseVoucherSelect = warehouseVoucher;
-        InventoryMovement inventoryMovement = createInventoryMovement("INGRESO DE OREDEN DE PRODUCCION  PRUEBA-OFICIAL");
+        InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", productionOrder.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(productionOrder);
         movementDetailSelect = movementDetails;
         accountOrderProductions = generateMovementDetailOrderProduction(productionOrder);
@@ -950,12 +959,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         detail.setUnitCost(productionOrder.getUnitCost());
         detail.setAmount(new BigDecimal(productionOrder.getTotalCostProduction()));
         detail.setProductItem(item);
-        detail.setWarehouse(inventoryService.findWarehouseByItemArticle(item));
+        detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
         detail.setMeasureUnit(item.getUsageMeasureUnit());
         movementDetails.add(detail);
 
         return movementDetails;
     }
+
     public class AccountOrderProduction{
 
         private BusinessUnit executorUnit;
@@ -1049,7 +1059,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
     }
-
+    //TODO: Revisar el almacen de productos
     private List<MovementDetail> generateMovementDetailMaterial(List<OrderMaterial> orderMaterials) {
         List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
 
@@ -1065,7 +1075,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 detail.setUnitCost(material.getCostUnit());
                 detail.setAmount(material.getCostTotal());
                 detail.setProductItem(material.getProductItem());
-                detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                //detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
                 detail.setMeasureUnit(material.getProductItem().getUsageMeasureUnit());
                 movementDetails.add(detail);
             }
@@ -1090,7 +1101,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     detail.setUnitCost(input.getCostUnit());
                     detail.setAmount(input.getCostTotal());
                     detail.setProductItem(input.getProductItem());
-                    detail.setWarehouse(inventoryService.findWarehouseByItemArticle(input.getProductItem()));
+                    detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
                     detail.setMeasureUnit(input.getProductItem().getUsageMeasureUnit());
                     movementDetails.add(detail);
 
