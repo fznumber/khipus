@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="611" pageHeight="791" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28">
 	<property name="ireport.zoom" value="1.771561000000001"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="303"/>
+	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="userLoginParam" class="java.lang.String"/>
@@ -49,7 +49,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["NÂº orden: "+$P{numOrder}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Nro. orden: "+$P{numOrder}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="date_text" style="titleStyle" positionType="Float" x="279" y="23" width="248" height="12"/>
