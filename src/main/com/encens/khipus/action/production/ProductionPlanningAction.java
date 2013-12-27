@@ -672,19 +672,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public String generateVoucherOrderProduction(){
 
+        productionOrder.setEstateOrder(TABULATED);
+
         InventoryMovement inventoryMovement = createVale();
         approvalVoucher(inventoryMovement);
-        productionOrder.setEstateOrder(TABULATED);
-        String outcome = update();
 
-        if (outcome != Outcome.SUCCESS) {
-            productionOrder.setEstateOrder(FINALIZED);
-            //getInstance().setState(PENDING);
-            return Outcome.FAIL;
-        }
         closeDetail();
         showProductionOrders = true;
-
+        update();
         return Outcome.SUCCESS;
     }
 

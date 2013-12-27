@@ -41,12 +41,12 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
+      <!--  <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
                          tabindex="3">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
-        </h:commandButton>
+        </h:commandButton>-->
 
         <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.back']}"
                          styleClass="button" immediate="true"
@@ -268,8 +268,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="estateOrderField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
                 <h:outputText
-                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
-                        value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
+                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                        value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderForPlanning.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
             </s:decorate>
 
         </s:div>
@@ -527,8 +527,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
                 <h:outputText
-                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
-                        value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
+                        style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                        value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
             </s:decorate>
 
         </h:panelGrid>
@@ -681,8 +681,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <s:decorate id="estateOrdField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
             <h:outputText
-                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'YELLOW' : 'green'))}"
-                    value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
+                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">Cantidad Producida:</ui:define>
@@ -761,8 +761,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </rich:column>
         <rich:column>
             <h:outputText
-                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : 'green')}"
-                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : messages['productionOrderForPlanning.estateOrder.finalized'])}"/>
+                    style="font-weight: bold; font-size:1.2em; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
         </rich:column>
         <rich:column styleClass="center">
 
@@ -797,19 +797,19 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <div class="buttons">
     <s:div id="ruleBotton2">
 
-        <h:commandButton action="#{productionPlanningAction.createNewPlannig()}" value="#{messages['Common.save']}"
+            <h:commandButton action="#{productionPlanningAction.createNewPlannig()}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{!productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"
                          tabindex="1">
             <s:defaultAction/>
         </h:commandButton>
 
-        <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
+       <!-- <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
                          tabindex="3">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
-        </h:commandButton>
+        </h:commandButton>-->
 
         <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.back']}"
                          styleClass="button" tabindex="21" immediate="true"/>
@@ -852,7 +852,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <a4j:commandButton action="#{productionPlanningAction.generateVoucherOrderProduction}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
-                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1"
+
                            styleClass="button"/>
     </ui:define>
 </s:decorate>
