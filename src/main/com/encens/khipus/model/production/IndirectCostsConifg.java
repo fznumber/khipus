@@ -47,6 +47,9 @@ public class IndirectCostsConifg implements BaseModel {
     @Length(max = 2)
     private String companyNumber;
 
+    @Column(name = "ESTADO")
+    private String estate;
+
     @Column(name = "CUENTA", insertable = false, updatable = false, nullable = true)
     @Length(max = 20)
     private String account;
@@ -117,5 +120,13 @@ public class IndirectCostsConifg implements BaseModel {
 
     public void setCashAccount(CashAccount cashAccount) {
         this.cashAccount = cashAccount;
+    }
+
+    public String getEstate() {
+        return estate;
+    }
+
+    public void setEstate(String estate) {
+        this.estate = estate;
     }
 }

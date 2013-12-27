@@ -163,7 +163,7 @@ public final class Constants {
     public static  final String ESTATE_ARTICLE_COMPOSITE = "COMPUESTO";
     public static  final String ESTATE_ARTICLE_PARAMETRIZE = "PARAMETRIZABLE";
     public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
-
+    public static final String ESTATE_COSTCONFIG = "MANOOBRA";
 
     private Constants() {
     }

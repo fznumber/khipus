@@ -1242,7 +1242,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionOrder.getId() != null) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            setTotalHour(productionOrder);
+            //setTotalHour(productionOrder);
             //setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
@@ -1262,8 +1262,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            setTotalIndiRectCost(productionOrder);
-            setTotalHour(productionOrder);
+            //setTotalIndiRectCost(productionOrder);
+            //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         //}
         String outcome = update();
@@ -1289,7 +1289,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             setTotalIndiRectCost(productionOrder);
-            setTotalHour(productionOrder);
+            //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         //}
         String outcome = update();
@@ -1359,8 +1359,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionPlanning.getId() != null) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            setTotalIndiRectCost(productionOrder);
-            setTotalHour(productionOrder);
+            //setTotalIndiRectCost(productionOrder);
+            //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
 
             if (update() != Outcome.SUCCESS) {
@@ -1402,8 +1402,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setExpendAmount(totalProducer);*/
         setTotalsMaterials(productionOrder);
         setTotalsInputs(productionOrder);
-        setTotalIndiRectCost(productionOrder);
-        setTotalHour(productionOrder);
+        //setTotalIndiRectCost(productionOrder);
+        //setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
         if (update() != Outcome.SUCCESS) {
             return;
@@ -1442,8 +1442,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            //setTotalHour(productionOrder);
+            //setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         String outcome = update();
@@ -1463,7 +1463,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            setTotalHour(productionOrder);
+            //setTotalHour(productionOrder);
             setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
@@ -1475,7 +1475,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         return outcome;
     }
-
+    //todo: metodo fuera de servicio
     public void setTotalHour(ProductionOrder productionOrder) {
         productionOrder.setTotalPriceJourney(((BigDecimal) (employeeTimeCardService.getCostProductionOrder(productionOrder, getInstance().getDate(), getTotalVolumProductionPlaning(productionOrder)))).doubleValue());
     }
@@ -1506,13 +1506,19 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         setTotalIndirectCosts(productionOrder);
         //productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
     }
-
+    //todo: la mano de obra directa se tomara diretamente de la tabla costosindirectos para no cambiar mucho
+    //se fijara directamente desde eseta tabla temporalmente
     private void setTotalIndirectCosts(ProductionOrder productionOrder) {
         Double total = 0.0;
-
+        productionOrder.setTotalPriceJourney(0.0);
         for(IndirectCosts costs :productionOrder.getIndirectCostses())
         {
-            total += costs.getAmountBs().doubleValue();
+            if(costs.getCostsConifg().getEstate() != null)
+            {if(costs.getCostsConifg().getEstate().compareTo(Constants.ESTATE_COSTCONFIG) == 0)
+                productionOrder.setTotalPriceJourney(productionOrder.getTotalPriceJourney()+costs.getAmountBs().doubleValue());
+            }
+            else
+            total = total + costs.getAmountBs().doubleValue();
         }
         productionOrder.setTotalIndirectCosts(total);
     }
