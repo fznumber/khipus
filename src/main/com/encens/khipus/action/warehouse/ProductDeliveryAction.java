@@ -44,6 +44,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private String orderNumber;
     private String messageSearchOrder;
 
+    private ProductDeliveryType productDeliveryType = ProductDeliveryType.CASH_ORDER;
+
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
     public ProductDelivery initProductDelivery() {
@@ -123,10 +125,18 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return Outcome.SUCCESS;
     }
 
-    public void searchOrderNumber() {
+    public void search() {
+        if (productDeliveryType.equals(ProductDeliveryType.CASH_SALE))
+            searchCashSale();
+        if (productDeliveryType.equals(ProductDeliveryType.CASH_ORDER))
+            searchCashOrder();
 
-        List<SoldProduct> soldProductList = soldProductService.getSoldProducts(orderNumber, Constants.defaultCompanyNumber);
 
+    }
+
+    private void searchCashSale() {
+
+        List<SoldProduct> soldProductList = soldProductService.getSoldProductsCashSale(orderNumber, Constants.defaultCompanyNumber);
         if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
             getInstance().setInvoiceNumber(null);
@@ -135,10 +145,33 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             setMessageSearchOrder(null);
             if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
                 setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
-                assignInvoiceNumber(soldProductList.get(0));
+                assignNumberCashSale(soldProductList.get(0));
             } else
-                assignInvoiceNumber(soldProductList.get(0));
+                assignNumberCashSale(soldProductList.get(0));
         }
+    }
+
+    private void searchCashOrder() {
+
+        List<SoldProduct> soldProductList = soldProductService.getSoldProductsCashOrder(orderNumber, Constants.defaultCompanyNumber);
+        if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+            getInstance().setInvoiceNumber(null);
+            soldProducts.clear();
+        } else {
+            setMessageSearchOrder(null);
+            if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
+                setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
+                assignNumberCashOrder(soldProductList.get(0));
+            } else
+                assignNumberCashOrder(soldProductList.get(0));
+        }
+    }
+
+
+    @Factory(value = "productDeliveryTypes", scope = ScopeType.STATELESS)
+    public ProductDeliveryType[] initProductDeliveryTypes() {
+        return ProductDeliveryType.values();
     }
 
     public List<SoldProduct> getSoldProducts() {
@@ -154,6 +187,16 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 soldProductService.getSoldProducts(getInstance().getInvoiceNumber(), Constants.defaultCompanyNumber));
     }
 
+    public void readSoldProductsCashSale() {
+        setSoldProducts(
+                soldProductService.getSoldProductsCashSale(getInstance().getInvoiceNumber(), Constants.defaultCompanyNumber));
+    }
+
+    public void readSoldProductsCashOrder() {
+        setSoldProducts(
+                soldProductService.getSoldProductsCashOrder(getInstance().getInvoiceNumber(), Constants.defaultCompanyNumber));
+    }
+
     public boolean isExistsSoldProducts() {
         return !soldProducts.isEmpty();
     }
@@ -166,6 +209,16 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void assignInvoiceNumber(SoldProduct soldProduct) {
         getInstance().setInvoiceNumber(soldProduct.getInvoiceNumber());
         readSoldProducts();
+    }
+
+    public void assignNumberCashSale(SoldProduct soldProduct) {
+        getInstance().setInvoiceNumber(soldProduct.getInvoiceNumber());
+        readSoldProductsCashSale();
+    }
+
+    public void assignNumberCashOrder(SoldProduct soldProduct) {
+        getInstance().setInvoiceNumber(soldProduct.getInvoiceNumber());
+        readSoldProductsCashOrder();
     }
 
     public void cleanInvoiceNumber() {
@@ -264,5 +317,14 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void setMessageSearchOrder(String messageSearchOrder) {
         this.messageSearchOrder = messageSearchOrder;
+    }
+
+    public ProductDeliveryType getProductDeliveryType() {
+        return productDeliveryType;
+    }
+
+    public void setProductDeliveryType(ProductDeliveryType productDeliveryType) {
+        this.productDeliveryType = productDeliveryType;
+        System.out.println("___________SET ProductDeliveryType: " + this.productDeliveryType);
     }
 }

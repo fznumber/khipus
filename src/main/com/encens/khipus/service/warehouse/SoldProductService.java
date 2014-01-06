@@ -13,4 +13,8 @@ import java.util.List;
 @Local
 public interface SoldProductService extends GenericService {
     List<SoldProduct> getSoldProducts(String invoiceNumber, String companyNumber);
+
+    List<SoldProduct> getSoldProductsCashSale(String invoiceNumber, String companyNumber);
+
+    List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber);
 }

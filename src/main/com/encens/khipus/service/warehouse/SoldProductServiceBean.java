@@ -31,4 +31,31 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
 
         return result;
     }
+
+    @SuppressWarnings(value = "unchecked")
+    public List<SoldProduct> getSoldProductsCashSale(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findByCashSale")
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+        return result;
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    public List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findByCashOrder")
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+        return result;
+    }
+
 }

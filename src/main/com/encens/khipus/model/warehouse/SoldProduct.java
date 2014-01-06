@@ -17,6 +17,10 @@ import java.math.BigDecimal;
 @NamedQueries({
         @NamedQuery(name = "SoldProduct.findByInvoiceNumber",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
+        @NamedQuery(name = "SoldProduct.findByCashSale",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.orderNumber is null"),
+        @NamedQuery(name = "SoldProduct.findByCashOrder",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.orderNumber is not null"),
         @NamedQuery(name = "SoldProduct.findByInvoiceNumberAndState",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.state=:state"),
         @NamedQuery(name = "SoldProduct.findByProductItem",
@@ -73,6 +77,10 @@ public class SoldProduct implements BaseModel {
     @Column(name = "NO_FACT", nullable = false, length = 10)
     @Length(max = 10)
     private String invoiceNumber;
+
+    @Column(name = "PEDIDO", nullable = true, length = 10)
+    @Length(max = 10)
+    private String orderNumber;
 
     @Column(name = "COD_ALM", nullable = false, length = 6)
     @Length(max = 6)
@@ -261,5 +269,13 @@ public class SoldProduct implements BaseModel {
 
     public void setProductDelivery(ProductDelivery productDelivery) {
         this.productDelivery = productDelivery;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 }
