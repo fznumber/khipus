@@ -1,6 +1,7 @@
 package com.encens.khipus.service.warehouse;
 
 
+import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
@@ -35,10 +36,41 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
             ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
 
+    public void approveWarehouseVoucherOrderProduction(WarehouseVoucherPK id, String[] gloss,
+                                                       Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                                       Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                                       List<MovementDetail> movementDetailWithoutWarnings,
+                                                       List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions
+                                                       )
+            throws InventoryException,
+            WarehouseVoucherApprovedException,
+            WarehouseVoucherNotFoundException,
+            WarehouseVoucherEmptyException,
+            ProductItemAmountException,
+            InventoryUnitaryBalanceException,
+            InventoryProductItemNotFoundException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            ConcurrencyException,
+            ReferentialIntegrityException, ProductItemNotFoundException;
+
+    void approveWarehouseVoucherFromDeliveryProduct(WarehouseVoucherPK id, String[] gloss,
+                                                    Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                                    Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                                    List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
+            WarehouseVoucherApprovedException,
+            WarehouseVoucherNotFoundException,
+            WarehouseVoucherEmptyException,
+            ProductItemAmountException, InventoryUnitaryBalanceException,
+            InventoryProductItemNotFoundException, CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
+            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
+
     void approveWarehouseVoucherFromCollection(WarehouseVoucherPK id, String[] gloss,
-                                 Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
-                                 Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
-                                 List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
+                                               Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                               Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                               List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException,
             WarehouseVoucherApprovedException,
             WarehouseVoucherNotFoundException,
             WarehouseVoucherEmptyException,

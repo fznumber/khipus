@@ -9,10 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
-import com.encens.khipus.model.warehouse.ProductDelivery;
-import com.encens.khipus.model.warehouse.ProductItem;
-import com.encens.khipus.model.warehouse.SoldProduct;
-import com.encens.khipus.model.warehouse.Warehouse;
+import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.warehouse.ProductDeliveryService;
 import com.encens.khipus.service.warehouse.SoldProductService;
 import com.encens.khipus.util.Constants;
@@ -44,6 +41,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @In
     private ProductDeliveryService productDeliveryService;
 
+    private String orderNumber;
+    private String messageSearchOrder;
+
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
     public ProductDelivery initProductDelivery() {
@@ -54,8 +54,12 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @End
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
+        System.out.println("...Entregar pedido.... " + getInstance().getInvoiceNumber());
+        System.out.println("......ValidatorUtil.isBlankOrNull.... " + ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber()));
+
         if (ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber())) {
             addInvoiceNumberRequiredMessage();
+            System.out.println("....Outcome.REDISPLAY: " + Outcome.REDISPLAY);
             return Outcome.REDISPLAY;
         }
         try {
@@ -119,6 +123,24 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return Outcome.SUCCESS;
     }
 
+    public void searchOrderNumber() {
+
+        List<SoldProduct> soldProductList = soldProductService.getSoldProducts(orderNumber, Constants.defaultCompanyNumber);
+
+        if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+            getInstance().setInvoiceNumber(null);
+            soldProducts.clear();
+        } else {
+            setMessageSearchOrder(null);
+            if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
+                setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
+                assignInvoiceNumber(soldProductList.get(0));
+            } else
+                assignInvoiceNumber(soldProductList.get(0));
+        }
+    }
+
     public List<SoldProduct> getSoldProducts() {
         return soldProducts;
     }
@@ -149,6 +171,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void cleanInvoiceNumber() {
         getInstance().setInvoiceNumber(null);
         soldProducts.clear();
+        setOrderNumber(null);
+        setMessageSearchOrder(null);
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -224,5 +248,21 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void addProductItemNotFoundMessage(String productItemName) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getMessageSearchOrder() {
+        return messageSearchOrder;
+    }
+
+    public void setMessageSearchOrder(String messageSearchOrder) {
+        this.messageSearchOrder = messageSearchOrder;
     }
 }

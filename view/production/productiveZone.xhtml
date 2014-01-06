@@ -24,14 +24,18 @@
         <h:form id="productiveZoneForm">
             <div class="buttons">
                 <h:commandButton action="#{productiveZoneAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','CREATE')}" id="createButtonId">
+                                 styleClass="button"
+                                 rendered="#{!productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','CREATE')}"
+                                 id="createButtonId">
 
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{productiveZoneAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -67,22 +71,25 @@
                     </h:inputText>
                 </s:decorate>
 
-                <s:decorate id="groupField" template="/include/inputField.xhtml" styleClass="formRow">
+                <!--<s:decorate id="groupField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
                     <h:inputText id="group" value="#{productiveZone.group}" styleClass="input" required="true"
                                  maxlength="100" tabindex="3">
                         <a4j:support event="onblur" reRender="groupField"/>
                     </h:inputText>
-                </s:decorate>
+                </s:decorate>-->
             </rich:panel>
 
             <div class="buttons">
                 <h:commandButton action="#{productiveZoneAction.create}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{!productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{!productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','CREATE')}"/>
                 <h:commandButton action="#{productiveZoneAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','UPDATE')}"/>
+                                 styleClass="button"
+                                 rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','DELETE')}">
+                                 styleClass="button"
+                                 rendered="#{productiveZoneAction.managed and s:hasPermission('PRODUCTIVEZONE','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

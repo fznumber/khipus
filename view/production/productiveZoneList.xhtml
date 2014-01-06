@@ -10,8 +10,8 @@
 
     <ui:define name="pageTitle">#{messages['ProductiveZone.list']}</ui:define>
     <style type="text/css">
-        .special tr[id]{
-            display:none;
+        .special tr[id] {
+            display: none;
         }
     </style>
 
@@ -54,26 +54,22 @@
             </div>
             <rich:dataTable value="#{productiveZoneDataModel}" var="productiveZoneItem" id="productiveZoneList"
                             rows="#{sessionUser.rowsPerPage}"
-                            width="100%" columnsWidth="20%, 20%">
+                            width="100%" columnsWidth="40%, 40%, 20%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productiveZone.name" dataModel="#{productiveZoneDataModel}"
+                            <app:commandSortHeader sortProperty="productiveZone.name"
+                                                   dataModel="#{productiveZoneDataModel}"
                                                    reRender="productiveZoneList, dataScroller">
                                 #{messages['ProductiveZone.name']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productiveZone.number" dataModel="#{productiveZoneDataModel}"
+                            <app:commandSortHeader sortProperty="productiveZone.number"
+                                                   dataModel="#{productiveZoneDataModel}"
                                                    reRender="productiveZoneList, dataScroller">
                                 #{messages['ProductiveZone.number']}
-                            </app:commandSortHeader>
-                        </rich:column>
-                        <rich:column>
-                            <app:commandSortHeader sortProperty="productiveZone.group" dataModel="#{productiveZoneDataModel}"
-                                                   reRender="productiveZoneList, dataScroller">
-                                #{messages['ProductiveZone.group']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column styleClass="center">
@@ -88,9 +84,6 @@
                 <rich:column>
                     <h:outputText value="#{productiveZoneItem.number}"/>
                 </rich:column>
-                <rich:column>
-                    <h:outputText value="#{productiveZoneItem.group}"/>
-                </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
                                    action="#{productiveZoneAction.select(productiveZoneItem)}">
@@ -101,8 +94,10 @@
             <app:dataScroller id="dataScroller" for="productiveZoneList" dataModel="#{productiveZoneDataModel}"/>
 
 
-            <rich:jQuery selector="#productiveZoneList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
-            <rich:jQuery selector="#productiveZoneList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+            <rich:jQuery selector="#productiveZoneList tr"
+                         query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+            <rich:jQuery selector="#productiveZoneList tr"
+                         query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
 
 
             <div class="buttons">
@@ -113,7 +108,7 @@
 
         </h:form>
 
-        <a4j:include viewId="/production/productiveZoneModalPanel.xhtml" />
+        <a4j:include viewId="/production/productiveZoneModalPanel.xhtml"/>
 
     </ui:define>
 </ui:composition>

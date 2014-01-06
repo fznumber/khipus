@@ -14,8 +14,6 @@ import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.fill.JRTemplatePrintText;
-import net.sf.jasperreports.engine.fill.JRTemplateText;
-import net.sf.jasperreports.engine.type.RunDirectionEnum;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -80,10 +78,13 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 "WHERE IP.IDINGREDIENTEPRODUCCION IN ( ";
 
         boolean band = true;
-        for (ProductionIngredient ingredient : ingredients) {
-            query += (band ? " " : ",") + ingredient.getId().toString();
-            band = false;
-        }
+        if(ingredients.size() == 0)
+            query += "(0)";
+        else
+            for (ProductionIngredient ingredient : ingredients) {
+                query += (band ? " " : ",") + ingredient.getId().toString();
+                band = false;
+            }
         query += " )";
         setReportFormat(ReportFormat.PDF);
 
@@ -158,32 +159,19 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         query += " )";
         setReportFormat(ReportFormat.PDF);
 
-        //addProductionOrderMaterialDetailSubReport(params);
-        //addProductionOrderMaterialSummaryDetailSubReport(params);
+        addProductionOrderMaterialDetailSubReport(params);
+        addProductionOrderMaterialSummaryDetailSubReport(params);
         //addProductionOrderHoursDetailSubReport(params);
         typedReportData = getReport(
                 fileName
                 , templatePath
                 , query
                 , params
-                , "RESUMEN_GENERAL_ORDEN_PRODUCCIÓN"
+                , "RESUMEN_GENERAL_ORDEN_PRODUCCION"
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-        JRTemplatePrintText temp = ((JRTemplatePrintText) (((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().get(10)));
-        JRTemplatePrintText printText = new JRTemplatePrintText(new JRTemplateText(temp.getOrigin(),temp.getDefaultStyleProvider()));
-        //printText = temp;
-        printText.setText("prueba");
-        printText.setRunDirection(RunDirectionEnum.LTR);
-        printText.setLineSpacingFactor(1.2578125f);
-        printText.setLeadingOffset(-1.7578125f);
-        printText.setTextHeight(10.0625f);
-        printText.setX(temp.getX()+temp.getX()+100);
-        printText.setY(temp.getY());
-        printText.setHeight(temp.getHeight());
-        printText.setWidth(temp.getWidth());
-        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().add(printText);
-/*
+
         for (int i = 0; i < typedReportData.getJasperPrint().getPages().size(); i++) {
             int codeCount = 16;
             int nameCount = 15;
@@ -206,7 +194,7 @@ public class ProductionPlanningReportAction extends GenericReportAction {
                 costUnit += 6;
                 totalcost += 6;
             }
-        }*/
+        }
         try {
             typedReportData.setJasperPrint(jasperPrint);
             GenerationReportData generationReportData = new GenerationReportData(typedReportData);
@@ -322,11 +310,11 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         //generate the sub report
         if (orderMaterials.size() == 0)
             sql = "select ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada \n" +
-                    "from ordenmaterial om\n" +
+                    "from ordenmaterial om \n" +
                     "inner join WISE.INV_ARTICULOS IA \n" +
-                    "ON om.COD_ART=IA.COD_ART\n" +
-                    "inner join ordenproduccion op\n" +
-                    "on op.idordenproduccion = om.idordenproduccion\n" +
+                    "ON om.COD_ART=IA.COD_ART \n" +
+                    "inner join ordenproduccion op \n" +
+                    "on op.idordenproduccion = om.idordenproduccion \n" +
                     " where op.idordenproduccion = 0 ";
 
         String subReportKey = "ORDERMATERIALSUBREPORT";

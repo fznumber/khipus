@@ -21,7 +21,7 @@ import java.math.BigDecimal;
                         "where inventory.productItem.id=:productItemId and inventory.warehouse.id=:warehouseId"),
         @NamedQuery(name = "Inventory.findWarehouseByItemArticle",
         query = "select inventory.warehouse from Inventory inventory " +
-                "where inventory.productItem = :productItem")
+                "where inventory.productItem.id = :productItemId")
 })
 
 @Entity

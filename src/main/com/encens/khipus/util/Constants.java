@@ -153,12 +153,17 @@ public final class Constants {
 
     //Indirect Cost
     public static final String INDIRECT_COST_TYPE_GENERAL = "GENERAL";
+    public static final String INDIRECT_COST_TYPE_YPFB = "YPFB";
+    public static final String INDIRECT_COST_TYPE_ELFEC = "ELFEC";
+    public static final String INDIRECT_COST_TYPE_DEPRECIACION_HERRAMIENTAS = "DEPRECIACION HERRAMIENTAS";
+    public static final String INDIRECT_COST_TYPE_MANO_OBRA_PRODUCCION = "MANO OBRA PRODUCCION";
+    public static final String INDIRECT_COST_TYPE_MANO_OBRA_PRODUCCION_EVENTUAL = "MANO OBRA PRODUCCION EVENTUAL";
 
     //Production diari
     public static  final String ESTATE_ARTICLE_COMPOSITE = "COMPUESTO";
     public static  final String ESTATE_ARTICLE_PARAMETRIZE = "PARAMETRIZABLE";
     public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
-
+    public static final String ESTATE_COSTCONFIG = "MANOOBRA";
 
     private Constants() {
     }

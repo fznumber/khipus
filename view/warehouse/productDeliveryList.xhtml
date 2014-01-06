@@ -18,7 +18,7 @@
 
             <rich:simpleTogglePanel label="#{messages['ProductDelivery.search']}" switchType="client">
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductDelivery.invoiceNumber']}</ui:define>
+                    <ui:define name="label">#{messages['ProductDelivery.documentNumber']}</ui:define>
                     <h:inputText id="invoiceNumber"
                                  value="#{productDeliveryDataModel.criteria.invoiceNumber}"
                                  maxlength="150"
@@ -59,7 +59,7 @@
                             <app:commandSortHeader sortProperty="productDelivery.invoiceNumber"
                                                    dataModel="#{productDeliveryDataModel}"
                                                    reRender="productDeliveryList, dataScroller">
-                                #{messages['ProductDelivery.invoiceNumber']}
+                                #{messages['ProductDelivery.documentNumber']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>

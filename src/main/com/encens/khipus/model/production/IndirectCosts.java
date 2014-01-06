@@ -3,6 +3,7 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.common.Text;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
  * @author Diego Loza
  * @version 1.2.1
  */
-@TableGenerator(name = "IndirectCosts.tableGenerator",
+@TableGenerator(name = "IndirectCostsConifg.tableGenerator",
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
@@ -32,45 +33,34 @@ public class IndirectCosts implements BaseModel {
 
     @Id
     @Column(name = "IDCOSTOSINDIRECTOS", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCosts.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
     private Long id;
 
     @Column(name = "NOMBRE", nullable = true)
     private String name;
 
-    @Column(name = "MES", nullable = false, columnDefinition = "NUMBER(2)")
-    private Integer month;
-
-    @Column(name = "ANIO", nullable = false, columnDefinition = "NUMBER(4)")
-    private Integer year;
-
     @Column(name = "MONTOBS", nullable = false, columnDefinition = "NUMBER(16,2)")
     private BigDecimal amountBs;
 
-    @Column(name = "TIPO", nullable = true)
-    private String type;
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "IDPERIODOCOSTOINDIRECTO")
+    private PeriodIndirectCost periodIndirectCost;
+
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "IDORDENPRODUCCION")
+    private ProductionOrder productionOrder;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.admin.Company company;
+    private Company company;
+
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "IDCOSTOSINDIRECTOSCONF", nullable = false)
+    private IndirectCostsConifg costsConifg;
 
     @Version
     @Column(name = "VERSION", nullable = false)
     private long version;
-
-    @Column(name = "COD_GRU", insertable = false, updatable = false, nullable = true)
-    private String groupCode;
-
-    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = true)
-    @Length(max = 2)
-    private String companyNumber;
-
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumns({
-            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
-            @JoinColumn(name = "COD_GRU", referencedColumnName = "COD_GRU")
-    })
-    private Group group;
 
     public Long getId() {
         return id;
@@ -88,36 +78,12 @@ public class IndirectCosts implements BaseModel {
         this.name = name;
     }
 
-    public Integer getMonth() {
-        return month;
-    }
-
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
     public BigDecimal getAmountBs() {
         return amountBs;
     }
 
     public void setAmountBs(BigDecimal amountBs) {
         this.amountBs = amountBs;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Company getCompany() {
@@ -136,27 +102,27 @@ public class IndirectCosts implements BaseModel {
         this.version = version;
     }
 
-    public String getGroupCode() {
-        return groupCode;
+    public PeriodIndirectCost getPeriodIndirectCost() {
+        return periodIndirectCost;
     }
 
-    public void setGroupCode(String groupCode) {
-        this.groupCode = groupCode;
+    public void setPeriodIndirectCost(PeriodIndirectCost periodIndirectCost) {
+        this.periodIndirectCost = periodIndirectCost;
     }
 
-    public String getCompanyNumber() {
-        return companyNumber;
+    public ProductionOrder getProductionOrder() {
+        return productionOrder;
     }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
+    public void setProductionOrder(ProductionOrder productionOrder) {
+        this.productionOrder = productionOrder;
     }
 
-    public Group getGroup() {
-        return group;
+    public IndirectCostsConifg getCostsConifg() {
+        return costsConifg;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setCostsConifg(IndirectCostsConifg costsConifg) {
+        this.costsConifg = costsConifg;
     }
 }
