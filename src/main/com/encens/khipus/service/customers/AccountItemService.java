@@ -5,6 +5,7 @@ import com.encens.khipus.model.customers.AccountItem;
 import com.encens.khipus.model.customers.ClientOrder;
 
 import javax.ejb.Local;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,13 @@ import java.util.List;
 @Local
 public interface AccountItemService extends GenericService {
 
-    public List<AccountItemServiceBean.ArticleReport> findAccountItem();
+    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,BigDecimal distribuidor);
 
+    public List<AccountItemServiceBean.OrderItem> findOrderItem(Date dateOrder);
+
+    public Integer getAmount(String codArt,String codPedido);
+
+    public List<BigDecimal> findDistributor(Date date);
+
+    public String getNameEmployeed(BigDecimal codEmployeed);
 }
