@@ -7,7 +7,7 @@
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="userLoginParam" class="java.lang.String"/>
 	<parameter name="dateParam" class="java.lang.String"/>
-	<parameter name="estate" class="java.lang.String"/>
+	<parameter name="totalOrder" class="java.lang.String"/>
 	<parameter name="cont" class="java.lang.Integer"/>
 	<parameter name="dateOrder" class="java.lang.String"/>
 	<parameter name="codeProduct" class="java.lang.String"/>
@@ -22,7 +22,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Recepción de pedidos correspondiente al: "+$P{dateOrder}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Entrega de pedidos correspondiente al: "+$P{dateOrder}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
