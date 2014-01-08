@@ -23,7 +23,7 @@
             <h:panelGrid columns="1" width="100%" cellpadding="0" cellspacing="0" border="0"
                          columnClasses="width50percent">
 
-                <s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
+                <!--<s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductItem.state']}</ui:define>
                     <h:selectOneMenu id="state"
                                      value="#{productItemCostUnitReportAction.productItemState}"
@@ -119,9 +119,9 @@
                                      reRender="subGroupField, groupField"
                                      hotKeySelect="alt+3">
                     </app:selectPopUp>
-                </s:decorate>
+                </s:decorate>-->
                 <s:decorate id="initDateField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['Reports.warehouseEvolution.page.initDate']}</ui:define>
+                    <ui:define name="label">#{messages['Order.report.date']}</ui:define>
                     <rich:calendar id="initDate"
                                    value="#{orderReceiptReportAction.dateOrder}"
                                    datePattern="#{messages['patterns.date']}"
