@@ -22,7 +22,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Recepción de pedidos correspondiente al: "+$P{dateOrder}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Entrega de pedidos correspondiente al: "+$P{dateOrder}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
