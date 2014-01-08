@@ -55,7 +55,10 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             for(Object[] obj: datas)
             {
                 OrderClient client = new OrderClient();
-                client.setName((String)obj[3]+"-"+(String)obj[0]+" "+(String)obj[1]+" "+(String)obj[2]+(String)obj[4]);
+                if(((String) obj[4]).compareTo(" ") != 0 )
+                    client.setName((String)obj[3]+"-"+(String)obj[4]);
+                else
+                    client.setName((String)obj[3]+"-"+(String)obj[0]+" "+(String)obj[1]+" "+(String)obj[2]);
                 client.setIdOrder((String)obj[3]);
                 clientOrders.add(client);
             }
@@ -71,7 +74,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     public Integer getAmount(String codArt,String codPedido){
         BigDecimal result = BigDecimal.ZERO;
         try{
-          result = (BigDecimal)em.createNativeQuery("SELECT nvl(cantidad,0) FROM USER01_DAF.articulos_pedido \n" +
+          result = (BigDecimal)em.createNativeQuery("SELECT nvl(cantidad,0)+ nvl(reposicion,0) FROM USER01_DAF.articulos_pedido \n" +
                   "where cod_art = :codArt\n" +
                   "and pedido = :codPedido")
                  .setParameter("codPedido",codPedido)
