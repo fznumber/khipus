@@ -38,11 +38,13 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         List<OrderClient> clientOrders = new ArrayList<OrderClient>();
         try{
 
-            List<Object[]> datas = em.createNativeQuery("select pe.ap,pe.am , pe.nom, ped.pedido from USER01_DAF.per_insts pi\n" +
-                    "inner join USER01_DAF.personas pe\n" +
-                    "on pe.nro_doc = pi.nro_doc\n" +
-                    "inner join USER01_DAF.pedidos ped\n" +
-                    "on ped.id = pi.id\n" +
+            List<Object[]> datas = em.createNativeQuery("select nvl(pe.ap,' '),nvl(pe.am,' ') , nvl(pe.nom,' '), ped.pedido, nvl(it.razon_soc,' ') from USER01_DAF.per_insts pi\n" +
+                    "                    left join user01_daf.instituciones it\n" +
+                    "                    on it.pi_id = pi.id\n" +
+                    "                    left join USER01_DAF.personas pe\n" +
+                    "                    on pe.nro_doc = pi.nro_doc\n" +
+                    "                    inner join USER01_DAF.pedidos ped\n" +
+                    "                    on ped.id = pi.id\n" +
                     "where ped.fecha_entrega = :date \n" +
                     "and ped.estado_pedido = 'PEN' \n" +
                     "and ped.distribuidor = :distribuidor")
@@ -53,7 +55,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             for(Object[] obj: datas)
             {
                 OrderClient client = new OrderClient();
-                client.setName((String)obj[3]+"-"+(String)obj[0]+" "+(String)obj[1]+" "+(String)obj[2]);
+                client.setName((String)obj[3]+"-"+(String)obj[0]+" "+(String)obj[1]+" "+(String)obj[2]+(String)obj[4]);
                 client.setIdOrder((String)obj[3]);
                 clientOrders.add(client);
             }
