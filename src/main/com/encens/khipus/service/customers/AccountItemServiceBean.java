@@ -38,16 +38,29 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         List<OrderClient> clientOrders = new ArrayList<OrderClient>();
         try{
 
-            List<Object[]> datas = em.createNativeQuery("select nvl(pe.ap,' '),nvl(pe.am,' ') , nvl(pe.nom,' '), ped.pedido, nvl(it.razon_soc,' ') from USER01_DAF.per_insts pi\n" +
-                    "                    left join user01_daf.instituciones it\n" +
-                    "                    on it.pi_id = pi.id\n" +
-                    "                    left join USER01_DAF.personas pe\n" +
-                    "                    on pe.nro_doc = pi.nro_doc\n" +
-                    "                    inner join USER01_DAF.pedidos ped\n" +
-                    "                    on ped.id = pi.id\n" +
-                    "where ped.fecha_entrega = :date \n" +
-                    "and ped.estado_pedido = 'PEN' \n" +
-                    "and ped.distribuidor = :distribuidor")
+            List<Object[]> datas = em.createNativeQuery("select \n" +
+                    "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
+                    ",ped.pedido\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.personas pe\n" +
+                    "on pi.id = pe.pi_id\n" +
+                    "where ped.fecha_entrega = :date\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
+                    "and ped.distribuidor = :distribuidor\n" +
+                    "union all\n" +
+                    "select \n" +
+                    "nvl(it.razon_soc,' ') \n" +
+                    ",ped.pedido\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.instituciones it\n" +
+                    "on pi.id = it.pi_id\n" +
+                    "where ped.fecha_entrega = :date\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
+                    "and ped.distribuidor = :distribuidor\n")
                     .setParameter("date", date, TemporalType.DATE)
                     .setParameter("distribuidor",distribuidor)
                     .getResultList();
@@ -55,11 +68,8 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             for(Object[] obj: datas)
             {
                 OrderClient client = new OrderClient();
-                if(((String) obj[4]).compareTo(" ") != 0 )
-                    client.setName((String)obj[3]+"-"+(String)obj[4]);
-                else
-                    client.setName((String)obj[3]+"-"+(String)obj[0]+" "+(String)obj[1]+" "+(String)obj[2]);
-                client.setIdOrder((String)obj[3]);
+                client.setName((String)obj[1]+"-"+(String)obj[0]);
+                client.setIdOrder((String)obj[1]);
                 clientOrders.add(client);
             }
 

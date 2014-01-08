@@ -7,7 +7,7 @@
 	<parameter name="reportTitle" class="java.lang.String"/>
 	<parameter name="userLoginParam" class="java.lang.String"/>
 	<parameter name="dateParam" class="java.lang.String"/>
-	<parameter name="estate" class="java.lang.String"/>
+	<parameter name="totalOrder" class="java.lang.String"/>
 	<parameter name="cont" class="java.lang.Integer"/>
 	<parameter name="dateOrder" class="java.lang.String"/>
 	<parameter name="codeProduct" class="java.lang.String"/>

@@ -61,6 +61,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private List<Integer> totals = new ArrayList<Integer>();
     private int amountY,amountX,amountH,amountW;
     private int clientY,clientX,clientH,clientW;
+    private Integer totalOrders = 0;
 
     public void generateReport() {
         log.debug("Generate OrderReceiptReport........");
@@ -74,8 +75,6 @@ public class OrderReceiptReportAction extends GenericReportAction {
         Map params = new HashMap();
         distributors = accountItemService.findDistributor(dateOrder);
         orderItems = accountItemService.findOrderItem(dateOrder);
-
-
 
         params.putAll(getCommonDocumentParamsInfo());
 
@@ -193,6 +192,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
             client.setPosY(temp.getY());
             printTextList.add(createCellY(temp,client.getName(), clientY));
             clientY = clientY+clientH;
+            totalOrders ++;
         }
         printTextList.add(createCellY(temp,nameDistributor+" - TOTAL: ", clientY));
         clientY = clientY+clientH+10;
@@ -304,7 +304,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         paramMap.put("estate", "prueba");
         paramMap.put("nameProduct", "prueba");
         paramMap.put("codeProduct", "prueba");
-        paramMap.put("numOrder", "prueba");
+        paramMap.put("totalOrder", totalOrders.toString());
         return paramMap;
     }
 
