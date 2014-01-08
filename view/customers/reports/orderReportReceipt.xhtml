@@ -120,30 +120,18 @@
                                      hotKeySelect="alt+3">
                     </app:selectPopUp>
                 </s:decorate>
-                <s:decorate id="subGroupField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductItem.subGroup']}</ui:define>
-                    <app:quickSearch id="quickSearchSubGroup"
-                                     textValue="productItemCostUnitReportAction.subGroup.subGroupCode"
-                                     value="#{productItemCostUnitReportAction.subGroup}"
-                                     searchField="subGroupCode"
-                                     alias="subGroup"
-                                     reRender="subGroupField , groupField "
-                                     tabindex="10">
-                        <ui:define name="restrictions">
-                            <app:restriction
-                                    condition="subGroup.group = #{productItemCostUnitReportAction.group}"/>
-                            <app:restriction
-                                    condition="subGroup.state != #{enumerationUtil.getEnumValue('com.encens.khipus.model.warehouse.SubGroupState', 'BLO')}"/>
-                        </ui:define>
-                    </app:quickSearch>
-                    <app:selectPopUp id="subGroup"
-                                     textValue="#{productItemCostUnitReportAction.subGroup.fullName}"
-                                     value="#{productItemCostUnitReportAction.subGroup}"
-                                     clearAction="productItemCostUnitReportAction.cleanSubGroup()"
-                                     searchModalPanel="subGroupListModalPanel"
-                                     dataModel="#{subGroupSearchDataModel}"
-                                     reRender="subGroupField"
-                                     hotKeySelect="alt+4"/>
+                <s:decorate id="initDateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['Reports.warehouseEvolution.page.initDate']}</ui:define>
+                    <rich:calendar id="initDate"
+                                   value="#{orderReceiptReportAction.dateOrder}"
+                                   datePattern="#{messages['patterns.date']}"
+                                   enableManualInput="true"
+                                   required="true"
+                                   tabindex="4">
+                        <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                           timeZone="#{sessionUser.timeZone}"
+                                           type="date"/>
+                    </rich:calendar>
                 </s:decorate>
             </h:panelGrid>
         </rich:panel>

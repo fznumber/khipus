@@ -47,6 +47,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private String date;
     private String state;
     private int postXIniAmount,widthIniAmount;
+    private Date dateOrder;
 
     @In
     private AccountItemService accountItemService;
@@ -54,8 +55,12 @@ public class OrderReceiptReportAction extends GenericReportAction {
     @In
     private ClientOrderService clientOrderService;
 
-    private List<AccountItemServiceBean.ArticleReport> accountItems = new ArrayList<AccountItemServiceBean.ArticleReport>();
-    private List<ClientOrder> clientOrders = new ArrayList<ClientOrder>();
+    private List<AccountItemServiceBean.OrderClient> orderClients = new ArrayList<AccountItemServiceBean.OrderClient>();
+    private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
+    private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
+    private List<Integer> totals = new ArrayList<Integer>();
+    private int amountY,amountX,amountH,amountW;
+    private int clientY,clientX,clientH,clientW;
 
     public void generateReport() {
         log.debug("Generate OrderReceiptReport........");
@@ -63,17 +68,27 @@ public class OrderReceiptReportAction extends GenericReportAction {
         String templatePath = "/customers/reports/orderReportReceipt.jrxml";
         String fileName = "Orden_Report_Receipt";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        date = sdf.format(new Date());
+        date = sdf.format(dateOrder);
+
         state = "Prueba";
         Map params = new HashMap();
+        distributors = accountItemService.findDistributor(dateOrder);
+        orderItems = accountItemService.findOrderItem(dateOrder);
 
-        accountItems =  accountItemService.findAccountItem();
+
 
         params.putAll(getCommonDocumentParamsInfo());
 
         String query = "select * from USER01_DAF.per_insts\n" +
                        "where rownum = 1\n";
 
+      /*  String query ="select pe.ap,pe.am , pe.nom, ped.pedido from USER01_DAF.per_insts pi\n" +
+                "inner join USER01_DAF.personas pe\n" +
+                "on pe.nro_doc = pi.nro_doc\n" +
+                "inner join USER01_DAF.pedidos ped\n" +
+                "on ped.id = pi.id\n" +
+                "where ped.fecha_entrega = :date \n" +
+                "and ped.estado_pedido = 'PEN' ";*/
         setReportFormat(ReportFormat.PDF);
 
         typedReportData = getReport(
@@ -85,11 +100,42 @@ public class OrderReceiptReportAction extends GenericReportAction {
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-        JRTemplatePrintText temp_customer = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(10)));
-        //listar clientes
-        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(10)));
+        JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(3)));
+        JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
+        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(2)));
+        temp_client.setHeight(9);
+        temp_amount.setHeight(9);
 
-        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(createCellCustomer(jasperPrint, temp_customer, temp_customer.getY(), temp_customer.getHeight(), "prueba"));
+        amountY = temp_amount.getY();
+        amountX = temp_amount.getX();
+        amountH = temp_amount.getHeight();
+        amountW = temp_amount.getWidth();
+        clientX = temp_client.getX();
+        clientY = temp_client.getY();
+        clientH = temp_client.getHeight();
+        clientW = temp_client.getWidth();
+        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateHeader(temp_product));
+        JRPrintPage tempPage = ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0)));
+
+        for(BigDecimal distributor: distributors)
+        {
+            orderClients =  accountItemService.findClientsOrder(dateOrder,distributor);
+            String nameDistributor = accountItemService.getNameEmployeed(distributor);
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor));
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateAmounts(temp_amount));
+
+        }
+
+       /* typedReportData.getJasperPrint().getPages().add(tempPage);
+
+
+            orderClients =  accountItemService.findClientsOrder(dateOrder,distributors.get(0));
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().clear();
+        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateHeader(temp_product));
+
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateClients(temp_client));
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateAmounts(temp_amount));*/
+
 
 
         try {
@@ -101,18 +147,101 @@ public class OrderReceiptReportAction extends GenericReportAction {
         }
     }
 
-    private List<JRTemplatePrintText> createCellCustomer(JasperPrint jasperPrint,JRTemplatePrintText temp, int posY, int height,String valor){
-        int y = posY;
+    private List<JRTemplatePrintText> generateAmounts(JRTemplatePrintText temp){
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
-        for(AccountItemServiceBean.ArticleReport articleReport: accountItems)
+        int auxY = amountY;
+        int auxX = amountX;
+        int lastY= 0;
+        Integer val = 0;
+        Integer total = 0;
+        totals.clear();
+        for(AccountItemServiceBean.OrderItem item : orderItems)
         {
-            //printTextList.add(createCell(temp,articleReport.getName(),height));
+
+            for(AccountItemServiceBean.OrderClient client:orderClients)
+            {
+                client.setPosX(amountY);
+                client.setPosY(temp.getY());
+                val =  accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+                JRTemplatePrintText printText = createCellY(temp,val.toString(), amountY);
+                printText.setX(amountX);
+                printTextList.add(printText);
+                amountY = amountY+amountH;
+                total += val;
+            }
+            JRTemplatePrintText printText = createCellY(temp,total.toString(), amountY);
+            printText.setX(amountX);
+            printTextList.add(printText);
+            amountX = amountX+amountW;
+            lastY = amountY;
+            amountY = auxY;
+            total  = 0;
+
+        }
+        amountY = lastY+amountH+10;
+        amountX = auxX;
+        return printTextList;
+    }
+
+    private List<JRTemplatePrintText> generateClients(JRTemplatePrintText temp, String nameDistributor){
+        List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
+
+
+        for(AccountItemServiceBean.OrderClient client:orderClients)
+        {
+            client.setPosX(clientX);
+            client.setPosY(temp.getY());
+            printTextList.add(createCellY(temp,client.getName(), clientY));
+            clientY = clientY+clientH;
+        }
+        printTextList.add(createCellY(temp,nameDistributor+" - TOTAL: ", clientY));
+        clientY = clientY+clientH+10;
+        return printTextList;
+    }
+
+    private List<JRTemplatePrintText> generateHeader(JRTemplatePrintText temp)
+    {
+        List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
+        int x = temp.getX();
+        int w = temp.getWidth();
+        for(AccountItemServiceBean.OrderItem orderItem:orderItems)
+        {
+            orderItem.setPosX(x);
+            orderItem.setPosY(temp.getY());
+            printTextList.add(createCellX(temp, orderItem.getNameItem(), x));
+            x = x+w;
+
         }
 
         return printTextList;
     }
 
-    private JRTemplatePrintText createCell(JRTemplatePrintText temp, String valor, int height,int posY)
+    private JRTemplatePrintText createCellX(JRTemplatePrintText temp, String valor,int posX)
+    {
+        JRTemplateText templateText = new JRTemplateText(temp.getOrigin(),temp.getDefaultStyleProvider());
+        templateText.setHorizontalAlignment(HorizontalAlignEnum.RIGHT);
+        templateText.setVerticalAlignment(VerticalAlignEnum.MIDDLE);
+        templateText.copyLineBox(temp.getLineBox());
+        templateText.setStyle(temp.getTemplate().getStyle());
+        templateText.setFontName(temp.getFontName());
+        templateText.setFontSize(temp.getFontSize());
+        templateText.setMode(temp.getModeValue());
+        JRTemplatePrintText printText = new JRTemplatePrintText(templateText);
+        //printText = temp;
+        printText.setText(valor);
+        printText.setRunDirection(RunDirectionEnum.LTR);
+        printText.setLineSpacingFactor(1.2578125f);
+        printText.setLeadingOffset(-1.7578125f);
+        printText.setTextHeight(10.0625f);
+        printText.setY(temp.getY());
+        printText.setX(posX);
+        printText.setHeight(temp.getHeight());
+        printText.setWidth(temp.getWidth());
+
+        return printText;
+    }
+
+    private JRTemplatePrintText createCellY(JRTemplatePrintText temp, String valor,int posY)
     {
         JRTemplateText templateText = new JRTemplateText(temp.getOrigin(),temp.getDefaultStyleProvider());
         templateText.setHorizontalAlignment(HorizontalAlignEnum.RIGHT);
@@ -130,7 +259,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         printText.setLeadingOffset(-1.7578125f);
         printText.setTextHeight(10.0625f);
         printText.setX(temp.getX());
-        printText.setY(posY+height);
+        printText.setY(posY);
         printText.setHeight(temp.getHeight());
         printText.setWidth(temp.getWidth());
 
@@ -168,7 +297,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private Map<String, Object> getCommonDocumentParamsInfo() {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("position", "prueba");
+        paramMap.put("dateOrder", date);
         paramMap.put("userLoginParam", "prueba");
         paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
         paramMap.put("dateParam", "prueba");
@@ -178,6 +307,8 @@ public class OrderReceiptReportAction extends GenericReportAction {
         paramMap.put("numOrder", "prueba");
         return paramMap;
     }
+
+
 
     class OrderReport
     {
@@ -201,4 +332,11 @@ public class OrderReceiptReportAction extends GenericReportAction {
         }
     }
 
+    public Date getDateOrder() {
+        return dateOrder;
+    }
+
+    public void setDateOrder(Date dateOrder) {
+        this.dateOrder = dateOrder;
+    }
 }
