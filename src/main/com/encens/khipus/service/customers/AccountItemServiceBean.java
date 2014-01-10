@@ -32,38 +32,71 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
 
     @In(value = "#{entityManager}")
     private EntityManager em;
-
+    //TODO: EL ESTADO DE LA ORDEN TIENE QUE IR DE ACUERDO CON LA TABLA CUANDO HAYA ESTADOS OFICIALES
     @Override
-    public List<OrderClient> findClientsOrder(Date date,BigDecimal distribuidor) {
+    public List<OrderClient> findClientsOrder(Date date,BigDecimal distribuidor,String stateOrder) {
         List<OrderClient> clientOrders = new ArrayList<OrderClient>();
         try{
-
-            List<Object[]> datas = em.createNativeQuery("select \n" +
-                    "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
-                    ",ped.pedido\n" +
-                    "from USER01_DAF.per_insts pi\n" +
-                    "inner join USER01_DAF.pedidos ped\n" +
-                    "on pi.id = ped.id\n" +
-                    "inner join USER01_DAF.personas pe\n" +
-                    "on pi.id = pe.pi_id\n" +
-                    "where ped.fecha_entrega = :date\n" +
-                    "and ped.estado_pedido = 'PEN'\n" +
-                    "and ped.distribuidor = :distribuidor\n" +
-                    "union all\n" +
-                    "select \n" +
-                    "nvl(it.razon_soc,' ') \n" +
-                    ",ped.pedido\n" +
-                    "from USER01_DAF.per_insts pi\n" +
-                    "inner join USER01_DAF.pedidos ped\n" +
-                    "on pi.id = ped.id\n" +
-                    "inner join USER01_DAF.instituciones it\n" +
-                    "on pi.id = it.pi_id\n" +
-                    "where ped.fecha_entrega = :date\n" +
-                    "and ped.estado_pedido = 'PEN'\n" +
-                    "and ped.distribuidor = :distribuidor\n")
-                    .setParameter("date", date, TemporalType.DATE)
-                    .setParameter("distribuidor",distribuidor)
-                    .getResultList();
+            List<Object[]> datas = new ArrayList<Object[]>();
+            if(stateOrder == "TODOS")
+            {
+                datas = em.createNativeQuery("select \n" +
+                        "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.personas pe\n" +
+                        "on pi.id = pe.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido <> 'ANL'\n" +
+                        "and ped.distribuidor = :distribuidor\n" +
+                        "union all\n" +
+                        "select \n" +
+                        "nvl(it.razon_soc,' ') \n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.instituciones it\n" +
+                        "on pi.id = it.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido <> 'ANL'\n" +
+                        "and ped.distribuidor = :distribuidor\n")
+                        .setParameter("date", date, TemporalType.DATE)
+                        .setParameter("distribuidor",distribuidor)
+                        .getResultList();
+            }
+            else
+            {
+                datas = em.createNativeQuery("select \n" +
+                        "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.personas pe\n" +
+                        "on pi.id = pe.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido = :stateOrder\n" +
+                        "and ped.distribuidor = :distribuidor\n" +
+                        "union all\n" +
+                        "select \n" +
+                        "nvl(it.razon_soc,' ') \n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.instituciones it\n" +
+                        "on pi.id = it.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido = :stateOrder\n" +
+                        "and ped.distribuidor = :distribuidor\n")
+                        .setParameter("date", date, TemporalType.DATE)
+                        .setParameter("distribuidor",distribuidor)
+                        .setParameter("stateOrder",stateOrder)
+                        .getResultList();
+            }
 
             for(Object[] obj: datas)
             {
@@ -131,17 +164,37 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     }
 
     @Override
-    public List<OrderItem> findOrderItem(Date dateOrder){
+    public List<OrderItem> findOrderItem(Date dateOrder,String stateOrder){
         List<OrderItem> orderItems = new ArrayList<OrderItem>();
         try{
-            List<Object[]> datas = em.createNativeQuery("select distinct ia.nombrecorto,ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
-                    "inner join WISE.inv_articulos ia\n" +
-                    "on ia.cod_art = ap.cod_art\n" +
-                    "inner join USER01_DAF.pedidos pe\n" +
-                    "on ap.pedido = pe.pedido\n" +
-                    "where pe.fecha_entrega = :dateOrder")
-                    .setParameter("dateOrder",dateOrder,TemporalType.DATE)
-                    .getResultList();
+            List<Object[]> datas = new ArrayList<Object[]>();
+            if(stateOrder == "TODOS")
+            {
+                datas = em.createNativeQuery("select distinct ia.nombrecorto,ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
+                        "inner join WISE.inv_articulos ia\n" +
+                        "on ia.cod_art = ap.cod_art\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on ap.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "or pe.ESTADO_PEDIDO = 'PEN'\n"+
+                        "or pe.ESTADO_PEDIDO = 'ECH'\n")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .getResultList();
+            }
+            else
+            {
+                datas = em.createNativeQuery("select distinct ia.nombrecorto,ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
+                        "inner join WISE.inv_articulos ia\n" +
+                        "on ia.cod_art = ap.cod_art\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on ap.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "and pe.ESTADO_PEDIDO =:stateOrder")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .setParameter("stateOrder",stateOrder)
+                        .getResultList();
+            }
+
             for(Object[] obj: datas)
             {
                 OrderItem item = new OrderItem();

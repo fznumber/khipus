@@ -19,9 +19,9 @@ import java.util.List;
 @Local
 public interface AccountItemService extends GenericService {
 
-    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,BigDecimal distribuidor);
+    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,BigDecimal distribuidor,String stateOrder);
 
-    public List<AccountItemServiceBean.OrderItem> findOrderItem(Date dateOrder);
+    public List<AccountItemServiceBean.OrderItem> findOrderItem(Date dateOrder,String stateOrder);
 
     public Integer getAmount(String codArt,String codPedido);
 

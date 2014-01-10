@@ -1,20 +1,14 @@
 package com.encens.khipus.action.customers.reports;
 
-import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.action.reports.GenericReportAction;
-import com.encens.khipus.action.reports.PageFormat;
-import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
-import com.encens.khipus.model.admin.User;
-import com.encens.khipus.model.customers.AccountItem;
-import com.encens.khipus.model.customers.ClientOrder;
-import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.customers.ClientOrderEstate;
+import com.encens.khipus.model.warehouse.ProductItemState;
 import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.customers.AccountItemService;
 import com.encens.khipus.service.customers.AccountItemServiceBean;
 import com.encens.khipus.service.customers.ClientOrderService;
 import com.encens.khipus.util.MessageUtils;
-import com.encens.khipus.util.RoundUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -24,6 +18,7 @@ import net.sf.jasperreports.engine.type.HorizontalAlignEnum;
 import net.sf.jasperreports.engine.type.RunDirectionEnum;
 import net.sf.jasperreports.engine.type.VerticalAlignEnum;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -45,7 +40,7 @@ import java.util.*;
 public class OrderReceiptReportAction extends GenericReportAction {
 
     private String date;
-    private String state;
+    private ClientOrderEstate stateOrder = ClientOrderEstate.ALL;
     private int postXIniAmount,widthIniAmount;
     private Date dateOrder;
 
@@ -63,6 +58,11 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private int clientY,clientX,clientH,clientW;
     private Integer totalOrders = 0;
 
+    @Factory(value = "clientOrderStates", scope = ScopeType.STATELESS)
+    public ClientOrderEstate[] getClientOrderEstate() {
+        return ClientOrderEstate.values();
+    }
+
     public void generateReport() {
         log.debug("Generate OrderReceiptReport........");
         TypedReportData typedReportData;
@@ -71,10 +71,9 @@ public class OrderReceiptReportAction extends GenericReportAction {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         date = sdf.format(dateOrder);
 
-        state = "Prueba";
         Map params = new HashMap();
         distributors = accountItemService.findDistributor(dateOrder);
-        orderItems = accountItemService.findOrderItem(dateOrder);
+        orderItems = accountItemService.findOrderItem(dateOrder,ClientOrderEstate.getVal(stateOrder));
 
         params.putAll(getCommonDocumentParamsInfo());
 
@@ -99,9 +98,9 @@ public class OrderReceiptReportAction extends GenericReportAction {
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-        JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(3)));
-        JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
-        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(2)));
+        JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
+        JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(5)));
+        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(3)));
         temp_client.setHeight(9);
         temp_amount.setHeight(9);
 
@@ -115,28 +114,18 @@ public class OrderReceiptReportAction extends GenericReportAction {
         clientW = temp_client.getWidth();
         ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateHeader(temp_product));
         JRPrintPage tempPage = ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0)));
-
+        if(orderItems.size() > 0)
         for(BigDecimal distributor: distributors)
         {
-            orderClients =  accountItemService.findClientsOrder(dateOrder,distributor);
+            orderClients =  accountItemService.findClientsOrder(dateOrder,distributor,ClientOrderEstate.getVal(stateOrder));
             String nameDistributor = accountItemService.getNameEmployeed(distributor);
+
             ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor));
             ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateAmounts(temp_amount));
 
         }
-
-       /* typedReportData.getJasperPrint().getPages().add(tempPage);
-
-
-            orderClients =  accountItemService.findClientsOrder(dateOrder,distributors.get(0));
-            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().clear();
-        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateHeader(temp_product));
-
-            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateClients(temp_client));
-            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(1))).getElements().addAll(generateAmounts(temp_amount));*/
-
-
-
+        JRTemplatePrintText printText = (JRTemplatePrintText)((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(1);
+        printText.setText(totalOrders.toString());
         try {
             typedReportData.setJasperPrint(jasperPrint);
             GenerationReportData generationReportData = new GenerationReportData(typedReportData);
@@ -298,12 +287,8 @@ public class OrderReceiptReportAction extends GenericReportAction {
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dateOrder", date);
-        paramMap.put("userLoginParam", "prueba");
         paramMap.put("reportTitle", MessageUtils.getMessage("ProductionPlanning.orderInputOrMaterial"));
-        paramMap.put("dateParam", "prueba");
-        paramMap.put("estate", "prueba");
-        paramMap.put("nameProduct", "prueba");
-        paramMap.put("codeProduct", "prueba");
+        paramMap.put("stateOrder", ClientOrderEstate.getVal(stateOrder));
         paramMap.put("totalOrder", totalOrders.toString());
         return paramMap;
     }
@@ -338,5 +323,13 @@ public class OrderReceiptReportAction extends GenericReportAction {
 
     public void setDateOrder(Date dateOrder) {
         this.dateOrder = dateOrder;
+    }
+
+    public ClientOrderEstate getStateOrder() {
+        return stateOrder;
+    }
+
+    public void setStateOrder(ClientOrderEstate stateOrder) {
+        this.stateOrder = stateOrder;
     }
 }

@@ -23,21 +23,22 @@
             <h:panelGrid columns="1" width="100%" cellpadding="0" cellspacing="0" border="0"
                          columnClasses="width50percent">
 
-                <!--<s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductItem.state']}</ui:define>
+             <s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['Order.report.state']}</ui:define>
                     <h:selectOneMenu id="state"
-                                     value="#{productItemCostUnitReportAction.productItemState}"
+                                     value="#{orderReceiptReportAction.stateOrder}"
                                      styleClass="input"
+                                     required="true"
                                      tabindex="1">
-                        <s:selectItems value="#{productItemStates}"
+                        <s:selectItems value="#{clientOrderStates}"
                                        var="element"
                                        label="#{messages[element.resourceKey]}"
                                        noSelectionLabel=""
                                        hideNoSelectionLabel="false"/>
                         <s:convertEnum/>
                     </h:selectOneMenu>
-                </s:decorate>
-                <s:decorate id="executorUnitCodeField" template="/include/inputField.xhtml" styleClass="formRow">
+             </s:decorate>
+                   <!--<s:decorate id="executorUnitCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">
                         #{messages['InventoryManagement.executorUnitCode']}
                     </ui:define>
