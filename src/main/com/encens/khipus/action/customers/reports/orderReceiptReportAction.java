@@ -102,6 +102,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(5)));
         JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(6)));
         JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
+        //JRTemplatePrintText temp_total = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(7)));
         temp_client.setHeight(9);
         temp_amount.setHeight(9);
 
@@ -122,11 +123,13 @@ public class OrderReceiptReportAction extends GenericReportAction {
             orderClients =  accountItemService.findClientsOrder(dateOrder,distributor,ClientOrderEstate.getVal(stateOrder));
             String nameDistributor = accountItemService.getNameEmployeed(distributor);
 
+            //((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor,temp_total));
             ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor));
             ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateAmounts(temp_amount));
 
         }
-        //((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateTotals(temp_amount));
+        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateTotals(temp_amount));
+        ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().add(createCellY(temp_client,"   TOTAL GENERAL:", clientY));
         JRTemplatePrintText printText = (JRTemplatePrintText)((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(1);
         printText.setText(totalOrders.toString());
         try {
@@ -181,7 +184,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
             amountY = auxY;
 
             try{
-                totals.add(cont,totals.get(cont) +total);
+                totals.set(cont,totals.get(cont) +total);
             }catch (IndexOutOfBoundsException e)
             {
                 totals.add(total);
@@ -195,6 +198,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         return printTextList;
     }
 
+    //private List<JRTemplatePrintText> generateClients(JRTemplatePrintText temp, String nameDistributor,JRTemplatePrintText temp_total){
     private List<JRTemplatePrintText> generateClients(JRTemplatePrintText temp, String nameDistributor){
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
 
