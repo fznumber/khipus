@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouseVoucherReport" pageWidth="1400" pageHeight="611" whenNoDataType="AllSectionsNoDetail" columnWidth="1372" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14">
 	<property name="ireport.zoom" value="1.771561000000001"/>
-	<property name="ireport.x" value="624"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
 	<parameter name="reportTitle" class="java.lang.String"/>
@@ -11,7 +11,7 @@
 	<title>
 		<band height="15" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="1" width="449" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="1" width="407" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -21,14 +21,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["PEDIDOS CORRESPONDIENTES AL: "+$P{dateOrder} +" ("+$P{stateOrder}+")"+"                CANTIDAD:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="449" y="1" width="45" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="407" y="1" width="45" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalOrder} ]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalOrder}]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
