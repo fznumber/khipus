@@ -11,17 +11,17 @@
 	<title>
 		<band height="15" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="1" width="407" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="0" y="1" width="371" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["PEDIDOS CORRESPONDIENTES AL: "+$P{dateOrder} +" ("+$P{stateOrder}+")"+"                CANTIDAD:"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["PEDIDOS CORRESPONDIENTES AL: "+$P{dateOrder} +"                CANTIDAD:"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="407" y="1" width="45" height="12"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="371" y="1" width="23" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -29,6 +29,16 @@
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{totalOrder}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="394" y="1" width="114" height="12"/>
+				<box padding="1">
+					<pen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["("+$P{stateOrder}+")"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

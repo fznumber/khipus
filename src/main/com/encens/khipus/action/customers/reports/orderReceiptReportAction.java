@@ -57,6 +57,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private int amountY,amountX,amountH,amountW;
     private int clientY,clientX,clientH,clientW;
     private Integer totalOrders = 0;
+    private Integer totalGeneral = 0;
 
     @Factory(value = "clientOrderStates", scope = ScopeType.STATELESS)
     public ClientOrderEstate[] getClientOrderEstate() {
@@ -98,9 +99,9 @@ public class OrderReceiptReportAction extends GenericReportAction {
         );
 
         JasperPrint jasperPrint = typedReportData.getJasperPrint();
-        JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
-        JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(5)));
-        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(3)));
+        JRTemplatePrintText temp_client = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(5)));
+        JRTemplatePrintText temp_amount = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(6)));
+        JRTemplatePrintText temp_product = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(4)));
         temp_client.setHeight(9);
         temp_amount.setHeight(9);
 
@@ -114,6 +115,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         clientW = temp_client.getWidth();
         ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateHeader(temp_product));
         JRPrintPage tempPage = ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0)));
+        totals.clear();
         if(orderItems.size() > 0)
         for(BigDecimal distributor: distributors)
         {
@@ -124,6 +126,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
             ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateAmounts(temp_amount));
 
         }
+        //((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateTotals(temp_amount));
         JRTemplatePrintText printText = (JRTemplatePrintText)((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(1);
         printText.setText(totalOrders.toString());
         try {
@@ -135,6 +138,18 @@ public class OrderReceiptReportAction extends GenericReportAction {
         }
     }
 
+    private List<JRTemplatePrintText> generateTotals(JRTemplatePrintText temp){
+        List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
+        for(Integer total:totals)
+        {
+            JRTemplatePrintText printText = createCellY(temp,total.toString(), amountY);
+            printText.setX(amountX);
+            printTextList.add(printText);
+            amountX = amountX+amountW;
+        }
+        return printTextList;
+    }
+
     private List<JRTemplatePrintText> generateAmounts(JRTemplatePrintText temp){
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
         int auxY = amountY;
@@ -142,7 +157,8 @@ public class OrderReceiptReportAction extends GenericReportAction {
         int lastY= 0;
         Integer val = 0;
         Integer total = 0;
-        totals.clear();
+        int cont = 0;
+
         for(AccountItemServiceBean.OrderItem item : orderItems)
         {
 
@@ -163,8 +179,16 @@ public class OrderReceiptReportAction extends GenericReportAction {
             amountX = amountX+amountW;
             lastY = amountY;
             amountY = auxY;
-            total  = 0;
 
+            try{
+                totals.add(cont,totals.get(cont) +total);
+            }catch (IndexOutOfBoundsException e)
+            {
+                totals.add(total);
+            }
+
+            total  = 0;
+            cont++;
         }
         amountY = lastY+amountH+10;
         amountX = auxX;
