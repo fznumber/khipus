@@ -357,13 +357,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     styleClass="button"
                     rendered="#{productionPlanningAction.managed}"/>
 
-            <a4j:commandButton
+           <!-- <a4j:commandButton
                     value="#{messages['ProductionPlanning.generateValeOrder']}"
                     styleClass="button"
                     rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED' and !(productionOrderForPlanning.estateOrder eq 'TABULATED')}">
                 <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
                                        operation="show"/>
-            </a4j:commandButton>
+            </a4j:commandButton>-->
 
         </s:div>
 
