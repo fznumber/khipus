@@ -1262,7 +1262,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
-            //setTotalIndiRectCost(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         //}
@@ -1443,7 +1443,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
-            //setTotalIndiRectCost(productionOrder);
+            setTotalIndiRectCost(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         String outcome = update();

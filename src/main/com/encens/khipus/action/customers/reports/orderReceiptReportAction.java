@@ -105,8 +105,9 @@ public class OrderReceiptReportAction extends GenericReportAction {
         JRTemplatePrintText temp_total = ((JRTemplatePrintText) (((JRPrintPage) (jasperPrint.getPages().get(0))).getElements().get(7)));
         temp_total.setX(temp_amount.getX());
         temp_total.setY(temp_amount.getY());
-        temp_client.setHeight(9);
-        temp_amount.setHeight(9);
+        temp_client.setHeight(10);
+        temp_amount.setHeight(10);
+        temp_total.setHeight(10);
 
         amountY = temp_amount.getY();
         amountX = temp_amount.getX();

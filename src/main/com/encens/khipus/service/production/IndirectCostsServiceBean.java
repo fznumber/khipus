@@ -238,9 +238,10 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
 
         return total.doubleValue() / 30;
     }
-
+    //TODO: se utilizara la cantidad esperada en lugar de la producida
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
-        Double total = productionOrder.getProducedAmount();
+        //Double total = productionOrder.getProducedAmount();
+        Double total = productionOrder.getExpendAmount();
         String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
         Double amount = 0.0;
         if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
@@ -249,7 +250,8 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         if (unitMeasure == "KG" || unitMeasure == "LT")
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
-        total = amount * productionOrder.getProducedAmount();
+        //total = amount * productionOrder.getProducedAmount();
+        total = amount * productionOrder.getExpendAmount();
         return total;
     }
 }
