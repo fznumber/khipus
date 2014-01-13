@@ -37,4 +37,6 @@ public interface ProductDeliveryService extends GenericService {
             ProductItemNotFoundException;
 
     ProductDelivery select(ProductDelivery entity);
+
+    public void updateOrderEstate(String invoiceNumber);
 }

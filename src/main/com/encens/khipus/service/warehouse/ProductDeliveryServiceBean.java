@@ -58,6 +58,13 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         return getEntityManager().find(ProductDelivery.class, entity.getId());
     }
 
+    @Override
+    public void updateOrderEstate(String invoiceNumber) {
+        getEntityManager().createNamedQuery("update USER01_DAF.pedidos set estado_pedido = 'ECH' where pedido = :pedido")
+                                           .setParameter("pedido",invoiceNumber)
+                                           .executeUpdate();
+    }
+
     @SuppressWarnings(value = "unchecked")
     public ProductDelivery create(String invoiceNumber, String warehouseDescription)
             throws InventoryException,

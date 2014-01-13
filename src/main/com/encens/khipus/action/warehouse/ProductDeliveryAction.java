@@ -69,6 +69,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                     MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", getInstance().getInvoiceNumber()));
             addSoldProductDeliveredInfoMessage();
             select(productDelivery);
+            productDeliveryService.updateOrderEstate(getInstance().getInvoiceNumber());
             return Outcome.SUCCESS;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
