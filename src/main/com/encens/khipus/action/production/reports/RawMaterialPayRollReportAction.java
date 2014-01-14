@@ -500,7 +500,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/production/reports/" + fileReport,
-                getSqlOld(),
+                getSqlCollected(),
                 params,
                 "rotatoryFundReport");
 
@@ -531,6 +531,45 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 "                              AND zp.idzonaproductiva = " + zone.getId().toString() + "\n" +
                 "                              order by sa.fecha asc\n";
 
+        return sql;
+    }
+
+    private String getSqlCollected(){
+
+        int initDay = periodo.getInitDay();
+        int endDay = periodo.getEndDay(month.getValue() + 1, gestion.getYear());
+        int cont = 1;
+        String sql = "";
+        int month_act = (month.getValue()) + 1;
+        sql += "select productor\n" ;
+
+        for (int i = initDay; i <= endDay; i++) {
+            //sql += ((cont == 1) ? "" : " , ")+"max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0)) AS D"+cont+"\n";
+            sql += ", max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0)) AS D"+cont+"\n";
+            cont++;
+        }
+        cont = 1;
+        if (periodo.getResourceKey().toString().compareTo("Periodo.first") == 0) {
+            sql += ", 0 AS D16";
+        }
+        for (int i = initDay; i <= endDay; i++) {
+            sql += ((cont == 1) ? "," : " + ")+"max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0))\n";
+            cont++;
+        }
+
+        sql += "       TOTAL\n" +
+                "from (\n" +
+                "select pe.nombres||' '||pe.apellidopaterno||' '||pe.apellidomaterno as productor ,am.cantidad as cantidad ,sa.fecha as fecha from acopiomateriaprima am\n" +
+                "inner join sesionacopio sa\n" +
+                "on am.idsesionacopio =sa.idsesionacopio\n" +
+                "inner join persona pe\n" +
+                "on pe.idpersona = am.idproductormateriaprima\n" +
+                "where sa.fecha between to_date('" + initDay + "/" + month_act + "/" + gestion.getYear() + "') and to_date('" + endDay + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy')\n" +
+                "and sa.idzonaproductiva = "+ zone.getId().toString() + "\n" +
+                "order by sa.fecha\n" +
+                ")\n" +
+                "group by productor\n" +
+                "order by productor asc";
         return sql;
     }
 
