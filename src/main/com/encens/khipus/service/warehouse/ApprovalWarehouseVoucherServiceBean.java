@@ -313,8 +313,8 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             gloss[1] = gloss[1].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
         }
 
-        //warehouseAccountEntryService.createAccountEntry(warehouseVoucher, gloss);
-        warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher,warehouseVoucher.getExecutorUnit(),warehouseVoucher.getCostCenterCode(),gloss[0],accountOrderProductions);
+       //todo: este servicio crea el asiento contable
+        //warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher,warehouseVoucher.getExecutorUnit(),warehouseVoucher.getCostCenterCode(),gloss[0],accountOrderProductions);
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
     }

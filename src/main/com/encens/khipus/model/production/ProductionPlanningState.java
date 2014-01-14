@@ -4,5 +4,6 @@ public enum ProductionPlanningState {
     PENDING,
     EXECUTED,
     FINALIZED,
-    TABULATED
+    TABULATED,
+    INSTOCK
 }
