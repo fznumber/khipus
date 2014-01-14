@@ -46,24 +46,24 @@
 		<band splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="24">
+		<band height="33">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="155" height="24"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="155" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Courier New" size="10" isBold="false" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="10" isBold="false" pdfFontName="Courier"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["CLIENTES"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="155" y="0" width="31" height="24"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="155" y="0" width="31" height="33"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Courier New" size="7" isBold="true" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Courier"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
@@ -77,7 +77,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Courier New" size="7" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="6" pdfFontName="Courier"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
@@ -87,17 +87,17 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Courier New" size="7" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" pdfFontName="Courier"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="155" height="12" forecolor="#000000" backcolor="#E8E7E7"/>
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="186" y="0" width="155" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Courier New" size="7" pdfFontName="Courier"/>
+					<font fontName="SansSerif" size="8" isBold="true" pdfFontName="Courier"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["total"]]></textFieldExpression>
 			</textField>

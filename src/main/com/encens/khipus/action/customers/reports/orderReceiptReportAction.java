@@ -88,7 +88,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
                 "on ped.id = pi.id\n" +
                 "where ped.fecha_entrega = :date \n" +
                 "and ped.estado_pedido = 'PEN' ";*/
-        setReportFormat(ReportFormat.PDF);
+        //setReportFormat(ReportFormat.PDF);
 
         typedReportData = getReport(
                 fileName
