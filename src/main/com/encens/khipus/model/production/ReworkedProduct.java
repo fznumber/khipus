@@ -2,9 +2,12 @@ package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.contacts.Organization;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
 
@@ -34,22 +37,21 @@ public class ReworkedProduct implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ReworkedProduct_Generator")
     private Long id;
 
-    @Column(name = "ESTADO", nullable = true)
-    private String estate;
+    @Column(name = "CANTIDAD", nullable = true)
+    private Integer amount;
 
-    @Column(name = "DESCRIPCION", nullable = true)
-    private String description;
+    @OneToOne(fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
+    private MetaProduct metaProduct;
 
-    @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
-    private String productItemCode;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @NotNull
+    private Company company;
 
-    @Column(name = "IDCOMPANIA", insertable = false, updatable = false, nullable = false)
-    @Length(max = 2)
-    private String companyNumber;
-
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
-    private ProductionOrder productionOrder;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    private Reworked reworked;
 
     public Long getId() {
         return id;
@@ -57,38 +59,6 @@ public class ReworkedProduct implements BaseModel {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEstate() {
-        return estate;
-    }
-
-    public void setEstate(String estate) {
-        this.estate = estate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getProductItemCode() {
-        return productItemCode;
-    }
-
-    public void setProductItemCode(String productItemCode) {
-        this.productItemCode = productItemCode;
-    }
-
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
     }
 
 }

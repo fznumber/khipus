@@ -78,6 +78,11 @@ public class ProductionPlanning implements BaseModel {
     @OrderBy("code desc")
     private List<ProductionOrder> productionOrderList = new ArrayList<ProductionOrder>();
 
+    @OneToMany(mappedBy = "productionPlanningReprocessed", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    //@OrderBy("code desc")
+    private List<ProductionOrder> productReprocessedList = new ArrayList<ProductionOrder>();
+
     public Company getCompany() {
         return company;
     }
@@ -136,5 +141,13 @@ public class ProductionPlanning implements BaseModel {
 
     public String getLabelDate() {
         return DateUtils.format(this.date, MessageUtils.getMessage("patterns.date"));
+    }
+
+    public List<ProductionOrder> getProductReprocessedList() {
+        return productReprocessedList;
+    }
+
+    public void setProductReprocessedList(List<ProductionOrder> productReprocessedList) {
+        this.productReprocessedList = productReprocessedList;
     }
 }
