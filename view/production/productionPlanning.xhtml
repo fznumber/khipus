@@ -79,7 +79,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <a4j:commandButton id="editFormulaButton" value="#{messages['ProductionPlanning.editFormulaButton']}"
                    action="#{productionPlanningAction.initEditFormula}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
-                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder)}"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct)}"
+                   ajaxSingle="true"/>
+
+<a4j:commandButton id="createReprocess" value="#{messages['ProductionPlanning.createReprocess']}"
+                   action="#{productionPlanningAction.setShowReprocessedProduct(true)}"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct)}"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
                    ajaxSingle="true"/>
 
 <a4j:region>
@@ -152,6 +158,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </h:inputText>
         </s:decorate>-->
     </h:panelGrid>
+    <s:div>
+        <ui:include src="/production/reprocessedProduct.xhtml"/>
+    </s:div>
     <s:div rendered="#{!(productionPlanningAction.formulaState eq 'NONE') and productionOrderForPlanning.estateOrder eq 'PENDING'}">
         <table style="width:100%">
             <tr>

@@ -74,6 +74,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showInputDetail = false;
     private Boolean showDetailOrder = false;
     private Boolean showProductionOrders = true;
+    private Boolean showReprocessedProduct = false;
 
     private Double expendOld;
     private Double containerOld;
@@ -1769,5 +1770,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowProductionOrders(Boolean showProductionOrders) {
         this.showProductionOrders = showProductionOrders;
+    }
+
+    public Boolean getShowReprocessedProduct() {
+        return showReprocessedProduct;
+    }
+
+    public void setShowReprocessedProduct(Boolean showReprocessedProduct) {
+        this.showReprocessedProduct = showReprocessedProduct;
     }
 }
