@@ -117,7 +117,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     public Integer getAmount(String codArt,String codPedido){
         BigDecimal result = BigDecimal.ZERO;
         try{
-          result = (BigDecimal)em.createNativeQuery("SELECT nvl(cantidad,0)+ nvl(reposicion,0) FROM USER01_DAF.articulos_pedido \n" +
+          result = (BigDecimal)em.createNativeQuery("SELECT nvl(cantidad,0)+ nvl(reposicion,0)+ nvl(promocion,0) FROM USER01_DAF.articulos_pedido \n" +
                   "where cod_art = :codArt\n" +
                   "and pedido = :codPedido")
                  .setParameter("codPedido",codPedido)
@@ -176,8 +176,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         "inner join USER01_DAF.pedidos pe\n" +
                         "on ap.pedido = pe.pedido\n" +
                         "where pe.fecha_entrega = :dateOrder\n" +
-                        "or pe.ESTADO_PEDIDO = 'PEN'\n"+
-                        "or pe.ESTADO_PEDIDO = 'ECH'\n")
+                        "and pe.estado_pedido <> 'ANL'\n")
                         .setParameter("dateOrder",dateOrder,TemporalType.DATE)
                         .getResultList();
             }
