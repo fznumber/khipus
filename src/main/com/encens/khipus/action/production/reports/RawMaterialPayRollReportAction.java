@@ -500,7 +500,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/production/reports/" + fileReport,
-                getSqlCollected(),
+               // getSqlCollected(),
+                getSqlOld(),
                 params,
                 "rotatoryFundReport");
 
