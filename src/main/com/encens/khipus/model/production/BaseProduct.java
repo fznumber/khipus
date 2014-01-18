@@ -8,6 +8,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,28 +20,28 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@TableGenerator(name = "Reworked_Generator",
+@TableGenerator(name = "BaseProduct_Generator",
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
-        pkColumnValue = "ESTADOARTICULO",
+        pkColumnValue = "PRODUCTOBASE",
         allocationSize = 10)
 
 @Entity
-@Table(name = "PRODUCTOREPROCESADO")
+@Table(name = "PRODUCTOBASE")
 @Filter(name = "companyFilter")
 @EntityListeners(CompanyListener.class)
-public class Reworked implements BaseModel {
+public class BaseProduct implements BaseModel {
 
     @Id
-    @Column(name = "IDREPROCESADO", columnDefinition = "NUMBER(24,0)", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "Reworked_Generator")
+    @Column(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "BaseProduct_Generator")
     private Long id;
 
     @Column(name = "UNIDADES", nullable = true)
     private Integer units;
 
-    @Column(name = "VOLUMEN", nullable = true)
+    @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "NUMBER(8,2)")
     private Double volume;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -49,17 +50,23 @@ public class Reworked implements BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
-    private ProductionPlanning productionPlanningReprocessed;
+    private ProductionPlanning productionPlanningBase;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 
-    @OneToMany(mappedBy = "reworked", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "baseProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ReworkedProduct> reworkedProducts = new ArrayList<ReworkedProduct>();
+    private List<SingleProduct> singleProducts = new ArrayList<SingleProduct>();
 
+    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal totalInput = new BigDecimal(0.0);
+
+    @OneToMany(mappedBy = "baseProductInput", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderInput> orderMaterials = new ArrayList<OrderInput>();
 
     public Long getId() {
         return id;
@@ -93,12 +100,12 @@ public class Reworked implements BaseModel {
         this.metaProduct = metaProduct;
     }
 
-    public ProductionPlanning getProductionPlanningReprocessed() {
-        return productionPlanningReprocessed;
+    public ProductionPlanning getProductionPlanningBase() {
+        return productionPlanningBase;
     }
 
-    public void setProductionPlanningReprocessed(ProductionPlanning productionPlanningReprocessed) {
-        this.productionPlanningReprocessed = productionPlanningReprocessed;
+    public void setProductionPlanningBase(ProductionPlanning productionPlanningBase) {
+        this.productionPlanningBase = productionPlanningBase;
     }
 
     public Company getCompany() {
@@ -107,5 +114,29 @@ public class Reworked implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<SingleProduct> getSingleProducts() {
+        return singleProducts;
+    }
+
+    public void setSingleProducts(List<SingleProduct> singleProducts) {
+        this.singleProducts = singleProducts;
+    }
+
+    public BigDecimal getTotalInput() {
+        return totalInput;
+    }
+
+    public void setTotalInput(BigDecimal totalInput) {
+        this.totalInput = totalInput;
+    }
+
+    public List<OrderInput> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderInput> orderMaterials) {
+        this.orderMaterials = orderMaterials;
     }
 }

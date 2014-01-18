@@ -61,7 +61,6 @@ public class ProductionPlanning implements BaseModel {
     @Column(name = "VERSION", nullable = false)
     private long version;
 
-
     @Column(name = "OBSERVACIONES", nullable = true, length = 1000)
     private String observations;
 
@@ -78,10 +77,10 @@ public class ProductionPlanning implements BaseModel {
     @OrderBy("code desc")
     private List<ProductionOrder> productionOrderList = new ArrayList<ProductionOrder>();
 
-    @OneToMany(mappedBy = "productionPlanningReprocessed", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "productionPlanningBase", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     //@OrderBy("code desc")
-    private List<ProductionOrder> productReprocessedList = new ArrayList<ProductionOrder>();
+    private List<BaseProduct> baseProducts = new ArrayList<BaseProduct>();
 
     public Company getCompany() {
         return company;
@@ -143,11 +142,11 @@ public class ProductionPlanning implements BaseModel {
         return DateUtils.format(this.date, MessageUtils.getMessage("patterns.date"));
     }
 
-    public List<ProductionOrder> getProductReprocessedList() {
-        return productReprocessedList;
+    public List<BaseProduct> getBaseProducts() {
+        return baseProducts;
     }
 
-    public void setProductReprocessedList(List<ProductionOrder> productReprocessedList) {
-        this.productReprocessedList = productReprocessedList;
+    public void setBaseProducts(List<BaseProduct> baseProducts) {
+        this.baseProducts = baseProducts;
     }
 }

@@ -57,6 +57,10 @@ public class OrderInput implements BaseModel {
     @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    private BaseProduct baseProductInput;
+
     public Long getId() {
         return id;
     }
@@ -135,5 +139,13 @@ public class OrderInput implements BaseModel {
 
     public void setCostTotal(BigDecimal costTotal) {
         this.costTotal = costTotal;
+    }
+
+    public BaseProduct getBaseProductInput() {
+        return baseProductInput;
+    }
+
+    public void setBaseProductInput(BaseProduct baseProductInput) {
+        this.baseProductInput = baseProductInput;
     }
 }
