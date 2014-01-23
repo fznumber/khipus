@@ -143,6 +143,7 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         return new BigDecimal(totalCost);
     }
 
+    //todo: se tomara el monto esperado para hacer el calculo del volumen total
     @Override
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         Double total = productionOrder.getProducedAmount();
@@ -154,7 +155,8 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         if (unitMeasure == "KG" || unitMeasure == "LT")
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
-        total = amount * productionOrder.getProducedAmount();
+        //total = amount * productionOrder.getProducedAmount();
+        total = amount * productionOrder.getExpendAmount();
         return total;
     }
 
