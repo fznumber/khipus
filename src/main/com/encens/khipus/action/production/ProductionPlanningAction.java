@@ -77,6 +77,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private Double expendOld;
     private Double containerOld;
+    private Integer codeOrder = 0;
 
     private List<MovementDetail> movementDetailSelect;
 
@@ -170,8 +171,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void initEditFormula() {
         clearFormulation();
         formulaState = FormulaState.NEW;
-        productionOrder.setCode(productionOrderCodeGenerator.generateCode());
+
+        if(getInstance().getId() == null && getInstance().getProductionOrderList().size() > 0 )
+        {
+            for (ProductionOrder order :getInstance().getProductionOrderList())
+            {
+                if(getCodeOrder(order.getCode()) > codeOrder)
+                codeOrder = getCodeOrder(order.getCode());
+            }
+            String[] arr=productionOrderCodeGenerator.generateCode().split("\\-");
+            String code = arr[0]+"-"+String.format("%04d", codeOrder+1);
+            productionOrder.setCode(code);
+        }
+        else
+        {
+            codeOrder = getCodeOrder(productionOrderCodeGenerator.generateCode());
+            productionOrder.setCode(productionOrderCodeGenerator.generateCode());
+        }
         productionOrder.setExpendAmount(0.0);
+    }
+
+    private Integer getCodeOrder(String code)
+    {
+        String[] arr=code.split("\\-");
+        Integer val = Integer.parseInt(arr[1]);
+        return val;
     }
 
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
