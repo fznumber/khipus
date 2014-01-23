@@ -45,7 +45,7 @@ public class BaseProduct implements BaseModel {
     private Double volume;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
@@ -66,7 +66,10 @@ public class BaseProduct implements BaseModel {
 
     @OneToMany(mappedBy = "baseProductInput", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<OrderInput> orderMaterials = new ArrayList<OrderInput>();
+    private List<OrderInput> orderInputs = new ArrayList<OrderInput>();
+
+    @Column(name = "CODIGO", length = 50, nullable = false)
+    private String code;
 
     public Long getId() {
         return id;
@@ -132,11 +135,19 @@ public class BaseProduct implements BaseModel {
         this.totalInput = totalInput;
     }
 
-    public List<OrderInput> getOrderMaterials() {
-        return orderMaterials;
+    public List<OrderInput> getOrderInputs() {
+        return orderInputs;
     }
 
-    public void setOrderMaterials(List<OrderInput> orderMaterials) {
-        this.orderMaterials = orderMaterials;
+    public void setOrderInputs(List<OrderInput> orderInputs) {
+        this.orderInputs = orderInputs;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

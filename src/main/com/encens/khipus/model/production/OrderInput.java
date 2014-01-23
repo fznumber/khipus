@@ -36,7 +36,7 @@ public class OrderInput implements BaseModel {
     @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal costTotal = new BigDecimal(0.0);
 
-    @Column(name = "FORMULAMATEMATICA", nullable = false, length = 500)
+    @Column(name = "FORMULAMATEMATICA", nullable = true, length = 500)
     private String mathematicalFormula;
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
@@ -54,7 +54,7 @@ public class OrderInput implements BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})

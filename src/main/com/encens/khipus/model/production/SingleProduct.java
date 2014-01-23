@@ -41,6 +41,9 @@ public class SingleProduct implements BaseModel {
     @Column(name = "CANTIDAD", nullable = true)
     private Integer amount;
 
+    @Column(name = "ESTADO", length = 20, nullable = false)
+    private String state;
+
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
     private MetaProduct metaProduct;
@@ -114,5 +117,13 @@ public class SingleProduct implements BaseModel {
 
     public void setTotalInput(BigDecimal totalInput) {
         this.totalInput = totalInput;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }
