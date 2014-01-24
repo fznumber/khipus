@@ -696,9 +696,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public String generateVoucherOrderProduction(){
 
-        //productionOrder.setEstateOrder(TABULATED);
+        productionOrder.setEstateOrder(TABULATED);
 
-        productionOrder.setEstateOrder(INSTOCK);
+        //productionOrder.setEstateOrder(INSTOCK);
 
         InventoryMovement inventoryMovement = createVale();
         approvalVoucher(inventoryMovement);
