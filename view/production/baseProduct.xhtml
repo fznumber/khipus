@@ -139,14 +139,14 @@
                                    reRender="baseProductionList,formulaSet"
                         />
                 <rich:spacer width="20"/>
-                <a4j:commandButton action="#{productionPlanningAction.setShowReprocessedProduct(false)}"
-                                   value="#{messages['Common.cancel']}"
-                                   reRender="baseProductionList,formulaSet"
-                        />
+
+                <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.setShowReprocessedProduct(false)}"
+                                   ajaxSingle="true"
+                                   value="#{messages['ProductionPlanning.innerButtonCancel']}"
+                                   reRender="baseProductionList,formulaSet"/>
             </div>
 
         </h:form>
-
     </s:div>
 
     </ui:composition>

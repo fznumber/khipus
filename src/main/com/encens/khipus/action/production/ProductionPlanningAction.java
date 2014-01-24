@@ -1863,6 +1863,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setShowReprocessedProduct(Boolean showReprocessedProduct) {
+        baseProduct = new BaseProduct();
         this.showReprocessedProduct = showReprocessedProduct;
     }
 
