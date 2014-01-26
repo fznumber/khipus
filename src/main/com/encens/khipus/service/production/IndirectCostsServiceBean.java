@@ -250,8 +250,8 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         if (unitMeasure == "KG" || unitMeasure == "LT")
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
-        //total = amount * productionOrder.getProducedAmount();
-        total = amount * productionOrder.getExpendAmount();
+        total = amount * productionOrder.getProducedAmount();
+        //total = amount * productionOrder.getExpendAmount();
         return total;
     }
 }

@@ -301,6 +301,8 @@ public class ProductionOrder implements BaseModel {
     }
 
     public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
-        this.indirectCostses = indirectCostses;
+        this.indirectCostses.clear();
+        if(indirectCostses != null)
+        this.indirectCostses.addAll(indirectCostses);
     }
 }

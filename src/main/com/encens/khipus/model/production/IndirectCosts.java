@@ -46,7 +46,7 @@ public class IndirectCosts implements BaseModel {
     @JoinColumn(name = "IDPERIODOCOSTOINDIRECTO")
     private PeriodIndirectCost periodIndirectCost;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDORDENPRODUCCION")
     private ProductionOrder productionOrder;
 
