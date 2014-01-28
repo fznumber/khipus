@@ -218,6 +218,7 @@
         s:hasPermission('VALUEDWAREHOUSERESIDUEREPORT','VIEW') or
         s:hasPermission('WAREHOUSEVOUCHERREPORT','VIEW') or
         s:hasPermission('SUBGROUPREPORT','VIEW') or
+        s:hasPermission('KARDEXSUMMARYREPORT','VIEW') or
         s:hasPermission('GROUP','VIEW') or
         s:hasPermission('WAREHOUSE','VIEW') or
         s:hasPermission('WAREHOUSEDOCUMENTTYPE','VIEW') or
@@ -260,6 +261,7 @@
         s:hasPermission('ARTICLESREPORT','VIEW') or
         s:hasPermission('VALUEDWAREHOUSERESIDUEREPORT','VIEW') or
         s:hasPermission('WAREHOUSEVOUCHERREPORT','VIEW') or
+        s:hasPermission('KARDEXSUMMARYREPORT','VIEW') or
         s:hasPermission('SUBGROUPREPORT','VIEW')}">
         <rich:menuItem submitMode="none"
                        styleClass="main-menu-item"
@@ -275,6 +277,15 @@
                     value="#{messages['Reports.kardex.menu.title']}"
                     propagation="none"/>
         </rich:menuItem>
+
+        <rich:menuItem submitMode="none"
+                       styleClass="main-menu-item"
+                       rendered="#{s:hasPermission('KARDEXSUMMARYREPORT','VIEW')}">
+            <s:link view="/warehouse/kardexSumaryReport.xhtml"
+                    value="#{messages['Reports.kardex.summary.menu.title']}"
+                    propagation="none"/>
+        </rich:menuItem>
+
         <rich:menuItem submitMode="none"
                        styleClass="main-menu-item"
                        rendered="#{s:hasPermission('GENERALVALUEDEVOLUTIONREPORT','VIEW')}">
