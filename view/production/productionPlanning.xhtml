@@ -769,7 +769,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </rich:column>
         <rich:column>
             <h:inputText value="#{productionOrderItem.greasePercentage}"
-                         maxlength="500" styleClass="input"
+                         maxlength="6" styleClass="input"
                          required="false"
                     >
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
