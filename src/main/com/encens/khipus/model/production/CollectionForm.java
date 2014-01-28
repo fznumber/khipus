@@ -75,6 +75,9 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<CollectionRecord> collectionRecordList = new ArrayList<CollectionRecord>();
 
+    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "NUMBER(16,2)")
+    private Double greasePercentage = 0.0;
+
     @OneToOne
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
@@ -137,5 +140,13 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
 
     public void setState(CollectionFormState state) {
         this.state = state;
+    }
+
+    public Double getGreasePercentage() {
+        return greasePercentage;
+    }
+
+    public void setGreasePercentage(Double greasePercentage) {
+        this.greasePercentage = greasePercentage;
     }
 }

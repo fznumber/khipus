@@ -186,4 +186,12 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                                             .executeUpdate();
     }
 
+    @Override
+    public void updateOrder(ProductionOrder order) {
+        getEntityManager().createNativeQuery("update ORDENPRODUCCION set PORCENTAJEGRASA = :percentage where IDORDENPRODUCCION = :order")
+                          .setParameter("percentage",order.getGreasePercentage())
+                          .setParameter("order",order)
+                          .executeUpdate();
+    }
+
 }
