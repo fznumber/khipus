@@ -771,9 +771,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <h:inputText value="#{productionOrderItem.greasePercentage}"
                          maxlength="500" styleClass="input"
                          required="false"
-                         >
-                <a4j:support event="onblur" action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" reRender="productionList"/>
+                    >
+                <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
+                                 styleClass="button"
+                                 tabindex="1">
+                    <s:defaultAction/>
+                </h:commandButton>
             </h:inputText>
+
         </rich:column>
 
         <rich:column styleClass="center">
