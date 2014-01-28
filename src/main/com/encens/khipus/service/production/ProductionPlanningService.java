@@ -33,4 +33,6 @@ public interface ProductionPlanningService extends GenericService {
     public void updateProductionPlanning(ProductionPlanning instance,ProductionOrder order) throws ConcurrencyException, EntryDuplicatedException;
 
     public void deleteIndirectCost(ProductionOrder order);
+
+    public void updateOrder(ProductionOrder order);
 }

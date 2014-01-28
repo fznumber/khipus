@@ -88,6 +88,19 @@
                                      reRender="formPanel, collectionRecordList" process="metaProduct"/>
                     </rich:calendar>
                 </s:decorate>
+
+                <s:decorate id="greasePercentageField"
+                            template="/include/inputField.xhtml"
+                            styleClass="formRow">
+                    <ui:define name="label">#{messages['CollectionForm.greasePercentage']}</ui:define>
+                    <h:inputText id="name"
+                                 value="#{collectionForm.greasePercentage}"
+                                 required="true"
+                                 maxlength="50"
+                                 styleClass="input">
+                    </h:inputText>
+                </s:decorate>
+
                 <c:choose>
                     <c:when test="#{!collectionFormAction.managed}">
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">

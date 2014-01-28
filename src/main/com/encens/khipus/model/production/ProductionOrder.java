@@ -56,6 +56,9 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceMaterial = 0.0;
 
+    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "NUMBER(16,2)")
+    private Double greasePercentage = 0.0;
+
     @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceInput = 0.0;
 
@@ -304,5 +307,13 @@ public class ProductionOrder implements BaseModel {
         this.indirectCostses.clear();
         if(indirectCostses != null)
         this.indirectCostses.addAll(indirectCostses);
+    }
+
+    public Double getGreasePercentage() {
+        return greasePercentage;
+    }
+
+    public void setGreasePercentage(Double greasePercentage) {
+        this.greasePercentage = greasePercentage;
     }
 }

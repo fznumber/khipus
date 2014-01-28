@@ -277,6 +277,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
+    public void saveGreasePercentaje(ProductionOrder order)
+    {
+        //productionPlanningService.updateOrder(order);
+        update();
+        refreshInstance();
+    }
+
     public Boolean verifAmount(ProductionIngredient ingredient) {
         Boolean band = true;
         if (!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))
