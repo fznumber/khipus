@@ -527,7 +527,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
 
             input.setCostUnit(costUnit);
-            input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
+            input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue( (ingredient.getAmount() * costUnit.doubleValue()),2, RoundUtil.RoundMode.SYMMETRIC)));
             productionOrder.getOrderInputs().add(input);
         }
     }
@@ -552,14 +552,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
 
                 input.setCostUnit(costUnit);
-                input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
+                input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue((ingredient.getAmount() * costUnit.doubleValue()),2, RoundUtil.RoundMode.SYMMETRIC)));
                 productionOrder.getOrderInputs().add(input);
             } else {
 
                 if(articleEstateService.verifyEstate(inputParameterize.getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
                     inputParameterize.setCostUnit(getCostUnitProdComposite(ingredient));
 
-                inputParameterize.setCostTotal(new BigDecimal(inputParameterize.getCostUnit().doubleValue() * inputParameterize.getAmount()));
+                inputParameterize.setCostTotal(new BigDecimal(RoundUtil.getRoundValue((inputParameterize.getCostUnit().doubleValue() * inputParameterize.getAmount()),2, RoundUtil.RoundMode.SYMMETRIC)));
                 productionOrder.getOrderInputs().add(inputParameterize);
             }
         }
@@ -1405,7 +1405,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
                 material.setAmountReturned(RoundUtil.getRoundValue(amountReturn, 2, RoundUtil.RoundMode.SYMMETRIC));
                 material.setCostUnit(material.getProductItem().getUnitCost());
-                material.setCostTotal(new BigDecimal(total));
+                material.setCostTotal(new BigDecimal(RoundUtil.getRoundValue(total,2, RoundUtil.RoundMode.SYMMETRIC)));
 
             }
         }
@@ -1602,7 +1602,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
             if (!isNotCountAs(input.getProductItem()))
                 //totalInput = totalInput + ((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount());
-            totalInput = totalInput + ((input.getCostUnit().doubleValue()) * input.getAmount());
+            //totalInput = totalInput + ((input.getCostUnit().doubleValue()) * input.getAmount());
+            totalInput = totalInput + input.getCostTotal().doubleValue();
         }
 
         //productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
