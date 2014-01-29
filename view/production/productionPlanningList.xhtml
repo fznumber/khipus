@@ -118,8 +118,8 @@
                         </rich:column>
                         <rich:column>
                             <h:outputText
-                                    style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'INSTOCK' ? 'fuchsia' : 'green'))}"
-                                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
+                                    style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
                         </rich:column>
                     </rich:dataTable>
                 </rich:panel>

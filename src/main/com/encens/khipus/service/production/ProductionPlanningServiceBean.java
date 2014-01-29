@@ -1,5 +1,7 @@
 package com.encens.khipus.service.production;
 
+import com.encens.khipus.exception.ConcurrencyException;
+import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
@@ -14,6 +16,7 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -160,6 +163,41 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         }
 
         return null;
+    }
+
+    @Override
+    public void updateProductionPlanning(ProductionPlanning instance,ProductionOrder order) throws ConcurrencyException, EntryDuplicatedException {
+        try {
+
+            for(IndirectCosts costs:order.getIndirectCostses()){
+                if(costs.getId() != null)
+                {
+                    getEntityManager().remove(costs);
+                    //order.getIndirectCostses().remove(costs);
+                }
+            }
+            getEntityManager().merge(instance);
+            getEntityManager().flush();
+        } catch (OptimisticLockException e) {
+            throw new ConcurrencyException(e);
+        } catch (PersistenceException ee) {
+            throw new EntryDuplicatedException(ee);
+        }
+    }
+    @Override
+    public void deleteIndirectCost(ProductionOrder order)
+    {
+        getEntityManager().createNativeQuery("delete from costosindirectos where IDORDENPRODUCCION = :order")
+                                            .setParameter("order",order)
+                                            .executeUpdate();
+    }
+
+    @Override
+    public void updateOrder(ProductionOrder order) {
+        getEntityManager().createNativeQuery("update ORDENPRODUCCION set PORCENTAJEGRASA = :percentage where IDORDENPRODUCCION = :order")
+                          .setParameter("percentage",order.getGreasePercentage())
+                          .setParameter("order",order)
+                          .executeUpdate();
     }
 
 }

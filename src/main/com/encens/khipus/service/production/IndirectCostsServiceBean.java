@@ -9,6 +9,7 @@ import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
+import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -17,10 +18,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,6 +31,10 @@ import java.util.List;
 @AutoCreate
 @Stateless
 public class IndirectCostsServiceBean extends ExtendedGenericServiceBean implements IndirectCostsService {
+
+
+    Calendar mycal = new GregorianCalendar(DateUtils.getCurrentYear(new Date()), Calendar.MONTH -3, 1);
+    int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
     @In(value = "#{entityManager}")
     private EntityManager em;
@@ -57,7 +59,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         } catch (NoResultException e) {
             total = new BigDecimal(0.0);
         }
-        return total.doubleValue() / 30;
+        return total.doubleValue() / daysInMonth;
     }
 
     public List<IndirectCosts> getIndirectCostGeneral(PeriodIndirectCost indirectCost)
@@ -142,15 +144,15 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             aux.setCompany(costs.getCompany());
             aux.setCostsConifg(costs.getCostsConifg());
             Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
-            Double amountCost = costs.getAmountBs().doubleValue() / 30;
+            Double amountCost = costs.getAmountBs().doubleValue() / daysInMonth;
             Double costGeneral = amountCost * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
-            aux.setAmountBs(new BigDecimal(costGeneral));
+            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral,2, RoundUtil.RoundMode.SYMMETRIC)));
             indirectCostses.add(aux);
         }
         return indirectCostses;
     }
 
-    public Double getTotalCostIndirectByAccount(CashAccount cashAccount) {
+    /*public Double getTotalCostIndirectByAccount(CashAccount cashAccount) {
         BigDecimal total = new BigDecimal(0.0);
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -171,8 +173,8 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         }
         return total.doubleValue() / 30;
     }
-
-    public Double getTotalCostIndirectGeneral(String type) {
+*/
+  /*  public Double getTotalCostIndirectGeneral(String type) {
         BigDecimal total = new BigDecimal(0.0);
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -192,7 +194,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             total = new BigDecimal(0.0);
         }
         return total.doubleValue() / 30;
-    }
+    }*/
 
     public Double getPorcent(Double totalDay, Double totalOrder) {
         if (totalDay == 0.0)
@@ -236,7 +238,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         if (total == null )
             total = new BigDecimal(0.0);
 
-        return total.doubleValue() / 30;
+        return total.doubleValue() / daysInMonth;
     }
     //TODO: se utilizara la cantidad esperada en lugar de la producida
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
@@ -250,8 +252,8 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         if (unitMeasure == "KG" || unitMeasure == "LT")
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
-        //total = amount * productionOrder.getProducedAmount();
-        total = amount * productionOrder.getExpendAmount();
+        total = amount * productionOrder.getProducedAmount();
+        //total = amount * productionOrder.getExpendAmount();
         return total;
     }
 }

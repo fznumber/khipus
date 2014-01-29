@@ -84,6 +84,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private Double expendOld;
     private Double containerOld;
+    private Integer codeOrder = 0;
 
     private List<MovementDetail> movementDetailSelect;
 
@@ -187,8 +188,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void initEditFormula() {
         clearFormulation();
         formulaState = FormulaState.NEW;
-        productionOrder.setCode(productionOrderCodeGenerator.generateCode());
+
+        if(getInstance().getId() == null && getInstance().getProductionOrderList().size() > 0 )
+        {
+            for (ProductionOrder order :getInstance().getProductionOrderList())
+            {
+                if(getCodeOrder(order.getCode()) > codeOrder)
+                codeOrder = getCodeOrder(order.getCode());
+            }
+            String[] arr=productionOrderCodeGenerator.generateCode().split("\\-");
+            String code = arr[0]+"-"+String.format("%04d", codeOrder+1);
+            productionOrder.setCode(code);
+        }
+        else
+        {
+            codeOrder = getCodeOrder(productionOrderCodeGenerator.generateCode());
+            productionOrder.setCode(productionOrderCodeGenerator.generateCode());
+        }
         productionOrder.setExpendAmount(0.0);
+    }
+
+    private Integer getCodeOrder(String code)
+    {
+        String[] arr=code.split("\\-");
+        Integer val = Integer.parseInt(arr[1]);
+        return val;
     }
 
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
@@ -268,6 +292,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             log.error("Exception caught", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
+    }
+
+    public void saveGreasePercentaje(ProductionOrder order)
+    {
+        //productionPlanningService.updateOrder(order);
+        update();
+        refreshInstance();
     }
 
     public Boolean verifAmount(ProductionIngredient ingredient) {
@@ -528,7 +559,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
 
             input.setCostUnit(costUnit);
-            input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
+            input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue( (ingredient.getAmount() * costUnit.doubleValue()),2, RoundUtil.RoundMode.SYMMETRIC)));
             productionOrder.getOrderInputs().add(input);
         }
     }
@@ -553,14 +584,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
 
                 input.setCostUnit(costUnit);
-                input.setCostTotal(new BigDecimal(ingredient.getAmount() * costUnit.doubleValue()));
+                input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue((ingredient.getAmount() * costUnit.doubleValue()),2, RoundUtil.RoundMode.SYMMETRIC)));
                 productionOrder.getOrderInputs().add(input);
             } else {
 
                 if(articleEstateService.verifyEstate(inputParameterize.getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
                     inputParameterize.setCostUnit(getCostUnitProdComposite(ingredient));
 
-                inputParameterize.setCostTotal(new BigDecimal(inputParameterize.getCostUnit().doubleValue() * inputParameterize.getAmount()));
+                inputParameterize.setCostTotal(new BigDecimal(RoundUtil.getRoundValue((inputParameterize.getCostUnit().doubleValue() * inputParameterize.getAmount()),2, RoundUtil.RoundMode.SYMMETRIC)));
                 productionOrder.getOrderInputs().add(inputParameterize);
             }
         }
@@ -704,9 +735,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public String generateVoucherOrderProduction(){
 
-        //productionOrder.setEstateOrder(TABULATED);
+        productionOrder.setEstateOrder(TABULATED);
 
-        productionOrder.setEstateOrder(INSTOCK);
+        //productionOrder.setEstateOrder(INSTOCK);
 
         InventoryMovement inventoryMovement = createVale();
         approvalVoucher(inventoryMovement);
@@ -1306,13 +1337,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(EXECUTED);
         productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
-        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
-            setTotalsMaterials(productionOrder);
-            setTotalsInputs(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+        for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(order);
+            setTotalsInputs(order);
+            setTotalIndiRectCost(order);
             //setTotalHour(productionOrder);
-            setTotalCostProducticionAndUnitPrice(productionOrder);
-        //}
+            setTotalCostProducticionAndUnitPrice(order);
+        }
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -1323,6 +1354,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder = null;
         showDetailOrder = false;
         showProductionOrders = true;
+        refreshInstance();
         //return outcome;
     }
 
@@ -1332,13 +1364,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //getInstance().setState(FINALIZED);
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
-        //for (ProductionOrder productionOrder : productionPlanning.getProductionOrderList()) {
-            setTotalsMaterials(productionOrder);
-            setTotalsInputs(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+        for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(order);
+            setTotalsInputs(order);
+            setTotalIndiRectCost(order);
             //setTotalHour(productionOrder);
-            setTotalCostProducticionAndUnitPrice(productionOrder);
-        //}
+            setTotalCostProducticionAndUnitPrice(order);
+        }
         String outcome = update();
 
         if (outcome != Outcome.SUCCESS) {
@@ -1349,6 +1381,32 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         disableEditingFormula();
         //productionOrder = null;
         showDetailOrder = false;
+        refreshInstance();
+    }
+
+    @End
+    public String update(ProductionOrder order) {
+        Long currentVersion = (Long) getVersion(getInstance());
+        try {
+            productionPlanningService.updateProductionPlanning(getInstance(),order);
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            setVersion(getInstance(), currentVersion);
+            return Outcome.REDISPLAY;
+        } catch (ConcurrencyException e) {
+            concurrencyLog();
+            try {
+                setInstance(getService().findById(getEntityClass(), getId(getInstance()), true));
+            } catch (EntryNotFoundException e1) {
+                entryNotFoundLog();
+                addNotFoundMessage();
+                return Outcome.FAIL;
+            }
+            addUpdateConcurrencyMessage();
+            return Outcome.REDISPLAY;
+        }
+        addUpdatedMessage();
+        return Outcome.SUCCESS;
     }
 
     public void closeDetail() {
@@ -1414,7 +1472,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
                 material.setAmountReturned(RoundUtil.getRoundValue(amountReturn, 2, RoundUtil.RoundMode.SYMMETRIC));
                 material.setCostUnit(material.getProductItem().getUnitCost());
-                material.setCostTotal(new BigDecimal(total));
+                material.setCostTotal(new BigDecimal(RoundUtil.getRoundValue(total,2, RoundUtil.RoundMode.SYMMETRIC)));
 
             }
         }
@@ -1541,6 +1599,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setEstateOrder(PENDING);
             //getInstance().setState(PENDING);
         }
+        refreshInstance();
         return outcome;
     }
 
@@ -1571,6 +1630,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setTotalCostProducticionAndUnitPrice(ProductionOrder productionOrder) {
         Double total = productionOrder.getTotalPriceMaterial() + productionOrder.getTotalPriceInput() + productionOrder.getTotalPriceJourney() + productionOrder.getTotalIndirectCosts();
+        /*Double total = RoundUtil.getRoundValue(productionOrder.getTotalPriceMaterial(),2, RoundUtil.RoundMode.SYMMETRIC)
+                     + RoundUtil.getRoundValue(productionOrder.getTotalPriceInput(),2, RoundUtil.RoundMode.SYMMETRIC)
+                     + RoundUtil.getRoundValue(productionOrder.getTotalPriceJourney(), 2, RoundUtil.RoundMode.SYMMETRIC)
+                     + RoundUtil.getRoundValue(productionOrder.getTotalIndirectCosts(),2, RoundUtil.RoundMode.SYMMETRIC);*/
+
         productionOrder.setTotalCostProduction(total);
         Double priceUnit = 0.0;
         if (productionOrder.getProducedAmount() > 0.0)
@@ -1582,18 +1646,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder) {
-        if(productionOrder.getIndirectCostses() != null)
-            productionOrder.getIndirectCostses().clear();
 
-        productionOrder.getIndirectCostses().addAll(indirectCostsService.getCostTotalIndirect(
-                                                                                     productionOrder,
-                                                                                     getTotalVolumProductionPlaning(productionOrder),
-                                                                                     getTotalVolumGeneralProductionPlaning(productionOrder),
-                                                                                     indirectCostsService.getLastPeroidIndirectCost()
-                                                                                     )
-                                           );
+        List<IndirectCosts> list = indirectCostsService.getCostTotalIndirect(
+                productionOrder,
+                getTotalVolumProductionPlaning(productionOrder),
+                getTotalVolumGeneralProductionPlaning(productionOrder),
+                indirectCostsService.getLastPeroidIndirectCost());
+        if(list.size() > 0)
+        {
+            productionPlanningService.deleteIndirectCost(productionOrder);
+            for(IndirectCosts costs: list)
+            {
+                costs.setProductionOrder(productionOrder);
+            }
+
+            productionOrder.setIndirectCostses(list);
+        }
+
         setTotalIndirectCosts(productionOrder);
-        //productionOrder.setTotalIndirectCosts(indirectCostsService.getCostTotalIndirect(productionOrder, getTotalVolumProductionPlaning(productionOrder), getTotalVolumGeneralProductionPlaning(productionOrder)));
     }
     //todo: la mano de obra directa se tomara diretamente de la tabla costosindirectos para no cambiar mucho
     //se fijara directamente desde eseta tabla temporalmente
@@ -1618,10 +1688,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (OrderInput input : productionOrder.getOrderInputs()) {
             //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
             if (!isNotCountAs(input.getProductItem()))
-                totalInput += (input.getProductItem().getUnitCost().doubleValue()) * input.getAmount();
+                //totalInput = totalInput + ((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount());
+            //totalInput = totalInput + ((input.getCostUnit().doubleValue()) * input.getAmount());
+            totalInput = totalInput + input.getCostTotal().doubleValue();
         }
 
-        productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
+        //productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
+        productionOrder.setTotalPriceInput(totalInput);
     }
 
     public void setTotalsMaterials(ProductionOrder productionOrder) {
@@ -1629,7 +1702,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (OrderMaterial material : productionOrder.getOrderMaterials()) {
             totalMaterial += material.getCostTotal().doubleValue();
         }
-        productionOrder.setTotalPriceMaterial(RoundUtil.getRoundValue(totalMaterial, 2, RoundUtil.RoundMode.SYMMETRIC));
+        //productionOrder.setTotalPriceMaterial(RoundUtil.getRoundValue(totalMaterial, 2, RoundUtil.RoundMode.SYMMETRIC));
+        productionOrder.setTotalPriceMaterial(totalMaterial);
     }
 
     public ProductComposition getProductComposition() {
