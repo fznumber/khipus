@@ -769,12 +769,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </rich:column>
         <rich:column>
             <h:inputText value="#{productionOrderItem.greasePercentage}"
-                         maxlength="6" styleClass="input"
-                         required="false"
-                    >
+                         maxlength="4" styleClass="input"
+                         disabled="#{productionOrderItem.estateOrder eq 'FINALIZED' or  productionOrderItem.estateOrder eq 'TABULATED' ? true : false}"
+                         required="false">
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 tabindex="1">
+                                 rendered="#{(productionOrderItem.estateOrder eq 'PENDING' or  productionOrderItem.estateOrder eq 'EXECUTED' ? true : false) and s:hasPermission('SAVEGRAASEPERCENTAGE','CREATE')}">
+
                     <s:defaultAction/>
                 </h:commandButton>
             </h:inputText>
