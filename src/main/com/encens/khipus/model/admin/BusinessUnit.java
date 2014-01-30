@@ -48,8 +48,8 @@ public class BusinessUnit implements BaseModel {
     @Length(max = 10)
     private String acronym;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @PrimaryKeyJoinColumn(name = "idunidadnegocio")
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},optional = true)
+    @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
     private Organization organization;
 
     @Column(name = "cantidaddepartamentos", nullable = false)

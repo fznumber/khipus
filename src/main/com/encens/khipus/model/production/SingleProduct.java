@@ -42,7 +42,8 @@ public class SingleProduct implements BaseModel {
     private Integer amount;
 
     @Column(name = "ESTADO", length = 20, nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private ProductionPlanningState state = ProductionPlanningState.EXECUTED;
 
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
@@ -56,6 +57,10 @@ public class SingleProduct implements BaseModel {
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private BaseProduct baseProduct;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
     @Column(name = "COSTOTOTALMATERIALES", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
     private BigDecimal totalMaterial = new BigDecimal(0.0);
@@ -119,11 +124,19 @@ public class SingleProduct implements BaseModel {
         this.totalInput = totalInput;
     }
 
-    public String getState() {
+    public ProductionPlanningState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(ProductionPlanningState state) {
         this.state = state;
+    }
+
+    public List<OrderMaterial> getOrderMaterials() {
+        return orderMaterials;
+    }
+
+    public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
+        this.orderMaterials = orderMaterials;
     }
 }

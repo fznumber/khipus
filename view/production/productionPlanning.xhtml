@@ -79,12 +79,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <a4j:commandButton id="editFormulaButton" value="#{messages['ProductionPlanning.editFormulaButton']}"
                    action="#{productionPlanningAction.initEditFormula}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
-                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct)}"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct) and !(productionPlanningAction.showSingleProduct)}"
                    ajaxSingle="true"/>
 
 <a4j:commandButton id="createReprocess" value="#{messages['ProductionPlanning.createReprocess']}"
                    action="#{productionPlanningAction.setShowReprocessedProduct(true)}"
-                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct)}"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) and !(productionPlanningAction.showReprocessedProduct) and !(productionPlanningAction.showSingleProduct)}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
                    ajaxSingle="true"/>
 
@@ -831,6 +831,17 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <c:forEach var="baseProduct" items="#{productionPlanning.baseProducts}" varStatus="row">
             <thead class="rich-table-thead">
 
+                <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
+                                   action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,detailBaseProduct"
+                                   ajaxSingle="true"/>
+
+                <rich:spacer width="40"/>
+                <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
+                                   action="#{productionPlanningAction.addProduct(baseProduct)}"
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
+                                   ajaxSingle="true"/>
+
             <tr class="rich-table-header">
                 <th class="rich-table-headercell">
                     #{baseProduct.metaProduct.fullName}
@@ -840,14 +851,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </th>
                 <th class="rich-table-headercell">
                     #{baseProduct.volume}
-                </th>
-                <th class="rich-table-headercell">
-
-                    <a4j:commandLink ajaxSingle="true" immediate="true"
-                                     value="#{messages['BaseProduct.action.addProduct']}"
-                                     action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
-                                     reRender="formulaSet,ruleBotton2,ruleBotton1,productionList"/>
-
                 </th>
             </tr>
             </thead>
@@ -860,7 +863,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <h:outputText value="#{singleProduct.metaProduct.fullName}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{singleProduct.code}"/>
+                    code
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{singleProduct.amount}"/>
@@ -872,7 +875,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </rich:column>
                 <rich:column styleClass="center">
 
-                    <a4j:commandLink ajaxSingle="true" immediate="true"
+                    <!--<a4j:commandLink ajaxSingle="true" immediate="true"
                                      value="#{ singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
                                      action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
                                      rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
@@ -891,7 +894,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                      action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
                                      rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
                                      reRender="formulaSet,ruleBotton2,ruleBotton1,productionList"/>
-                    <rich:spacer width="5"/>
+                    <rich:spacer width="5"/>-->
+                    Acciones
 
                 </rich:column>
             </rich:dataTable>
@@ -1014,6 +1018,42 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            reRender="detailBaseProductInput"
                            styleClass="button"
                            oncomplete="Richfaces.hideModalPanel('baseProductInputsListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="singleProductMaterialListModalPanelContainer"
+            template="/warehouse/productItemsListModalPanel.xhtml">
+    <ui:param name="containerId" value="singleProductMaterialListModalPanelContainer"/>
+    <ui:param name="dialogId" value="singleProductMaterialListModalPanel"/>
+    <ui:define name="addButton">
+        <a4j:commandButton id="addButton"
+                           immediate="true"
+                           ajaxSingle="true"
+                           action="#{productionPlanningAction.addSingleProductMaterial(productItemSearchDataModel.selectedProductItems)}"
+                           value="#{messages['Common.add']}"
+                           reRender="detailSingleProductInput"
+                           styleClass="button"
+                           oncomplete="Richfaces.hideModalPanel('singleProductMaterialListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="singleProductListModalPanelContainer" template="/production/metaProductListModalPanel.xhtml">
+    <ui:param name="listTitle" value="#{messages['ProductionPlanning.selectProcessedProduct']}"/>
+    <ui:param name="searchPanelTitle" value="#{messages['ProductionPlanning.searchProcessedProduct']}"/>
+    <ui:param name="dialogId" value="singleProductListModalPanel"/>
+    <ui:param name="dataModel" value="#{processedProductDataModel}"/>
+    <ui:param name="showMeasureUnit" value="false"/>
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           title="#{messages['Common.choose']}"
+                           action="#{productionPlanningAction.selectSingleProduct(dataItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image-middle"
+                           ajaxSingle="true"
+                           reRender="detailSingleProduct"
+                           oncomplete="Richfaces.hideModalPanel('singleProductListModalPanel');"
+                           style="width:0.8em"/>
+
     </ui:define>
 </s:decorate>
 

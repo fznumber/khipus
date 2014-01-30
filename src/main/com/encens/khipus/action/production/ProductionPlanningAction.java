@@ -60,8 +60,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private String codeGenerate;
     private List<ProductItemPK> selectedProductItems = new ArrayList<ProductItemPK>();
     private List<ProductItemPK> selectedBaseProductItems = new ArrayList<ProductItemPK>();
+    private List<ProductItemPK> selectedSingleProductMaterial = new ArrayList<ProductItemPK>();
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
     private List<OrderInput> orderBaseInputs = new ArrayList<OrderInput>();
+    private List<OrderMaterial> orderSingleMaterial = new ArrayList<OrderMaterial>();
     private List<ProductItem> productItems = new ArrayList<ProductItem>();
 
     // this map stores the MovementDetails that are under the minimal stock and the unitaryBalance of the Inventory
@@ -1235,9 +1237,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public void selectBaseProduct(ProcessedProduct processedProduct) {
 
         try {
-            //this.processedProduct = processedProductService.find(processedProduct.getId());
             this.baseProduct = new BaseProduct();
             baseProduct.setMetaProduct(processedProductService.find(processedProduct.getId()));
+        } catch (Exception ex) {
+            log.error(ex);
+            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+        }
+
+    }
+
+    public void selectSingleProduct(ProcessedProduct processedProduct) {
+
+        try {
+            this.singleProduct = new SingleProduct();
+            singleProduct.setMetaProduct(processedProductService.find(processedProduct.getId()));
         } catch (Exception ex) {
             log.error(ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
@@ -1460,6 +1473,29 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
+    public void addSingleProductMaterial(List<ProductItem> productItems) {
+
+        if (selectedSingleProductMaterial.size() == 0 && orderSingleMaterial.size() > 0)
+            for (OrderMaterial material: orderSingleMaterial) {
+                selectedSingleProductMaterial.add(material.getProductItem().getId());
+            }
+
+        for (ProductItem productItem : productItems) {
+            if (selectedSingleProductMaterial.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedSingleProductMaterial.add(productItem.getId());
+
+            OrderMaterial material = new OrderMaterial();
+            material.setProductItem(productItem);
+            material.setSingleProduct(singleProduct);
+            material.setCompanyNumber(productItem.getCompanyNumber());
+            orderSingleMaterial.add(material);
+
+        }
+    }
+
     public void setProductItems(List<ProductItem> productItems) {
         this.productItems = productItems;
     }
@@ -1501,8 +1537,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void removeMaterial(OrderMaterial instance) {
-        selectedProductItems.remove(instance.getProductItem().getId());
-        orderMaterials.remove(instance);
+        selectedSingleProductMaterial.remove(instance.getProductItem().getId());
+        orderSingleMaterial.remove(instance);
     }
 
     public void removeInput(OrderInput instance) {
@@ -1568,10 +1604,19 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void saveBaseProduct(){
         ProductionPlanning productionPlanning = getInstance();
+        if(baseProduct.getId() == null)
+        {
+            productionPlanning.getBaseProducts().add(baseProduct);
+        }
+        /*if(baseProduct.getOrderInputs() == null){
+            baseProduct.getOrderInputs().clear();
+        }*/
 
-        productionPlanning.getBaseProducts().add(baseProduct);
         baseProduct.setProductionPlanningBase(productionPlanning);
+        if(baseProduct.getOrderInputs() == null){
         baseProduct.getOrderInputs().addAll(orderBaseInputs);
+        }
+
         baseProduct.setCode(codeGenerate);
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -1579,6 +1624,30 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showReprocessedProduct = false;
         baseProduct = null;
         orderBaseInputs.clear();
+        refreshInstance();
+    }
+
+    public void saveSingleProduct(){
+        ProductionPlanning productionPlanning = getInstance();
+        if(singleProduct.getId() == null)
+            baseProduct.getSingleProducts().add(singleProduct);
+
+        singleProduct.setBaseProduct(baseProduct);
+        singleProduct.getOrderMaterials().addAll(orderSingleMaterial);
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
+        showSingleProduct = false;
+        singleProduct = null;
+        orderSingleMaterial.clear();
+        refreshInstance();
+    }
+
+    public void addProduct(BaseProduct product)
+    {
+        baseProduct = product;
+        singleProduct = new SingleProduct();
+        showSingleProduct = true;
     }
 
     @End(ifOutcome = Outcome.SUCCESS)
@@ -1941,6 +2010,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         this.showReprocessedProduct = showReprocessedProduct;
     }
 
+    public void editReprocessedProduct(BaseProduct base)
+    {
+        baseProduct = base;
+        orderBaseInputs = base.getOrderInputs();
+        showReprocessedProduct = true;
+    }
+
     public List<OrderInput> getOrderBaseInputs() {
         return orderBaseInputs;
     }
@@ -1954,6 +2030,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void setShowSingleProduct(Boolean showSingleProduct) {
+        singleProduct = new SingleProduct();
         this.showSingleProduct = showSingleProduct;
     }
 
@@ -1972,5 +2049,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setCodeGenerate(String codeGenerate) {
         this.codeGenerate = codeGenerate;
+    }
+
+    public List<OrderMaterial> getOrderSingleMaterial() {
+        return orderSingleMaterial;
+    }
+
+    public void setOrderSingleMaterial(List<OrderMaterial> orderSingleMaterial) {
+        this.orderSingleMaterial = orderSingleMaterial;
+    }
+
+    public BaseProduct getBaseProduct() {
+        return baseProduct;
+    }
+
+    public void setBaseProduct(BaseProduct baseProduct) {
+        this.baseProduct = baseProduct;
     }
 }

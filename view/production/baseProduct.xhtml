@@ -68,7 +68,6 @@
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
                                                actionListener="#{selectPopUpAction.select}"
-                                               rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
                                                reRender="productItemsListModalPanel">
                                 <f:attribute name="entityManagerName" value=""/>
                                 <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
@@ -76,7 +75,7 @@
 
                         </div>
 
-                        <rich:dataTable value="#{productionPlanningAction.orderBaseInputs}"
+                        <rich:dataTable value="#{productionPlanningAction.baseProduct.orderInputs}"
                                         var="productionIngredientItem"
                                         id="productionIngredientList" styleClass="formRow" width="100%">
                             <f:facet name="header">
