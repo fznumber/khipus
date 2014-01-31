@@ -3,11 +3,13 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.*;
 import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +46,9 @@ public class BaseProduct implements BaseModel {
     @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "NUMBER(8,2)")
     private Double volume;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
-    private MetaProduct metaProduct;
+    @OneToMany(mappedBy = "baseProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
@@ -95,12 +97,12 @@ public class BaseProduct implements BaseModel {
         this.volume = volume;
     }
 
-    public MetaProduct getMetaProduct() {
-        return metaProduct;
+    public List<ProductProcessing> getProductProcessings() {
+        return productProcessings;
     }
 
-    public void setMetaProduct(MetaProduct metaProduct) {
-        this.metaProduct = metaProduct;
+    public void setProductProcessings(List<ProductProcessing> productProcessings) {
+        this.productProcessings = productProcessings;
     }
 
     public ProductionPlanning getProductionPlanningBase() {

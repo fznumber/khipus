@@ -18,7 +18,7 @@
                          border="0"
                          columnClasses="width50percent, width50percent">
 
-                <s:decorate id="baseProductField" template="/include/inputField.xhtml" styleClass="formRow">
+                <!--<s:decorate id="baseProductField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
                     <h:inputText id="baseProduct" value="#{baseProduct.metaProduct.fullName}"
                                  required="true" maxlength="500" styleClass="input" tabindex="5"
@@ -31,7 +31,7 @@
                                      >
                         <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
                     </a4j:commandLink>
-                </s:decorate>
+                </s:decorate>-->
 
                 <s:decorate id="baseProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.code']}</ui:define>
@@ -52,7 +52,70 @@
 
         </app:fieldset>
 
-        <app:fieldset id="detailBaseProductInput" title="#{messages['BaseProduct.detailProduct']}">
+
+
+        <app:fieldset id="detailProductBase" title="#{messages['BaseProduct.detailProduct']}">
+            <h:panelGrid columns="1"
+                         width="100%"
+                         cellpadding="0"
+                         cellspacing="0"
+                         border="0">
+                <s:div id="productDetailListPanel">
+                    <div class="buttons">
+
+                        <a4j:commandButton id="addProductCommandButton"
+                                           action="#{productItemSearchDataModel.reset()}"
+                                           value="#{messages['BaseProduct.addProducts']}"
+                                           styleClass="button"
+                                           immediate="true"
+                                           oncomplete="Richfaces.showModalPanel('productListModalPanel');"
+                                           actionListener="#{selectPopUpAction.select}"
+                                           reRender="productListModalPanel">
+                            <f:attribute name="entityManagerName" value=""/>
+                            <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
+                        </a4j:commandButton>
+
+                    </div>
+
+                    <rich:dataTable value="#{productionPlanningAction.productProcessings}"
+                                    var="productProcessing"
+                                    id="productProcessingList" styleClass="formRow" width="100%">
+                        <f:facet name="header">
+                            <rich:columnGroup>
+                                <rich:column>
+                                    #{messages['ProductionPlanning.inputName']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.productionInput.measureUnit']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['Common.action']}
+                                </rich:column>
+                            </rich:columnGroup>
+                        </f:facet>
+                        <rich:column>
+                            <h:outputText value="#{productProcessing.metaProduct.productItem.name}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{productProcessing.metaProduct.productItem.usageMeasureCode}"/>
+                        </rich:column>
+                        <rich:column>
+                            <a4j:commandLink immediate="true"
+                                             title="#{messages['Common.remove']}"
+                                             action="#{productionPlanningAction.removeProductProcessing(productProcessing)}"
+                                             ajaxSingle="true"
+                                             reRender="detailProductBase">
+                                <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+                            </a4j:commandLink>
+                        </rich:column>
+
+                    </rich:dataTable>
+
+                </s:div>
+            </h:panelGrid>
+        </app:fieldset>
+
+        <app:fieldset id="detailBaseProductInput" title="#{messages['BaseProduct.input']}">
                 <h:panelGrid columns="1"
                              width="100%"
                              cellpadding="0"
@@ -63,7 +126,7 @@
 
                             <a4j:commandButton id="addProductItemCommandButton"
                                                action="#{productItemSearchDataModel.reset()}"
-                                               value="#{messages['BaseProduct.addProducts']}"
+                                               value="#{messages['BaseProduct.addInput']}"
                                                styleClass="button"
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
@@ -75,7 +138,7 @@
 
                         </div>
 
-                        <rich:dataTable value="#{productionPlanningAction.baseProduct.orderInputs}"
+                        <rich:dataTable value="#{productionPlanningAction.orderBaseInputs}"
                                         var="productionIngredientItem"
                                         id="productionIngredientList" styleClass="formRow" width="100%">
                             <f:facet name="header">

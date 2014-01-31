@@ -129,11 +129,11 @@
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveSingleProduct}"
                                    value="#{messages['Common.save']}"
-                                   reRender="baseProductionList,formulaSet"/>
+                                   reRender="formulaSet,baseProductionList"/>
                 <rich:spacer width="20"/>
                 <a4j:commandButton action="#{productionPlanningAction.setShowSingleProduct(false)}"
                                    value="#{messages['Common.cancel']}"
-                                   reRender="baseProductionList,formulaSet"/>
+                                   reRender="formulaSet,baseProductionList"/>
             </div>
 
         </h:form>
