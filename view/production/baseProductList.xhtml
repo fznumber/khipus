@@ -101,27 +101,17 @@
                     </rich:column>
                     <rich:column styleClass="center">
 
+                        <a4j:commandLink ajaxSingle="true" immediate="true"
+                                         value="#{singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
+                                         action="#{productionPlanningAction.editSingle(baseProduct,singleProduct)}"
+                                         rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
+                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>
+                        <rich:spacer width="5"/>
+
                         <!--<a4j:commandLink ajaxSingle="true" immediate="true"
-                                         value="#{ singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
-                                         action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
-                                         rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
-                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList"/>
-                        <rich:spacer width="5"/>
-
-                        <a4j:commandLink ajaxSingle="true" immediate="true"
-                                         value="#{ singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
-                                         action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
-                                         rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
-                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList"/>
-                        <rich:spacer width="5"/>
-
-                        <a4j:commandLink ajaxSingle="true" immediate="true"
-                                         value="#{ singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
-                                         action="#{productionPlanningAction.selectModifiIput(productionOrderItem)}"
-                                         rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
-                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList"/>
-                        <rich:spacer width="5"/>-->
-                        Acciones
+                                         value="#{messages['ProductionOrder.materialProduccion.selectOrder']}"
+                                         action="#{productionPlanningAction.selectDetail(singleProduct)}"
+                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>-->
 
                     </rich:column>
                 </rich:dataTable>

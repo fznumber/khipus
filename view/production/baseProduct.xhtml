@@ -18,21 +18,6 @@
                          border="0"
                          columnClasses="width50percent, width50percent">
 
-                <!--<s:decorate id="baseProductField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
-                    <h:inputText id="baseProduct" value="#{baseProduct.metaProduct.fullName}"
-                                 required="true" maxlength="500" styleClass="input" tabindex="5"
-                                 >
-                    </h:inputText>
-                    <a4j:commandLink id="selectBaseProduct" ajaxSingle="true" immediate="true"
-                                     tabindex="2"
-                                     title="#{messages['ProductionPlanning.selectProcessedProduct']}"
-                                     onclick="Richfaces.showModalPanel('baseProductListModalPanel');"
-                                     >
-                        <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
-                    </a4j:commandLink>
-                </s:decorate>-->
-
                 <s:decorate id="baseProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.code']}</ui:define>
                     <h:outputText value="#{productionPlanningAction.codeGenerate}" />

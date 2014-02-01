@@ -1315,6 +1315,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = false;
     }
 
+    public void editSingle(BaseProduct base, SingleProduct single){
+        baseProduct = base;
+        singleProduct = single;
+        orderSingleMaterial = single.getOrderMaterials();
+        showSingleProduct = true;
+    }
+
     public void selectMaterialDetail(ProductionOrder order) {
         disableEditingFormula();
         productionOrderMaterial = order;
@@ -1684,14 +1691,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             baseProduct.getSingleProducts().add(singleProduct);
             singleProduct.setBaseProduct(baseProduct);
+            singleProduct.getOrderMaterials().addAll(orderSingleMaterial);
         }
 
-        singleProduct.getOrderMaterials().addAll(orderSingleMaterial);
         if (update() != Outcome.SUCCESS) {
             return;
         }
         showSingleProduct = false;
         singleProduct = null;
+        baseProduct = null;
         orderSingleMaterial.clear();
         refreshInstance();
     }

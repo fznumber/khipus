@@ -43,7 +43,7 @@ public class SingleProduct implements BaseModel {
 
     @Column(name = "ESTADO", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
-    private ProductionPlanningState state = ProductionPlanningState.EXECUTED;
+    private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
