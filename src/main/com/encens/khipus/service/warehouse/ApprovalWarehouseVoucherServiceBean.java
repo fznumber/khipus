@@ -314,7 +314,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         }
 
        //todo: este servicio crea el asiento contable
-        warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher,warehouseVoucher.getExecutorUnit(),warehouseVoucher.getCostCenterCode(),gloss[0],accountOrderProductions);
+        //warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher,warehouseVoucher.getExecutorUnit(),warehouseVoucher.getCostCenterCode(),gloss[0],accountOrderProductions);
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
     }

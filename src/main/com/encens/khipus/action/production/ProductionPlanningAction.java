@@ -168,6 +168,29 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return Outcome.SUCCESS;
     }
 
+    public void generateAllVoucher()
+    {
+        for(ProductionOrder order:getInstance().getProductionOrderList())
+        {
+            if(order.getEstateOrder() == FINALIZED && order.getEstateOrder() != TABULATED)
+                generateVoucherOrderProduction(order);
+        }
+    }
+
+    public void generateVoucherOrderProduction(ProductionOrder order){
+
+        order.setEstateOrder(TABULATED);
+
+        //productionOrder.setEstateOrder(INSTOCK);
+
+        InventoryMovement inventoryMovement = createVale(order);
+        approvalVoucher(inventoryMovement);
+
+        closeDetail();
+        showProductionOrders = true;
+        update();
+    }
+
     public void initEditFormula() {
         clearFormulation();
         formulaState = FormulaState.NEW;
@@ -891,6 +914,34 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 "WarehouseVoucher.approve.error.notEnoughAmount",
                 productItem.getName(),
                 availableAmount);
+    }
+
+    public InventoryMovement createVale(ProductionOrder order){
+
+        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
+        warehouseVoucher = createWarehouseVoucherOrder();
+        warehouseVoucherSelect = warehouseVoucher;
+        InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", order.getCode()));
+        List<MovementDetail> movementDetails = generateMovementDetailOrder(order);
+        movementDetailSelect = movementDetails;
+        accountOrderProductions = generateMovementDetailOrderProduction(order);
+        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+        Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+        List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+        try {
+            warehouseService.saveWarehouseVoucher(warehouseVoucher, inventoryMovement, movementDetails,
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+            addMessageCreateWarehouseVoucherInput();
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return null;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return null;
+        }
+        return inventoryMovement;
     }
 
     public InventoryMovement createVale(){

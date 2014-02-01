@@ -82,6 +82,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder)}"
                    ajaxSingle="true"/>
 
+<a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
+                   action="#{productionPlanningAction.generateAllVoucher}"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,productionList"
+                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) }"
+                   ajaxSingle="true"/>
+
 <a4j:region>
     <h:panelGrid columns="2" width="70%"
                  rendered="#{!(productionPlanningAction.formulaState eq 'NONE') and productionOrderForPlanning.estateOrder eq 'PENDING' and !(productionPlanningAction.addMaterial)}">
