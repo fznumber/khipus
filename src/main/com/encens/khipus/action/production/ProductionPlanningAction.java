@@ -50,13 +50,22 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private ProcessedProduct processedProduct;
     private ProductionOrder productionOrderMaterial;
+    private BaseProduct baseProduct;
+    private SingleProduct singleProduct;
     private ProductComposition productComposition;
     private ProductionOrder productionOrder;
     private Formulation existingFormulation;
     private OrderMaterial orderMaterial;
     private ProductItem productItem;
+    private String codeGenerate;
     private List<ProductItemPK> selectedProductItems = new ArrayList<ProductItemPK>();
+    private List<ProductItemPK> selectedBaseProductItems = new ArrayList<ProductItemPK>();
+    private List<ProductItemPK> selectedProductToBaseproduct = new ArrayList<ProductItemPK>();
+    private List<ProductItemPK> selectedSingleProductMaterial = new ArrayList<ProductItemPK>();
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
+    private List<OrderInput> orderBaseInputs = new ArrayList<OrderInput>();
+    private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
+    private List<OrderMaterial> orderSingleMaterial = new ArrayList<OrderMaterial>();
     private List<ProductItem> productItems = new ArrayList<ProductItem>();
 
     // this map stores the MovementDetails that are under the minimal stock and the unitaryBalance of the Inventory
@@ -74,6 +83,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showInputDetail = false;
     private Boolean showDetailOrder = false;
     private Boolean showProductionOrders = true;
+    private Boolean showReprocessedProduct = false;
+    private Boolean showSingleProduct = false;
+    private Boolean showListReprocessedProduct = true;
+    private Boolean showButtonReprocessed = true;
+    private Boolean showButtonAddProduct = true;
+    private Boolean showProductionList = true;
 
     private Double expendOld;
     private Double containerOld;
@@ -119,6 +134,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
     @In
     private MovementDetailService movementDetailService;
+    @In
+    private MetaProductService metaProductService;
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
@@ -156,6 +173,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     @Factory(value = "productionOrderMaterialForPlanning", scope = ScopeType.STATELESS)
     public ProductionOrder initProductionOrderMaterial() {
         return productionOrderMaterial;
+    }
+
+    @Factory(value = "baseProduct", scope = ScopeType.STATELESS)
+    public BaseProduct initBaseProduct() {
+        return baseProduct;
+    }
+
+    @Factory(value = "singleProduct", scope = ScopeType.STATELESS)
+    public SingleProduct initSingleProduct() {
+        return singleProduct;
     }
 
     @Factory(value = "processedProductForPlanning", scope = ScopeType.STATELESS)
@@ -212,6 +239,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setCode(productionOrderCodeGenerator.generateCode());
         }
         productionOrder.setExpendAmount(0.0);
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     private Integer getCodeOrder(String code)
@@ -329,6 +358,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
+    public Boolean verifStockInput(OrderInput orderInput) {
+        Boolean band = true;
+        BigDecimal stock = BigDecimal.ZERO;
+        if (!articleEstateService.existArticleEstate(orderInput.getProductItem()))
+            //if (productionPlanningService.getMountInWarehouse(orderInput.getProductItem()).doubleValue() < orderInput.getAmount()) {
+            stock = productionPlanningService.getMountInWarehouse(orderInput.getProductItem());
+            if (stock.doubleValue() < 0) {
+                band = false;
+                dispobleBalance = false;
+            }
+
+        orderInput.setAmountStock(stock);
+        return band;
+    }
+
     public Boolean isParameterized(ProductItem productItem) {
         return articleEstateService.verifyEstate(productItem, "PARAMETRIZABLE");
     }
@@ -356,6 +400,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         clearFormulation();
         disableEditingFormula();
         showProductionOrders = true;
+        showInit();
     }
 
     public void updateFormulation() {
@@ -377,6 +422,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         existingFormulation = null;
         disableEditingFormula();
         showProductionOrders = true;
+        showInit();
     }
 
     private Boolean verifySotck(ProductionOrder order) {
@@ -735,6 +781,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         closeDetail();
         showProductionOrders = true;
+        showInit();
         update();
         return Outcome.SUCCESS;
     }
@@ -1221,6 +1268,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         disableEditingFormula();
         showProductionOrders = true;
+        showInit();
         //return result;
     }
 
@@ -1249,6 +1297,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             log.error(ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
+    }
+
+    public void selectSingleProduct(ProcessedProduct processedProduct) {
+
+        try {
+            this.singleProduct = new SingleProduct();
+            singleProduct.setMetaProduct(processedProductService.find(processedProduct.getId()));
+        } catch (Exception ex) {
+            log.error(ex);
+            facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
+        }
+
     }
 
     public void selectResultProcessedProduct(ProcessedProduct processedProduct) {
@@ -1281,6 +1341,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
 
     }
 
@@ -1305,6 +1367,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         addMaterial = true;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
+    }
+
+    public void editSingle(BaseProduct base, SingleProduct single){
+        baseProduct = base;
+        singleProduct = single;
+        orderSingleMaterial = single.getOrderMaterials();
+        showSingleProduct = true;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     public void selectMaterialDetail(ProductionOrder order) {
@@ -1335,6 +1408,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         showDetailOrder = true;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     //@End(ifOutcome = Outcome.SUCCESS)
@@ -1360,6 +1435,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder = null;
         showDetailOrder = false;
         showProductionOrders = true;
+        showInit();
         refreshInstance();
         //return outcome;
     }
@@ -1387,6 +1463,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         disableEditingFormula();
         //productionOrder = null;
         showDetailOrder = false;
+        showInit();
         refreshInstance();
     }
 
@@ -1420,6 +1497,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder = null;
         showDetailOrder = false;
         showProductionOrders = true;
+        showInit();
+    }
+
+    public void showInit()
+    {
+        showListReprocessedProduct = true;
+        showProductionOrders = true;
+        showButtonReprocessed = true;
+        showButtonAddProduct = true;
+        showSingleProduct = false;
+        disableEditingFormula();
     }
 
     public void addProductItems(List<ProductItem> productItems) {
@@ -1441,6 +1529,72 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             material.setProductionOrder(productionOrder);
             material.setCompanyNumber(productItem.getCompanyNumber());
             orderMaterials.add(material);
+        }
+    }
+
+    public void addBaseProductItems(List<ProductItem> productItems) {
+
+        if (selectedBaseProductItems.size() == 0 && orderBaseInputs.size() > 0)
+            for (OrderInput input: orderBaseInputs) {
+                selectedBaseProductItems.add(input.getProductItem().getId());
+            }
+
+        for (ProductItem productItem : productItems) {
+            if (selectedBaseProductItems.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedBaseProductItems.add(productItem.getId());
+
+            OrderInput input = new OrderInput();
+            input.setProductItem(productItem);
+            input.setBaseProductInput(baseProduct);
+            input.setCompanyNumber(productItem.getCompanyNumber());
+            orderBaseInputs.add(input);
+        }
+    }
+
+    public void addProductToBaseProduct(List<ProductItem> productItems) {
+
+        if (selectedProductToBaseproduct.size() == 0)
+            for (ProductProcessing productProcessing: productProcessings) {
+                selectedProductToBaseproduct.add(productProcessing.getMetaProduct().getProductItem().getId());
+            }
+
+        for (ProductItem productItem : productItems) {
+            if (selectedProductToBaseproduct.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedProductToBaseproduct.add(productItem.getId());
+            ProductProcessing processing = new ProductProcessing();
+            processing.setBaseProduct(baseProduct);
+            processing.setMetaProduct(metaProductService.find(productItem));
+            productProcessings.add(processing);
+        }
+    }
+
+
+    public void addSingleProductMaterial(List<ProductItem> productItems) {
+
+        if (selectedSingleProductMaterial.size() == 0 && orderSingleMaterial.size() > 0)
+            for (OrderMaterial material: orderSingleMaterial) {
+                selectedSingleProductMaterial.add(material.getProductItem().getId());
+            }
+
+        for (ProductItem productItem : productItems) {
+            if (selectedSingleProductMaterial.contains(productItem.getId())) {
+                continue;
+            }
+
+            selectedSingleProductMaterial.add(productItem.getId());
+
+            OrderMaterial material = new OrderMaterial();
+            material.setProductItem(productItem);
+            material.setSingleProduct(singleProduct);
+            material.setCompanyNumber(productItem.getCompanyNumber());
+            orderSingleMaterial.add(material);
+
         }
     }
 
@@ -1484,9 +1638,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
     }
 
+    public void removeProductProcessing(ProductProcessing processing)
+    {
+        selectedProductToBaseproduct.remove(processing.getMetaProduct().getProductItem().getId());
+        productProcessings.remove(processing);
+    }
+
     public void removeMaterial(OrderMaterial instance) {
-        selectedProductItems.remove(instance.getProductItem().getId());
-        orderMaterials.remove(instance);
+        selectedSingleProductMaterial.remove(instance.getProductItem().getId());
+        orderSingleMaterial.remove(instance);
+    }
+
+    public void removeInput(OrderInput instance) {
+        selectedBaseProductItems.remove(instance.getProductItem().getId());
+        orderBaseInputs.remove(instance);
     }
 
     public void clearFormulation() {
@@ -1539,10 +1704,85 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showMaterialDetail = false;
         showDetailOrder = false;
         showProductionOrders = true;
+        showListReprocessedProduct = false;
+        showButtonReprocessed = false;
+        showButtonAddProduct = false;
+        showInit();
     }
 
     private void disableEditingFormula() {
         formulaState = FormulaState.NONE;
+    }
+
+    public void saveBaseProduct(){
+        ProductionPlanning productionPlanning = getInstance();
+        if(baseProduct.getId() == null)
+        {
+            productionPlanning.getBaseProducts().add(baseProduct);
+            baseProduct.setProductionPlanningBase(productionPlanning);
+        }
+
+        if(baseProduct.getCode() == null)
+        {
+            baseProduct.setCode(codeGenerate);
+            baseProduct.getProductProcessings().addAll(productProcessings);
+            baseProduct.getOrderInputs().addAll(orderBaseInputs);
+        }
+
+            if (update() != Outcome.SUCCESS) {
+                return;
+            }
+        showReprocessedProduct = false;
+        baseProduct = null;
+        orderBaseInputs.clear();
+        productProcessings.clear();
+        refreshInstance();
+        showInit();
+    }
+
+    public void deleteReprocessedProduct(BaseProduct product){
+        ProductionPlanning productionPlanning = getInstance();
+        productionPlanning.getBaseProducts().remove(product);
+
+
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
+        showReprocessedProduct = false;
+        baseProduct = null;
+        orderBaseInputs.clear();
+        productProcessings.clear();
+        refreshInstance();
+        showInit();
+    }
+
+    public void saveSingleProduct(){
+        ProductionPlanning productionPlanning = getInstance();
+        if(singleProduct.getId() == null)
+        {
+            baseProduct.getSingleProducts().add(singleProduct);
+            singleProduct.setBaseProduct(baseProduct);
+            singleProduct.getOrderMaterials().addAll(orderSingleMaterial);
+        }
+
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
+        showSingleProduct = false;
+        singleProduct = null;
+        baseProduct = null;
+        orderSingleMaterial.clear();
+        refreshInstance();
+        showInit();
+    }
+
+    public void addProduct(BaseProduct product)
+    {
+        baseProduct = product;
+        singleProduct = new SingleProduct();
+        showSingleProduct = true;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     @End(ifOutcome = Outcome.SUCCESS)
@@ -1846,6 +2086,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder = null;
         addMaterial = false;
         showProductionOrders = true;
+        showInit();
     }
 
     public OrderMaterial getOrderMaterial() {
@@ -1894,5 +2135,146 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowProductionOrders(Boolean showProductionOrders) {
         this.showProductionOrders = showProductionOrders;
+    }
+
+    public Boolean getShowReprocessedProduct() {
+        return showReprocessedProduct;
+    }
+
+    public void setShowReprocessedProduct(Boolean showReprocessedProduct) {
+        baseProduct = new BaseProduct();
+        singleProduct = new SingleProduct();
+        orderBaseInputs = new ArrayList<OrderInput>();
+        productProcessings = new ArrayList<ProductProcessing>();
+        this.showReprocessedProduct = showReprocessedProduct;
+        hideButtonGeneral();
+        hideTablesIni();
+    }
+
+    public void cancelReprossecing(){
+        baseProduct = new BaseProduct();
+        singleProduct = new SingleProduct();
+        this.showReprocessedProduct = false;
+        showInit();
+    }
+
+    public void hideButtonGeneral()
+    {
+        showButtonAddProduct = false;
+        showButtonReprocessed = false;
+        showProductionOrders = true;
+    }
+
+    public void hideTablesIni()
+    {
+        showListReprocessedProduct = false;
+        showProductionList = false;
+        showProductionOrders = false;
+    }
+
+    public void editReprocessedProduct(BaseProduct base)
+    {
+        baseProduct = base;
+        orderBaseInputs = new ArrayList<OrderInput>();
+        orderBaseInputs = base.getOrderInputs();
+        productProcessings = new ArrayList<ProductProcessing>();
+        productProcessings = base.getProductProcessings();
+        showReprocessedProduct = true;
+        hideTablesIni();
+    }
+
+    public List<OrderInput> getOrderBaseInputs() {
+        return orderBaseInputs;
+    }
+
+    public void setOrderBaseInputs(List<OrderInput> orderBaseInputs) {
+        this.orderBaseInputs = orderBaseInputs;
+    }
+
+    public Boolean getShowSingleProduct() {
+        return showSingleProduct;
+    }
+
+    public void setShowSingleProduct(Boolean showSingleProduct) {
+        this.showSingleProduct = showSingleProduct;
+        showInit();
+    }
+
+    public void cancelSingleProduct()
+    {
+        showInit();
+    }
+
+    public SingleProduct getSingleProduct() {
+        return singleProduct;
+    }
+
+    public void setSingleProduct(SingleProduct singleProduct) {
+        this.singleProduct = singleProduct;
+    }
+
+    public String getCodeGenerate() {
+        this.codeGenerate = productionOrderCodeGenerator.generateCode();
+        return productionOrderCodeGenerator.generateCode();
+    }
+
+    public void setCodeGenerate(String codeGenerate) {
+        this.codeGenerate = codeGenerate;
+    }
+
+    public List<OrderMaterial> getOrderSingleMaterial() {
+        return orderSingleMaterial;
+    }
+
+    public void setOrderSingleMaterial(List<OrderMaterial> orderSingleMaterial) {
+        this.orderSingleMaterial = orderSingleMaterial;
+    }
+
+    public BaseProduct getBaseProduct() {
+        return baseProduct;
+    }
+
+    public void setBaseProduct(BaseProduct baseProduct) {
+        this.baseProduct = baseProduct;
+    }
+
+    public List<ProductProcessing> getProductProcessings() {
+        return productProcessings;
+    }
+
+    public void setProductProcessings(List<ProductProcessing> productProcessings) {
+        this.productProcessings = productProcessings;
+    }
+
+    public Boolean getShowListReprocessedProduct() {
+        return showListReprocessedProduct;
+    }
+
+    public void setShowListReprocessedProduct(Boolean showListReprocessedProduct) {
+        this.showListReprocessedProduct = showListReprocessedProduct;
+    }
+
+    public Boolean getShowButtonReprocessed() {
+        return showButtonReprocessed;
+    }
+
+    public void setShowButtonReprocessed(Boolean showButtonReprocessed) {
+        this.showButtonReprocessed = showButtonReprocessed;
+    }
+
+    public Boolean getShowButtonAddProduct() {
+        return showButtonAddProduct;
+    }
+
+    public void setShowButtonAddProduct(Boolean showButtonAddProduct) {
+        this.showButtonAddProduct = showButtonAddProduct;
+    }
+
+    public Boolean getShowProductionList() {
+        return showProductionList;
+    }
+
+    public void setShowProductionList(Boolean showProductionList) {
+        this.showProductionList = showProductionList;
     }
 }

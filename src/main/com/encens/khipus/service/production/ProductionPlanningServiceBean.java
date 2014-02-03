@@ -113,15 +113,21 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     public BigDecimal getMountInWarehouse(ProductItem productItem) {
+        BigDecimal result = BigDecimal.ZERO;
         try{
-        return (BigDecimal) getEntityManager()
+            result = (BigDecimal) getEntityManager()
                 .createQuery("SELECT sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                 .setParameter("productItem", productItem)
                 .getSingleResult();
+
         }catch(NoResultException e)
         {
             return new BigDecimal(0.0);
         }
+        if(result == null)
+            return BigDecimal.ZERO;
+
+        return result;
     }
 
     public BigDecimal getMountInWarehouse(Long id) {

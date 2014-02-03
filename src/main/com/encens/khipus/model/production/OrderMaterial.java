@@ -70,8 +70,12 @@ public class OrderMaterial implements BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "IDPRODUCTOSIMPLE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    private SingleProduct singleProduct;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
@@ -171,5 +175,13 @@ public class OrderMaterial implements BaseModel {
 
     public void setCostUnit(BigDecimal costUnit) {
         this.costUnit = costUnit;
+    }
+
+    public SingleProduct getSingleProduct() {
+        return singleProduct;
+    }
+
+    public void setSingleProduct(SingleProduct singleProduct) {
+        this.singleProduct = singleProduct;
     }
 }
