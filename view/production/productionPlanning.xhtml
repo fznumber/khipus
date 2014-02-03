@@ -253,6 +253,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </a4j:region>
 
 <a4j:region rendered="#{productionPlanningAction.showDetailOrder}">
+<!--region reproceso-->
+
+<!-- fin region reproceso-->
 <!--region detalle Orden de produccion-->
 <app:fieldset id="orderDetail" title="#{messages['ProductionOrder.processedProduct.detail']}">
     <h:panelGrid columns="3"
