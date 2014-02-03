@@ -88,6 +88,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showListReprocessedProduct = true;
     private Boolean showButtonReprocessed = true;
     private Boolean showButtonAddProduct = true;
+    private Boolean showProductionList = true;
 
     private Double expendOld;
     private Double containerOld;
@@ -186,8 +187,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     @Factory(value = "processedProductForPlanning", scope = ScopeType.STATELESS)
     public ProcessedProduct initProcessedProduct() {
-        if(processedProduct != null)
-            return null;
         return processedProduct;
     }
 
@@ -217,6 +216,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setCode(productionOrderCodeGenerator.generateCode());
         }
         productionOrder.setExpendAmount(0.0);
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     private Integer getCodeOrder(String code)
@@ -1289,6 +1290,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
 
     }
 
@@ -1313,6 +1316,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         addMaterial = true;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     public void editSingle(BaseProduct base, SingleProduct single){
@@ -1320,6 +1325,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         singleProduct = single;
         orderSingleMaterial = single.getOrderMaterials();
         showSingleProduct = true;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     public void selectMaterialDetail(ProductionOrder order) {
@@ -1350,6 +1357,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         showDetailOrder = true;
         showProductionOrders = false;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     //@End(ifOutcome = Outcome.SUCCESS)
@@ -1446,6 +1455,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
         showButtonReprocessed = true;
         showButtonAddProduct = true;
+        showSingleProduct = false;
         disableEditingFormula();
     }
 
@@ -1646,6 +1656,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showListReprocessedProduct = false;
         showButtonReprocessed = false;
         showButtonAddProduct = false;
+        showInit();
     }
 
     private void disableEditingFormula() {
@@ -1659,21 +1670,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionPlanning.getBaseProducts().add(baseProduct);
             baseProduct.setProductionPlanningBase(productionPlanning);
         }
-        /*if(baseProduct.getOrderInputs() == null){
-            baseProduct.getOrderInputs().clear();
-        }*/
-       /* if(baseProduct.getOrderInputs() != null)
-        baseProduct.getOrderInputs().clear();*/
-
-       // baseProduct.getOrderInputs().addAll(orderBaseInputs);
-
-      /*  if(baseProduct.getProductProcessings() != null)
-        baseProduct.getProductProcessings().clear();*/
-
-        //baseProduct.getProductProcessings().addAll(productProcessings);
 
         if(baseProduct.getCode() == null)
-        baseProduct.setCode(codeGenerate);
+        {
+            baseProduct.setCode(codeGenerate);
+            baseProduct.getProductProcessings().addAll(productProcessings);
+            baseProduct.getOrderInputs().addAll(orderBaseInputs);
+        }
 
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -1683,6 +1686,23 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderBaseInputs.clear();
         productProcessings.clear();
         refreshInstance();
+        showInit();
+    }
+
+    public void deleteReprocessedProduct(BaseProduct product){
+        ProductionPlanning productionPlanning = getInstance();
+        productionPlanning.getBaseProducts().remove(product);
+
+
+        if (update() != Outcome.SUCCESS) {
+            return;
+        }
+        showReprocessedProduct = false;
+        baseProduct = null;
+        orderBaseInputs.clear();
+        productProcessings.clear();
+        refreshInstance();
+        showInit();
     }
 
     public void saveSingleProduct(){
@@ -1702,6 +1722,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         baseProduct = null;
         orderSingleMaterial.clear();
         refreshInstance();
+        showInit();
     }
 
     public void addProduct(BaseProduct product)
@@ -1709,6 +1730,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         baseProduct = product;
         singleProduct = new SingleProduct();
         showSingleProduct = true;
+        hideButtonGeneral();
+        hideTablesIni();
     }
 
     @End(ifOutcome = Outcome.SUCCESS)
@@ -2012,6 +2035,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder = null;
         addMaterial = false;
         showProductionOrders = true;
+        showInit();
     }
 
     public OrderMaterial getOrderMaterial() {
@@ -2068,7 +2092,33 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowReprocessedProduct(Boolean showReprocessedProduct) {
         baseProduct = new BaseProduct();
+        singleProduct = new SingleProduct();
+        orderBaseInputs = new ArrayList<OrderInput>();
+        productProcessings = new ArrayList<ProductProcessing>();
         this.showReprocessedProduct = showReprocessedProduct;
+        hideButtonGeneral();
+        hideTablesIni();
+    }
+
+    public void cancelReprossecing(){
+        baseProduct = new BaseProduct();
+        singleProduct = new SingleProduct();
+        this.showReprocessedProduct = false;
+        showInit();
+    }
+
+    public void hideButtonGeneral()
+    {
+        showButtonAddProduct = false;
+        showButtonReprocessed = false;
+        showProductionOrders = true;
+    }
+
+    public void hideTablesIni()
+    {
+        showListReprocessedProduct = false;
+        showProductionList = false;
+        showProductionOrders = false;
     }
 
     public void editReprocessedProduct(BaseProduct base)
@@ -2079,6 +2129,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productProcessings = new ArrayList<ProductProcessing>();
         productProcessings = base.getProductProcessings();
         showReprocessedProduct = true;
+        hideTablesIni();
     }
 
     public List<OrderInput> getOrderBaseInputs() {
@@ -2095,6 +2146,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowSingleProduct(Boolean showSingleProduct) {
         this.showSingleProduct = showSingleProduct;
+        showInit();
+    }
+
+    public void cancelSingleProduct()
+    {
+        showInit();
     }
 
     public SingleProduct getSingleProduct() {
@@ -2160,5 +2217,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowButtonAddProduct(Boolean showButtonAddProduct) {
         this.showButtonAddProduct = showButtonAddProduct;
+    }
+
+    public Boolean getShowProductionList() {
+        return showProductionList;
+    }
+
+    public void setShowProductionList(Boolean showProductionList) {
+        this.showProductionList = showProductionList;
     }
 }

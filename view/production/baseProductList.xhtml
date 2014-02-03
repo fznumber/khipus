@@ -7,7 +7,9 @@
                 xmlns:c="http://java.sun.com/jstl/core"
                 xmlns:app="http://encens.com/products/khipus/facelets"
                 xmlns:rich="http://richfaces.org/rich">
-<app:fieldset id="baseProductionList" title="#{messages['ProductionPlanning.productReproccesing']}" rendered = "#{productionPlanningAction.showListReprocessedProduct}">
+    <s:div id="baseProductionList">
+    <a4j:region rendered = "#{productionPlanningAction.showListReprocessedProduct}" >
+<!--<app:fieldset  title="#{messages['ProductionPlanning.productReproccesing']}">-->
 
         <table class="rich-table">
 
@@ -53,13 +55,21 @@
                     <s:div>
                         <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
                                            action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
-                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,detailBaseProduct"
+                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                            ajaxSingle="true"/>
 
                         <rich:spacer width="40"/>
+
+                        <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
+                                           action="#{productionPlanningAction.deleteReprocessedProduct(baseProduct)}"
+                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                                           ajaxSingle="true"/>
+
+                        <rich:spacer width="40"/>
+
                         <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                            action="#{productionPlanningAction.addProduct(baseProduct)}"
-                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
+                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                            ajaxSingle="true"/>
                     </s:div>
 
@@ -118,5 +128,9 @@
 
             </c:forEach>
         </table>
-</app:fieldset>
+        <rich:jQuery selector="#singleProductsList tr" query="mouseover(function(){jQuery(this).addClass('active-row')})"/>
+        <rich:jQuery selector="#singleProductsList tr" query="mouseout(function(){jQuery(this).removeClass('active-row')})"/>
+<!--</app:fieldset>-->
+    </a4j:region>
+    </s:div>
     </ui:composition>

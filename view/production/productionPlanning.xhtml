@@ -78,14 +78,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <h:panelGroup id="formulaSet">
 <a4j:commandButton id="editFormulaButton" value="#{messages['ProductionPlanning.editFormulaButton']}"
                    action="#{productionPlanningAction.initEditFormula}"
-                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
-                   rendered="#{productionPlanningAction.showButtonReprocessed}"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                   rendered="#{productionPlanningAction.showButtonAddProduct}"
                    ajaxSingle="true"/>
 
 <a4j:commandButton id="createReprocess" value="#{messages['ProductionPlanning.createReprocess']}"
                    action="#{productionPlanningAction.setShowReprocessedProduct(true)}"
                    rendered="#{productionPlanningAction.showButtonReprocessed}"
-                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
 <a4j:region>

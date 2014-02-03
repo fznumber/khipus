@@ -25,12 +25,12 @@
 
                 <s:decorate id="baseProductUnidsField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.units']}</ui:define>
-                    <h:inputText value="#{baseProduct.units}" required="true"/>
+                    <h:inputText value="#{baseProduct.units}" required="false"/>
                 </s:decorate>
 
                 <s:decorate id="baseProductVolumeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.volume']}</ui:define>
-                    <h:inputText value="#{baseProduct.volume}" required="true"/>
+                    <h:inputText value="#{baseProduct.volume}" required="false"/>
                 </s:decorate>
 
             </h:panelGrid>
@@ -183,14 +183,15 @@
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveBaseProduct}"
                                    value="#{messages['Common.save']}"
-                                   reRender="baseProductionList,formulaSet"
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                         />
                 <rich:spacer width="20"/>
 
-                <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.setShowReprocessedProduct(false)}"
+                <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelReprossecing()}"
                                    ajaxSingle="true"
                                    value="#{messages['ProductionPlanning.innerButtonCancel']}"
-                                   reRender="baseProductionList,formulaSet"/>
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                        />
             </div>
 
         </h:form>

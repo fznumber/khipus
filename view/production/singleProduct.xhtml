@@ -48,10 +48,10 @@
                              cellpadding="0"
                              cellspacing="0"
                              border="0">
-                    <s:div id="movementDetailListPanel">
+
                         <div class="buttons">
 
-                            <a4j:commandButton id="addProductItemCommandButton"
+                            <a4j:commandButton id="addProductSingleCommandButton"
                                                action="#{productItemSearchDataModel.reset()}"
                                                value="#{messages['BaseProduct.addProducts']}"
                                                styleClass="button"
@@ -122,18 +122,19 @@
 
                         </rich:dataTable>
 
-                    </s:div>
+
                 </h:panelGrid>
             </app:fieldset>
 
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveSingleProduct}"
                                    value="#{messages['Common.save']}"
-                                   reRender="formulaSet,baseProductionList"/>
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"/>
                 <rich:spacer width="20"/>
-                <a4j:commandButton action="#{productionPlanningAction.setShowSingleProduct(false)}"
+                <a4j:commandButton action="#{productionPlanningAction.cancelSingleProduct}"
                                    value="#{messages['Common.cancel']}"
-                                   reRender="formulaSet,baseProductionList"/>
+                                   ajaxSingle="true"
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"/>
             </div>
 
         </h:form>
