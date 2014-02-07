@@ -49,7 +49,7 @@
                     <div class="buttons">
 
                         <a4j:commandButton id="addProductCommandButton"
-                                           action="#{productItemSearchDataModel.reset()}"
+                                           action="#{productItemArticleSearchDataModel.reset()}"
                                            value="#{messages['BaseProduct.addProducts']}"
                                            styleClass="button"
                                            immediate="true"
@@ -57,7 +57,7 @@
                                            actionListener="#{selectPopUpAction.select}"
                                            reRender="productListModalPanel">
                             <f:attribute name="entityManagerName" value=""/>
-                            <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
+                            <f:attribute name="dataModelObject" value="#{productItemArticleSearchDataModel}"/>
                         </a4j:commandButton>
 
                     </div>
@@ -110,7 +110,7 @@
                         <div class="buttons">
 
                             <a4j:commandButton id="addProductItemCommandButton"
-                                               action="#{productItemSearchDataModel.reset()}"
+                                               action="#{productItemInputSearchDataModel.reset()}"
                                                value="#{messages['BaseProduct.addInput']}"
                                                styleClass="button"
                                                immediate="true"
@@ -118,7 +118,7 @@
                                                actionListener="#{selectPopUpAction.select}"
                                                reRender="productItemsListModalPanel">
                                 <f:attribute name="entityManagerName" value=""/>
-                                <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
+                                <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
                             </a4j:commandButton>
 
                         </div>
@@ -185,6 +185,13 @@
                                    value="#{messages['Common.save']}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                         />
+                <rich:spacer width="20"/>
+
+                <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
+                                   action="#{productionPlanningAction.deleteReprocessedProduct}"
+                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                                   ajaxSingle="true"/>
+
                 <rich:spacer width="20"/>
 
                 <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelReprossecing()}"

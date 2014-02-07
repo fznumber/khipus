@@ -3,10 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.JobContract;
-import com.encens.khipus.model.production.ConfigGroup;
-import com.encens.khipus.model.production.EmployeeTimeCard;
-import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.production.ProductionTaskType;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.util.Constants;
@@ -155,9 +152,43 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
         if (unitMeasure == "KG" || unitMeasure == "LT")
             amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
 
-        //total = amount * productionOrder.getProducedAmount();
-        total = amount * productionOrder.getExpendAmount();
+        total = amount * productionOrder.getProducedAmount();
         return total;
+    }
+    //todo: en caso que el producto procesado no cuente con con un monto lanzar un mensaje de alerta
+    @Override
+    public Double getTotalVolumeSingle(SingleProduct single){
+        Double total = single.getAmount().doubleValue();
+        ProcessedProduct product = getProductProcessingByMetaProduct(single.getProductProcessingSingle().getMetaProduct());
+        String unitMeasure = product.getUnidMeasure();
+        Double amount = 0.0;
+
+        if (product.getAmount() != null)
+            amount = product.getAmount();
+
+        if (unitMeasure == "KG" || unitMeasure == "LT")
+            amount = product.getAmount() * 1000;
+
+        total = amount * single.getAmount();
+        return total;
+    }
+
+    public ProcessedProduct getProductProcessingByMetaProduct(MetaProduct metaProduct)
+    {
+        ProcessedProduct processedProduct;
+
+        try{
+
+            processedProduct = (ProcessedProduct) getEntityManager().createQuery("SELECT processedProduct from ProcessedProduct processedProduct where processedProduct = :metaProduct ")
+                                                    .setParameter("metaProduct",metaProduct)
+                                                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return null;
+        }
+
+        return processedProduct;
     }
 
     @Override

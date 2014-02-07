@@ -2,9 +2,7 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.finances.CashAccount;
-import com.encens.khipus.model.production.IndirectCosts;
-import com.encens.khipus.model.production.PeriodIndirectCost;
-import com.encens.khipus.model.production.ProductionOrder;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
@@ -118,6 +116,23 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     }
 
     @Override
+    public List<IndirectCosts> getCostTotalIndirectSingle(SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost) {
+
+        List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+        indirectCostses.addAll(generateCosts(periodIndirectCost, single, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
+        indirectCostses.addAll(generateCosts(periodIndirectCost, single, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, single.getProductProcessingSingle().getMetaProduct().getProductItem().getSubGroup())));
+
+        /*Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
+        Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
+        Double totalCostIndirectByGroup = getTotalCostIndirectByGroup(productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup());
+        Double costGeneral = totalCostIndirectGeneral * getPorcent(totalVolumGeneralDay, totalVolumeOrder) / 100;
+        Double costByGroup = totalCostIndirectByGroup * getPorcent(totalVolumDay, totalVolumeOrder) / 100;*/
+
+        return indirectCostses;
+    }
+
+    @Override
     public PeriodIndirectCost getLastPeroidIndirectCost()
     {
         List<PeriodIndirectCost> periodIndirectCosts = new ArrayList<PeriodIndirectCost>();
@@ -144,6 +159,24 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             aux.setCompany(costs.getCompany());
             aux.setCostsConifg(costs.getCostsConifg());
             Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
+            Double amountCost = costs.getAmountBs().doubleValue() / daysInMonth;
+            Double costGeneral = amountCost * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
+            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral,2, RoundUtil.RoundMode.SYMMETRIC)));
+            indirectCostses.add(aux);
+        }
+        return indirectCostses;
+    }
+
+    private List<IndirectCosts> generateCosts( PeriodIndirectCost periodIndirectCost,SingleProduct product, Double totalVolumDay, List<IndirectCosts> costses)
+    {
+        List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+        for(IndirectCosts costs: costses)
+        {
+            IndirectCosts aux = new IndirectCosts();
+            aux.setName(costs.getName());
+            aux.setCompany(costs.getCompany());
+            aux.setCostsConifg(costs.getCostsConifg());
+            Double totalVolumeOrder = getTotalVolumeSingle(product);
             Double amountCost = costs.getAmountBs().doubleValue() / daysInMonth;
             Double costGeneral = amountCost * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
             aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral,2, RoundUtil.RoundMode.SYMMETRIC)));
@@ -255,5 +288,41 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         total = amount * productionOrder.getProducedAmount();
         //total = amount * productionOrder.getExpendAmount();
         return total;
+    }
+
+    //todo: en caso que el producto procesado no cuente con con un monto lanzar un mensaje de alerta
+
+    public Double getTotalVolumeSingle(SingleProduct single){
+        Double total = single.getAmount().doubleValue();
+        ProcessedProduct product = getProductProcessingByMetaProduct(single.getProductProcessingSingle().getMetaProduct());
+        String unitMeasure = product.getUnidMeasure();
+        Double amount = 0.0;
+
+        if (product.getAmount() != null)
+            amount = product.getAmount();
+
+        if (unitMeasure == "KG" || unitMeasure == "LT")
+            amount = product.getAmount() * 1000;
+
+        total = amount * single.getAmount();
+        return total;
+    }
+
+    public ProcessedProduct getProductProcessingByMetaProduct(MetaProduct metaProduct)
+    {
+        ProcessedProduct processedProduct;
+
+        try{
+
+            processedProduct = (ProcessedProduct) getEntityManager().createQuery("SELECT processedProduct from ProcessedProduct processedProduct where processedProduct = :metaProduct ")
+                    .setParameter("metaProduct",metaProduct)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return null;
+        }
+
+        return processedProduct;
     }
 }

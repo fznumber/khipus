@@ -193,6 +193,14 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     @Override
+    public void deleteIndirectCost(SingleProduct singleProduct)
+    {
+        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :singleProduct")
+                .setParameter("singleProduct",singleProduct)
+                .executeUpdate();
+    }
+
+    @Override
     public void updateOrder(ProductionOrder order) {
         getEntityManager().createNativeQuery("update ORDENPRODUCCION set PORCENTAJEGRASA = :percentage where IDORDENPRODUCCION = :order")
                           .setParameter("percentage",order.getGreasePercentage())

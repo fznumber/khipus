@@ -73,9 +73,9 @@ public class MetaProduct implements Serializable, BaseModel {
     @JoinColumn(name = "IDUNIDADMEDIDAPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = true, insertable = true)
     private MeasureUnitProduction measureUnitProduction;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    /*@ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
-    private BaseProduct baseProduct;
+    private BaseProduct baseProduct;*/
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
@@ -206,11 +206,11 @@ public class MetaProduct implements Serializable, BaseModel {
         this.companyNumber = companyNumber;
     }
 
-    public BaseProduct getBaseProduct() {
+    /*public BaseProduct getBaseProduct() {
         return baseProduct;
     }
 
     public void setBaseProduct(BaseProduct baseProduct) {
         this.baseProduct = baseProduct;
-    }
+    }*/
 }
