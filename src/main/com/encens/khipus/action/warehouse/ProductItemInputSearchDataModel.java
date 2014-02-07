@@ -24,10 +24,10 @@ public class ProductItemInputSearchDataModel extends QueryDataModel<ProductItemP
 
     private static final String[] RESTRICTIONS =
             {
-                    "lower(productItem.id.productItemCode) like concat(lower(#{productItemArticleSearchDataModel.criteria.id.productItemCode}), '%')",
-                    "lower(productItem.name) like concat('%',concat(lower(#{productItemArticleSearchDataModel.criteria.name}), '%'))",
+                    "lower(productItem.id.productItemCode) like concat(lower(#{productItemInputSearchDataModel.criteria.id.productItemCode}), '%')",
+                    "lower(productItem.name) like concat('%',concat(lower(#{productItemInputSearchDataModel.criteria.name}), '%'))",
                     "productItem.state = #{enumerationUtil.getEnumValue('com.encens.khipus.model.warehouse.ProductItemState', 'VIG')}",
-                    "productItem.groupCode in (#{productItemArticleSearchDataModel.groups})"
+                    "productItem.groupCode in (#{productItemInputSearchDataModel.groups})"
             };
 
     @Create

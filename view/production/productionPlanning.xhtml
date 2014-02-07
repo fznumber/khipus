@@ -583,7 +583,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <rich:spacer width="10"/>
 
                     <a4j:commandButton id="addProductItemCommandButton"
-                                       action="#{productItemSearchDataModel.reset()}"
+                                       action="#{productItemMaterialSearchDataModel.reset()}"
                                        value="#{messages['ProductionPlanning.addMaterial']}"
                                        styleClass="button"
                                        immediate="true"
@@ -592,7 +592,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                        rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
                                        reRender="productItemsListModalPanel">
                         <f:attribute name="entityManagerName" value=""/>
-                        <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
+                        <f:attribute name="dataModelObject" value="#{productItemMaterialSearchDataModel}"/>
                     </a4j:commandButton>
 
                     <a4j:commandButton id="cancelMaterialButton" action="#{productionPlanningAction.cancelMaterial}"
@@ -924,14 +924,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </s:decorate>
 
 <s:decorate id="productItemsListModalPanelContainer"
-            template="/warehouse/productItemsListModalPanel.xhtml">
+            template="/warehouse/productItemsMaterialListModalPanel.xhtml">
     <ui:param name="containerId" value="productItemsListModalPanelContainer"/>
     <ui:param name="dialogId" value="productItemsListModalPanel"/>
     <ui:define name="addButton">
         <a4j:commandButton id="addButton"
                            immediate="true"
                            ajaxSingle="true"
-                           action="#{productionPlanningAction.addProductItems(productItemSearchDataModel.selectedProductItems)}"
+                           action="#{productionPlanningAction.addProductItems(productItemMaterialSearchDataModel.selectedProductItems)}"
                            value="#{messages['Common.add']}"
                            reRender="movementDetailListPanel"
                            styleClass="button"
@@ -940,14 +940,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </s:decorate>
 
 <s:decorate id="baseProductInputsListModalPanelContainer"
-            template="/warehouse/productItemsListModalPanel.xhtml">
+            template="/warehouse/productItemsInputListModalPanel.xhtml">
     <ui:param name="containerId" value="baseProductInputsListModalPanelContainer"/>
     <ui:param name="dialogId" value="baseProductInputsListModalPanel"/>
     <ui:define name="addButton">
         <a4j:commandButton id="addButton"
                            immediate="true"
                            ajaxSingle="true"
-                           action="#{productionPlanningAction.addBaseProductItems(productItemSearchDataModel.selectedProductItems)}"
+                           action="#{productionPlanningAction.addBaseProductItems(productItemInputSearchDataModel.selectedProductItems)}"
                            value="#{messages['Common.add']}"
                            reRender="detailBaseProductInput"
                            styleClass="button"
@@ -972,14 +972,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </s:decorate>
 
 <s:decorate id="singleProductMaterialListModalPanelContainer"
-            template="/warehouse/productItemsListModalPanel.xhtml">
+            template="/warehouse/productItemsMaterialListModalPanel.xhtml">
     <ui:param name="containerId" value="singleProductMaterialListModalPanelContainer"/>
     <ui:param name="dialogId" value="singleProductMaterialListModalPanel"/>
     <ui:define name="addButton">
         <a4j:commandButton id="addButton"
                            immediate="true"
                            ajaxSingle="true"
-                           action="#{productionPlanningAction.addSingleProductMaterial(productItemSearchDataModel.selectedProductItems)}"
+                           action="#{productionPlanningAction.addSingleProductMaterial(productItemMaterialSearchDataModel.selectedProductItems)}"
                            value="#{messages['Common.add']}"
                            reRender="detailSingleProductInput"
                            styleClass="button"
