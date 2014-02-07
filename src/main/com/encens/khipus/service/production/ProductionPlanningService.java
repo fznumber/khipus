@@ -6,6 +6,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.production.ProductionPlanning;
+import com.encens.khipus.model.production.SingleProduct;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
@@ -33,6 +34,8 @@ public interface ProductionPlanningService extends GenericService {
     public void updateProductionPlanning(ProductionPlanning instance,ProductionOrder order) throws ConcurrencyException, EntryDuplicatedException;
 
     public void deleteIndirectCost(ProductionOrder order);
+
+    public void deleteIndirectCost(SingleProduct singleProduct);
 
     public void updateOrder(ProductionOrder order);
 }

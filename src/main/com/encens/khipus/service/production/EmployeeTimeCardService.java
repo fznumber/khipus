@@ -1,10 +1,7 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.model.employees.Employee;
-import com.encens.khipus.model.production.ConfigGroup;
-import com.encens.khipus.model.production.EmployeeTimeCard;
-import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.production.ProductionTaskType;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.Group;
 
 import javax.ejb.Local;
@@ -38,4 +35,6 @@ public interface EmployeeTimeCardService {
     public List<EmployeeTimeCard> getLastTimesCardsEmployee(Employee employeeSelect);
 
     public Double getTotalVolumeOrder(ProductionOrder productionOrder);
+
+    public Double getTotalVolumeSingle(SingleProduct single);
 }

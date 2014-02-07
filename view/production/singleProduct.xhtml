@@ -10,7 +10,7 @@
     <s:div rendered="#{productionPlanningAction.showSingleProduct}" id = "detailSingleProduct">
 
         <h:form id="singleProductionPlanningForm">
-        <app:fieldset id="singleProductDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
+        <app:fieldset id="singleProductDetailFields" title="#{messages['SingleProduct.product']}">
             <h:panelGrid columns="1"
                          width="100%"
                          cellpadding="0"
@@ -20,7 +20,7 @@
 
                 <s:decorate id="singleProductField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
-                    <h:inputText id="singleProduct" value="#{singleProduct.metaProduct.fullName}"
+                    <h:inputText id="singleProduct" value="#{singleProduct.productProcessingSingle.metaProduct.fullName}"
                                  required="true" maxlength="500" styleClass="input" tabindex="5"
                                  >
                     </h:inputText>
@@ -42,7 +42,7 @@
 
         </app:fieldset>
 
-        <app:fieldset id="detailSingleProductInput" title="#{messages['BaseProduct.detailProduct']}">
+        <app:fieldset id="detailSingleProductInput" title="#{messages['SingleProduct.mateial']}">
                 <h:panelGrid columns="1"
                              width="100%"
                              cellpadding="0"
@@ -131,6 +131,7 @@
                                    value="#{messages['Common.save']}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"/>
                 <rich:spacer width="20"/>
+
                 <a4j:commandButton action="#{productionPlanningAction.cancelSingleProduct}"
                                    value="#{messages['Common.cancel']}"
                                    ajaxSingle="true"

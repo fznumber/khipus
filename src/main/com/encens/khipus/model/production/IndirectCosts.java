@@ -46,9 +46,13 @@ public class IndirectCosts implements BaseModel {
     @JoinColumn(name = "IDPERIODOCOSTOINDIRECTO")
     private PeriodIndirectCost periodIndirectCost;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDORDENPRODUCCION")
     private ProductionOrder productionOrder;
+
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "IDPRODUCTOSIMPLE")
+    private SingleProduct singleProduct;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
@@ -124,5 +128,13 @@ public class IndirectCosts implements BaseModel {
 
     public void setCostsConifg(IndirectCostsConifg costsConifg) {
         this.costsConifg = costsConifg;
+    }
+
+    public SingleProduct getSingleProduct() {
+        return singleProduct;
+    }
+
+    public void setSingleProduct(SingleProduct singleProduct) {
+        this.singleProduct = singleProduct;
     }
 }

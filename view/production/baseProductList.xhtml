@@ -15,66 +15,6 @@
 
             <c:forEach var="baseProduct" items="#{productionPlanning.baseProducts}" varStatus="row">
 
-                <h:panelGrid  columns="3" columnClasses="top-aligned" width="80%">
-                    <s:div>
-                        <rich:dataTable value="#{baseProduct.productProcessings}" var="productProsessing"
-                                        width="100%">
-                            <f:facet name="header">
-                                <rich:columnGroup>
-                                    <rich:column>
-                                        #{messages['ProductionOrder.processedProduct.name']}
-                                    </rich:column>
-                                </rich:columnGroup>
-                            </f:facet>
-                            <rich:column>
-                                <h:outputText value="#{productProsessing.metaProduct.fullName}"/>
-                            </rich:column>
-                        </rich:dataTable>
-                    </s:div>
-                    <s:div>
-
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['BaseProduct.code']}</ui:define>
-                            <h:outputText value="#{baseProduct.code}">
-                            </h:outputText>
-                        </s:decorate>
-
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['BaseProduct.volume']}</ui:define>
-                            <h:outputText value="#{baseProduct.volume}">
-                            </h:outputText>
-                        </s:decorate>
-
-                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['BaseProduct.amount']}</ui:define>
-                            <h:outputText value="#{baseProduct.units}">
-                            </h:outputText>
-                        </s:decorate>
-                    </s:div>
-
-                    <s:div>
-                        <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
-                                           action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
-                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                                           ajaxSingle="true"/>
-
-                        <rich:spacer width="40"/>
-
-                        <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
-                                           action="#{productionPlanningAction.deleteReprocessedProduct(baseProduct)}"
-                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                                           ajaxSingle="true"/>
-
-                        <rich:spacer width="40"/>
-
-                        <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
-                                           action="#{productionPlanningAction.addProduct(baseProduct)}"
-                                           reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                                           ajaxSingle="true"/>
-                    </s:div>
-
-                </h:panelGrid>
-
 
 
                 <rich:dataTable value="#{baseProduct.singleProducts}" var="singleProduct"
@@ -84,13 +24,19 @@
                     <f:facet name="header">
                         <rich:columnGroup>
                             <rich:column>
-                                #{messages['ProductionOrder.processedProduct.name']}
+                                #{messages['BaseProduct.code']} : #{baseProduct.code}
                             </rich:column>
                             <rich:column>
-                                #{messages['ProductionOrder.producingAmount']}
+                                <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
+                                                   action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
+                                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                                                   ajaxSingle="true"/>
                             </rich:column>
                             <rich:column>
-                                #{messages['ProductionOrder.estateOrderProduction']}
+                                <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
+                                                   action="#{productionPlanningAction.addProduct(baseProduct)}"
+                                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                                                   ajaxSingle="true"/>
                             </rich:column>
                             <rich:column styleClass="center">
                                 #{messages['Common.action']}
@@ -99,7 +45,7 @@
                     </f:facet>
 
                     <rich:column>
-                        <h:outputText value="#{singleProduct.metaProduct.fullName}"/>
+                        <h:outputText value="#{singleProduct.productProcessingSingle.metaProduct.fullName}"/>
                     </rich:column>
                     <rich:column>
                         <h:outputText value="#{singleProduct.amount}"/>
@@ -118,10 +64,11 @@
                                          reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>
                         <rich:spacer width="5"/>
 
-                        <!--<a4j:commandLink ajaxSingle="true" immediate="true"
+                        <a4j:commandLink ajaxSingle="true" immediate="true"
                                          value="#{messages['ProductionOrder.materialProduccion.selectOrder']}"
-                                         action="#{productionPlanningAction.selectDetail(singleProduct)}"
-                                         reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>-->
+                                         action="#{productionPlanningAction.showDetailSingle(singleProduct,baseProduct)}"
+                                         reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"/>
+
 
                     </rich:column>
                 </rich:dataTable>

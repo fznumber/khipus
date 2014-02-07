@@ -45,10 +45,10 @@ public class SingleProduct implements BaseModel {
     @Enumerated(EnumType.STRING)
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    /*@OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
     private MetaProduct metaProduct;
-
+*/
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     @NotNull
@@ -57,6 +57,10 @@ public class SingleProduct implements BaseModel {
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private BaseProduct baseProduct;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private ProductProcessingSingle productProcessingSingle;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -67,6 +71,25 @@ public class SingleProduct implements BaseModel {
 
     @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
     private BigDecimal totalInput = new BigDecimal(0.0);
+
+    @Column(name = "COSTOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal costLabor = new BigDecimal(0.0);
+
+    @Column(name = "COSTOTOTALINDIRECTO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal totalIndirecCost = new BigDecimal(0.0);
+
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal unitCost = new BigDecimal(0.0);
+
+    @Column(name = "PORCENTAJEGRASA", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal greasePorentage = new BigDecimal(0.0);
+
+    @Column(name = "COSTOTOTALPRODUCCION", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    private BigDecimal totalCostProduction = new BigDecimal(0.0);
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
 
     public Long getId() {
         return id;
@@ -82,14 +105,6 @@ public class SingleProduct implements BaseModel {
 
     public void setAmount(Integer amount) {
         this.amount = amount;
-    }
-
-    public MetaProduct getMetaProduct() {
-        return metaProduct;
-    }
-
-    public void setMetaProduct(MetaProduct metaProduct) {
-        this.metaProduct = metaProduct;
     }
 
     public Company getCompany() {
@@ -139,4 +154,81 @@ public class SingleProduct implements BaseModel {
     public void setOrderMaterials(List<OrderMaterial> orderMaterials) {
         this.orderMaterials = orderMaterials;
     }
+
+    public BigDecimal getTotalIndirecCost() {
+        return totalIndirecCost;
+    }
+
+    public void setTotalIndirecCost(BigDecimal totalIndirecCost) {
+        this.totalIndirecCost = totalIndirecCost;
+    }
+
+    public BigDecimal getUnitCost() {
+        return unitCost;
+    }
+
+    public void setUnitCost(BigDecimal unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public BigDecimal getGreasePorentage() {
+        return greasePorentage;
+    }
+
+    public void setGreasePorentage(BigDecimal greasePorentage) {
+        this.greasePorentage = greasePorentage;
+    }
+
+    public BigDecimal getCostLabor() {
+        return costLabor;
+    }
+
+    public void setCostLabor(BigDecimal costLabor) {
+        this.costLabor = costLabor;
+    }
+
+    public BigDecimal getTotalCostProduction() {
+        return totalCostProduction;
+    }
+
+    public void setTotalCostProduction(BigDecimal totalCostProduction) {
+        this.totalCostProduction = totalCostProduction;
+    }
+
+    /*public List<IndirectCosts> getIndirectCostses() {
+
+        if(indirectCostses == null)
+            return new ArrayList<IndirectCosts>();
+
+        return indirectCostses;
+    }
+
+    public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
+        this.indirectCostses.clear();
+        if(indirectCostses != null)
+        this.indirectCostses = indirectCostses;
+    }*/
+
+    public List<IndirectCosts> getIndirectCostses() {
+
+        if(indirectCostses == null)
+            return new ArrayList<IndirectCosts>();
+
+        return indirectCostses;
+    }
+
+    public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
+        this.indirectCostses.clear();
+        if(indirectCostses != null)
+            this.indirectCostses.addAll(indirectCostses);
+    }
+
+    public ProductProcessingSingle getProductProcessingSingle() {
+        return productProcessingSingle;
+    }
+
+    public void setProductProcessingSingle(ProductProcessingSingle productProcessingSingle) {
+        this.productProcessingSingle = productProcessingSingle;
+    }
+
 }

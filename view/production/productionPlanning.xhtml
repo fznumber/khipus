@@ -88,11 +88,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
-<a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
+<!--<a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
                    action="#{productionPlanningAction.generateAllVoucher}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,productionList"
                    rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) }"
-                   ajaxSingle="true"/>
+                   ajaxSingle="true"/>-->
 
 <a4j:region>
     <h:panelGrid columns="2" width="70%"
@@ -172,6 +172,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     <s:div>
         <ui:include src="/production/singleProduct.xhtml"/>
     </s:div>
+    <!--region reproceso-->
+    <s:div>
+        <ui:include src="/production/singleProductDetail.xhtml"/>
+    </s:div>
+    <!-- fin region reproceso-->
     <s:div rendered="#{!(productionPlanningAction.formulaState eq 'NONE') and productionOrderForPlanning.estateOrder eq 'PENDING'}">
         <table style="width:100%">
             <tr>
@@ -251,11 +256,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </table>
     </s:div>
 </a4j:region>
-
 <a4j:region rendered="#{productionPlanningAction.showDetailOrder}">
-<!--region reproceso-->
-
-<!-- fin region reproceso-->
 <!--region detalle Orden de produccion-->
 <app:fieldset id="orderDetail" title="#{messages['ProductionOrder.processedProduct.detail']}">
     <h:panelGrid columns="3"
@@ -955,14 +956,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </s:decorate>
 
 <s:decorate id="productListModalPanelContainer"
-            template="/warehouse/productItemsListModalPanel.xhtml">
+            template="/warehouse/productItemsArticleListModalPanel.xhtml">
     <ui:param name="containerId" value="productListModalPanelContainer"/>
     <ui:param name="dialogId" value="productListModalPanel"/>
     <ui:define name="addButton">
         <a4j:commandButton id="addButton"
                            immediate="true"
                            ajaxSingle="true"
-                           action="#{productionPlanningAction.addProductToBaseProduct(productItemSearchDataModel.selectedProductItems)}"
+                           action="#{productionPlanningAction.addProductToBaseProduct(productItemArticleSearchDataModel.selectedProductItems)}"
                            value="#{messages['Common.add']}"
                            reRender="detailProductBase"
                            styleClass="button"
