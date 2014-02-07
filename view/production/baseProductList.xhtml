@@ -25,6 +25,13 @@
                         <rich:columnGroup>
                             <rich:column>
                                 #{messages['BaseProduct.code']} : #{baseProduct.code}
+                                <rich:spacer width="10"/>
+                                <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
+                                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                                                   ajaxSingle="true">
+                                    <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
+                                                           operation="show"/>
+                                </a4j:commandButton>
                             </rich:column>
                             <rich:column>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
@@ -58,7 +65,7 @@
                     <rich:column styleClass="center">
 
                         <a4j:commandLink ajaxSingle="true" immediate="true"
-                                         value="#{singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
+                                         value="#{singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['SingleProduct.action.setAmounts']}"
                                          action="#{productionPlanningAction.editSingle(baseProduct,singleProduct)}"
                                          rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
                                          reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>

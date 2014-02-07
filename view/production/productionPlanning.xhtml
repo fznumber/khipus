@@ -903,6 +903,24 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </s:decorate>
 
 <s:decorate template="/include/modalDialog.xhtml"
+            rendered="#{productionPlanningAction.managed}">
+    <ui:param name="dialogId" value="confirmationVoucherSingle"/>
+    <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
+    <ui:define name="dialogContent">
+        <p>
+            <h:outputFormat value="#{messages['ProductionPlanning.generateVoucher.confirmation']}">
+            </h:outputFormat>
+        </p>
+    </ui:define>
+    <ui:define name="dialogOption">
+        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction}"
+                           value="#{messages['Common.confirm']}"
+                           immediate="true"
+                           styleClass="button"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate template="/include/modalDialog.xhtml"
             rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}">
     <ui:param name="dialogId" value="deleteConfirmation"/>
     <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
