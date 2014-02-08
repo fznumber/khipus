@@ -35,7 +35,7 @@
 
                 <s:decorate id="singleProductAmounField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SingleProduct.amount']}</ui:define>
-                    <h:inputText value="#{singleProduct.amount}" required="true"/>
+                    <h:inputText value="#{singleProduct.amount}" required="false"/>
                 </s:decorate>
 
             </h:panelGrid>
@@ -53,7 +53,7 @@
 
                             <a4j:commandButton id="addProductSingleCommandButton"
                                                action="#{productItemInputSearchDataModel.reset()}"
-                                               value="#{messages['BaseProduct.addProducts']}"
+                                               value="#{messages['SingleProduct.addMaterial']}"
                                                styleClass="button"
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('singleProductMaterialListModalPanel');"

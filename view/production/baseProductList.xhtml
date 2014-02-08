@@ -25,18 +25,22 @@
                         <rich:columnGroup>
                             <rich:column>
                                 #{messages['BaseProduct.code']} : #{baseProduct.code}
-                            </rich:column>
-                            <rich:column>
+                                <rich:spacer width="5"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
                                                    action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
-                            </rich:column>
-                            <rich:column>
+                                <rich:spacer width="5"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                                    action="#{productionPlanningAction.addProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
+                            </rich:column>
+                            <rich:column>
+                              Cant. Producida
+                            </rich:column>
+                            <rich:column>
+                               Estado
                             </rich:column>
                             <rich:column styleClass="center">
                                 #{messages['Common.action']}
