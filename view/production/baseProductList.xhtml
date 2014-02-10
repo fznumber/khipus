@@ -24,30 +24,45 @@
                     <f:facet name="header">
                         <rich:columnGroup>
                             <rich:column>
+
                                 #{messages['BaseProduct.code']} : #{baseProduct.code}
+
                                 <rich:spacer width="10"/>
+
                                 <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
-                                                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                                                   ajaxSingle="true">
+                                                   rendered="#{baseProduct.state != 'TABULATED'}"
+                                                   >
+
                                     <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
-                                                           operation="show"/>
+                                                           operation="show">
+                                            </rich:componentControl>
                                 </a4j:commandButton>
-                            </rich:column>
-                            <rich:column>
+
+                                <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
                                                    action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
-                            </rich:column>
-                            <rich:column>
+                                <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                                    action="#{productionPlanningAction.addProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
+
                             </rich:column>
+
+                            <rich:column>
+                                #{messages['ProductionPlanning.producingAmount']}
+                            </rich:column>
+
+                            <rich:column>
+                                #{messages['BaseProduct.state']}
+                            </rich:column>
+
                             <rich:column styleClass="center">
                                 #{messages['Common.action']}
                             </rich:column>
+
                         </rich:columnGroup>
                     </f:facet>
 

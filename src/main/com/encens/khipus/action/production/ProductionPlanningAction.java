@@ -89,6 +89,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showButtonAddProduct = true;
     private Boolean showProductionList = true;
     private Boolean showDetailSingleProduct = false;
+    private Boolean showGenerateAllVoucher = true;
 
     private Double expendOld;
     private Double containerOld;
@@ -202,6 +203,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if(order.getEstateOrder() == FINALIZED && order.getEstateOrder() != TABULATED)
                 generateVoucherOrderProduction(order);
         }
+        for(BaseProduct base : getInstance().getBaseProducts())
+        {
+                if(base.getState() == FINALIZED && base.getState() != TABULATED)
+                    generateVoucherSingleProduction(base);
+
+        }
     }
 
     public void generateVoucherOrderProduction(ProductionOrder order){
@@ -220,26 +227,35 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void generateVoucherSingleProduction(BaseProduct base){
 
-        //base.setState(TABULATED);
-/*
 
-        InventoryMovement inventoryMovement = createVale(order);
-        approvalVoucher(inventoryMovement);
-*/
+        if(base.getSingleProducts().size() ==0)
+        {
+            showErrorVoucherNotsingles();
+            return;
+        }
         for(SingleProduct single: base.getSingleProducts())
         {
             if(single.getState() != FINALIZED)
             {
-                //mostrar error
+                showErrorVoucherSingle();
                 return;
             }
         }
 
+        base.setState(TABULATED);
         InventoryMovement inventoryMovement = createVale(base);
         approvalVoucher(inventoryMovement);
         closeDetail();
         showProductionOrders = true;
         update();
+    }
+
+    public void showErrorVoucherSingle(){
+       facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "SingleProduct.message.errorState");
+    }
+
+    public void showErrorVoucherNotsingles(){
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "SingleProduct.message.notOrders");
     }
 
     public void initEditFormula() {
@@ -1023,7 +1039,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", base.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(base);
         movementDetailSelect = movementDetails;
-        accountOrderProductions = generateMovementDetailOrderProduction(order);
+        accountOrderProductions = generateMovementDetailOrderProduction(base);
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
         Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
         List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
@@ -1076,6 +1092,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         accountOrderProductions.addAll(generateAccountOrderProductionsMaterial(order.getOrderMaterials()));
         accountOrderProductions.addAll(generateAccountOrderProductionsInput(order.getOrderInputs()));
         accountOrderProductions.addAll(generateAccountOrderProductionsIndirectCost(order.getIndirectCostses()));
+        return accountOrderProductions;
+    }
+
+    private List<AccountOrderProduction> generateMovementDetailOrderProduction(BaseProduct base) {
+        List<AccountOrderProduction> accountOrderProductions = new ArrayList<AccountOrderProduction>();
+        accountOrderProductions.addAll(generateAccountOrderProductionsInput(base.getOrderInputs()));
+
+        for(SingleProduct single:base.getSingleProducts()){
+            accountOrderProductions.addAll(generateAccountOrderProductionsMaterial(single.getOrderMaterials()));
+            accountOrderProductions.addAll(generateAccountOrderProductionsIndirectCost(single.getIndirectCostses()));
+        }
+
         return accountOrderProductions;
     }
 
@@ -1147,21 +1175,29 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private List<MovementDetail> generateMovementDetailOrder(BaseProduct base) {
 
         List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
+        for(SingleProduct single:base.getSingleProducts()){
+            single.setState(TABULATED);
+            movementDetails.add(createMovementDetail(single));
+        }
 
+        return movementDetails;
+    }
+
+    private MovementDetail createMovementDetail(SingleProduct singleProduct)
+    {
         MovementDetail detail = new MovementDetail();
-        ProductItem item = base.get.getProductItem();
+        ProductItem item = singleProduct.getProductProcessingSingle().getMetaProduct().getProductItem();
         detail.setProductItemCode(item.getProductItemCode());
-        detail.setQuantity(new BigDecimal(base.getProducedAmount()));
+        detail.setQuantity(new BigDecimal(singleProduct.getAmount()));
         detail.setProductItemAccount(item.getProductItemAccount());
         detail.setMeasureCode(item.getUsageMeasureUnit().getMeasureUnitCode());
-        detail.setUnitCost(base.getUnitCost());
-        detail.setAmount(new BigDecimal(base.getTotalCostProduction()));
+        detail.setUnitCost(singleProduct.getUnitCost());
+        detail.setAmount(singleProduct.getTotalCostProduction());
         detail.setProductItem(item);
         detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
         detail.setMeasureUnit(item.getUsageMeasureUnit());
-        movementDetails.add(detail);
 
-        return movementDetails;
+        return detail;
     }
 
     public class AccountOrderProduction{
@@ -1669,6 +1705,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showListReprocessedProduct = true;
         showProductionOrders = true;
         showButtonReprocessed = true;
+        showGenerateAllVoucher = true;
         showButtonAddProduct = true;
         showSingleProduct = false;
         disableEditingFormula();
@@ -1870,6 +1907,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
         showListReprocessedProduct = false;
         showButtonReprocessed = false;
+        showGenerateAllVoucher = false;
         showButtonAddProduct = false;
         showInit();
     }
@@ -2469,6 +2507,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     {
         showButtonAddProduct = false;
         showButtonReprocessed = false;
+        showGenerateAllVoucher = false;
         showProductionOrders = true;
     }
 
@@ -2592,5 +2631,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowDetailSingleProduct(Boolean showDetailSingleProduct) {
         this.showDetailSingleProduct = showDetailSingleProduct;
+    }
+
+    public Boolean getShowGenerateAllVoucher() {
+        return showGenerateAllVoucher;
+    }
+
+    public void setShowGenerateAllVoucher(Boolean showGenerateAllVoucher) {
+        this.showGenerateAllVoucher = showGenerateAllVoucher;
     }
 }

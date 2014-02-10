@@ -46,6 +46,10 @@ public class BaseProduct implements BaseModel {
     @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "NUMBER(8,2)")
     private Double volume;
 
+    @Column(name = "ESTADO", length = 20, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionPlanningState state = ProductionPlanningState.PENDING;
+
     @OneToMany(mappedBy = "baseProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
@@ -151,5 +155,13 @@ public class BaseProduct implements BaseModel {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public ProductionPlanningState getState() {
+        return state;
+    }
+
+    public void setState(ProductionPlanningState state) {
+        this.state = state;
     }
 }

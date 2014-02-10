@@ -73,6 +73,12 @@
                                 <rich:column>
                                     #{messages['ProductionOrder.productionInput.measureUnit']}
                                 </rich:column>
+                                <!--<rich:column>
+                                    #{messages['BaseProduct.units']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['BaseProduct.volume']}
+                                </rich:column>-->
                                 <rich:column>
                                     #{messages['Common.action']}
                                 </rich:column>
@@ -84,6 +90,12 @@
                         <rich:column>
                             <h:outputText value="#{productProcessing.metaProduct.productItem.usageMeasureCode}"/>
                         </rich:column>
+                        <!--<rich:column>
+                            <h:inputText value="#{productProcessing.units}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:inputText value="#{productProcessing.volume}"/>
+                        </rich:column>-->
                         <rich:column>
                             <a4j:commandLink immediate="true"
                                              title="#{messages['Common.remove']}"

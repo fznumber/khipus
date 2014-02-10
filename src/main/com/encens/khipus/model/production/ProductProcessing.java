@@ -24,6 +24,12 @@ public class ProductProcessing implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductProcessing_Generator")
     private Long id;
 
+   /* @Column(name = "UNIDADES", nullable = true)
+    private Integer units;
+
+    @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "NUMBER(8,2)")
+    private Double volume;*/
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
@@ -55,4 +61,20 @@ public class ProductProcessing implements BaseModel {
     public void setBaseProduct(BaseProduct baseProduct) {
         this.baseProduct = baseProduct;
     }
+
+    /*public Integer getUnits() {
+        return units;
+    }
+
+    public void setUnits(Integer units) {
+        this.units = units;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }*/
 }

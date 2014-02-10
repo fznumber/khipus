@@ -88,11 +88,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
-<!--<a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
+<a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
                    action="#{productionPlanningAction.generateAllVoucher}"
-                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,productionList"
-                   rendered="#{(productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED') and productionPlanningAction.formulaState eq 'NONE' and !(productionPlanningAction.addMaterial) and !(productionPlanningAction.showDetailOrder) }"
-                   ajaxSingle="true"/>-->
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                   rendered="#{productionPlanningAction.showGenerateAllVoucher}"
+                   ajaxSingle="true"/>
 
 <a4j:region>
     <h:panelGrid columns="2" width="70%"
@@ -913,7 +913,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </p>
     </ui:define>
     <ui:define name="dialogOption">
-        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction}"
+        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction(baseProduct)}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
                            styleClass="button"/>
