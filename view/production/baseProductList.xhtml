@@ -24,27 +24,45 @@
                     <f:facet name="header">
                         <rich:columnGroup>
                             <rich:column>
+
                                 #{messages['BaseProduct.code']} : #{baseProduct.code}
-                                <rich:spacer width="5"/>
+
+                                <rich:spacer width="10"/>
+
+                                <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
+                                                   rendered="#{baseProduct.state != 'TABULATED'}"
+                                                   >
+
+                                    <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
+                                                           operation="show">
+                                            </rich:componentControl>
+                                </a4j:commandButton>
+
+                                <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
                                                    action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
-                                <rich:spacer width="5"/>
+                                <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                                    action="#{productionPlanningAction.addProduct(baseProduct)}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
+
                             </rich:column>
+
                             <rich:column>
-                              Cant. Producida
+                                #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
+
                             <rich:column>
-                               Estado
+                                #{messages['BaseProduct.state']}
                             </rich:column>
+
                             <rich:column styleClass="center">
                                 #{messages['Common.action']}
                             </rich:column>
+
                         </rich:columnGroup>
                     </f:facet>
 
@@ -62,7 +80,7 @@
                     <rich:column styleClass="center">
 
                         <a4j:commandLink ajaxSingle="true" immediate="true"
-                                         value="#{singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
+                                         value="#{singleProduct.state == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['SingleProduct.action.setAmounts']}"
                                          action="#{productionPlanningAction.editSingle(baseProduct,singleProduct)}"
                                          rendered="#{singleProduct.state == 'EXECUTED' or singleProduct.state == 'PENDING'}"
                                          reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>

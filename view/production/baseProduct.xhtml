@@ -23,11 +23,11 @@
                     <h:outputText value="#{productionPlanningAction.codeGenerate}" />
                 </s:decorate>
 
-                <s:decorate id="baseProductUnidsField" template="/include/inputField.xhtml" styleClass="formRow">
+               <!-- <s:decorate id="baseProductUnidsField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.units']}</ui:define>
                     <h:inputText value="#{baseProduct.units}" required="false"/>
                 </s:decorate>
-
+-->
                 <s:decorate id="baseProductVolumeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['BaseProduct.volume']}</ui:define>
                     <h:inputText value="#{baseProduct.volume}" required="false"/>
@@ -74,6 +74,12 @@
                                     #{messages['ProductionOrder.productionInput.measureUnit']}
                                 </rich:column>
                                 <rich:column>
+                                    #{messages['BaseProduct.units']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['BaseProduct.volume']}
+                                </rich:column>
+                                <rich:column>
                                     #{messages['Common.action']}
                                 </rich:column>
                             </rich:columnGroup>
@@ -83,6 +89,12 @@
                         </rich:column>
                         <rich:column>
                             <h:outputText value="#{productProcessing.metaProduct.productItem.usageMeasureCode}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:inputText value="#{productProcessing.units}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:inputText value="#{productProcessing.volume}"/>
                         </rich:column>
                         <rich:column>
                             <a4j:commandLink immediate="true"
