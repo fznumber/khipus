@@ -381,11 +381,15 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         if (existsPendingAdvancePayments(purchaseOrder)) {
             throw new AdvancePaymentPendingException("The purchase order contain pending advance payments.");
         }
+        //primeramente verificar verificar si ya se hizo la liquidacion
+/*        if (purchaseOrder.getState() != PurchaseOrderState.LIQ) {
+            throw new PurchaseOrderLiquidatedException("The purchase order was not liquidated");
+        }*/
 
-        if (isPurchaseOrderLiquidated(purchaseOrder)) {
+/*        if (isPurchaseOrderLiquidated(purchaseOrder)) {
             findPurchaseOrder(purchaseOrder.getId());
             throw new PurchaseOrderLiquidatedException("The purchase order was already liquidated, and cannot be changed");
-        }
+        }*/
 
         if (isPurchaseOrderEmpty(purchaseOrder)) {
             throw new PurchaseOrderDetailEmptyException("The purchase order detail cannot be empty");
@@ -394,10 +398,14 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         BigDecimal defaultExchangeRate = null;
 
 
-        warehouseAccountEntryService.createEntryAccountForLiquidatedPurchaseOrder(purchaseOrder, defaultExchangeRate);
+        warehouseAccountEntryService.createEntryAccountForValidatePurchaseOrder(purchaseOrder, defaultExchangeRate);
 
         purchaseOrder.setBalanceAmount(BigDecimal.ZERO);
         purchaseOrder.setPaymentStatus(PurchaseOrderPaymentStatus.FULLY_PAID);
+
+    }
+
+    public void updateliquidatePurchaseOrder(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException {
         purchaseOrder = getEntityManager().merge(purchaseOrder);
         getEntityManager().flush();
 

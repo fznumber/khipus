@@ -63,4 +63,7 @@ public interface AdvancePaymentService extends GenericService {
 
     @SuppressWarnings(value = "unchecked")
     BigDecimal sumAllPaymentAmountsByKind(PurchaseOrder purchaseOrder, PurchaseOrderPaymentKind purchaseOrderPaymentKind);
+
+    @SuppressWarnings(value = "unchecked")
+    BigDecimal sumAllPaymentAmountsByKindPurchaseOrder(PurchaseOrder purchaseOrder, PurchaseOrderPaymentKind purchaseOrderPaymentKind);
 }

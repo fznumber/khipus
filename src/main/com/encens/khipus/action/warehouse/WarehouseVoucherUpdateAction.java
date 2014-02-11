@@ -134,6 +134,8 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     public String approve() {
         resetValidateQuantityMappings();
         try {
+            //primeramente ejecuta las operacion y verifica que no haya errores
+
             for (MovementDetail movementDetail : inventoryMovement.getMovementDetailList()) {
                 buildValidateQuantityMappings(movementDetail);
             }
@@ -143,10 +145,14 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
                     movementDetailWithoutWarnings);
             addWarehouseVoucherApproveMessage();
             showMovementDetailWarningMessages();
-            if(warehouseVoucher.getPurchaseOrder() != null)
-            warehousePurchaseOrderService.liquidatePurchaseOrder(warehouseVoucher.getPurchaseOrder());
 
-            //agregar la funcion para el segundo asiento
+            //luego hace persistente los cambios si es que no hubo ningun error en ambos el vale y la orden de compra
+
+            if(warehouseVoucher.getPurchaseOrder() != null)
+            {
+                warehousePurchaseOrderService.liquidatePurchaseOrder(warehouseVoucher.getPurchaseOrder());
+            }
+
         } catch (WarehouseDocumentTypeNotFoundException e) {
             addWarehouseDocumentTypeErrorMessage();
             return Outcome.REDISPLAY;
@@ -475,7 +481,7 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
 
     public void addPurchaseOrderLiquidatedErrorMessage(PurchaseOrder purchaseOrder) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "PurchaseOrder.error.purchaseOrderAlreadyLiquidated", purchaseOrder.getOrderNumber());
+                "PurchaseOrder.error.purchaseOrderNotLiquidated", purchaseOrder.getOrderNumber());
     }
 
     private void addAdvancePaymentPendingErrorMessage(PurchaseOrder purchaseOrder) {

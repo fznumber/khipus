@@ -123,4 +123,7 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
                                  Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap,
                                  Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailOverMaximumStockMap,
                                  List<PurchaseOrderDetail> purchaseOrderDetailWithoutWarnings);
+
+    public void updateliquidatePurchaseOrder(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException;
 }
+
