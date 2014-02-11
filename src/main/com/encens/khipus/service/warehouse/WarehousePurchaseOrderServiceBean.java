@@ -365,6 +365,45 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         createWarehouseVoucher(entity, purchaseOrderDetails, responsible, warehouseDocumentType);
     }
 
+    public void liquidatePurchaseOrder(PurchaseOrder purchaseOrder)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException {
+
+        if (existsPendingAdvancePayments(purchaseOrder)) {
+            throw new AdvancePaymentPendingException("The purchase order contain pending advance payments.");
+        }
+
+        if (isPurchaseOrderLiquidated(purchaseOrder)) {
+            findPurchaseOrder(purchaseOrder.getId());
+            throw new PurchaseOrderLiquidatedException("The purchase order was already liquidated, and cannot be changed");
+        }
+
+        if (isPurchaseOrderEmpty(purchaseOrder)) {
+            throw new PurchaseOrderDetailEmptyException("The purchase order detail cannot be empty");
+        }
+
+        BigDecimal defaultExchangeRate = null;
+
+
+        warehouseAccountEntryService.createEntryAccountForLiquidatedPurchaseOrder(purchaseOrder, defaultExchangeRate);
+
+        purchaseOrder.setBalanceAmount(BigDecimal.ZERO);
+        purchaseOrder.setPaymentStatus(PurchaseOrderPaymentStatus.FULLY_PAID);
+        purchaseOrder = getEntityManager().merge(purchaseOrder);
+        getEntityManager().flush();
+
+        financeAccountingDocumentService.createAccountingVoucherByPurchaseOrder(purchaseOrder);
+    }
+
     public void liquidatePurchaseOrder(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment)
             throws WarehouseDocumentTypeNotFoundException,
             PurchaseOrderDetailEmptyException,
@@ -471,45 +510,6 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         purchaseOrder.setState(PurchaseOrderState.LIQ);
         getEntityManager().flush();
 
-    }
-
-    public void liquidatePurchaseOrder(PurchaseOrder purchaseOrder)
-            throws WarehouseDocumentTypeNotFoundException,
-            PurchaseOrderDetailEmptyException,
-            PurchaseOrderLiquidatedException,
-            AdvancePaymentPendingException,
-            CompanyConfigurationNotFoundException,
-            FinancesCurrencyNotFoundException,
-            FinancesExchangeRateNotFoundException,
-            RotatoryFundNullifiedException,
-            RotatoryFundLiquidatedException,
-            CollectionSumExceedsRotatoryFundAmountException,
-            RotatoryFundConcurrencyException {
-
-        if (existsPendingAdvancePayments(purchaseOrder)) {
-            throw new AdvancePaymentPendingException("The purchase order contain pending advance payments.");
-        }
-
-        if (isPurchaseOrderLiquidated(purchaseOrder)) {
-            findPurchaseOrder(purchaseOrder.getId());
-            throw new PurchaseOrderLiquidatedException("The purchase order was already liquidated, and cannot be changed");
-        }
-
-        if (isPurchaseOrderEmpty(purchaseOrder)) {
-            throw new PurchaseOrderDetailEmptyException("The purchase order detail cannot be empty");
-        }
-
-        BigDecimal defaultExchangeRate = null;
-
-
-        warehouseAccountEntryService.createEntryAccountForLiquidatedPurchaseOrder(purchaseOrder, defaultExchangeRate);
-
-        purchaseOrder.setBalanceAmount(BigDecimal.ZERO);
-        purchaseOrder.setPaymentStatus(PurchaseOrderPaymentStatus.FULLY_PAID);
-        purchaseOrder = getEntityManager().merge(purchaseOrder);
-        getEntityManager().flush();
-
-        financeAccountingDocumentService.createAccountingVoucherByPurchaseOrder(purchaseOrder);
     }
 
     @Override
