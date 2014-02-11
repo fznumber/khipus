@@ -543,4 +543,9 @@ public class WarehouseVoucherGeneralAction extends GenericAction<WarehouseVouche
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
     }
+
+    public void addWarehouseDocumentTypeErrorMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "PurchaseOrder.error.warehouseDocumentTypeNotFound");
+    }
 }

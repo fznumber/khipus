@@ -82,6 +82,32 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
             CollectionSumExceedsRotatoryFundAmountException,
             RotatoryFundConcurrencyException;
 
+    void onlyLiquidatePurchaseOrder(PurchaseOrder entity, PurchaseOrderPayment purchaseOrderPayment)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException;
+
+    void liquidatePurchaseOrder(PurchaseOrder entity)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException;
+
     /**
      * Fills the warning attribute according to the Maps and List mappings
      *

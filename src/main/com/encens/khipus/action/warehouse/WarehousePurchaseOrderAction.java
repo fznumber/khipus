@@ -408,7 +408,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
 
         try {
-            service.liquidatePurchaseOrder(getInstance(), getLiquidationPayment());
+            service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
+            //service.liquidatePurchaseOrder(getInstance());
             addPurchaseOrderLiquidatedMessage();
             return Outcome.SUCCESS;
         } catch (WarehouseDocumentTypeNotFoundException e) {
