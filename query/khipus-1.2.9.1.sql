@@ -1,9 +1,4 @@
---permiso para generar todos los vales
-/*INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBRERECURSO,IDMODULO)
-  VALUES (365, 'GENERATEALLVOUCHER', NULL, 15, 'ProductionPlanning.generateAllVoucher', 1); 
-INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
-  VALUES (365, 50, 15, 1, 9);     
-  */
+
 --SELECT * FROM FUNCIONALIDAD
 --Khipus MRP PROD-83: Implementar el re procesado de productos
 --Diego H. Loza Fernandez

@@ -91,7 +91,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 <a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
                    action="#{productionPlanningAction.generateAllVoucher}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   rendered="#{productionPlanningAction.showGenerateAllVoucher}"
+                   rendered="#{productionPlanningAction.showGenerateAllVoucher and s:hasPermission('GENERATEALLVOUCHER','VIEW')}"
                    ajaxSingle="true"/>
 
 <a4j:region>
@@ -551,8 +551,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="estateField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.estateOrder']}</ui:define>
                 <h:outputText
-                        style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
-                        value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
+                        style="font-weight: bold; color: #{productionOrderForPlanning.estateOrder == 'PENDING' ? 'red' :(productionOrderForPlanning.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderForPlanning.estateOrder == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                        value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderForPlanning.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderForPlanning.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
             </s:decorate>
 
         </h:panelGrid>
@@ -664,7 +664,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             <td class="rich-table-cell center">
                                 <a4j:commandLink immediate="true"
                                                  title="#{messages['Common.remove']}"
-                                                 action="#{productionPlanningAction.removeMaterial(instance)}"
+                                                 action="#{productionPlanningAction.removeMaterialProduct(instance)}"
                                                  ajaxSingle="true"
                                                  rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING'}"
                                                  reRender="movementDetailListPanel">

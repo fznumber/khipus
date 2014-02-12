@@ -1837,12 +1837,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderMaterials.clear();
         selectedProductItems.clear();
         showProductionOrders = true;
+        showInit();
     }
 
     public void removeProductProcessing(ProductProcessing processing)
     {
         selectedProductToBaseproduct.remove(processing.getMetaProduct().getProductItem().getId());
         productProcessings.remove(processing);
+    }
+
+    public void removeMaterialProduct(OrderMaterial instance) {
+        selectedProductItems.remove(instance.getProductItem().getId());
+        orderMaterials.remove(instance);
     }
 
     public void removeMaterial(OrderMaterial instance) {
