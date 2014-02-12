@@ -6,6 +6,7 @@ import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.finances.Voucher;
 import com.encens.khipus.model.purchases.PurchaseOrder;
 import com.encens.khipus.model.purchases.PurchaseOrderPayment;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
@@ -29,6 +30,11 @@ public interface WarehouseAccountEntryService extends GenericService {
     void createAdvancePaymentAccountEntry(PurchaseOrderPayment purchaseOrderPayment) throws CompanyConfigurationNotFoundException;
 
     void createEntryAccountForLiquidatedPurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
+    public Voucher createEntryAccountForValidatePurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException;

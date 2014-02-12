@@ -293,6 +293,118 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         }
         voucherService.create(voucher);
     }
+
+    public Voucher createEntryAccountForValidatePurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException {
+        BigDecimal sumAdvancePaymentAmount = advancePaymentService.sumAllPaymentAmountsByKind(purchaseOrder, PurchaseOrderPaymentKind.ADVANCE_PAYMENT);
+        //BigDecimal sumLiquidationPaymentAmount = advancePaymentService.sumAllPaymentAmountsByKind(purchaseOrder, PurchaseOrderPaymentKind.LIQUIDATION_PAYMENT);
+        BigDecimal sumLiquidationPaymentAmount = advancePaymentService.sumAllPaymentAmountsByKindPurchaseOrder(purchaseOrder, PurchaseOrderPaymentKind.LIQUIDATION_PAYMENT);
+
+        if (BigDecimalUtil.isZeroOrNull(sumAdvancePaymentAmount)) {
+            sumAdvancePaymentAmount = BigDecimal.ZERO;
+        }
+        if (BigDecimalUtil.isZeroOrNull(sumLiquidationPaymentAmount)) {
+            sumLiquidationPaymentAmount = BigDecimal.ZERO;
+        }
+
+
+        CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+
+        if (ValidatorUtil.isBlankOrNull(companyConfiguration.getWarehouseNationalCurrencyTransientAccountCode())) {
+            throw new CompanyConfigurationNotFoundException("The system configuration (warehouseNationalCurrencyAccountCode) for current company haven't been configured");
+        }
+
+        String executorUnitCode = purchaseOrder.getExecutorUnit().getExecutorUnitCode();
+        String costCenterCode = purchaseOrder.getCostCenter().getCode();
+
+        String gloss = glossGeneratorService.generatePurchaseOrderGloss(purchaseOrder,
+                MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"), MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+
+        Voucher voucher = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
+        voucher.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+        if (CollectionDocumentType.INVOICE.equals(purchaseOrder.getDocumentType())) {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    companyConfiguration.getWarehouseNationalCurrencyTransientAccount(),
+                    BigDecimalUtil.multiply(purchaseOrder.getTotalAmount(), Constants.VAT_COMPLEMENT),
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+            voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    companyConfiguration.getNationalCurrencyVATFiscalCreditTransientAccount(),
+                    BigDecimalUtil.multiply(purchaseOrder.getTotalAmount(), Constants.VAT),
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+        } else {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    companyConfiguration.getWarehouseNationalCurrencyTransientAccount(),
+                    purchaseOrder.getTotalAmount(),
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+        }
+
+        BigDecimal totalCreditAmount = BigDecimal.ZERO;
+
+        if (BigDecimalUtil.isPositive(sumAdvancePaymentAmount)) {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    companyConfiguration.getAdvancePaymentNationalCurrencyAccount(),
+                    sumAdvancePaymentAmount,
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+            totalCreditAmount = BigDecimalUtil.sum(totalCreditAmount, sumAdvancePaymentAmount);
+        }
+
+        if (BigDecimalUtil.isPositive(sumLiquidationPaymentAmount)) {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    purchaseOrder.getProvider().getPayableAccount(),
+                    sumLiquidationPaymentAmount,
+                    purchaseOrder.getProvider().getPayableAccount().getCurrency(),
+                    financesExchangeRateService.getExchangeRateByCurrencyType(purchaseOrder.getProvider().getPayableAccount().getCurrency(), defaultExchangeRate)));
+            totalCreditAmount = BigDecimalUtil.sum(totalCreditAmount, sumLiquidationPaymentAmount);
+        }else{
+            voucher.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
+                    executorUnitCode,
+                    costCenterCode,
+                    purchaseOrder.getProvider().getPayableAccount(),
+                    purchaseOrder.getTotalAmount(),
+                    purchaseOrder.getProvider().getPayableAccount().getCurrency(),
+                    financesExchangeRateService.getExchangeRateByCurrencyType(purchaseOrder.getProvider().getPayableAccount().getCurrency(), defaultExchangeRate)));
+            totalCreditAmount = BigDecimalUtil.sum(totalCreditAmount, purchaseOrder.getTotalAmount());
+        }
+
+
+        BigDecimal balanceAmount = BigDecimalUtil.subtract(purchaseOrder.getTotalAmount(), totalCreditAmount);
+
+        if (balanceAmount.doubleValue() > 0) {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
+                    executorUnitCode,
+                    companyConfiguration.getExchangeRateBalanceCostCenter().getCode(),
+                    companyConfiguration.getBalanceExchangeRateAccount(),
+                    balanceAmount,
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+        } else if (balanceAmount.doubleValue() < 0) {
+            voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                    executorUnitCode,
+                    companyConfiguration.getExchangeRateBalanceCostCenter().getCode(),
+                    companyConfiguration.getBalanceExchangeRateAccount(),
+                    balanceAmount.abs(),
+                    FinancesCurrencyType.P,
+                    BigDecimal.ONE));
+        }
+        voucherService.create(voucher);
+        return voucher;
+    }
     /* when a fixedAsset or warehouse purchase order has been liquidated
     *  (bank or cashbox) vs provider */
 
