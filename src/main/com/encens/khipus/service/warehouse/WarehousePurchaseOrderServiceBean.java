@@ -14,6 +14,7 @@ import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.CollectionDocumentType;
 import com.encens.khipus.model.finances.Provide;
 import com.encens.khipus.model.finances.PurchaseOrderPaymentKind;
+import com.encens.khipus.model.finances.Voucher;
 import com.encens.khipus.model.purchases.*;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.finances.FinanceAccountingDocumentService;
@@ -365,7 +366,7 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         createWarehouseVoucher(entity, purchaseOrderDetails, responsible, warehouseDocumentType);
     }
 
-    public void liquidatePurchaseOrder(PurchaseOrder purchaseOrder)
+    public Voucher liquidatePurchaseOrder(PurchaseOrder purchaseOrder)
             throws WarehouseDocumentTypeNotFoundException,
             PurchaseOrderDetailEmptyException,
             PurchaseOrderLiquidatedException,
@@ -386,7 +387,7 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
             throw new PurchaseOrderLiquidatedException("The purchase order was not liquidated");
         }*/
 
-/*        if (isPurchaseOrderLiquidated(purchaseOrder)) {
+       /* if (isPurchaseOrderLiquidated(purchaseOrder)) {
             findPurchaseOrder(purchaseOrder.getId());
             throw new PurchaseOrderLiquidatedException("The purchase order was already liquidated, and cannot be changed");
         }*/
@@ -398,11 +399,12 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         BigDecimal defaultExchangeRate = null;
 
 
-        warehouseAccountEntryService.createEntryAccountForValidatePurchaseOrder(purchaseOrder, defaultExchangeRate);
+        Voucher voucher = warehouseAccountEntryService.createEntryAccountForValidatePurchaseOrder(purchaseOrder, defaultExchangeRate);
 
         purchaseOrder.setBalanceAmount(BigDecimal.ZERO);
         purchaseOrder.setPaymentStatus(PurchaseOrderPaymentStatus.FULLY_PAID);
 
+        return voucher;
     }
 
     public void updateliquidatePurchaseOrder(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException {

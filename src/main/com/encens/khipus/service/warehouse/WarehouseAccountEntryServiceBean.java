@@ -294,7 +294,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         voucherService.create(voucher);
     }
 
-    public void createEntryAccountForValidatePurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
+    public Voucher createEntryAccountForValidatePurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException {
@@ -403,6 +403,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     BigDecimal.ONE));
         }
         voucherService.create(voucher);
+        return voucher;
     }
     /* when a fixedAsset or warehouse purchase order has been liquidated
     *  (bank or cashbox) vs provider */
