@@ -1529,7 +1529,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         hideTablesIni();
     }
 
-    //@End(ifOutcome = Outcome.SUCCESS)
+    //@End
     //public String makeExecutedOrder() {
     public void makeExecutedOrder() {
         //getInstance().setState(EXECUTED);
@@ -1546,7 +1546,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(BaseProduct base:getInstance().getBaseProducts()){
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
-                setTotalsInputs(single);
+                setTotalsInputs(base,single);
                 setTotalIndiRectCost(single);
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
@@ -1563,7 +1563,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showDetailOrder = false;
         showProductionOrders = true;
         showInit();
-        //refreshInstance();
+        refreshInstance();
         //return outcome;
     }
 
@@ -1579,7 +1579,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(BaseProduct base:productionPlanning.getBaseProducts()){
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
-                setTotalsInputs(single);
+                setTotalsInputs(base,single);
                 setTotalIndiRectCost(single);
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
@@ -1593,7 +1593,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         showDetailSingleProduct = false;
         showInit();
-      //  refreshInstance();
+        refreshInstance();
     }
 
     public void makeFinalizedOrderSingle() {
@@ -1608,7 +1608,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(BaseProduct base:productionPlanning.getBaseProducts()){
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
-                setTotalsInputs(single);
+                setTotalsInputs(base,single);
                 setTotalIndiRectCost(single);
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
@@ -1640,7 +1640,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(BaseProduct base:getInstance().getBaseProducts()){
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
-                setTotalsInputs(single);
+                setTotalsInputs(base,single);
                 setTotalIndiRectCost(single);
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
@@ -2116,18 +2116,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             if(single.getIndirectCostses().size() >0)
             productionPlanningService.deleteIndirectCost(single);
-
+            //single.getIndirectCostses().clear();
+            /*List<IndirectCosts> indirectCostFromSingle =productionPlanningService.findIndirectCostFromSingle(single);
+            single.getIndirectCostses().removeAll(indirectCostFromSingle);*/
             for(IndirectCosts costs: list)
             {
                 costs.setSingleProduct(single);
+                productionPlanningService.addIndirectCostToSingleProduct(single);
             }
             //single.getIndirectCostses().clear();
             //single.getIndirectCostses().addAll(list);
             //single.setIndirectCostses(list);
-            single.setIndirectCostses(list);
+            //single.setIndirectCostses(list);
         }
 
-        setTotalIndirectCosts(single);
+        setTotalIndirectCosts(list,single);
     }
 
     //todo: la mano de obra directa se tomara diretamente de la tabla costosindirectos para no cambiar mucho
@@ -2145,6 +2148,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             total = total + costs.getAmountBs().doubleValue();
         }
         productionOrder.setTotalIndirectCosts(total);
+    }
+
+    private void setTotalIndirectCosts(List<IndirectCosts> indirectCosts, SingleProduct single) {
+        Double total = 0.0;
+        for(IndirectCosts costs :indirectCosts)
+        {
+            if(costs.getCostsConifg().getEstate() != null)
+            {if(costs.getCostsConifg().getEstate().compareTo(Constants.ESTATE_COSTCONFIG) == 0)
+                single.setCostLabor(new BigDecimal(single.getCostLabor().doubleValue() + costs.getAmountBs().doubleValue()));
+            }
+            else
+                total = total + costs.getAmountBs().doubleValue();
+        }
+        single.setTotalIndirecCost(new BigDecimal(total));
     }
 
     private void setTotalIndirectCosts(SingleProduct single) {
@@ -2178,14 +2195,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setTotalPriceInput(totalInput);
     }
 
-    public void setTotalsInputs(SingleProduct single) {
+    public void setTotalsInputs(BaseProduct base, SingleProduct single) {
         Double porcentage = 0.0;
         Double totalProducerInput = 0.0;
-        for(SingleProduct product: baseProduct.getSingleProducts()){
+        for(SingleProduct product: base.getSingleProducts()){
             totalProducerInput = totalProducerInput + product.getAmount();
         }
         porcentage = getProcentage(totalProducerInput,single.getAmount().doubleValue());
-        Double totalInput = baseProduct.getTotalInput().doubleValue() * porcentage;
+        Double totalInput = base.getTotalInput().doubleValue() * porcentage;
         single.setTotalInput(new BigDecimal(totalInput));
     }
 
@@ -2498,6 +2515,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         orderBaseInputs = new ArrayList<OrderInput>();
         productProcessings = new ArrayList<ProductProcessing>();
         this.showReprocessedProduct = showReprocessedProduct;
+        codeGenerate = "";
         hideButtonGeneral();
         hideTablesIni();
     }
@@ -2532,6 +2550,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productProcessings = new ArrayList<ProductProcessing>();
         productProcessings = base.getProductProcessings();
         showReprocessedProduct = true;
+        codeGenerate = base.getCode();
         hideButtonGeneral();
         hideTablesIni();
     }
@@ -2567,8 +2586,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public String getCodeGenerate() {
+        if(this.codeGenerate.length() == 0)
         this.codeGenerate = productionOrderCodeGenerator.generateCode();
-        return productionOrderCodeGenerator.generateCode();
+        else
+        return this.codeGenerate;
+
+        return codeGenerate;
     }
 
     public void setCodeGenerate(String codeGenerate) {

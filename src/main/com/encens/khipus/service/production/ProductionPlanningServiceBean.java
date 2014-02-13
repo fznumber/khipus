@@ -20,6 +20,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
@@ -201,11 +202,33 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     @Override
+    public List<IndirectCosts> findIndirectCostFromSingle(SingleProduct singleProduct) {
+        List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+        try{
+            indirectCostses = getEntityManager().createQuery("select indirectCosts from IndirectCosts indirectCosts where indirectCosts.singleProduct = :singleProduct")
+                              .setParameter("singleProduct",singleProduct)
+                              .getResultList();
+
+        }catch( NoResultException e )
+        {
+            return new ArrayList<IndirectCosts>();
+        }
+
+        return indirectCostses;
+    }
+
+    @Override
     public void updateOrder(ProductionOrder order) {
         getEntityManager().createNativeQuery("update ORDENPRODUCCION set PORCENTAJEGRASA = :percentage where IDORDENPRODUCCION = :order")
                           .setParameter("percentage",order.getGreasePercentage())
                           .setParameter("order",order)
                           .executeUpdate();
+    }
+
+    @Override
+    public void addIndirectCostToSingleProduct(SingleProduct single) {
+        getEntityManager().persist(single);
     }
 
 }
