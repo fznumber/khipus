@@ -54,7 +54,7 @@ public class BaseProduct implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionPlanning productionPlanningBase;
 

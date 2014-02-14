@@ -122,6 +122,42 @@
                                     value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
                         </rich:column>
                     </rich:dataTable>
+                    <rich:dataTable value="#{productionPlanningItem.baseProducts}" var="productionBaseItem"
+                                    id="productionBaseList"
+                                    width="100%">
+                        <f:facet name="header">
+                            <rich:columnGroup>
+                                <rich:column>
+                                    #{messages['ProductionOrder.reprocessedProduct']}
+                                </rich:column>
+
+                                <rich:column>
+                                    #{messages['ProductionOrder.reprocessedProduct.unid']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.reprocessedProduct.volume']}
+                                </rich:column>
+                                <rich:column>
+                                    #{messages['ProductionOrder.estateOrderProduction']}
+                                </rich:column>
+                            </rich:columnGroup>
+                        </f:facet>
+                        <rich:column>
+                            <h:outputText value="#{productionBaseItem.code}"/>
+                        </rich:column>
+
+                        <rich:column>
+                            <h:outputText value="#{productionBaseItem.units}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText value="#{productionBaseItem.volume}"/>
+                        </rich:column>
+                        <rich:column>
+                            <h:outputText
+                                    style="font-weight: bold; color: #{productionBaseItem.state == 'PENDING' ? 'red' :(productionBaseItem.state == 'EXECUTED' ? 'blue' : (productionBaseItem.state == 'TABULATED' ? 'fuchsia' : 'green'))}"
+                                    value="#{productionBaseItem.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionBaseItem.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionBaseItem.state == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
+                        </rich:column>
+                    </rich:dataTable>
                 </rich:panel>
             </rich:dataGrid>
             <app:dataScroller id="dataScroller" for="productionPlanningList"

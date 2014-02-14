@@ -39,5 +39,5 @@ public interface ProductionPlanningService extends GenericService {
 
     public void updateOrder(ProductionOrder order);
 
-    public void addIndirectCostToSingleProduct(SingleProduct single);
+    public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts);
 }

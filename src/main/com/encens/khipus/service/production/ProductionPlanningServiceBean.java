@@ -196,9 +196,10 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public void deleteIndirectCost(SingleProduct singleProduct)
     {
-        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :singleProduct")
-                .setParameter("singleProduct",singleProduct)
+        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :id")
+                .setParameter("id",singleProduct.getId())
                 .executeUpdate();
+        //getEntityManager().remove(singleProduct.getIndirectCostses());
     }
 
     @Override
@@ -227,8 +228,8 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     @Override
-    public void addIndirectCostToSingleProduct(SingleProduct single) {
-        getEntityManager().persist(single);
+    public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts) {
+        getEntityManager().persist(indirectCosts);
     }
 
 }

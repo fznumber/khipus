@@ -1240,6 +1240,33 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
+    //TODO: Revisar el almacen de productos
+    private List<MovementDetail> generateMovementDetailMaterial(List<OrderMaterial> orderMaterials) {
+        List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
+
+        for(OrderMaterial material: orderMaterials)
+        {
+            if(!articleEstateService.verifyEstate(material.getProductItem(),Constants.ESTATE_ARTICLE_NOTVERIFY))
+            {
+                MovementDetail detail = new MovementDetail();
+                detail.setProductItemCode(material.getProductItemCode());
+                detail.setQuantity(new BigDecimal(material.getAmountUsed()));
+                detail.setProductItemAccount(material.getProductItem().getProductItemAccount());
+                detail.setMeasureCode(material.getProductItem().getUsageMeasureUnit().getMeasureUnitCode());
+                detail.setUnitCost(material.getCostUnit());
+                detail.setAmount(material.getCostTotal());
+                detail.setProductItem(material.getProductItem());
+                //detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
+                detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
+                detail.setMeasureUnit(material.getProductItem().getUsageMeasureUnit());
+                movementDetails.add(detail);
+            }
+
+        }
+
+        return movementDetails;
+    }
+
     public void generateValeInput(){
 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
@@ -1277,7 +1304,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
     }
-
     public void addInventoryMessages(List<InventoryMessage> messages) {
         for (InventoryMessage message : messages) {
             if (message.isNotFound()) {
@@ -1292,32 +1318,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                         message.getAvailableQuantity());
             }
         }
-    }
-    //TODO: Revisar el almacen de productos
-    private List<MovementDetail> generateMovementDetailMaterial(List<OrderMaterial> orderMaterials) {
-        List<MovementDetail> movementDetails = new ArrayList<MovementDetail>();
-
-        for(OrderMaterial material: orderMaterials)
-        {
-            if(!articleEstateService.verifyEstate(material.getProductItem(),Constants.ESTATE_ARTICLE_NOTVERIFY))
-            {
-                MovementDetail detail = new MovementDetail();
-                detail.setProductItemCode(material.getProductItemCode());
-                detail.setQuantity(new BigDecimal(material.getAmountUsed()));
-                detail.setProductItemAccount(material.getProductItem().getProductItemAccount());
-                detail.setMeasureCode(material.getProductItem().getUsageMeasureUnit().getMeasureUnitCode());
-                detail.setUnitCost(material.getCostUnit());
-                detail.setAmount(material.getCostTotal());
-                detail.setProductItem(material.getProductItem());
-                //detail.setWarehouse(inventoryService.findWarehouseByItemArticle(material.getProductItem()));
-                detail.setWarehouse(warehouseService.findWarehouseByCode("2"));
-                detail.setMeasureUnit(material.getProductItem().getUsageMeasureUnit());
-                movementDetails.add(detail);
-            }
-
-        }
-
-        return movementDetails;
     }
 
     private List<MovementDetail> generateMovementDetailInput(List<OrderInput> orderInputs) {
@@ -1529,10 +1529,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         hideTablesIni();
     }
 
-    //@End
-    //public String makeExecutedOrder() {
     public void makeExecutedOrder() {
-        //getInstance().setState(EXECUTED);
         productionOrder.setEstateOrder(EXECUTED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
@@ -1556,15 +1553,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         if (outcome != Outcome.SUCCESS) {
             productionOrder.setEstateOrder(PENDING);
-            //getInstance().setState(PENDING);
         }
         disableEditingFormula();
-        //productionOrder = null;
         showDetailOrder = false;
         showProductionOrders = true;
         showInit();
         refreshInstance();
-        //return outcome;
     }
 
     public void makeExecutedOrderSingle() {
@@ -1622,7 +1616,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         showDetailSingleProduct = false;
         showInit();
-        //  refreshInstance();
+        refreshInstance();
     }
 
     public void makeFinalizedOrder() {
@@ -1976,7 +1970,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void saveSingleProduct(){
-        ProductionPlanning productionPlanning = getInstance();
+
         if(singleProduct.getId() == null)
         {
             baseProduct.getSingleProducts().add(singleProduct);
@@ -1987,7 +1981,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (OrderMaterial material : singleProduct.getOrderMaterials()) {
             if (material.getAmountUsed() > 0) {
                 Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
-                //el precio unitario sin redondear
                 Double total = material.getAmountUsed() * ((BigDecimal) material.getProductItem().getUnitCost()).doubleValue();
                 material.setAmountReturned(RoundUtil.getRoundValue(amountReturn, 2, RoundUtil.RoundMode.SYMMETRIC));
                 material.setCostUnit(material.getProductItem().getUnitCost());
@@ -2003,6 +1996,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //singleProduct = null;
         //baseProduct = null;
         //orderSingleMaterial.clear();
+        selectedSingleProductMaterial.clear();
+        if(singleProduct.getId() != null)
         refreshInstance();
         showInit();
     }
@@ -2114,22 +2109,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 indirectCostsService.getLastPeroidIndirectCost());
         if(list.size() > 0)
         {
-            if(single.getIndirectCostses().size() >0)
-            productionPlanningService.deleteIndirectCost(single);
+            /*if(single.getIndirectCostses().size() >0)
+            productionPlanningService.deleteIndirectCost(single);*/
             //single.getIndirectCostses().clear();
-            /*List<IndirectCosts> indirectCostFromSingle =productionPlanningService.findIndirectCostFromSingle(single);
-            single.getIndirectCostses().removeAll(indirectCostFromSingle);*/
+            List<IndirectCosts> indirectCostFromSingle =productionPlanningService.findIndirectCostFromSingle(single);
+            single.getIndirectCostses().removeAll(indirectCostFromSingle);
             for(IndirectCosts costs: list)
             {
                 costs.setSingleProduct(single);
-                productionPlanningService.addIndirectCostToSingleProduct(single);
+                //productionPlanningService.addIndirectCostToSingleProduct(costs);
             }
             //single.getIndirectCostses().clear();
             //single.getIndirectCostses().addAll(list);
-            //single.setIndirectCostses(list);
-            //single.setIndirectCostses(list);
-        }
+            single.setIndirectCostses(list);
 
+        }
         setTotalIndirectCosts(list,single);
     }
 

@@ -41,11 +41,13 @@
                                 <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.edit']}"
                                                    action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
+                                                   rendered="#{baseProduct.state != 'FINALIZED'}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
                                 <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                                    action="#{productionPlanningAction.addProduct(baseProduct)}"
+                                                   rendered="#{baseProduct.state != 'FINALIZED'}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
 

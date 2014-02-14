@@ -58,8 +58,8 @@ public class IndirectCosts implements BaseModel {
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "IDCOSTOSINDIRECTOSCONF", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "IDCOSTOSINDIRECTOSCONF")
     private IndirectCostsConifg costsConifg;
 
     @Version
