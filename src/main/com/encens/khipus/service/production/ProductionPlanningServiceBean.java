@@ -20,6 +20,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
@@ -195,9 +196,27 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public void deleteIndirectCost(SingleProduct singleProduct)
     {
-        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :singleProduct")
-                .setParameter("singleProduct",singleProduct)
+        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :id")
+                .setParameter("id",singleProduct.getId())
                 .executeUpdate();
+        //getEntityManager().remove(singleProduct.getIndirectCostses());
+    }
+
+    @Override
+    public List<IndirectCosts> findIndirectCostFromSingle(SingleProduct singleProduct) {
+        List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+        try{
+            indirectCostses = getEntityManager().createQuery("select indirectCosts from IndirectCosts indirectCosts where indirectCosts.singleProduct = :singleProduct")
+                              .setParameter("singleProduct",singleProduct)
+                              .getResultList();
+
+        }catch( NoResultException e )
+        {
+            return new ArrayList<IndirectCosts>();
+        }
+
+        return indirectCostses;
     }
 
     @Override
@@ -206,6 +225,11 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                           .setParameter("percentage",order.getGreasePercentage())
                           .setParameter("order",order)
                           .executeUpdate();
+    }
+
+    @Override
+    public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts) {
+        getEntityManager().persist(indirectCosts);
     }
 
 }
