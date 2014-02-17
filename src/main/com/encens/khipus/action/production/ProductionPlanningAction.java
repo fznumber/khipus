@@ -1362,8 +1362,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     //@End
-    //public String removeFormulation() {
-    public void removeFormulation() {
+    public String removeFormulation() {
+    //public void removeFormulation() {
         ProductionPlanning productionPlanning = getInstance();
         //setPriceCostInput();
         String result = Outcome.FAIL;
@@ -1375,10 +1375,28 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 break;
             }
         }
+        for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+            setTotalsMaterials(order);
+            setTotalsInputs(order);
+            setTotalIndiRectCost(order);
+            //setTotalHour(productionOrder);
+            setTotalCostProducticionAndUnitPrice(order);
+        }
+
+        for(BaseProduct base:getInstance().getBaseProducts()){
+            for (SingleProduct single : base.getSingleProducts()) {
+                setTotalsMaterials(single);
+                setTotalsInputs(base,single);
+                setTotalIndiRectCost(single);
+                //setTotalHour(productionOrder);
+                setTotalCostProducticionAndUnitPrice(single);
+            }
+        }
+        productionPlanning.setTotalMilk(calculateTotalMilk());
         disableEditingFormula();
         showProductionOrders = true;
         showInit();
-        //return result;
+        return Outcome.SUCCESS;
     }
 
     public String deleteOrder(ProductionOrder order) {
