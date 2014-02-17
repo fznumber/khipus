@@ -78,6 +78,9 @@
                                 value="#{productionPlanningItem.state eq 'PENDING' ? messages['ProductionPlanning.state.pending'] : (productionPlanningItem.state eq 'EXECUTED' ? messages['ProductionPlanning.state.executed'] : messages['ProductionPlanning.state.finalized'])}"/>
                         <s:div style="float:clear"/>-->
                     </s:div>
+                    <s:div style="float:right;">
+                        #{messages['ProductionPlanning.etiq.totalMilk']} #{productionPlanningItem.totalMilk}
+                    </s:div>
                     <rich:dataTable value="#{productionPlanningItem.productionOrderList}" var="productionOrderItem"
                                     id="productionOrderList"
                                     width="100%">

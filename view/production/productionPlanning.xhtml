@@ -30,8 +30,11 @@
 
 
 <div class="buttons">
-    <s:div id="ruleBotton1">
 
+    <s:div id="ruleBotton1">
+        <s:div style="float:left;">
+            #{messages['ProductionPlanning.etiq.totalMilk']} #{productionPlanning.totalMilk}
+        </s:div>
 
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}"
                          value="#{messages['Common.save']}"

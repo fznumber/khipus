@@ -60,6 +60,38 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
             throw new PersistenceException(ex);
         }
     }
+    //todo: buscar a la leche cruda y usar su id
+    public Double calculateTotalMilk(ProductionPlanning planning){
+     BigDecimal total_order = BigDecimal.ZERO;
+     BigDecimal total_repro = BigDecimal.ZERO;
+        try {
+            total_order = (BigDecimal)getEntityManager().createNativeQuery("select nvl(sum(oi.cantidad),0) from ordenproduccion op\n" +
+                    "inner join ordeninsumo oi\n" +
+                    "on oi.idordenproduccion = op.idordenproduccion\n" +
+                    "where oi.cod_art = '26'\n" +
+                    "and oi.no_cia = '01'\n" +
+                    "and op.idplanificacionproduccion = :planning")
+                    .setParameter("planning",planning)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            total_order = BigDecimal.ZERO;
+        }
+
+        try {
+            total_repro = (BigDecimal)getEntityManager().createNativeQuery("select nvl(sum(oi.cantidad),0) from productobase pb\n" +
+                    "inner join ordeninsumo oi\n" +
+                    "on oi.idproductobase = pb.idproductobase\n" +
+                    "where oi.cod_art = '26'\n" +
+                    "and oi.no_cia = '01'\n" +
+                    "and pb.idplanificacionproduccion= :planning")
+                    .setParameter("planning",planning)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            total_repro = BigDecimal.ZERO;
+        }
+
+        return total_repro.doubleValue() + total_order.doubleValue();
+    }
 
     private void executeMathematicalFormulas(ProductionPlanning planning) throws IOException, ProductCompositionException {
         for (ProductionOrder po : planning.getProductionOrderList()) {

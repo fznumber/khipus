@@ -9,6 +9,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +83,9 @@ public class ProductionPlanning implements BaseModel {
     //@OrderBy("code desc")
     private List<BaseProduct> baseProducts = new ArrayList<BaseProduct>();
 
+    @Column(name = "TOTALLECHEPRODUCIDA", nullable = true, columnDefinition = "NUMBER(9)")
+    private BigDecimal totalMilk = new BigDecimal(0.0);
+
     public Company getCompany() {
         return company;
     }
@@ -148,5 +152,13 @@ public class ProductionPlanning implements BaseModel {
 
     public void setBaseProducts(List<BaseProduct> baseProducts) {
         this.baseProducts = baseProducts;
+    }
+
+    public BigDecimal getTotalMilk() {
+        return totalMilk;
+    }
+
+    public void setTotalMilk(BigDecimal totalMilk) {
+        this.totalMilk = totalMilk;
     }
 }

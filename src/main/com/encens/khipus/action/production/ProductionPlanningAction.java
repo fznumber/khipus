@@ -432,6 +432,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionOrder.getOrderInputs().size() == 0)
             setInputs(productionOrder.getProductComposition().getProductionIngredientList());
 
+        productionPlanning.setTotalMilk(calculateTotalMilk());
         if (productionPlanning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -1659,6 +1660,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public String update(ProductionOrder order) {
         Long currentVersion = (Long) getVersion(getInstance());
         try {
+            getInstance().setTotalMilk(calculateTotalMilk());
             productionPlanningService.updateProductionPlanning(getInstance(),order);
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
@@ -1822,7 +1824,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             //setTotalIndiRectCost(productionOrder);
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
-
+            getInstance().setTotalMilk(calculateTotalMilk());
             if (update() != Outcome.SUCCESS) {
                 return;
             }
@@ -1882,10 +1884,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //setTotalIndiRectCost(productionOrder);
         //setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
+        getInstance().setTotalMilk(calculateTotalMilk());
         if (update() != Outcome.SUCCESS) {
             return;
         }
-
         existingFormulation = null;
         disableEditingFormula();
         showProductionOrders = true;
@@ -1941,7 +1943,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
         baseProduct.setTotalInput(new BigDecimal(totalInput));
-
+        productionPlanning.setTotalMilk(calculateTotalMilk());
             if (update() != Outcome.SUCCESS) {
                 return;
             }
@@ -1957,7 +1959,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductionPlanning productionPlanning = getInstance();
         productionPlanning.getBaseProducts().remove(baseProduct);
 
-
+        getInstance().setTotalMilk(calculateTotalMilk());
         if (update() != Outcome.SUCCESS) {
             return;
         }
@@ -1967,6 +1969,29 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productProcessings.clear();
         refreshInstance();
         showInit();
+    }
+
+    private BigDecimal calculateTotalMilk(){
+        ProductionPlanning planning = getInstance();
+        Double total = 0.0;
+        for(ProductionOrder order: planning.getProductionOrderList()){
+            for(OrderInput input: order.getOrderInputs())
+            {
+                if(input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                    total += input.getAmount();
+            }
+        }
+
+        for(BaseProduct base:planning.getBaseProducts())
+        {
+            for(OrderInput input:base.getOrderInputs())
+            {
+                if(input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                    total += input.getAmount();
+            }
+
+        }
+        return new BigDecimal(total);
     }
 
     public void saveSingleProduct(){

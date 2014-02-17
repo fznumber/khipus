@@ -40,4 +40,6 @@ public interface ProductionPlanningService extends GenericService {
     public void updateOrder(ProductionOrder order);
 
     public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts);
+
+    public Double calculateTotalMilk(ProductionPlanning planning);
 }

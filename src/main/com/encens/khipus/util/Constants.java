@@ -164,6 +164,8 @@ public final class Constants {
     public static  final String ESTATE_ARTICLE_PARAMETRIZE = "PARAMETRIZABLE";
     public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
+    //id Milk
+    public static final String ID_ART_RAW_MILK = "26";
 
     private Constants() {
     }
