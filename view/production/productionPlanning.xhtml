@@ -295,7 +295,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     <a4j:commandButton
             value="#{messages['ProductionPlanning.deleteOrderProducction']}"
             reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-            rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed }">
+            rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
         <rich:componentControl for="deleteOrderConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </a4j:commandButton>
