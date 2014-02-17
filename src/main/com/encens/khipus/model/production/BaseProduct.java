@@ -67,7 +67,7 @@ public class BaseProduct implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<SingleProduct> singleProducts = new ArrayList<SingleProduct>();
 
-    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal totalInput = new BigDecimal(0.0);
 
     @OneToMany(mappedBy = "baseProductInput", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
