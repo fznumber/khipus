@@ -6,6 +6,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.model.BaseModel;
+import com.encens.khipus.model.production.ProductionPlanning;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;

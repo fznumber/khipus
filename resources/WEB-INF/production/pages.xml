@@ -196,6 +196,13 @@
                 <redirect view-id="/production/productionPlanningList.xhtml"/>
             </rule>
         </navigation>
+
+        <navigation from-action="#{productionPlanningAction.removeFormulation()}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/productionPlanning.xhtml"/>
+            </rule>
+        </navigation>
+
     </page>
 
     <page view-id="/production/productCompositionList.xhtml">

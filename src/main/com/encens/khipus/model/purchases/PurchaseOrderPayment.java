@@ -33,6 +33,9 @@ import java.util.Date;
         @NamedQuery(name = "PurchaseOrderPayment.findByStateAndKind",
                 query = "select o from PurchaseOrderPayment o where o.purchaseOrder =:purchaseOrder and o.state in (:states)" +
                         " and o.purchaseOrderPaymentKind=:purchaseOrderPaymentKind"),
+        @NamedQuery(name = "PurchaseOrderPayment.findByStateAndKindPurchaseOrder",
+                query = "select o from PurchaseOrderPayment o where o.purchaseOrder =:purchaseOrder and o.state in (:states)" +
+                        " and o.purchaseOrderPaymentKind=:purchaseOrderPaymentKind"),
         @NamedQuery(name = "PurchaseOrderPayment.findByPurchaseOrder",
                 query = "select o from PurchaseOrderPayment o where o.purchaseOrder=:purchaseOrder"),
         @NamedQuery(name = "PurchaseOrderPayment.countByStateAndPurchaseOrder",

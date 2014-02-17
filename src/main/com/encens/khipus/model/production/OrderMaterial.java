@@ -69,11 +69,11 @@ public class OrderMaterial implements BaseModel {
     })
     private ProductItem productItem;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "IDPRODUCTOSIMPLE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
     private SingleProduct singleProduct;
 

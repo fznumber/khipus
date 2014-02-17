@@ -20,6 +20,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
@@ -58,6 +59,38 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         } catch (Exception ex) {
             throw new PersistenceException(ex);
         }
+    }
+    //todo: buscar a la leche cruda y usar su id
+    public Double calculateTotalMilk(ProductionPlanning planning){
+     BigDecimal total_order = BigDecimal.ZERO;
+     BigDecimal total_repro = BigDecimal.ZERO;
+        try {
+            total_order = (BigDecimal)getEntityManager().createNativeQuery("select nvl(sum(oi.cantidad),0) from ordenproduccion op\n" +
+                    "inner join ordeninsumo oi\n" +
+                    "on oi.idordenproduccion = op.idordenproduccion\n" +
+                    "where oi.cod_art = '26'\n" +
+                    "and oi.no_cia = '01'\n" +
+                    "and op.idplanificacionproduccion = :planning")
+                    .setParameter("planning",planning)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            total_order = BigDecimal.ZERO;
+        }
+
+        try {
+            total_repro = (BigDecimal)getEntityManager().createNativeQuery("select nvl(sum(oi.cantidad),0) from productobase pb\n" +
+                    "inner join ordeninsumo oi\n" +
+                    "on oi.idproductobase = pb.idproductobase\n" +
+                    "where oi.cod_art = '26'\n" +
+                    "and oi.no_cia = '01'\n" +
+                    "and pb.idplanificacionproduccion= :planning")
+                    .setParameter("planning",planning)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            total_repro = BigDecimal.ZERO;
+        }
+
+        return total_repro.doubleValue() + total_order.doubleValue();
     }
 
     private void executeMathematicalFormulas(ProductionPlanning planning) throws IOException, ProductCompositionException {
@@ -195,9 +228,27 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public void deleteIndirectCost(SingleProduct singleProduct)
     {
-        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :singleProduct")
-                .setParameter("singleProduct",singleProduct)
+        getEntityManager().createNativeQuery("delete from costosindirectos where IDPRODUCTOSIMPLE = :id")
+                .setParameter("id",singleProduct.getId())
                 .executeUpdate();
+        //getEntityManager().remove(singleProduct.getIndirectCostses());
+    }
+
+    @Override
+    public List<IndirectCosts> findIndirectCostFromSingle(SingleProduct singleProduct) {
+        List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+        try{
+            indirectCostses = getEntityManager().createQuery("select indirectCosts from IndirectCosts indirectCosts where indirectCosts.singleProduct = :singleProduct")
+                              .setParameter("singleProduct",singleProduct)
+                              .getResultList();
+
+        }catch( NoResultException e )
+        {
+            return new ArrayList<IndirectCosts>();
+        }
+
+        return indirectCostses;
     }
 
     @Override
@@ -206,6 +257,11 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                           .setParameter("percentage",order.getGreasePercentage())
                           .setParameter("order",order)
                           .executeUpdate();
+    }
+
+    @Override
+    public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts) {
+        getEntityManager().persist(indirectCosts);
     }
 
 }

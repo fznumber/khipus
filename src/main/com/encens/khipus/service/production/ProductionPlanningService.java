@@ -3,15 +3,13 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.framework.service.GenericService;
-import com.encens.khipus.model.production.MetaProduct;
-import com.encens.khipus.model.production.ProductionOrder;
-import com.encens.khipus.model.production.ProductionPlanning;
-import com.encens.khipus.model.production.SingleProduct;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.List;
 
 
 @Local
@@ -37,5 +35,11 @@ public interface ProductionPlanningService extends GenericService {
 
     public void deleteIndirectCost(SingleProduct singleProduct);
 
+    public List<IndirectCosts> findIndirectCostFromSingle(SingleProduct singleProduct);
+
     public void updateOrder(ProductionOrder order);
+
+    public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts);
+
+    public Double calculateTotalMilk(ProductionPlanning planning);
 }

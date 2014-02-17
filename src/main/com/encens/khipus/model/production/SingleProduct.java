@@ -89,7 +89,7 @@ public class SingleProduct implements BaseModel {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+    private List<IndirectCosts> indirectCostses;
 
     public Long getId() {
         return id;
@@ -218,9 +218,9 @@ public class SingleProduct implements BaseModel {
     }
 
     public void setIndirectCostses(List<IndirectCosts> indirectCostses) {
-        this.indirectCostses.clear();
-        if(indirectCostses != null)
-            this.indirectCostses.addAll(indirectCostses);
+        //this.indirectCostses.clear();
+        //this.indirectCostses = new ArrayList<IndirectCosts>();
+        this.indirectCostses.addAll(indirectCostses);
     }
 
     public ProductProcessingSingle getProductProcessingSingle() {

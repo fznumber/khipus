@@ -263,6 +263,31 @@ public class AdvancePaymentServiceBean extends GenericServiceBean implements Adv
     }
 
     @SuppressWarnings(value = "unchecked")
+    public BigDecimal sumAllPaymentAmountsByKindPurchaseOrder(PurchaseOrder purchaseOrder, PurchaseOrderPaymentKind purchaseOrderPaymentKind) {
+        List<PurchaseOrderPaymentState> states = Arrays.asList(PurchaseOrderPaymentState.APPROVED, PurchaseOrderPaymentState.PENDING);
+
+        List<PurchaseOrderPayment> purchaseOrderPayments = listEm
+                .createNamedQuery("PurchaseOrderPayment.findByStateAndKindPurchaseOrder")
+                .setParameter("purchaseOrder", purchaseOrder)
+                .setParameter("states", states)
+                .setParameter("purchaseOrderPaymentKind", purchaseOrderPaymentKind).getResultList();
+
+        BigDecimal totalAdvancePayment = BigDecimal.ZERO;
+
+        for (PurchaseOrderPayment purchaseOrderPayment : purchaseOrderPayments) {
+            BigDecimal payAmount = purchaseOrderPayment.getPayAmount();
+
+            if (purchaseOrderPayment.useExchangeCurrency() && FinancesCurrencyType.D.equals(purchaseOrderPayment.getPayCurrency())) {
+                payAmount = purchaseOrderPayment.changePayAmountToLocalCurrency();
+            }
+
+            totalAdvancePayment = BigDecimalUtil.sum(totalAdvancePayment, payAmount);
+        }
+
+        return totalAdvancePayment;
+    }
+
+    @SuppressWarnings(value = "unchecked")
     public BigDecimal sumAllAdvancePaymentAmountsButCurrent(PurchaseOrderPayment purchaseOrderPayment) {
         PurchaseOrder purchaseOrder = purchaseOrderPayment.getPurchaseOrder();
         List<PurchaseOrderPaymentState> states = Arrays.asList(PurchaseOrderPaymentState.APPROVED, PurchaseOrderPaymentState.PENDING);

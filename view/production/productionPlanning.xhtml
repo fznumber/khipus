@@ -30,8 +30,11 @@
 
 
 <div class="buttons">
-    <s:div id="ruleBotton1">
 
+    <s:div id="ruleBotton1">
+        <s:div style="float:left;">
+            #{messages['ProductionPlanning.etiq.totalMilk']} #{productionPlanning.totalMilk}
+        </s:div>
 
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}"
                          value="#{messages['Common.save']}"
@@ -239,13 +242,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
                                            rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance}"/>
-                        <a4j:commandButton
-                                value="#{messages['ProductionPlanning.innerButtonRemove']}"
-                                reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
-                            <rich:componentControl for="deleteOrderConfirmation" event="onclick" disableDefault="true"
-                                                   operation="show"/>
-                        </a4j:commandButton>
                         <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}"
                                            ajaxSingle="true"
                                            value="#{messages['ProductionPlanning.innerButtonCancel']}"
@@ -258,6 +254,57 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 </a4j:region>
 <a4j:region rendered="#{productionPlanningAction.showDetailOrder}">
 <!--region detalle Orden de produccion-->
+<s:div style="text-align:right;">
+    <a4j:commandButton action="#{productionPlanningAction.makeFinalizedOrder}"
+                       value="#{messages['ProductionPlanning.makeFinalized']}"
+                       styleClass="button"
+                       rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                       reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
+    <a4j:commandButton action="#{productionPlanningAction.makeExecutedOrder}"
+                       value="#{messages['ProductionPlanning.makeExecuted']}"
+                       styleClass="button"
+                       rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
+                       reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
+    <!--<h:commandButton
+            action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
+            value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
+            styleClass="button"
+            rendered="#{productionPlanningAction.managed}"/>-->
+
+    <!--            <h:commandButton
+                       action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
+                       value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+                       styleClass="button"
+                       rendered="#{productionPlanningAction.managed}"
+                       tabindex="1"/>-->
+
+    <h:commandButton
+            action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.unitCost)}"
+            value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+            styleClass="button"
+            rendered="#{productionPlanningAction.managed}"/>
+
+    <a4j:commandButton
+            value="#{messages['ProductionPlanning.generateValeOrder']}"
+            styleClass="button"
+            rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED' and !(productionOrderForPlanning.estateOrder eq 'TABULATED') and s:hasPermission('GENERATEACCOUNTING','VIEW')}">
+        <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
+                               operation="show"/>
+    </a4j:commandButton>
+
+    <a4j:commandButton
+            value="#{messages['ProductionPlanning.deleteOrderProducction']}"
+            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
+            rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed }">
+        <rich:componentControl for="deleteOrderConfirmation" event="onclick" disableDefault="true"
+                               operation="show"/>
+    </a4j:commandButton>
+
+    <a4j:commandButton action="#{productionPlanningAction.closeDetail}" ajaxSingle="true"
+                       value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
+                       reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
+
+</s:div>
 <app:fieldset id="orderDetail" title="#{messages['ProductionOrder.processedProduct.detail']}">
     <h:panelGrid columns="3"
                  width="100%"
@@ -348,48 +395,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </s:decorate>
         </s:div>
 
-        <s:div>
-            <a4j:commandButton action="#{productionPlanningAction.makeFinalizedOrder}"
-                               value="#{messages['ProductionPlanning.makeFinalized']}"
-                               styleClass="button"
-                               rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                               reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
-            <a4j:commandButton action="#{productionPlanningAction.makeExecutedOrder}"
-                               value="#{messages['ProductionPlanning.makeExecuted']}"
-                               styleClass="button"
-                               rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','UPDATE')}"
-                               reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
-            <a4j:commandButton action="#{productionPlanningAction.closeDetail}" ajaxSingle="true"
-                               value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
-                               reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
-            <h:commandButton
-                    action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
-                    value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
-                    styleClass="button"
-                    rendered="#{productionPlanningAction.managed}"/>
-
-             <!--            <h:commandButton
-                                action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"
-                                value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
-                                styleClass="button"
-                                rendered="#{productionPlanningAction.managed}"
-                                tabindex="1"/>-->
-
-            <h:commandButton
-                    action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.unitCost)}"
-                    value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
-                    styleClass="button"
-                    rendered="#{productionPlanningAction.managed}"/>
-
-            <a4j:commandButton
-                    value="#{messages['ProductionPlanning.generateValeOrder']}"
-                    styleClass="button"
-                    rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED' and !(productionOrderForPlanning.estateOrder eq 'TABULATED') and s:hasPermission('GENERATEACCOUNTING','VIEW')}">
-                <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
-                                       operation="show"/>
-            </a4j:commandButton>
-
-        </s:div>
 
     </h:panelGrid>
 </app:fieldset>
