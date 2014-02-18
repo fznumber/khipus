@@ -19,6 +19,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.interceptor.BusinessUnitRestrict;
 import com.encens.khipus.interceptor.BusinessUnitRestriction;
 import com.encens.khipus.model.admin.User;
+import com.encens.khipus.model.finances.CollectionDocumentType;
 import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.JobContract;
 import com.encens.khipus.model.finances.Provider;
@@ -88,6 +89,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     public static final String APPROVED_OUTCOME = "Approved";
     public static final String FINALIZED_OUTCOME = "Finalized";
     public static final String LIQUIDATED_OUTCOME = "Liquidated";
+
+    private Boolean showBillConditions =false;
 
     // this map stores the PurchaseOrderDetails that are under the minimal stock and the unitaryBalance of the Inventory
     private Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap = new HashMap<PurchaseOrderDetail, BigDecimal>();
@@ -818,5 +821,23 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     public void addProductItemNotFoundMessage(String productItemName) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
+    }
+
+    public void verifyCondicionWill(CollectionDocumentType documentType)
+    {
+        if(documentType == CollectionDocumentType.INVOICE)
+        {
+            showBillConditions = true;
+        }else{
+            showBillConditions = false;
+        }
+    }
+
+    public Boolean getShowBillConditions() {
+        return showBillConditions;
+    }
+
+    public void setShowBillConditions(Boolean showBillConditions) {
+        this.showBillConditions = showBillConditions;
     }
 }

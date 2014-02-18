@@ -44,6 +44,7 @@
                                    label="#{messages[element.resourceKey]}"
                                    noSelectionLabel=""
                                    hideNoSelectionLabel="false"/>
+                    <a4j:support event="onchange" action="#{warehousePurchaseOrderAction.verifyCondicionWill(warehousePurchaseOrder.documentType)}" reRender="rightSidePanel" ajaxSingle="true" immediate="true"/>
                 </h:selectOneMenu>
             </c:when>
             <c:otherwise>
@@ -530,11 +531,28 @@
     </c:choose>
 </s:decorate>
 
-<s:decorate>
+<!--<s:decorate>
     <ui:define name="label">
         <h:outputText value="#{messages['WarehousePurchaseOrder.billConditions']}"/>
     </ui:define>
-    <h:selectBooleanCheckbox
+    <h:selectBooleanCheckbox id="selectCheckboxHeader"
+                             immediate="true"
+
+                             >
+        <a4j:support action="#{warehousePurchaseOrderAction.assignWarehouse}"
+                     event="onchange"
+                     reRender=""/>
+    </h:selectBooleanCheckbox>
+</s:decorate>-->
+
+<s:decorate id="billConditionsField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{warehousePurchaseOrderAction.showBillConditions}">
+    <ui:define name="label">
+        <h:outputText value="#{messages['WarehousePurchaseOrder.billConditions']}"/>
+    </ui:define>
+    <h:selectOneMenu id="selectOneMenu"  value="#{Bean1.val1}" >
+        <f:selectItems value="#{Bean1.selectItems}"/>
+        <a4j:support event="onchange" action="#{Bean1.onSelectOneMenuChange}" reRender="textbox1 , textbox2 , textbox3, textbox4"  />
+    </h:selectOneMenu>
 </s:decorate>
 
 </s:div>
