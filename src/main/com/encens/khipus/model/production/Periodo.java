@@ -45,11 +45,11 @@ public enum Periodo {
         if ((mount == 1 || mount == 3 || mount == 5 || mount == 7 || mount == 8 || mount == 10 || mount == 12) && (resourceKey == "Periodo.second"))
             return endDay + 1;
 
-        if (mount == 2) {
+        if (mount == 2 && (resourceKey == "Periodo.second")) {
             if (isBisiesto(year)) {
-                return 28;
+                return 29;
             }
-            return 29;
+            return 28;
         }
         return endDay;
     }
