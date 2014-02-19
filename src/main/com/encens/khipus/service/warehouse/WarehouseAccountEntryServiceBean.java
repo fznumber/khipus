@@ -325,6 +325,22 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         Voucher voucher = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
         voucher.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
         if (CollectionDocumentType.INVOICE.equals(purchaseOrder.getDocumentType())) {
+            if(purchaseOrder.getWithBill().compareTo(Constants.WITH_BILL) == 0){
+                voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                        executorUnitCode,
+                        costCenterCode,
+                        companyConfiguration.getWarehouseNationalCurrencyTransientAccount(),
+                        BigDecimalUtil.multiply(purchaseOrder.getTotalAmount(), Constants.VAT_COMPLEMENT),
+                        FinancesCurrencyType.P,
+                        BigDecimal.ONE));
+                voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                        executorUnitCode,
+                        costCenterCode,
+                        companyConfiguration.getNationalCurrencyVATFiscalCreditAccount(),
+                        BigDecimalUtil.multiply(purchaseOrder.getTotalAmount(), Constants.VAT),
+                        FinancesCurrencyType.P,
+                        BigDecimal.ONE));
+            }else{
             voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                     executorUnitCode,
                     costCenterCode,
@@ -339,6 +355,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     BigDecimalUtil.multiply(purchaseOrder.getTotalAmount(), Constants.VAT),
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
+            }
         } else {
             voucher.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                     executorUnitCode,

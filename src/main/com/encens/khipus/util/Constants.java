@@ -166,6 +166,9 @@ public final class Constants {
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
     //id Milk
     public static final String ID_ART_RAW_MILK = "26";
+    //condicion purchase order
+    public static final String WITH_BILL = "CONFACTURA";
+    public static final String WITHOUT_BILL = "SINFACTURA";
 
     private Constants() {
     }

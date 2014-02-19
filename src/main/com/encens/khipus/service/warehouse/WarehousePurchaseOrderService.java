@@ -50,7 +50,7 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
             PurchaseOrderDetailEmptyException,
             ConcurrencyException,
             PurchaseOrderNullifiedException,
-            DiscountAmountException, PurchaseOrderLiquidatedException;
+            DiscountAmountException, PurchaseOrderLiquidatedException, CompanyConfigurationNotFoundException;
 
     void updateWarehousePurchaseOrder(PurchaseOrder entity,
                                       Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap,

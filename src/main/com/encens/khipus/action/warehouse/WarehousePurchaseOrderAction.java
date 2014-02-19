@@ -31,6 +31,7 @@ import com.encens.khipus.service.purchases.PurchaseOrderService;
 import com.encens.khipus.service.warehouse.InventoryService;
 import com.encens.khipus.service.warehouse.WarehousePurchaseOrderService;
 import com.encens.khipus.util.BigDecimalUtil;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.FormatUtils;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.purchases.PurchaseOrderValidator;
@@ -91,6 +92,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     public static final String LIQUIDATED_OUTCOME = "Liquidated";
 
     private Boolean showBillConditions =false;
+
+    private Boolean billConditions = true;
 
     // this map stores the PurchaseOrderDetails that are under the minimal stock and the unitaryBalance of the Inventory
     private Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap = new HashMap<PurchaseOrderDetail, BigDecimal>();
@@ -336,13 +339,18 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
             buildValidateQuantityMappings(purchaseOrderDetail);
         }
         try {
-            service.approveWarehousePurchaseOrder(getInstance(),
-                    purchaseOrderDetailUnderMinimalStockMap,
-                    purchaseOrderDetailOverMaximumStockMap,
-                    purchaseOrderDetailWithoutWarnings);
+
+                service.approveWarehousePurchaseOrder(getInstance(),
+                        purchaseOrderDetailUnderMinimalStockMap,
+                        purchaseOrderDetailOverMaximumStockMap,
+                        purchaseOrderDetailWithoutWarnings);
+
             addPurchaseOrderApprovedMessage();
             showPurchaseOrderDetailWarningMessages();
             return Outcome.SUCCESS;
+        } catch (CompanyConfigurationNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return Outcome.REDISPLAY;
         } catch (PurchaseOrderApprovedException e) {
             addPurchaseOrderApprovedErrorMessage();
             return APPROVED_OUTCOME;
@@ -823,14 +831,17 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
                 "ProductItem.error.notFound", productItemName);
     }
 
-    public void verifyCondicionWill(CollectionDocumentType documentType)
+    public void verifyCondicionWill()
     {
-        if(documentType == CollectionDocumentType.INVOICE)
+        if(getInstance().getDocumentType() == CollectionDocumentType.INVOICE)
         {
             showBillConditions = true;
+            getInstance().setWithBill("CONFACTURA");
         }else{
             showBillConditions = false;
+            getInstance().setWithBill("SINFACTURA");
         }
+
     }
 
     public Boolean getShowBillConditions() {
@@ -839,5 +850,23 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
 
     public void setShowBillConditions(Boolean showBillConditions) {
         this.showBillConditions = showBillConditions;
+    }
+
+    public void setWithWill()
+    {
+        if(this.billConditions)
+        {
+            getInstance().setWithBill(Constants.WITH_BILL);
+        }else{
+            getInstance().setWithBill(Constants.WITHOUT_BILL);
+        }
+    }
+
+    public Boolean getBillConditions() {
+        return billConditions;
+    }
+
+    public void setBillConditions(Boolean billConditions) {
+        this.billConditions = billConditions;
     }
 }

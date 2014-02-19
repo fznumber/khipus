@@ -11,6 +11,7 @@ import com.encens.khipus.model.purchases.PurchaseDocument;
 import com.encens.khipus.model.purchases.PurchaseOrder;
 
 import javax.ejb.Local;
+import java.util.List;
 
 /**
  * @author
@@ -39,4 +40,6 @@ public interface FinanceAccountingDocumentService extends GenericService {
             throws CompanyConfigurationNotFoundException;
 
     void createAccountingVoucherByPurchaseOrder(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException;
+
+    public List<PurchaseDocument> findByOrderVoucher(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException;
 }
