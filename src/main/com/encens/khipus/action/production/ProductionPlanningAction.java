@@ -387,6 +387,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
+    public void saveGreasePercentajeSingle()
+    {
+        update();
+        refreshInstance();
+    }
+
     public Boolean verifAmountInput(OrderInput orderInput) {
         Boolean band = true;
         if (!articleEstateService.existArticleEstate(orderInput.getProductItem()))

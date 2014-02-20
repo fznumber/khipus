@@ -61,6 +61,10 @@
                                 #{messages['BaseProduct.state']}
                             </rich:column>
 
+                            <rich:column>
+                                #{messages['BaseProduct.percentajeGrease']}
+                            </rich:column>
+
                             <rich:column styleClass="center">
                                 #{messages['Common.action']}
                             </rich:column>
@@ -79,6 +83,22 @@
                                 style="font-weight: bold; color: #{singleProduct.state == 'PENDING' ? 'red' :(singleProduct.state == 'EXECUTED' ? 'blue' : (singleProduct.state == 'INSTOCK' ? 'fuchsia' : 'green'))}"
                                 value="#{singleProduct.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (singleProduct.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (singleProduct.state == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized']))}"/>
                     </rich:column>
+
+                    <rich:column>
+                        <h:inputText value="#{singleProduct.greasePorentage}"
+                                     maxlength="4" styleClass="input"
+                                     disabled="#{singleProduct.state eq 'FINALIZED' or  singleProduct.state eq 'TABULATED' ? true : false}"
+                                     required="false">
+                            <h:commandButton action="#{productionPlanningAction.saveGreasePercentajeSingle}" value="#{messages['Common.save']}"
+                                             styleClass="button"
+                                             rendered="#{(singleProduct.state eq 'PENDING' or  singleProduct.state eq 'EXECUTED' ? true : false) and s:hasPermission('SINGLESAVEGRAASEPERCENTAGE','CREATE')}">
+
+                                <s:defaultAction/>
+                            </h:commandButton>
+                        </h:inputText>
+
+                    </rich:column>
+
                     <rich:column styleClass="center">
 
                         <a4j:commandLink ajaxSingle="true" immediate="true"
