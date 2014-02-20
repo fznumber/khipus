@@ -432,7 +432,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if (productionOrder.getOrderInputs().size() == 0)
             setInputs(productionOrder.getProductComposition().getProductionIngredientList());
 
-        productionPlanning.setTotalMilk(calculateTotalMilk());
+        setTotalCostProducticionAndUnitPrice(productionOrder);
+        getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
+
         if (productionPlanning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -455,6 +461,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
         setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+        setTotalCostProducticionAndUnitPrice(productionOrder);
+        getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
         if (planning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
@@ -1392,7 +1404,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 setTotalCostProducticionAndUnitPrice(single);
             }
         }
-        productionPlanning.setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
         disableEditingFormula();
         showProductionOrders = true;
         showInit();
@@ -1679,6 +1695,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Long currentVersion = (Long) getVersion(getInstance());
         try {
             getInstance().setTotalMilk(calculateTotalMilk());
+            getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+            getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+            getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+            getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
             productionPlanningService.updateProductionPlanning(getInstance(),order);
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
@@ -1843,6 +1863,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(productionOrder);
             getInstance().setTotalMilk(calculateTotalMilk());
+            getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+            getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+            getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+            getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
             if (update() != Outcome.SUCCESS) {
                 return;
             }
@@ -1903,6 +1927,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
         getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
+
         if (update() != Outcome.SUCCESS) {
             return;
         }
@@ -1961,7 +1990,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
         baseProduct.setTotalInput(new BigDecimal(totalInput));
-        productionPlanning.setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
             if (update() != Outcome.SUCCESS) {
                 return;
             }
@@ -1978,6 +2011,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanning.getBaseProducts().remove(baseProduct);
 
         getInstance().setTotalMilk(calculateTotalMilk());
+        getInstance().setTotalMilkCheese(calculateTotalMilkCheese());
+        getInstance().setTotalMilkUHT(calculateTotalMilkUHT());
+        getInstance().setTotalMilkYogurt(calculateTotalMilkYogurt());
+        getInstance().setTotalMilkReprocessed(calculateTotalMilkReprocessed());
         if (update() != Outcome.SUCCESS) {
             return;
         }
@@ -1988,6 +2025,55 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         refreshInstance();
         showInit();
     }
+
+    private BigDecimal calculateTotalMilkCheese(){
+        ProductionPlanning planning = getInstance();
+        Double total = 0.0;
+        for(ProductionOrder order: planning.getProductionOrderList()){
+            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_CHEESE) == 0)
+            for(OrderInput input: order.getOrderInputs())
+            {
+                if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                {
+                    total += input.getAmount();
+                }
+            }
+        }
+        return new BigDecimal(total);
+    }
+
+    private BigDecimal calculateTotalMilkUHT(){
+        ProductionPlanning planning = getInstance();
+        Double total = 0.0;
+        for(ProductionOrder order: planning.getProductionOrderList()){
+            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_UHT) == 0)
+            for(OrderInput input: order.getOrderInputs())
+            {
+                if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                {
+                        total += input.getAmount();
+                }
+            }
+        }
+        return new BigDecimal(total);
+    }
+
+    private BigDecimal calculateTotalMilkYogurt(){
+        ProductionPlanning planning = getInstance();
+        Double total = 0.0;
+        for(ProductionOrder order: planning.getProductionOrderList()){
+            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_YOGURT) == 0)
+            for(OrderInput input: order.getOrderInputs())
+            {
+                if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                {
+                        total += input.getAmount();
+                }
+            }
+        }
+        return new BigDecimal(total);
+    }
+
 
     private BigDecimal calculateTotalMilk(){
         ProductionPlanning planning = getInstance();
@@ -2004,7 +2090,23 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             for(OrderInput input:base.getOrderInputs())
             {
-                if(input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                    total += input.getAmount();
+            }
+
+        }
+        return new BigDecimal(total);
+    }
+
+    private BigDecimal calculateTotalMilkReprocessed(){
+        ProductionPlanning planning = getInstance();
+        Double total = 0.0;
+
+        for(BaseProduct base:planning.getBaseProducts())
+        {
+            for(OrderInput input:base.getOrderInputs())
+            {
+                if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
                     total += input.getAmount();
             }
 
