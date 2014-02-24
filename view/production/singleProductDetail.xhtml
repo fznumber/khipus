@@ -27,6 +27,14 @@
                            rendered="#{productionPlanningAction.singleProduct.state eq 'EXECUTED' }"
                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
 
+        <!--<a4j:commandButton
+                value="#{messages['ProductionPlanning.generateValeOrder']}"
+                styleClass="button"
+                rendered="#{productionPlanningAction.singleProduct.state eq 'FINALIZED' and !(productionPlanningAction.singleProduct.state eq 'TABULATED') }">
+            <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
+                                   operation="show"/>
+        </a4j:commandButton>-->
+
         <a4j:commandButton action="#{productionPlanningAction.closeSingleDetail}" ajaxSingle="true"
                            value="#{messages['ProductionPlanning.innerButtonCancelDetail']}"
                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
@@ -50,13 +58,7 @@
                 styleClass="button"
                 rendered="#{productionPlanningAction.managed}"/>
 -->
-        <!--<a4j:commandButton
-                value="#{messages['ProductionPlanning.generateValeOrder']}"
-                styleClass="button"
-                rendered="#{productionOrderForPlanning.estateOrder eq 'FINALIZED' and !(productionOrderForPlanning.estateOrder eq 'TABULATED') and s:hasPermission('GENERATEACCOUNTING','VIEW')}">
-            <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
-                                   operation="show"/>
-        </a4j:commandButton>-->
+
 
 
 
@@ -70,6 +72,11 @@
                      columnClasses="width50percent, width50percent">
 
             <s:div>
+
+                <s:decorate id="nameSingleProductField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
+                    <h:outputText value="#{productionPlanningAction.singleProduct.productProcessingSingle.metaProduct.name}"/>
+                </s:decorate>
 
                 <s:decorate id="baseProductCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>
@@ -104,7 +111,7 @@
 
                 <s:decorate id="totalPriceInputSingleField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductionOrder.totalPriceInput']}</ui:define>
-                    <h:outputText value="#{productionPlanningAction.singleProduct.unitCost}">
+                    <h:outputText value="#{productionPlanningAction.singleProduct.totalInput}">
                         <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
                     </h:outputText>
                 </s:decorate>

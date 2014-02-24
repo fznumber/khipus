@@ -10,6 +10,16 @@
     <s:div rendered="#{productionPlanningAction.showReprocessedProduct}" id = "detailBaseProduct">
 
         <h:form id="baseProductionPlanningForm">
+        <s:div>
+            <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
+                               rendered="#{baseProduct.state != 'TABULATED'}"
+                    >
+
+                <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
+                                       operation="show">
+                </rich:componentControl>
+            </a4j:commandButton>
+        </s:div>
         <app:fieldset id="baseProductDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
             <h:panelGrid columns="1"
                          width="100%"
@@ -55,6 +65,7 @@
                                            immediate="true"
                                            oncomplete="Richfaces.showModalPanel('productListModalPanel');"
                                            actionListener="#{selectPopUpAction.select}"
+                                           rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                            reRender="productListModalPanel">
                             <f:attribute name="entityManagerName" value=""/>
                             <f:attribute name="dataModelObject" value="#{productItemArticleSearchDataModel}"/>
@@ -100,6 +111,7 @@
                             <a4j:commandLink immediate="true"
                                              title="#{messages['Common.remove']}"
                                              action="#{productionPlanningAction.removeProductProcessing(productProcessing)}"
+                                             rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                              ajaxSingle="true"
                                              reRender="detailProductBase">
                                 <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
@@ -128,6 +140,7 @@
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
                                                actionListener="#{selectPopUpAction.select}"
+                                               rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                                reRender="productItemsListModalPanel">
                                 <f:attribute name="entityManagerName" value=""/>
                                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
@@ -181,6 +194,7 @@
                                                  title="#{messages['Common.remove']}"
                                                  action="#{productionPlanningAction.removeInput(productionIngredientItem)}"
                                                  ajaxSingle="true"
+                                                 rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                                  reRender="detailBaseProductInput">
                                     <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                                 </a4j:commandLink>
@@ -195,12 +209,14 @@
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveBaseProduct}"
                                    value="#{messages['Common.save']}"
+                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                         />
                 <rich:spacer width="20"/>
 
                 <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
                                    action="#{productionPlanningAction.deleteReprocessedProduct}"
+                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                    ajaxSingle="true"/>
 

@@ -916,7 +916,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            value="#{messages['Common.confirm']}"
                            immediate="true"
 
-                           styleClass="button"/>
+                           styleClass="button">
+            <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
+                                   operation="hide"/>
+        </a4j:commandButton>
+
     </ui:define>
 </s:decorate>
 
@@ -931,7 +935,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </p>
     </ui:define>
     <ui:define name="dialogOption">
-        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction(baseProduct)}"
+        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
                            styleClass="button"/>

@@ -225,6 +225,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         update();
     }
 
+    public String generateVoucherSingleProduction(){
+
+
+        if(baseProduct.getSingleProducts().size() ==0)
+        {
+            showErrorVoucherNotsingles();
+            return Outcome.FAIL;
+        }
+        for(SingleProduct single: baseProduct.getSingleProducts())
+        {
+            if(single.getState() != FINALIZED)
+            {
+                showErrorVoucherSingle();
+                return Outcome.FAIL;
+            }
+        }
+
+        baseProduct.setState(TABULATED);
+        InventoryMovement inventoryMovement = createVale(baseProduct);
+        approvalVoucher(inventoryMovement);
+        closeDetail();
+        showProductionOrders = true;
+        return update();
+    }
+
     public void generateVoucherSingleProduction(BaseProduct base){
 
 
@@ -245,6 +270,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         base.setState(TABULATED);
         InventoryMovement inventoryMovement = createVale(base);
         approvalVoucher(inventoryMovement);
+        for(SingleProduct single: base.getSingleProducts())
+        {
+            single.setState(TABULATED);
+        }
         closeDetail();
         showProductionOrders = true;
         update();
@@ -757,8 +786,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         warehouseVoucher.setDate(new Date());
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
         warehouseVoucher.setWarehouseCode("2");
-        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0112"));
-        warehouseVoucher.setCostCenterCode("0112");
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
+        warehouseVoucher.setCostCenterCode("0111");
         Warehouse warehouse = warehouseService.findWarehouseByCode("2");
         warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDocumentType(productionPlanningService.getRecepcionDocumentType());
@@ -1052,8 +1081,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public InventoryMovement createVale(BaseProduct base){
 
-        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
-        warehouseVoucher = createWarehouseVoucherOrder();
+        WarehouseVoucher warehouseVoucher = createWarehouseVoucherOrder();
         warehouseVoucherSelect = warehouseVoucher;
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", base.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(base);
@@ -2283,30 +2311,42 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private void setTotalIndirectCosts(ProductionOrder productionOrder) {
         Double total = 0.0;
         productionOrder.setTotalPriceJourney(0.0);
+        Double total_labor = 0.0;
         for(IndirectCosts costs :productionOrder.getIndirectCostses())
         {
             if(costs.getCostsConifg().getEstate() != null)
             {if(costs.getCostsConifg().getEstate().compareTo(Constants.ESTATE_COSTCONFIG) == 0)
-                productionOrder.setTotalPriceJourney(productionOrder.getTotalPriceJourney()+costs.getAmountBs().doubleValue());
+            {
+                total_labor = total_labor + costs.getAmountBs().doubleValue();
             }
             else
-            total = total + costs.getAmountBs().doubleValue();
+                total = total + costs.getAmountBs().doubleValue();
+            }
+            else
+                total = total + costs.getAmountBs().doubleValue();
         }
         productionOrder.setTotalIndirectCosts(total);
+        productionOrder.setTotalPriceJourney(total_labor);
     }
 
     private void setTotalIndirectCosts(List<IndirectCosts> indirectCosts, SingleProduct single) {
         Double total = 0.0;
+        Double total_labor = 0.0;
         for(IndirectCosts costs :indirectCosts)
         {
             if(costs.getCostsConifg().getEstate() != null)
             {if(costs.getCostsConifg().getEstate().compareTo(Constants.ESTATE_COSTCONFIG) == 0)
-                single.setCostLabor(new BigDecimal(single.getCostLabor().doubleValue() + costs.getAmountBs().doubleValue()));
+                {
+                    total_labor = total_labor + costs.getAmountBs().doubleValue();
+                }
+             else
+                total = total + costs.getAmountBs().doubleValue();
             }
             else
                 total = total + costs.getAmountBs().doubleValue();
         }
         single.setTotalIndirecCost(new BigDecimal(total));
+        single.setCostLabor(new BigDecimal(total_labor));
     }
 
     private void setTotalIndirectCosts(SingleProduct single) {
