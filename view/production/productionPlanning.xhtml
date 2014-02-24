@@ -32,8 +32,21 @@
 <div class="buttons">
 
     <s:div id="ruleBotton1">
-        <s:div style="float:left;">
-            #{messages['ProductionPlanning.etiq.totalMilk']} #{productionPlanning.totalMilk}
+
+        <s:div style="float:left;padding-right:50px;">
+            #{messages['ProductionPlanning.etiq.totalMilkCheese']} #{productionPlanning.totalMilkCheese}
+        </s:div>
+
+        <s:div style="float:left;padding-right:50px;">
+            #{messages['ProductionPlanning.etiq.totalMilkUHT']} #{productionPlanning.totalMilkUHT}
+        </s:div>
+
+        <s:div style="float:left;padding-right:50px;">
+            #{messages['ProductionPlanning.etiq.totalMilkYogurt']} #{productionPlanning.totalMilkYogurt}
+        </s:div>
+
+        <s:div style="float:left;padding-right:50px;">
+            #{messages['ProductionPlanning.etiq.totalMilkReprocessed']} #{productionPlanning.totalMilkReprocessed}
         </s:div>
 
         <h:commandButton action="#{productionPlanningAction.create(productionPlanningAction.consolidatedInputs)}"
@@ -903,7 +916,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            value="#{messages['Common.confirm']}"
                            immediate="true"
 
-                           styleClass="button"/>
+                           styleClass="button">
+            <rich:componentControl for="confirmationVoucher" event="onclick" disableDefault="true"
+                                   operation="hide"/>
+        </a4j:commandButton>
+
     </ui:define>
 </s:decorate>
 
@@ -918,7 +935,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         </p>
     </ui:define>
     <ui:define name="dialogOption">
-        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction(baseProduct)}"
+        <a4j:commandButton action="#{productionPlanningAction.generateVoucherSingleProduction}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
                            styleClass="button"/>

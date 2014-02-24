@@ -86,6 +86,18 @@ public class ProductionPlanning implements BaseModel {
     @Column(name = "TOTALLECHEPRODUCIDA", nullable = true, columnDefinition = "NUMBER(9)")
     private BigDecimal totalMilk = new BigDecimal(0.0);
 
+    @Column(name = "TOTALLECHEQUESO", nullable = true, columnDefinition = "NUMBER(9)")
+    private BigDecimal totalMilkCheese = new BigDecimal(0.0);
+
+    @Column(name = "TOTALLECHEUHT", nullable = true, columnDefinition = "NUMBER(9)")
+    private BigDecimal totalMilkUHT = new BigDecimal(0.0);
+
+    @Column(name = "TOTALLECHEYOGURT", nullable = true, columnDefinition = "NUMBER(9)")
+    private BigDecimal totalMilkYogurt = new BigDecimal(0.0);
+
+    @Column(name = "TOTALLECHEREPROCESO", nullable = true, columnDefinition = "NUMBER(9)")
+    private BigDecimal totalMilkReprocessed = new BigDecimal(0.0);
+
     public Company getCompany() {
         return company;
     }
@@ -160,5 +172,37 @@ public class ProductionPlanning implements BaseModel {
 
     public void setTotalMilk(BigDecimal totalMilk) {
         this.totalMilk = totalMilk;
+    }
+
+    public BigDecimal getTotalMilkCheese() {
+        return totalMilkCheese;
+    }
+
+    public void setTotalMilkCheese(BigDecimal totalMilkCheese) {
+        this.totalMilkCheese = totalMilkCheese;
+    }
+
+    public BigDecimal getTotalMilkUHT() {
+        return totalMilkUHT;
+    }
+
+    public void setTotalMilkUHT(BigDecimal totalMilkUHT) {
+        this.totalMilkUHT = totalMilkUHT;
+    }
+
+    public BigDecimal getTotalMilkYogurt() {
+        return totalMilkYogurt;
+    }
+
+    public void setTotalMilkYogurt(BigDecimal totalMilkYogurt) {
+        this.totalMilkYogurt = totalMilkYogurt;
+    }
+
+    public BigDecimal getTotalMilkReprocessed() {
+        return totalMilkReprocessed;
+    }
+
+    public void setTotalMilkReprocessed(BigDecimal totalMilkReprocessed) {
+        this.totalMilkReprocessed = totalMilkReprocessed;
     }
 }
