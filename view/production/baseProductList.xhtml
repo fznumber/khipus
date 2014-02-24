@@ -43,12 +43,6 @@
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
 
-                                <rich:spacer width="10"/>
-                                <h:commandButton
-                                        action="#{productionPlanningReportReproAction.generateReportSummary(baseProduct)}"
-                                        value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
-                                        styleClass="button"
-                                        rendered="#{productionPlanningAction.managed}"/>
 
                             </rich:column>
 

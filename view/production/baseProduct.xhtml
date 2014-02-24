@@ -19,7 +19,15 @@
                                        operation="show">
                 </rich:componentControl>
             </a4j:commandButton>
+
+            <rich:spacer width="10"/>
+            <h:commandButton
+                    action="#{productionPlanningReportReproAction.generateReportSummary(baseProduct)}"
+                    value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+                    styleClass="button"
+                    rendered="#{productionPlanningAction.managed}"/>
         </s:div>
+
         <app:fieldset id="baseProductDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
             <h:panelGrid columns="1"
                          width="100%"
