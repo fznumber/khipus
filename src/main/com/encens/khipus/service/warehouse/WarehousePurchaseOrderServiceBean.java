@@ -1,6 +1,7 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.action.SessionUser;
+import com.encens.khipus.action.fixedassets.LiquidationPaymentAction;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
@@ -86,6 +87,9 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
 
     @In
     protected Map<String, String> messages;
+
+    @In(create = true, value = "liquidationPaymentAction")
+    private LiquidationPaymentAction liquidationPaymentAction;
 
     private static final Integer SCALE = 6;
 
@@ -475,6 +479,60 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         getEntityManager().flush();
 
         financeAccountingDocumentService.createAccountingVoucherByPurchaseOrder(purchaseOrder);
+    }
+
+    public void onlyLiquidatePurchaseOrder(List<PurchaseOrder> purchaseOrders, PurchaseOrder entity)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException {
+        Double total = 0.0;
+        BigDecimal defaultExchangeRate = null;
+        PurchaseOrderPayment purchaseOrderPayment;
+        for(PurchaseOrder purchaseOrder: purchaseOrders){
+
+            liquidationPaymentAction.setDefaultDescription(entity,
+                    MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
+                    MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+            liquidationPaymentAction.setPurchaseOrder(entity);
+            purchaseOrderPayment  = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
+
+        if (purchaseOrderPayment != null && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getPayAmount())
+                && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getSourceAmount())) {
+            purchaseOrderPayment.setPurchaseOrderPaymentKind(PurchaseOrderPaymentKind.LIQUIDATION_PAYMENT);
+            if (!purchaseOrderPayment.getPaymentType().equals(PurchaseOrderPaymentType.PAYMENT_WITH_CHECK)) {
+                purchaseOrderPayment.setCheckDestination(null);
+            }
+            defaultExchangeRate = purchaseOrderPayment.getExchangeRate();
+            total
+            warehouseAccountEntryService.createEntryAccountForPurchaseOrderPayment(purchaseOrder, purchaseOrderPayment);
+            //todo:verificar con Claudia
+            /*if (PurchaseOrderPaymentType.PAYMENT_ROTATORY_FUND.equals(purchaseOrderPayment.getPaymentType())) {
+                try {
+                    rotatoryFundCollectionService.generateCollectionForPurchaseOrderPayment(purchaseOrderPayment);
+                } catch (com.encens.khipus.exception.finances.RotatoryFundNullifiedException e) {
+                    throw new com.encens.khipus.exception.purchase.RotatoryFundNullifiedException(e);
+                } catch (com.encens.khipus.exception.finances.RotatoryFundLiquidatedException e) {
+                    throw new com.encens.khipus.exception.purchase.RotatoryFundLiquidatedException(e);
+                } catch (com.encens.khipus.exception.finances.CollectionSumExceedsRotatoryFundAmountException e) {
+                    throw new com.encens.khipus.exception.purchase.CollectionSumExceedsRotatoryFundAmountException(e);
+                } catch (ConcurrencyException e) {
+                    throw new com.encens.khipus.exception.purchase.RotatoryFundConcurrencyException(e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }*/
+        }
+        purchaseOrder.setState(PurchaseOrderState.LIQ);
+        }
+        getEntityManager().flush();
     }
 
     public void onlyLiquidatePurchaseOrder(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment)

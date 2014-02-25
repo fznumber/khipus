@@ -101,6 +101,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     private Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailOverMaximumStockMap = new HashMap<PurchaseOrderDetail, BigDecimal>();
     // this list stores the PurchaseOrderDetails that should not show warnings
     private List<PurchaseOrderDetail> purchaseOrderDetailWithoutWarnings = new ArrayList<PurchaseOrderDetail>();
+    // this list stores the PurchaseOrderDetails that when choise payment in check
+    private List<PurchaseOrder> purchaseOrdersWithCheck = new ArrayList<PurchaseOrder>();
 
     @In(value = "warehousePurchaseOrderService")
     private WarehousePurchaseOrderService service;
@@ -419,9 +421,14 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
 
         try {
-            service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
+            if(checkPayment()){
+                service.onlyLiquidatePurchaseOrder(purchaseOrdersWithCheck,getInstance());
+                addPurchaseOrderLiquidatedMessage();//personalizar este mensaje
+            }else{
+                service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
+                addPurchaseOrderLiquidatedMessage();
+            }
             //service.liquidatePurchaseOrder(getInstance());
-            addPurchaseOrderLiquidatedMessage();
             return Outcome.SUCCESS;
         } catch (WarehouseDocumentTypeNotFoundException e) {
             addWarehouseDocumentTypeErrorMessage();
