@@ -39,7 +39,7 @@ public class SingleProduct implements BaseModel {
     private Long id;
 
     @Column(name = "CANTIDAD", nullable = true)
-    private Integer amount;
+    private Integer amount = 0;
 
     @Column(name = "ESTADO", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)

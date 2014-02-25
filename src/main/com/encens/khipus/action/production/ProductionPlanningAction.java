@@ -590,6 +590,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.setProducedAmount(0.0);
         }
     }*/
+
+    public void addMessageCantProducerCero()
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "ProductionPlanning.waning.amountCero");
+    }
+
     public void addMessageCreateWarehouseVoucherInput()
     {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "WarehouseVoucher.generateVoucher");
@@ -1591,7 +1597,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
         //orderMaterials.addAll(order.getOrderMaterials());
-
+        if(order.getProducedAmount() == 0.0 && order.getEstateOrder().equals(EXECUTED)){
+            addMessageCantProducerCero();
+        }
         showDetailOrder = true;
         showProductionOrders = false;
         hideButtonGeneral();
@@ -2429,6 +2437,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         singleProduct = product;
         baseProduct = base;
         showDetailSingleProduct = true;
+        if(product.getAmount() == 0.0)
+        {
+            addMessageCantProducerCero();
+        }
         hideButtonGeneral();
         hideTablesIni();
     }
