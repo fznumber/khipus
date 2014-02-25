@@ -1,11 +1,15 @@
 package com.encens.khipus.action.production.reports;
 
 import com.encens.khipus.action.reports.GenericReportAction;
+import com.encens.khipus.action.reports.PageFormat;
+import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.production.BaseProduct;
+import com.encens.khipus.model.production.OrderMaterial;
 import com.encens.khipus.model.production.ProductionPlanningState;
 import com.encens.khipus.util.MessageUtils;
+import com.encens.khipus.util.RoundUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -33,7 +37,6 @@ public class ProductionPlanningReportReproAction extends GenericReportAction {
 
     private String date;
     private String state;
-    private Double unitPrice;
 
     BaseProduct baseProduct;
 
@@ -50,6 +53,8 @@ public class ProductionPlanningReportReproAction extends GenericReportAction {
 
         params.putAll(getCommonDocumentParamsInfo());
         setReportFormat(ReportFormat.PDF);
+        addProductionOrderMaterialDetailSubReport(params);
+        addProductionOrderMaterialSummaryDetailSubReport(params);
         super.generateSqlReport(
                 fileName,
                 templatePath,
@@ -116,6 +121,72 @@ public class ProductionPlanningReportReproAction extends GenericReportAction {
         paramMap.put("nameProduct", "Reproceso");
         paramMap.put("numOrder", baseProduct.getCode());
         return paramMap;
+    }
+
+    private void addProductionOrderMaterialDetailSubReport(Map mainReportParams) {
+        log.debug("Generating productionOrderMaterialDetailSubReport.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String sql = "select mp.nombre ,ia.descri, IA.COD_ART, om.cantidadpesosolicitada, om.cantidadpesousada, om.cantidadpesoretornada,om.COSTOUNITARIO ,om.COSTOTOTAL from productobase pb\n" +
+                "inner join productosimple ps\n" +
+                "on ps.idproductobase = pb.idproductobase\n" +
+                "inner join PRODUCTOSIMPLEPROCESADO psp\n" +
+                "on psp.idproductosimple = ps.idproductosimple\n" +
+                "inner join metaproductoproduccion mp\n" +
+                "on mp.idmetaproductoproduccion = psp.idmetaproductoproduccion\n" +
+                "inner join ordenmaterial om \n" +
+                "on om.idproductosimple = ps.idproductosimple\n" +
+                "inner join WISE.inv_articulos ia\n" +
+                "on ia.cod_art = om.cod_art\n" +
+                "where pb.idproductobase = " + baseProduct.getId();
+
+        String subReportKey = "ORDERMATERIALSUBREPORT";
+        TypedReportData subReportData = super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderMaterialDetailSubReproReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
+    }
+
+    private void addProductionOrderMaterialSummaryDetailSubReport(Map mainReportParams) {
+        log.debug("Generating productionOrderMaterialDetailSubReport.............................");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String sql = "select mp.nombre , ps.cantidad ,ps.costototalmateriales ,ps.costototalinsumos,ps.costototalmanoobra\n" +
+                "      ,ps.costototalindirecto,ps.costototalproduccion,ps.costounitario  \n" +
+                "from productobase pb\n" +
+                "inner join productosimple ps\n" +
+                "on ps.idproductobase = pb.idproductobase\n" +
+                "inner join PRODUCTOSIMPLEPROCESADO psp\n" +
+                "on psp.idproductosimple = ps.idproductosimple\n" +
+                "inner join metaproductoproduccion mp\n" +
+                "on mp.idmetaproductoproduccion = psp.idmetaproductoproduccion\n" +
+                "where pb.idproductobase = "+ baseProduct.getId();
+
+        //generate the sub report
+
+        String subReportKey = "ORDERMATERIALSUMMARYSUBREPORT";
+        TypedReportData subReportData = super.generateSqlSubReport(
+                subReportKey,
+                "/production/reports/productionOrderMaterialSummaryDetailReproSubReport.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.PORTRAIT,
+                sql,
+                params);
+
+        //add in main report params
+        mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+
     }
 
 }
