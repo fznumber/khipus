@@ -2401,6 +2401,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public double getProcentage(Double total,Double totalSingle){
         Double porcentage = 0.0;
+        if(total != 0.0)
         porcentage = (totalSingle * 100)/total;
 
         return porcentage /100;
