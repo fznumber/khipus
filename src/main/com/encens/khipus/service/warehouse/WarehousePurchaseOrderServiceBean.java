@@ -493,45 +493,63 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
             RotatoryFundLiquidatedException,
             CollectionSumExceedsRotatoryFundAmountException,
             RotatoryFundConcurrencyException {
-        Double total = 0.0;
-        BigDecimal defaultExchangeRate = null;
-        PurchaseOrderPayment purchaseOrderPayment;
+        BigDecimal totalSourceAmount = BigDecimal.ZERO;
+        BigDecimal totalPayAmount = BigDecimal.ZERO;
+
         for(PurchaseOrder purchaseOrder: purchaseOrders){
+            PurchaseOrderPayment purchaseOrderPayment = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
 
-            liquidationPaymentAction.setDefaultDescription(entity,
-                    MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
-                    MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
-            liquidationPaymentAction.setPurchaseOrder(entity);
-            purchaseOrderPayment  = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
-
-        if (purchaseOrderPayment != null && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getPayAmount())
-                && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getSourceAmount())) {
-            purchaseOrderPayment.setPurchaseOrderPaymentKind(PurchaseOrderPaymentKind.LIQUIDATION_PAYMENT);
-            if (!purchaseOrderPayment.getPaymentType().equals(PurchaseOrderPaymentType.PAYMENT_WITH_CHECK)) {
-                purchaseOrderPayment.setCheckDestination(null);
+            if (purchaseOrderPayment != null && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getPayAmount())
+                    && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getSourceAmount())) {
+                totalSourceAmount.add(purchaseOrderPayment.getSourceAmount());
+                totalPayAmount.add(purchaseOrderPayment.getPayAmount());
             }
-            defaultExchangeRate = purchaseOrderPayment.getExchangeRate();
-            total
-            warehouseAccountEntryService.createEntryAccountForPurchaseOrderPayment(purchaseOrder, purchaseOrderPayment);
-            //todo:verificar con Claudia
-            /*if (PurchaseOrderPaymentType.PAYMENT_ROTATORY_FUND.equals(purchaseOrderPayment.getPaymentType())) {
-                try {
-                    rotatoryFundCollectionService.generateCollectionForPurchaseOrderPayment(purchaseOrderPayment);
-                } catch (com.encens.khipus.exception.finances.RotatoryFundNullifiedException e) {
-                    throw new com.encens.khipus.exception.purchase.RotatoryFundNullifiedException(e);
-                } catch (com.encens.khipus.exception.finances.RotatoryFundLiquidatedException e) {
-                    throw new com.encens.khipus.exception.purchase.RotatoryFundLiquidatedException(e);
-                } catch (com.encens.khipus.exception.finances.CollectionSumExceedsRotatoryFundAmountException e) {
-                    throw new com.encens.khipus.exception.purchase.CollectionSumExceedsRotatoryFundAmountException(e);
-                } catch (ConcurrencyException e) {
-                    throw new com.encens.khipus.exception.purchase.RotatoryFundConcurrencyException(e);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+        }
+        PurchaseOrderPayment purchasePayment = (currentBalanceAmount(entity).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
+        if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(totalPayAmount) && !BigDecimalUtil.isZeroOrNull(totalPayAmount)
+            || !BigDecimalUtil.isZeroOrNull(totalSourceAmount) && !BigDecimalUtil.isZeroOrNull(totalSourceAmount)){
+
+        String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,totalSourceAmount,totalPayAmount);
+
+            for(PurchaseOrder purchaseOrder: purchaseOrders){
+
+                BigDecimal defaultExchangeRate = null;
+                liquidationPaymentAction.setDefaultDescription(entity,
+                        MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
+                        MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+                liquidationPaymentAction.setPurchaseOrder(entity);
+                PurchaseOrderPayment purchaseOrderPayment = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
+
+
+            if (purchaseOrderPayment != null && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getPayAmount())
+                    && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getSourceAmount())) {
+                purchaseOrderPayment.setPurchaseOrderPaymentKind(PurchaseOrderPaymentKind.LIQUIDATION_PAYMENT);
+                if (!purchaseOrderPayment.getPaymentType().equals(PurchaseOrderPaymentType.PAYMENT_WITH_CHECK)) {
+                    purchaseOrderPayment.setCheckDestination(null);
                 }
-            }*/
+                defaultExchangeRate = purchaseOrderPayment.getExchangeRate();
+                warehouseAccountEntryService.setPurchaseOrderForPaymentCheck(purchaseOrder, purchaseOrderPayment,transactionNumber);
+                //todo:verificar con Claudia
+                /*if (PurchaseOrderPaymentType.PAYMENT_ROTATORY_FUND.equals(purchaseOrderPayment.getPaymentType())) {
+                    try {
+                        rotatoryFundCollectionService.generateCollectionForPurchaseOrderPayment(purchaseOrderPayment);
+                    } catch (com.encens.khipus.exception.finances.RotatoryFundNullifiedException e) {
+                        throw new com.encens.khipus.exception.purchase.RotatoryFundNullifiedException(e);
+                    } catch (com.encens.khipus.exception.finances.RotatoryFundLiquidatedException e) {
+                        throw new com.encens.khipus.exception.purchase.RotatoryFundLiquidatedException(e);
+                    } catch (com.encens.khipus.exception.finances.CollectionSumExceedsRotatoryFundAmountException e) {
+                        throw new com.encens.khipus.exception.purchase.CollectionSumExceedsRotatoryFundAmountException(e);
+                    } catch (ConcurrencyException e) {
+                        throw new com.encens.khipus.exception.purchase.RotatoryFundConcurrencyException(e);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }*/
+            }
+            purchaseOrder.setState(PurchaseOrderState.LIQ);
+            }
         }
-        purchaseOrder.setState(PurchaseOrderState.LIQ);
-        }
+        entity.setState(PurchaseOrderState.LIQ);
         getEntityManager().flush();
     }
 

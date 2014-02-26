@@ -421,7 +421,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
 
         try {
-            if(checkPayment()){
+            //if(checkPayment()){
+            if(false){
                 service.onlyLiquidatePurchaseOrder(purchaseOrdersWithCheck,getInstance());
                 addPurchaseOrderLiquidatedMessage();//personalizar este mensaje
             }else{

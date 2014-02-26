@@ -43,6 +43,17 @@ public interface WarehouseAccountEntryService extends GenericService {
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException;
+    void setPurchaseOrderForPaymentCheck(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment, String transactionNumber)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
+    public String createEntryAccountPurchaseOrderForPaymentCheck(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment
+            ,BigDecimal totalSourceAmount,BigDecimal totalPayAmount)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
     public void createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
                                                   BusinessUnit executorUnit,
                                                   String costCenterCode,
