@@ -24,6 +24,8 @@ import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author
@@ -34,6 +36,8 @@ import java.math.BigDecimal;
 @Scope(ScopeType.CONVERSATION)
 public class LiquidationPaymentAction {
     private PurchaseOrderPayment liquidationPayment = new PurchaseOrderPayment();
+
+    private List<PurchaseOrder> selectedPurchaseOrdersWithCheck = new ArrayList<PurchaseOrder>();
 
     @In
     private GlossGeneratorService glossGeneratorService;
@@ -51,6 +55,8 @@ public class LiquidationPaymentAction {
     protected Log log;
 
     private PurchaseOrder purchaseOrder;
+    // this list stores the PurchaseOrderDetails that when choise payment in check
+    private List<PurchaseOrder> purchaseOrdersWithCheck = new ArrayList<PurchaseOrder>();
 
     public PurchaseOrder getPurchaseOrder() {
         return purchaseOrder;
@@ -241,6 +247,22 @@ public class LiquidationPaymentAction {
         getLiquidationPayment().setSourceAmount(null);
     }
 
+    public void addPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
+        for (PurchaseOrder purchaseOrder : purchaseOrders) {
+            if (selectedPurchaseOrdersWithCheck.contains(purchaseOrder)) {
+                continue;
+            }
+
+            selectedPurchaseOrdersWithCheck.add(purchaseOrder);
+            purchaseOrdersWithCheck.add(purchaseOrder);
+        }
+    }
+
+    public void removePurchaseOrder(PurchaseOrder instance) {
+        purchaseOrdersWithCheck.remove(instance);
+        selectedPurchaseOrdersWithCheck.remove(instance);
+    }
+
     public void entryNotFoundErrorLog(Exception e) {
         log.error("entity was removed by another user...", e);
     }
@@ -277,4 +299,11 @@ public class LiquidationPaymentAction {
                 "RotatoryFundCollection.error.rotatoryFundAlreadyAnnulled", getLiquidationPayment().getRotatoryFund().getCode());
     }
 
+    public List<PurchaseOrder> getPurchaseOrdersWithCheck() {
+        return purchaseOrdersWithCheck;
+    }
+
+    public void setPurchaseOrdersWithCheck(List<PurchaseOrder> purchaseOrdersWithCheck) {
+        this.purchaseOrdersWithCheck = purchaseOrdersWithCheck;
+    }
 }

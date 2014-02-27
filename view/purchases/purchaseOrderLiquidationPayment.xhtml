@@ -33,7 +33,7 @@
                            hideNoSelectionLabel="false"/>
             <a4j:support event="onchange"
                          action="#{liquidationPaymentAction.paymentTypeChanged()}"
-                         reRender="beneficiaryPanel, cashBoxCashAccountDiv, checkDestinationDiv, bankDiv, calculatedAmountDiv, exchangeRatePanel, rotatoryFundDiv, rotatoryFundListModalPanelDiv"
+                         reRender="beneficiaryPanel, cashBoxCashAccountDiv, checkDestinationDiv, bankDiv, calculatedAmountDiv, exchangeRatePanel, rotatoryFundDiv, rotatoryFundListModalPanelDiv,purchaseOrdersWithCheckList"
                          ajaxSingle="true"/>
             <s:convertEnum/>
         </h:selectOneMenu>
@@ -237,6 +237,49 @@
                            reRender="globalDiv"
                            tabindex="1006"/>
     </s:decorate>
+</s:div>
+<s:div id="purchaseOrdersWithCheckList">
+
+    <ui:include src="/warehouse/warehousePurchaseOrderWithCheckListCreate.xhtml"/>
+    <!--<rich:dataTable value="#{warehousePurchaseOrderDataModel}"
+                    var="purchaseOrderItem"
+                    id="purchaseOrderWithCheckList"
+                    rows="#{sessionUser.rowsPerPage}"
+                    rendered="#{liquidationPaymentAction.checkPayment}"
+                    width="100%"
+                    >
+
+        <f:facet name="header">
+            <rich:columnGroup>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.orderNumber']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.invoiceNumber']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.date']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.responsible']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.provider']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.warehouse']}
+                </rich:column>
+                <rich:column>
+                        #{messages['WarehousePurchaseOrder.state']}
+                </rich:column>
+                <rich:column styleClass="center">
+                    #{messages['Common.action']}
+                </rich:column>
+            </rich:columnGroup>
+        </f:facet>
+
+
+    </rich:dataTable>-->
 </s:div>
 </h:panelGrid>
 </s:div>

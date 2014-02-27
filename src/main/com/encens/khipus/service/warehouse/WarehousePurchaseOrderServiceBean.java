@@ -506,9 +506,9 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
             }
         }
         PurchaseOrderPayment purchasePayment = (currentBalanceAmount(entity).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
-        if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(totalPayAmount) && !BigDecimalUtil.isZeroOrNull(totalPayAmount)
-            || !BigDecimalUtil.isZeroOrNull(totalSourceAmount) && !BigDecimalUtil.isZeroOrNull(totalSourceAmount)){
-
+        if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(totalPayAmount) && !BigDecimalUtil.isZeroOrNull(totalSourceAmount)){
+            totalPayAmount.add(purchasePayment.getPayAmount());
+            totalSourceAmount.add(purchasePayment.getSourceAmount());
         String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,totalSourceAmount,totalPayAmount);
 
             for(PurchaseOrder purchaseOrder: purchaseOrders){

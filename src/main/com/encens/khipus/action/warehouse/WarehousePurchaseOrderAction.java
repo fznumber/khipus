@@ -101,8 +101,6 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     private Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailOverMaximumStockMap = new HashMap<PurchaseOrderDetail, BigDecimal>();
     // this list stores the PurchaseOrderDetails that should not show warnings
     private List<PurchaseOrderDetail> purchaseOrderDetailWithoutWarnings = new ArrayList<PurchaseOrderDetail>();
-    // this list stores the PurchaseOrderDetails that when choise payment in check
-    private List<PurchaseOrder> purchaseOrdersWithCheck = new ArrayList<PurchaseOrder>();
 
     @In(value = "warehousePurchaseOrderService")
     private WarehousePurchaseOrderService service;
@@ -421,10 +419,10 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
 
         try {
-            //if(checkPayment()){
-            if(false){
-                service.onlyLiquidatePurchaseOrder(purchaseOrdersWithCheck,getInstance());
-                addPurchaseOrderLiquidatedMessage();//personalizar este mensaje
+            if(liquidationPaymentAction.isCheckPayment()){
+            //if(false){
+                service.onlyLiquidatePurchaseOrder(liquidationPaymentAction.getPurchaseOrdersWithCheck(),getInstance());
+                addPurchaseOrderLiquidatedMessage();//personalizar este mensaje con todas la ordenes de produccion
             }else{
                 service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
                 addPurchaseOrderLiquidatedMessage();
