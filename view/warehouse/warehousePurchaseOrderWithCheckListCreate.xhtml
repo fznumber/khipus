@@ -25,9 +25,9 @@
                                    reRender="purchaseOrderWithCheckListModalPanel">
                     <f:attribute name="entityManagerName" value=""/>
                     <f:attribute name="dataModelObject" value="#{purchaseOrderWithCheckSearchDataModel}"/>
-                    <app:criteriaValue fieldName="purchaseOrderState"
+                    <app:criteriaValue fieldName="state"
                                        value="#{warehousePurchaseOrderAction.purchaseOrder.state}"/>
-                    <app:criteriaValue fieldName="purchaseOrderWareHouse"
+                    <app:criteriaValue fieldName="warehouse"
                                        value="#{warehousePurchaseOrderAction.purchaseOrder.warehouse}"/>
                 </a4j:commandButton>
             </div>
@@ -55,12 +55,12 @@
                         <rich:column>
                                 #{messages['WarehousePurchaseOrder.provider']}
                         </rich:column>
-                        <rich:column>
+                        <!--<rich:column>
                                 #{messages['WarehousePurchaseOrder.warehouse']}
                         </rich:column>
                         <rich:column>
                                 #{messages['WarehousePurchaseOrder.state']}
-                        </rich:column>
+                        </rich:column>-->
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -86,12 +86,12 @@
                 <rich:column >
                     <h:outputText value="#{purchaseOrderItem.provider.fullName}"/>
                 </rich:column>
-                <rich:column >
+                <!--<rich:column >
                     <h:outputText value="#{purchaseOrderItem.warehouse.fullName}"/>
-                </rich:column>
-                <rich:column >
+                </rich:column>-->
+                <!--<rich:column >
                     <h:outputText value="#{messages[purchaseOrderItem.state.resourceKey]}"/>
-                </rich:column>
+                </rich:column>-->
 
                 <rich:column styleClass="center">
                     <s:div id="removeLinkId">
@@ -107,7 +107,7 @@
 
             </rich:dataTable>
 
-            <!--<app:dataScroller id="dataScroller" for="purchaseOrderList" dataModel="#{warehousePurchaseOrderDataModel}"/>-->
+            <!--<app:dataScroller id="dataScrollerWithCheckList" for="purchaseOrderWithCheckList" dataModel="#{purchaseOrderWithCheckSearchDataModel}"/>-->
 
 
         </s:div>

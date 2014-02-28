@@ -577,6 +577,22 @@
     </ui:define>
 </s:decorate>
 
+<s:decorate id="purchaseOrderWithCheckListModalPanelContainer"
+            template="/warehouse/warehousePurchaseOrderListModalPanel.xhtml">
+    <ui:param name="containerId" value="purchaseOrderWithCheckListModalPanelContainer"/>
+    <ui:param name="dialogId" value="purchaseOrderWithCheckListModalPanel"/>
+    <ui:define name="addButton">
+        <a4j:commandButton id="addButton"
+                           immediate="true"
+                           ajaxSingle="true"
+                           action="#{liquidationPaymentAction.addPurchaseOrder(purchaseOrderWithCheckSearchDataModel.selectedPurchaseOrders)}"
+                           value="#{messages['Common.add']}"
+                           reRender="purchaseOrderWithCheckPanel"
+                           styleClass="button"
+                           oncomplete="Richfaces.hideModalPanel('purchaseOrderWithCheckListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
 <s:decorate id="cashBoxCashAccountListModalPanelContainer" template="/finances/cashAccountListModalPanel.xhtml">
     <ui:param name="accountType" value="A"/>
     <ui:param name="accountClass" value="A"/>

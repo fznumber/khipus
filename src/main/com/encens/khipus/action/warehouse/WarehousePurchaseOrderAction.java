@@ -542,7 +542,17 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     }
 
     public BigDecimal getCurrentBalanceAmount() {
+        if(liquidationPaymentAction.getPurchaseOrdersWithCheck().isEmpty())
         return purchaseOrderService.currentBalanceAmount(getInstance());
+        else{
+            Double total = purchaseOrderService.currentBalanceAmount(getInstance()).doubleValue();
+            for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+            {
+                total += purchaseOrderService.currentBalanceAmount(purchaseOrder).doubleValue();
+            }
+
+            return new BigDecimal(total);
+        }
     }
 
     public boolean checkPayment() {
