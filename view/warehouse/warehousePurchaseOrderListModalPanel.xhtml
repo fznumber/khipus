@@ -164,13 +164,14 @@
                                        tabindex="15">
                         <s:defaultAction/>
                     </a4j:commandButton>
-                    <a4j:commandButton action="#{purchaseOrderWithCheckSearchDataModel.clear}"
+                    <!--TODO:El modelo pierde las restricciones cuando se ejecuta limpiar-->
+                    <!--<a4j:commandButton action="#{purchaseOrderWithCheckSearchDataModel.clear}"
                                        reRender="searchOptionsPanelWithCheck, purchaseOrderListWithCheck, dataScrollerWithCheck"
                                        styleClass="button"
                                        value="#{messages['Common.clear']}"
                                        id="clearButtonIdWithCheck"
                                        tabindex="16">
-                    </a4j:commandButton>
+                    </a4j:commandButton>-->
                 </s:decorate>
             </s:div>
         </h:panelGrid>
@@ -226,6 +227,20 @@
                         #{messages['WarehousePurchaseOrder.provider']}
                     </app:commandSortHeader>
                 </rich:column>
+                <rich:column>
+                    <app:commandSortHeader sortProperty="warehousePurchaseOrder.warehouse"
+                                           dataModel="#{purchaseOrderWithCheckSearchDataModel}"
+                                           reRender="purchaseOrderListWithCheck, dataScrollerWithCheck">
+                        #{messages['WarehousePurchaseOrder.warehouse']}
+                    </app:commandSortHeader>
+                </rich:column>
+                <rich:column>
+                    <app:commandSortHeader sortProperty="warehousePurchaseOrder.state"
+                                           dataModel="#{purchaseOrderWithCheckSearchDataModel}"
+                                           reRender="purchaseOrderListWithCheck, dataScrollerWithCheck">
+                        #{messages['WarehousePurchaseOrder.state']}
+                    </app:commandSortHeader>
+                </rich:column>
                 <rich:column styleClass="center">
                     #{messages['Common.action']}
                 </rich:column>
@@ -250,6 +265,12 @@
         </rich:column>
         <rich:column >
             <h:outputText value="#{purchaseOrderItem.provider.fullName}"/>
+        </rich:column>
+        <rich:column >
+            <h:outputText value="#{purchaseOrderItem.warehouse.fullName}"/>
+        </rich:column>
+        <rich:column >
+            <h:outputText value="#{messages[purchaseOrderItem.state.resourceKey]}"/>
         </rich:column>
         <rich:column styleClass="center">
             <h:selectBooleanCheckbox id="selectCheckboxItem"

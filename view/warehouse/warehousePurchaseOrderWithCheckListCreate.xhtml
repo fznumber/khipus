@@ -25,10 +25,12 @@
                                    reRender="purchaseOrderWithCheckListModalPanel">
                     <f:attribute name="entityManagerName" value=""/>
                     <f:attribute name="dataModelObject" value="#{purchaseOrderWithCheckSearchDataModel}"/>
+                    <app:criteriaValue fieldName="id"
+                                       value="#{warehousePurchaseOrderAction.purchaseOrder.id}"/>
                     <app:criteriaValue fieldName="state"
                                        value="#{warehousePurchaseOrderAction.purchaseOrder.state}"/>
-                    <app:criteriaValue fieldName="warehouse"
-                                       value="#{warehousePurchaseOrderAction.purchaseOrder.warehouse}"/>
+                    <app:criteriaValue fieldName="provider"
+                                       value="#{warehousePurchaseOrderAction.purchaseOrder.provider}"/>
                 </a4j:commandButton>
             </div>
 
@@ -52,15 +54,18 @@
                         <rich:column>
                                 #{messages['WarehousePurchaseOrder.responsible']}
                         </rich:column>
-                        <rich:column>
-                                #{messages['WarehousePurchaseOrder.provider']}
-                        </rich:column>
                         <!--<rich:column>
+                                #{messages['WarehousePurchaseOrder.provider']}
+                        </rich:column>-->
+                        <rich:column>
                                 #{messages['WarehousePurchaseOrder.warehouse']}
                         </rich:column>
-                        <rich:column>
+                        <!--<rich:column>
                                 #{messages['WarehousePurchaseOrder.state']}
                         </rich:column>-->
+                        <rich:column>
+                            #{messages['WarehousePurchaseOrder.totalAmount']}
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -83,15 +88,18 @@
                 <rich:column >
                     <h:outputText value="#{purchaseOrderItem.responsible.fullName}"/>
                 </rich:column>
-                <rich:column >
-                    <h:outputText value="#{purchaseOrderItem.provider.fullName}"/>
-                </rich:column>
                 <!--<rich:column >
-                    <h:outputText value="#{purchaseOrderItem.warehouse.fullName}"/>
+                    <h:outputText value="#{purchaseOrderItem.provider.fullName}"/>
                 </rich:column>-->
+                <rich:column >
+                    <h:outputText value="#{purchaseOrderItem.warehouse.fullName}"/>
+                </rich:column>
                 <!--<rich:column >
                     <h:outputText value="#{messages[purchaseOrderItem.state.resourceKey]}"/>
                 </rich:column>-->
+                <rich:column >
+                    <h:outputText value="#{purchaseOrderItem.totalAmount}"/>
+                </rich:column>
 
                 <rich:column styleClass="center">
                     <s:div id="removeLinkId">

@@ -37,10 +37,11 @@ public class PurchaseOrderSearchDataModel extends QueryDataModel<Long, PurchaseO
             "lower(warehousePurchaseOrder.invoiceNumber) like concat('%', concat(lower(#{purchaseOrderWithCheckSearchDataModel.criteria.invoiceNumber}), '%'))",
             "warehousePurchaseOrder.responsible = #{purchaseOrderWithCheckSearchDataModel.responsible}",
             "warehousePurchaseOrder.costCenter = #{purchaseOrderWithCheckSearchDataModel.costCenter}",
-            "warehousePurchaseOrder.provider = #{purchaseOrderWithCheckSearchDataModel.provider}",
-            "warehousePurchaseOrder.warehouse = #{purchaseOrderWithCheckSearchDataModel.criteria.warehouse}",
+            "warehousePurchaseOrder.provider = #{purchaseOrderWithCheckSearchDataModel.criteria.provider}",
+            "warehousePurchaseOrder.warehouse = #{purchaseOrderWithCheckSearchDataModel.warehouse}",
             "warehousePurchaseOrder.date >= #{purchaseOrderWithCheckSearchDataModel.startDate}",
             "warehousePurchaseOrder.date <= #{purchaseOrderWithCheckSearchDataModel.endDate}",
+            "warehousePurchaseOrder.id <> #{purchaseOrderWithCheckSearchDataModel.criteria.id}",
             "warehousePurchaseOrder.executorUnit = #{purchaseOrderWithCheckSearchDataModel.criteria.executorUnit}",
             "warehousePurchaseOrder.orderType = #{enumerationUtil.getEnumValue('com.encens.khipus.model.purchases.PurchaseOrderType', 'WAREHOUSE')}",
             "warehousePurchaseOrder.documentType = #{purchaseOrderWithCheckSearchDataModel.documentType}"
@@ -54,6 +55,7 @@ public class PurchaseOrderSearchDataModel extends QueryDataModel<Long, PurchaseO
     private CollectionDocumentType documentType;
     private PurchaseOrderState state;
     private Warehouse warehouse;
+    private Long id;
 
     @Create
     public void init() {
@@ -175,5 +177,13 @@ public class PurchaseOrderSearchDataModel extends QueryDataModel<Long, PurchaseO
         }
 
         return result;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
