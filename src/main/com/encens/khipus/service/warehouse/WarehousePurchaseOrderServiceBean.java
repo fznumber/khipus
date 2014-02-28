@@ -493,23 +493,22 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
             RotatoryFundLiquidatedException,
             CollectionSumExceedsRotatoryFundAmountException,
             RotatoryFundConcurrencyException {
-        BigDecimal totalSourceAmount = BigDecimal.ZERO;
-        BigDecimal totalPayAmount = BigDecimal.ZERO;
+        PurchaseOrderPayment purchasePayment = (currentBalanceAmount(entity).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
+        Double totalSourceAmount = purchasePayment.getSourceAmount().doubleValue();
+        Double totalPayAmount = purchasePayment.getPayAmount().doubleValue();
 
         for(PurchaseOrder purchaseOrder: purchaseOrders){
             PurchaseOrderPayment purchaseOrderPayment = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
 
             if (purchaseOrderPayment != null && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getPayAmount())
                     && !BigDecimalUtil.isZeroOrNull(purchaseOrderPayment.getSourceAmount())) {
-                totalSourceAmount.add(purchaseOrderPayment.getSourceAmount());
-                totalPayAmount.add(purchaseOrderPayment.getPayAmount());
+                totalSourceAmount += purchaseOrderPayment.getSourceAmount().doubleValue();
+                totalPayAmount += purchaseOrderPayment.getPayAmount().doubleValue();
             }
         }
-        PurchaseOrderPayment purchasePayment = (currentBalanceAmount(entity).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
-        if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(totalPayAmount) && !BigDecimalUtil.isZeroOrNull(totalSourceAmount)){
-            totalPayAmount.add(purchasePayment.getPayAmount());
-            totalSourceAmount.add(purchasePayment.getSourceAmount());
-        String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,totalSourceAmount,totalPayAmount);
+        if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(new BigDecimal(totalPayAmount)) && !BigDecimalUtil.isZeroOrNull(new BigDecimal(totalSourceAmount))){
+
+        String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,new BigDecimal(totalSourceAmount),new BigDecimal(totalPayAmount));
 
             for(PurchaseOrder purchaseOrder: purchaseOrders){
 
