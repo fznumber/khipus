@@ -585,9 +585,9 @@
         <a4j:commandButton id="addButton"
                            immediate="true"
                            ajaxSingle="true"
-                           action="#{liquidationPaymentAction.addPurchaseOrder(purchaseOrderWithCheckSearchDataModel.selectedPurchaseOrders)}"
+                           action="#{warehousePurchaseOrderAction.addPurchaseOrder(purchaseOrderWithCheckSearchDataModel.selectedPurchaseOrders)}"
                            value="#{messages['Common.add']}"
-                           reRender="purchaseOrderWithCheckPanel"
+                           reRender="globalDiv"
                            styleClass="button"
                            oncomplete="Richfaces.hideModalPanel('purchaseOrderWithCheckListModalPanel');"/>
     </ui:define>

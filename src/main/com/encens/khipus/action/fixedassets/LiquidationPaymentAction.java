@@ -247,20 +247,8 @@ public class LiquidationPaymentAction {
         getLiquidationPayment().setSourceAmount(null);
     }
 
-    public void addPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
-        for (PurchaseOrder purchaseOrder : purchaseOrders) {
-            if (selectedPurchaseOrdersWithCheck.contains(purchaseOrder)) {
-                continue;
-            }
-
-            selectedPurchaseOrdersWithCheck.add(purchaseOrder);
-            purchaseOrdersWithCheck.add(purchaseOrder);
-        }
-    }
-
-    public void removePurchaseOrder(PurchaseOrder instance) {
-        purchaseOrdersWithCheck.remove(instance);
-        selectedPurchaseOrdersWithCheck.remove(instance);
+    public void removePurchaseOrder(BigDecimal payAmount) {
+        computePayment(payAmount);
     }
 
     public void entryNotFoundErrorLog(Exception e) {
@@ -305,5 +293,13 @@ public class LiquidationPaymentAction {
 
     public void setPurchaseOrdersWithCheck(List<PurchaseOrder> purchaseOrdersWithCheck) {
         this.purchaseOrdersWithCheck = purchaseOrdersWithCheck;
+    }
+
+    public List<PurchaseOrder> getSelectedPurchaseOrdersWithCheck() {
+        return selectedPurchaseOrdersWithCheck;
+    }
+
+    public void setSelectedPurchaseOrdersWithCheck(List<PurchaseOrder> selectedPurchaseOrdersWithCheck) {
+        this.selectedPurchaseOrdersWithCheck = selectedPurchaseOrdersWithCheck;
     }
 }

@@ -106,8 +106,8 @@
                         <a4j:commandLink ajaxSingle="true"
                                          immediate="true"
                                          title="#{messages['Common.remove']}"
-                                         action="#{liquidationPaymentAction.removePurchaseOrder(purchaseOrderItem)}"
-                                         reRender="purchaseOrderWithCheckList">
+                                         action="#{liquidationPaymentAction.removePurchaseOrder(mainAction.removePurchaseOrderAndGetCurrentBalanceAmount(purchaseOrderItem))}"
+                                         reRender="globalDiv">
                             <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                         </a4j:commandLink>
                     </s:div>

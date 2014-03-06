@@ -420,9 +420,8 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
 
         try {
             if(liquidationPaymentAction.isCheckPayment()){
-            //if(false){
                 service.onlyLiquidatePurchaseOrder(liquidationPaymentAction.getPurchaseOrdersWithCheck(),getInstance());
-                addPurchaseOrderLiquidatedMessage();//personalizar este mensaje con todas la ordenes de produccion
+                addPurchaseOrderWithCheckLiquidatedMessage(liquidationPaymentAction.getPurchaseOrdersWithCheck());//personalizar este mensaje con todas la ordenes de produccion
             }else{
                 service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
                 addPurchaseOrderLiquidatedMessage();
@@ -555,6 +554,26 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
     }
 
+    public void addPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
+        for (PurchaseOrder purchaseOrder : purchaseOrders) {
+            if (liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().contains(purchaseOrder)) {
+                continue;
+            }
+
+            liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().add(purchaseOrder);
+            liquidationPaymentAction.getPurchaseOrdersWithCheck().add(purchaseOrder);
+        }
+        liquidationPaymentAction.computePayment(getCurrentBalanceAmount());
+    }
+
+    public BigDecimal removePurchaseOrderAndGetCurrentBalanceAmount(PurchaseOrder instance){
+        if(!liquidationPaymentAction.getPurchaseOrdersWithCheck().isEmpty()){
+            liquidationPaymentAction.getPurchaseOrdersWithCheck().remove(instance);
+            liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().remove(instance);
+        }
+        return getCurrentBalanceAmount();
+    }
+
     public boolean checkPayment() {
         if (getLiquidationPayment() != null) {
             return liquidationPaymentAction.checkPayment(getCurrentBalanceAmount());
@@ -622,6 +641,20 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     private void addPurchaseOrderLiquidatedMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
                 "PurchaseOrder.liquidateMessage", getInstance().getOrderNumber());
+    }
+
+    private void addPurchaseOrderWithCheckLiquidatedMessage(List<PurchaseOrder> purchaseOrdersWithCheck) {
+
+        String ordersNumbers = getInstance().getOrderNumber()+", ";
+
+        for(PurchaseOrder purchaseOrder: purchaseOrdersWithCheck)
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += ", ";
+        }
+
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "PurchaseOrder.liquidateMessageWithCheck", ordersNumbers);
     }
 
     private void addWarehouseDocumentTypeErrorMessage() {
