@@ -509,7 +509,7 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(new BigDecimal(totalPayAmount)) && !BigDecimalUtil.isZeroOrNull(new BigDecimal(totalSourceAmount))){
 
         String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,new BigDecimal(totalSourceAmount),new BigDecimal(totalPayAmount));
-
+            //todo:verificar con Claudia
             if (PurchaseOrderPaymentType.PAYMENT_ROTATORY_FUND.equals(purchasePayment.getPaymentType())) {
                 try {
                     rotatoryFundCollectionService.generateCollectionForPurchaseOrderPayment(purchasePayment);
