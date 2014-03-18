@@ -13,7 +13,8 @@ import java.util.List;
     @NamedQuery(name = "RawMaterialProducer.findAllByProductiveZone",
                 query = "select rawMaterialProducer " +
                         "from RawMaterialProducer rawMaterialProducer " +
-                        "where rawMaterialProducer.productiveZone = :productiveZone"),
+                        "where rawMaterialProducer.productiveZone = :productiveZone" +
+                        " order by rawMaterialProducer.lastName"),
     @NamedQuery(name = "RawMaterialProducer.findReponsibleExceptThisByProductiveZone",
                 query = "select rawMaterialProducer " +
                         "from RawMaterialProducer rawMaterialProducer " +

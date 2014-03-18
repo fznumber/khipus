@@ -6,14 +6,21 @@ import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.production.RawMaterialProducer;
 import com.encens.khipus.model.production.SalaryMovementProducer;
+import com.encens.khipus.service.production.SalaryMovementProducerService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+import org.jboss.seam.international.StatusMessage;
+
+import javax.net.ssl.SSLEngineResult;
 
 import static org.jboss.seam.international.StatusMessage.Severity.ERROR;
 
 @Name("salaryMovementProducerAction")
 @Scope(ScopeType.CONVERSATION)
 public class SalaryMovementProducerAction extends GenericAction<SalaryMovementProducer> {
+
+    @In
+    private SalaryMovementProducerService salaryMovementProducerService;
 
     private boolean readonly;
 
@@ -31,10 +38,17 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
     }
-  /*  @End
+
     @Override
+    @End
     public String create() {
         try {
+            Double totalCollected = salaryMovementProducerService.getTotalCollectedByProductor(getInstance().getRawMaterialProducer(), getInstance().getDate());
+            if(totalCollected < getInstance().getValor())
+            {
+                addMessgeFailBalance(getInstance().getRawMaterialProducer().getFullName(),totalCollected);
+                return Outcome.REDISPLAY;
+            }
             getService().create(getInstance());
             addCreatedMessage();
             return Outcome.SUCCESS;
@@ -42,41 +56,16 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
             addDuplicatedMessage();
             return Outcome.REDISPLAY;
         }
-    }*/
+    }
+
+    private void addMessgeFailBalance(String fullName,Double totalCollected ) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"SalaryMovementProducer.message.insufficientBalance",fullName,totalCollected);
+    }
 
     @SuppressWarnings({"NullableProblems"})
     public void clearRawMaterialProducer() {
         getInstance().setRawMaterialProducer(null);
     }
-
-    /*@Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
-    public String select(SalaryMovementProducer salaryMovementProducer) {
-        try {
-            SalaryMovementProducer discount = rawMaterialProducerDiscountService.prepareDiscount(rawMaterialProducer);
-            setOp(OP_UPDATE);
-            setInstance(discount);
-            return Outcome.SUCCESS;
-        } catch (Exception ex) {
-            facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "Common.globalError.description");
-            return Outcome.REDISPLAY;
-        }
-    }*/
-
-/*    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
-    public String select(SalaryMovementProducer salaryMovementProducer) {
-        try {
-            setOp(OP_UPDATE);
-            //define the unmanaged instance as current instance
-            setInstance(salaryMovementProducer);
-            //Ensure the instance exists in the database, find it
-            setInstance(getService().findById(getEntityClass(), getId(salaryMovementProducer)));
-            return Outcome.SUCCESS;
-
-        } catch (EntryNotFoundException e) {
-            addNotFoundMessage();
-            return Outcome.FAIL;
-        }
-    }*/
 
     public boolean isReadonly() {
         return readonly;

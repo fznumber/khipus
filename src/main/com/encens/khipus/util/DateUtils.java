@@ -185,6 +185,33 @@ public final class DateUtils {
         return firstDayOfMonthCalendar.getTime();
     }
 
+    public static Date getMiddleDayOfMonth(Date today) {
+        Calendar todayCalendar = Calendar.getInstance();
+        todayCalendar.setTime(today);
+
+        Calendar middleDayOfMonthCalendar = Calendar.getInstance();
+        middleDayOfMonthCalendar.set(
+                todayCalendar.get(Calendar.YEAR),
+                todayCalendar.get(Calendar.MONTH),
+                15,
+                0, 0, 0);
+        return middleDayOfMonthCalendar.getTime();
+    }
+
+    public static Date getFirstMiddleDayOfMonth(Date date){
+        Calendar todayCalendar = Calendar.getInstance();
+        todayCalendar.setTime(date);
+
+        Calendar firstMiddleDayOfmonthCalendar = Calendar.getInstance();
+
+        firstMiddleDayOfmonthCalendar.set(
+                todayCalendar.get(Calendar.YEAR),
+                todayCalendar.get(Calendar.MONTH),
+                16,
+                0, 0, 0);
+        return firstMiddleDayOfmonthCalendar.getTime();
+    }
+
     public static Date getLastDayOfMonth(Date today) {
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.setTime(today);
@@ -363,6 +390,29 @@ public final class DateUtils {
             dateIterator.add(Calendar.DAY_OF_MONTH, 1);
         }
         return monthlyDayFrequencyMap;
+    }
+
+    public static Date getLastDayFromPeriod(Date date)
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        if(calendar.get(Calendar.DAY_OF_MONTH) > 15 ){
+            return getLastDayOfMonth(date);
+        }else{
+            return getMiddleDayOfMonth(date);
+        }
+    }
+
+    public static Date getFirsDayFromPeriod(Date date)
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        if(calendar.get(Calendar.DAY_OF_MONTH) > 15){
+            return getFirstMiddleDayOfMonth(date);
+        }else{
+            return getFirstDayOfMonth(date);
+        }
+
     }
 
 }

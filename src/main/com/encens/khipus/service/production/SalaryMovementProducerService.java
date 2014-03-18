@@ -11,4 +11,6 @@ import java.util.Date;
 @Local
 public interface SalaryMovementProducerService extends GenericService {
     public RawMaterialProducerDiscount prepareDiscount(RawMaterialProducer rawMaterialProducer, Date startDate, Date endDate) throws EntryNotFoundException;
+
+    Double getTotalCollectedByProductor(RawMaterialProducer rawMaterialProducer, Date date);
 }

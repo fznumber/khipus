@@ -217,6 +217,14 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
             throw new EntryDuplicatedException(ee);
         }
     }
+
+    @Override
+    public void updateProductionPlanning(ProductionPlanning instance) throws ConcurrencyException, EntryDuplicatedException {
+        //To change body of implemented methods use File | Settings | File Templates.
+        getEntityManager().merge(instance);
+        getEntityManager().flush();
+    }
+
     @Override
     public void deleteIndirectCost(ProductionOrder order)
     {
@@ -262,6 +270,24 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts) {
         getEntityManager().persist(indirectCosts);
+    }
+
+    public void updateProductionBase(BaseProduct base)
+    {
+        getEntityManager().merge(base);
+        getEntityManager().flush();
+    }
+
+    public void updateOrdenProduction(ProductionOrder order)
+    {
+        getEntityManager().merge(order);
+        getEntityManager().flush();
+    }
+
+    public void updateSingleProduct(SingleProduct singleProduct)
+    {
+        getEntityManager().merge(singleProduct);
+        getEntityManager().flush();
     }
 
 }

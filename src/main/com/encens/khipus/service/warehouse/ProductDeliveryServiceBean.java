@@ -60,9 +60,19 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     @Override
     public void updateOrderEstate(String invoiceNumber) {
-        getEntityManager().createNamedQuery("update USER01_DAF.pedidos set estado_pedido = 'ECH' where pedido = :pedido")
+
+        getEntityManager().createNativeQuery("update USER01_DAF.pedidos set estado_pedido = :state where pedido = :pedido")
                                            .setParameter("pedido",invoiceNumber)
+                                           .setParameter("state",Constants.ESTATE_ORDER_DELIVERED)
                                            .executeUpdate();
+    }
+
+    public void updateOrderIncashEstate(String invoiceNumber) {
+
+        getEntityManager().createNativeQuery("update WISE.inv_ventart set ESTADO = :state where no_fact = :pedido")
+                .setParameter("pedido",invoiceNumber)
+                .setParameter("state",Constants.ESTATE_ORDER_DELIVERED_INCASH)
+                .executeUpdate();
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -96,7 +106,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         Warehouse warehouse = firstSoldProduct.getWarehouse();
         CostCenter costCenter = findPublicCostCenter(warehouse);
-
+        //update state of order
+        if(firstSoldProduct.getOrderNumber() != null)
+        updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         if (null == costCenter) {
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
@@ -168,6 +180,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         warehouseVoucher.setDocumentType(warehouseDocumentType);
         warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDate(monthProcessService.getMothProcessDate(new Date()));
+        //todo: cambiar el estado del vale
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
 
         warehouseVoucher.setExecutorUnit(warehouse.getExecutorUnit());

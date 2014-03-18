@@ -55,6 +55,27 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ConcurrencyException,
             ReferentialIntegrityException, ProductItemNotFoundException;
 
+    public void crateAccountEntry(WarehouseVoucher warehouseVoucher,String[] gloss,List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions)
+            throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
+
+    public void approveWarehouseVoucherOrderProduction(WarehouseVoucherPK id,
+                                           Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
+                                           Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
+                                           List<MovementDetail> movementDetailWithoutWarnings
+    )
+            throws InventoryException,
+            WarehouseVoucherApprovedException,
+            WarehouseVoucherNotFoundException,
+            WarehouseVoucherEmptyException,
+            ProductItemAmountException,
+            InventoryUnitaryBalanceException,
+            InventoryProductItemNotFoundException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            ConcurrencyException,
+            ReferentialIntegrityException, ProductItemNotFoundException;
+
     void approveWarehouseVoucherFromDeliveryProduct(WarehouseVoucherPK id, String[] gloss,
                                                     Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
                                                     Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap,
@@ -103,4 +124,6 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             FinancesExchangeRateNotFoundException,
             ConcurrencyException,
             ReferentialIntegrityException, ProductItemNotFoundException, MovementDetailTypeException, WarehouseVoucherStateException;
+
+    public WarehouseVoucher findWarehouseVoucherByNumber(String number);
 }

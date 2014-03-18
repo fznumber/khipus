@@ -1,5 +1,6 @@
 package com.encens.khipus.model.production;
 
+import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
@@ -27,20 +28,22 @@ public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.production.RawMaterialProducer rawMaterialProducer;
+    private RawMaterialProducer rawMaterialProducer;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDSESIONACOPIO", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.production.RawMaterialCollectionSession rawMaterialCollectionSession;
+    private RawMaterialCollectionSession rawMaterialCollectionSession;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.admin.Company company;
+    private Company company;
 
     @Version
     @Column(name = "VERSION", nullable = false)
     private long version;
 
+    @Transient
+    private String rawMaterialProducerLastName;
 
     public Long getId() {
         return id;
@@ -88,6 +91,14 @@ public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public String getRawMaterialProducerLastName() {
+        return rawMaterialProducer.getLastName();
+    }
+
+    public void setRawMaterialProducerLastName(String rawMaterialProducerLastName) {
+        this.rawMaterialProducerLastName = rawMaterialProducerLastName;
     }
 }
 

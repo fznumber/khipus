@@ -49,6 +49,9 @@ public class SingleProduct implements BaseModel {
     @PrimaryKeyJoinColumn(name = "IDMETAPRODUCTOPRODUCCION")
     private MetaProduct metaProduct;
 */
+    @Column(name = "NO_TRANS",nullable = true)
+    private String numberTransaction;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     @NotNull
@@ -231,4 +234,11 @@ public class SingleProduct implements BaseModel {
         this.productProcessingSingle = productProcessingSingle;
     }
 
+    public String getNumberTransaction() {
+        return numberTransaction;
+    }
+
+    public void setNumberTransaction(String numberTransaction) {
+        this.numberTransaction = numberTransaction;
+    }
 }

@@ -62,6 +62,9 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
     public void setModelCriteria(ModelCriteria modelCriteria) {
         this.modelCriteria = modelCriteria;
     }
+    public List<ProductionPlanning> getListProductoPlannig(){
+        return this.getList(1,getCount().intValue());
+    }
 
     public static class ModelCriteria {
         private String order;

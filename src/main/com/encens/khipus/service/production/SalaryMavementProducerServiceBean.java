@@ -6,6 +6,8 @@ import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialProducer;
 import com.encens.khipus.model.production.RawMaterialProducerDiscount;
 import com.encens.khipus.model.production.SalaryMovementProducer;
+import com.encens.khipus.util.Constants;
+import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.RoundUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
@@ -101,4 +103,23 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
 
         return rawMaterialProducerDiscount;
     }
+
+    @Override
+    public Double getTotalCollectedByProductor(RawMaterialProducer rawMaterialProducer, Date date) {
+        Date initDate = DateUtils.getFirsDayFromPeriod(date);
+        Date endDate = DateUtils.getLastDayFromPeriod(date);
+        Double totalCollected = (Double)getEntityManager().createQuery("SELECT sum(collectedRawMaterial.amount)  FROM RawMaterialCollectionSession rawMaterialCollectionSession" +
+                                       " INNER JOIN rawMaterialCollectionSession.collectedRawMaterialList collectedRawMaterial" +
+                                       " WHERE rawMaterialCollectionSession.date BETWEEN :initDate AND :endDate " +
+                                       " AND collectedRawMaterial.rawMaterialProducer = :rawMaterialProducer")
+                                      .setParameter("initDate",initDate,TemporalType.DATE)
+                                      .setParameter("endDate",endDate,TemporalType.DATE)
+                                      .setParameter("rawMaterialProducer",rawMaterialProducer)
+                                      .getSingleResult();
+        if(totalCollected == null)
+            return 0.0;
+        return totalCollected * Constants.PRICE_UNIT_MILK;
+    }
+
+
 }

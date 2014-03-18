@@ -29,6 +29,7 @@ import java.util.List;
                 query = "select warehouseVoucher from WarehouseVoucher warehouseVoucher where warehouseVoucher.id =:pk"),
         @NamedQuery(name = "WarehouseVoucher.findByState",
                 query = "select warehouseVoucher from WarehouseVoucher warehouseVoucher where warehouseVoucher.id.companyNumber =:companyNumber and warehouseVoucher.state =:state and warehouseVoucher.date <=:endDate and warehouseVoucher.date >=:startDate"),
+        @NamedQuery(name = "WarehouseVoucher.findByNumber", query = "select w from WarehouseVoucher w where w.number =:number"),
         @NamedQuery(name = "WarehouseVoucher.updateStateByPartialDetails",
                 query = "update WarehouseVoucher warehouseVoucher " +
                         "set warehouseVoucher.state=:approvedState " +
