@@ -196,8 +196,126 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return Outcome.SUCCESS;
     }
 
+    public void regularizarOrdenes(){
+
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        startDate.set(2014,Calendar.JANUARY,1);
+        endDate.set(2014,Calendar.JANUARY,31);
+
+        List<ProductionPlanning> planningConcurrents = productionPlanningService.getAllProductionPlanningByDates(startDate.getTime(),endDate.getTime());
+
+        for(ProductionPlanning planning: planningConcurrents){
+                for(ProductionOrder order:planning.getProductionOrderList())
+                {
+                    Double totalMaterial = 0.0;
+                    Double totalInput = 0.0;
+                    for(OrderInput input: order.getOrderInputs())
+                    {
+                        Double cost = RoundUtil.getRoundValue(input.getCostTotal().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC);
+                        input.setCostTotal(new BigDecimal(cost));
+                        totalInput += totalInput + cost;
+                    }
+                    for(OrderMaterial material: order.getOrderMaterials())
+                    {
+                        Double cost = RoundUtil.getRoundValue(material.getCostTotal().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC);
+                        material.setCostTotal(new BigDecimal(cost));
+                        totalMaterial  += totalMaterial + cost;
+                    }
+                    order.setTotalCostProduction(totalInput+totalMaterial+order.getTotalPriceJourney()+order.getTotalIndirectCosts());
+                }
+
+            try {
+                getService().update(planning);
+            } catch (EntryDuplicatedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (ConcurrencyException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+    }
+
+    public void regularizarCostosIndirectos(){
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        startDate.set(2014,Calendar.JANUARY,1);
+        endDate.set(2014,Calendar.JANUARY,31);
+
+        List<ProductionPlanning> planningConcurrents = productionPlanningService.getAllProductionPlanningByDates(startDate.getTime(),endDate.getTime());
+        ProductionPlanning planning = getInstance();
+        //for(ProductionPlanning planning: planningConcurrents){
+
+                for(ProductionOrder order:planning.getProductionOrderList()){
+                    setTotalIndiRectCost(order,planning.getDate());
+                    setTotalCostProducticionAndUnitPrice(order);
+                }
+
+                for(BaseProduct base:planning.getBaseProducts())
+                {
+                    for(SingleProduct single:base.getSingleProducts())
+                    {
+                        setTotalIndiRectCost(single);
+                        setTotalCostProducticionAndUnitPrice(single);
+                    }
+                }
+                /*try {
+                    getService().update(planning);
+                } catch (EntryDuplicatedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (ConcurrencyException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }*/
+        //}
+        //borrar
+        update();
+    }
+
+    public void verificarCostosIndirectos(){
+
+        Calendar startDate = Calendar.getInstance();
+        Calendar endDate = Calendar.getInstance();
+        startDate.set(2014,Calendar.JANUARY,1);
+        endDate.set(2014,Calendar.JANUARY,31);
+
+        List<ProductionPlanning> planningConcurrent = productionPlanningService.getAllProductionPlanningByDates(startDate.getTime(),endDate.getTime());
+    }
+
+    public void getTotalIndirectCostByProductioPlannig(List<ProductionPlanning> productionPlannings){
+        Double energiaElectrica = 0.0;
+        Double gasNatural = 0.0;
+        Double depreciacionMaquinaria = 0.0;
+        Double depreciacionHerramientas = 0.0;
+        Double sueldosProduccion = 0.0;
+        Double depreciacionMaquinariaUHT = 0.0;
+        Double aportesPatronalesProduccion = 0.0;
+        Double provisionAguinaldosProduccion = 0.0;
+        Double provisionIndeminizacionProduccion = 0.0;
+        Double sueldosEventualesProduccion = 0.0;
+
+        for(ProductionPlanning planning: productionPlannings)
+        {
+            for(ProductionOrder order: planning.getProductionOrderList())
+            {
+               List<IndirectCosts>  costs = order.getIndirectCostses();
+
+                energiaElectrica += costs.get(0).getAmountBs().doubleValue();
+                gasNatural += costs.get(1).getAmountBs().doubleValue();
+                depreciacionMaquinaria += costs.get(2).getAmountBs().doubleValue();
+                depreciacionHerramientas += costs.get(3).getAmountBs().doubleValue();
+                sueldosProduccion += costs.get(4).getAmountBs().doubleValue();
+                depreciacionMaquinariaUHT += costs.get(5).getAmountBs().doubleValue();
+                aportesPatronalesProduccion += costs.get(6).getAmountBs().doubleValue();
+                provisionAguinaldosProduccion += costs.get(7).getAmountBs().doubleValue();
+                provisionIndeminizacionProduccion += costs.get(8).getAmountBs().doubleValue();
+                sueldosEventualesProduccion += costs.get(9).getAmountBs().doubleValue();
+            }
+        }
+
+    }
+
     public void generateOnlyAllVoucher()
     {
+        Date dateConcurrent = getInstance().getDate();
         if(!wasFinishedAllOrders())
         {
             showErrorVoucherSingle();
@@ -222,12 +340,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(ProductionOrder order:getInstance().getProductionOrderList())
         {
             if(order.getEstateOrder() == FINALIZED && order.getEstateOrder() != TABULATED)
-                generateOnlyVoucherOrderProduction(order);
+                generateOnlyVoucherOrderProduction(order,dateConcurrent);
         }
         for(BaseProduct base : getInstance().getBaseProducts())
         {
             if(base.getState() == PENDING && base.getState() != TABULATED)
-                generateOnlyVoucherSingleProduction(base);
+                generateOnlyVoucherSingleProduction(base,dateConcurrent);
         }
      getInstance().setState(INSTOCK);
         try {
@@ -242,6 +360,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void generateAllAccountingEntries()
     {
+
         if(!wasInStockAllOrders())
         {
             showErrorVoucherNotstock();
@@ -261,8 +380,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 return;
             }
         }
-
-        for(ProductionOrder order:getInstance().getProductionOrderList())
+        List<ProductionOrder> orderList = new ArrayList<ProductionOrder>();
+        orderList.addAll(getInstance().getProductionOrderList());
+        for(ProductionOrder order:orderList)
         {
             if(order.getEstateOrder() == INSTOCK && order.getEstateOrder() != TABULATED)
             {
@@ -280,13 +400,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
         getInstance().setState(TABULATED);
-        try {
-            productionPlanningService.updateProductionPlanning(getInstance());
-        } catch (ConcurrencyException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (EntryDuplicatedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
+        productionPlanningService.updateProductionPlanningDirect(getInstance());
     }
 
     public void generateAllVoucher(List<ProductionPlanning> productionPlannings)
@@ -310,22 +425,22 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(ProductionOrder order:planning.getProductionOrderList())
         {
             if(order.getEstateOrder() == FINALIZED && order.getEstateOrder() != TABULATED)
-                generateVoucherOrderProduction(order);
+                generateVoucherOrderProduction(order,planning.getDate());
         }
         for(BaseProduct base:planning.getBaseProducts())
         {
             if(base.getState() == FINALIZED && base.getState() != TABULATED)
-                generateVoucherSingleProduction(base);
+                generateVoucherSingleProduction(base,planning.getDate());
         }
     }
 
-    public void generateVoucherOrderProduction(ProductionOrder order){
+    public void generateVoucherOrderProduction(ProductionOrder order,Date dateConcurrent){
 
         order.setEstateOrder(TABULATED);
 
         //productionOrder.setEstateOrder(INSTOCK);
 
-        InventoryMovement inventoryMovement = createVale(order);
+        InventoryMovement inventoryMovement = createVale(order,dateConcurrent);
         approvalVoucher(inventoryMovement);
 
         closeDetail();
@@ -333,11 +448,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         update();
     }
 
-    public void generateOnlyVoucherOrderProduction(ProductionOrder order){
+    public void generateOnlyVoucherOrderProduction(ProductionOrder order,Date dateConcurrent){
 
         order.setEstateOrder(INSTOCK);
 
-        InventoryMovement inventoryMovement = createVale(order);
+        InventoryMovement inventoryMovement = createVale(order,dateConcurrent);
         approvalOnlyVoucher();
 
         //closeDetail();
@@ -417,17 +532,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
         baseProduct.setState(TABULATED);
-        InventoryMovement inventoryMovement = createVale(baseProduct);
+        InventoryMovement inventoryMovement = createVale(baseProduct,getInstance().getDate());
         approvalVoucher(inventoryMovement);
         closeDetail();
         showProductionOrders = true;
         return update();
     }
 
-    public void generateOnlyVoucherSingleProduction(BaseProduct base){
+    public void generateOnlyVoucherSingleProduction(BaseProduct base,Date dateConcurrent){
 
         base.setState(INSTOCK);
-        InventoryMovement inventoryMovement = createOnlyVale(base);
+        InventoryMovement inventoryMovement = createOnlyVale(base,dateConcurrent);
         approvalOnlyVoucher();
         base.setNumberVoucher(warehouseVoucherSelect.getNumber());
         productionPlanningService.updateProductionBase(base);
@@ -435,7 +550,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //refreshInstance();
     }
 
-    public void generateVoucherSingleProduction(BaseProduct base){
+    public void generateVoucherSingleProduction(BaseProduct base,Date dateConcurrent){
 
 
         if(base.getSingleProducts().size() ==0)
@@ -453,7 +568,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
         base.setState(TABULATED);
-        InventoryMovement inventoryMovement = createVale(base);
+        InventoryMovement inventoryMovement = createVale(base,dateConcurrent);
         approvalVoucher(inventoryMovement);
         for(SingleProduct single: base.getSingleProducts())
         {
@@ -979,12 +1094,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return warehouseVoucher;
     }
 
-    public WarehouseVoucher createWarehouseVoucherOrder(){
+    public WarehouseVoucher createWarehouseVoucherOrder(Date dateConcurrent){
 
         WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
         warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
         warehouseVoucher.setDocumentCode("1");
-        warehouseVoucher.setDate(new Date());
+        warehouseVoucher.setDate(dateConcurrent);
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
         warehouseVoucher.setWarehouseCode("2");
         warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
@@ -1166,10 +1281,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    public void generateAccountToWarehouseVoucher(InventoryMovement inventoryMovement)
-    {
+    public String generateAccountToWarehouseVoucher(InventoryMovement inventoryMovement)
+    { String numTrans = "";
         try {
-            approvalWarehouseVoucherService.crateAccountEntry(warehouseVoucherSelect,getGlossMessage(inventoryMovement),accountOrderProductions);
+            numTrans = approvalWarehouseVoucherService.crateAccountEntry(warehouseVoucherSelect,getGlossMessage(inventoryMovement),accountOrderProductions);
         } catch (CompanyConfigurationNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (FinancesCurrencyNotFoundException e) {
@@ -1177,6 +1292,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         } catch (FinancesExchangeRateNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        return numTrans;
     }
 
     public void approvalVoucher(InventoryMovement inventoryMovement){
@@ -1322,33 +1438,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void createInventoryMovement(ProductionOrder order){
-        InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", order.getCode()));
         warehouseVoucherSelect = approvalWarehouseVoucherService.findWarehouseVoucherByNumber(order.getNumberVoucher());
+        InventoryMovement inventoryMovement = approvalWarehouseVoucherService.getMovement(warehouseVoucherSelect);
         List<MovementDetail> movementDetails = generateMovementDetailOrder(order);
         movementDetailSelect = movementDetails;
         accountOrderProductions = generateMovementDetailOrderProduction(order);
-        generateAccountToWarehouseVoucher(inventoryMovement);
+        order.setNumberTransaction(generateAccountToWarehouseVoucher(inventoryMovement));
         order.setEstateOrder(TABULATED);
-        //TODO:AQUI
-        order.setNumberTransaction(warehouseVoucherSelect.getId().getTransactionNumber());
         addMessageGenerateAccountingEntry(order.getCode());
     }
 
     public void createInventoryMovement(BaseProduct base){
-        InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", base.getCode()));
         warehouseVoucherSelect = approvalWarehouseVoucherService.findWarehouseVoucherByNumber(base.getNumberVoucher());
+        InventoryMovement inventoryMovement = approvalWarehouseVoucherService.getMovement(warehouseVoucherSelect);
         List<MovementDetail> movementDetails = generateMovementDetailOrder(base);
         movementDetailSelect = movementDetails;
         accountOrderProductions = generateMovementDetailOrderProduction(base);
-        generateAccountToWarehouseVoucher(inventoryMovement);
+        base.setNumberTransaction(generateAccountToWarehouseVoucher(inventoryMovement));
         base.setState(TABULATED);
         addMessageGenerateAccountingEntry(base.getCode());
     }
 
-    public InventoryMovement createVale(ProductionOrder order){
+    public InventoryMovement createVale(ProductionOrder order,Date dateConcurrent){
 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
-        warehouseVoucher = createWarehouseVoucherOrder();
+        warehouseVoucher = createWarehouseVoucherOrder(dateConcurrent);
         warehouseVoucherSelect = warehouseVoucher;
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", order.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(order);
@@ -1373,9 +1487,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return inventoryMovement;
     }
 
-    public InventoryMovement createVale(BaseProduct base){
+    public InventoryMovement createVale(BaseProduct base,Date dateConcurrent){
 
-        WarehouseVoucher warehouseVoucher = createWarehouseVoucherOrder();
+        WarehouseVoucher warehouseVoucher = createWarehouseVoucherOrder(dateConcurrent);
         warehouseVoucherSelect = warehouseVoucher;
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", base.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(base);
@@ -1400,9 +1514,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return inventoryMovement;
     }
 
-    public InventoryMovement createOnlyVale(BaseProduct base){
+    public InventoryMovement createOnlyVale(BaseProduct base,Date dateConcurrent){
 
-        WarehouseVoucher warehouseVoucher = createWarehouseVoucherOrder();
+        WarehouseVoucher warehouseVoucher = createWarehouseVoucherOrder(dateConcurrent);
         warehouseVoucherSelect = warehouseVoucher;
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", base.getCode()));
         List<MovementDetail> movementDetails = generateOnlyMovementDetailOrder(base);
@@ -1430,7 +1544,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     public InventoryMovement createVale(){
 
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
-        warehouseVoucher = createWarehouseVoucherOrder();
+        warehouseVoucher = createWarehouseVoucherOrder(getInstance().getDate());
         warehouseVoucherSelect = warehouseVoucher;
         InventoryMovement inventoryMovement = createInventoryMovement(MessageUtils.getMessage("Warehousevoucher.gloss.productionOrder", productionOrder.getCode()));
         List<MovementDetail> movementDetails = generateMovementDetailOrder(productionOrder);
@@ -1558,8 +1672,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(SingleProduct single:base.getSingleProducts()){
             single.setState(TABULATED);
             movementDetails.add(createMovementDetail(single));
-            //todo:AQUI
-            single.setNumberTransaction(warehouseVoucherSelect.getId().getTransactionNumber());
         }
 
         return movementDetails;
@@ -1759,7 +1871,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,productionPlanning.getDate());
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(order);
         }
@@ -1917,7 +2029,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            setTotalIndiRectCost(productionOrder,getInstance().getDate());
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
@@ -1937,7 +2049,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,productionPlanning.getDate());
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(order);
         }
@@ -1979,7 +2091,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,productionPlanning.getDate());
             setTotalCostProducticionAndUnitPrice(order);
         }
         for(BaseProduct base:productionPlanning.getBaseProducts()){
@@ -2009,7 +2121,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,productionPlanning.getDate());
             setTotalCostProducticionAndUnitPrice(order);
         }
         for(BaseProduct base:productionPlanning.getBaseProducts()){
@@ -2040,7 +2152,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,productionPlanning.getDate());
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(order);
         }
@@ -2075,7 +2187,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if(order.getEstateOrder().equals(EXECUTED)){
             setTotalsMaterials(order);
             setTotalsInputs(order);
-            setTotalIndiRectCost(order);
+            setTotalIndiRectCost(order,planning.getDate());
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(order);
             order.setEstateOrder(FINALIZED);
@@ -2580,7 +2692,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            setTotalIndiRectCost(productionOrder,productionPlanning.getDate());
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         setValuesMilks();
@@ -2602,7 +2714,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
-            setTotalIndiRectCost(productionOrder);
+            setTotalIndiRectCost(productionOrder,productionPlanning.getDate());
             setTotalCostProducticionAndUnitPrice(productionOrder);
         }
         setValuesMilks();
@@ -2638,9 +2750,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         singleProduct.setUnitCost(new BigDecimal(priceUnit));
     }
 
-    public void setTotalIndiRectCost(ProductionOrder productionOrder) {
+    public void setTotalIndiRectCost(ProductionOrder productionOrder, Date dateConcurrent) {
+
+        int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
 
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirect(
+                dateConcurrent,
+                totalDaysNotProducer,
                 productionOrder,
                 getTotalVolumProductionPlaning(productionOrder),
                 getTotalVolumGeneralProductionPlaning(),

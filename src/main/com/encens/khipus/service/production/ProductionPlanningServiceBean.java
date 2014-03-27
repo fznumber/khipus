@@ -18,9 +18,11 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
+import javax.persistence.TemporalType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.encens.khipus.model.production.ProductionPlanningState.EXECUTED;
@@ -278,16 +280,45 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         getEntityManager().flush();
     }
 
+    public List<ProductionPlanning> getAllProductionPlanningByDates(Date startDate,Date endDate){
+        List<ProductionPlanning> productionPlannings = new ArrayList<ProductionPlanning>();
+        productionPlannings = (List<ProductionPlanning>)getEntityManager().createQuery("select productionPlanning from ProductionPlanning productionPlanning " +
+                                                                                       " where productionPlanning.date between :startDate and :endDate")
+                                                                          .setParameter("startDate",startDate, TemporalType.DATE)
+                                                                          .setParameter("endDate",endDate,TemporalType.DATE)
+                                                                          .getResultList();
+
+        return productionPlannings;
+    }
+
+    @Override
+    public void updateProductionPlanningDirect(ProductionPlanning instance) {
+        getEntityManager().createNativeQuery("update planificacionproduccion set estado = :state \n" +
+                "where idplanificacionproduccion =  :id ")
+                .setParameter("state", instance.getState().toString())
+                .setParameter("id",instance.getId())
+                .executeUpdate();
+    }
+
     public void updateOrdenProduction(ProductionOrder order)
     {
-        getEntityManager().merge(order);
-        getEntityManager().flush();
+        getEntityManager().createNativeQuery("update ordenproduccion set estadoorden = :state, no_trans = :numTranst\n" +
+                "where idordenproduccion = :id ")
+                                      .setParameter("state", order.getEstateOrder().toString())
+                                      .setParameter("numTranst",order.getNumberTransaction())
+                                      .setParameter("id",order.getId())
+                                      .executeUpdate();
+
     }
 
     public void updateSingleProduct(SingleProduct singleProduct)
     {
-        getEntityManager().merge(singleProduct);
-        getEntityManager().flush();
+        getEntityManager().createNativeQuery("update productosimple set estado = :state ,no_trans= :numTranst \n" +
+                "where idproductosimple = :id")
+                .setParameter("state",singleProduct.getState().toString())
+                .setParameter("numTranst",singleProduct.getNumberTransaction())
+                .setParameter("id",singleProduct.getId())
+                .executeUpdate();
     }
 
 }

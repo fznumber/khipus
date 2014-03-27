@@ -15,6 +15,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -31,8 +32,10 @@ import java.util.*;
 public class IndirectCostsServiceBean extends ExtendedGenericServiceBean implements IndirectCostsService {
 
 
-    Calendar mycal = new GregorianCalendar(DateUtils.getCurrentYear(new Date()), Calendar.MONTH -3, 1);
-    int daysInMonth = mycal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    //Calendar mycal = new GregorianCalendar(DateUtils.getCurrentYear(new Date()), Calendar.MONTH -3, 1);
+    //todo: se tomara el mes actual para regularizar Enero ... Marzo
+    //Calendar calendar = Calendar.getInstance();
+    int daysInMonth;
 
     @In(value = "#{entityManager}")
     private EntityManager em;
@@ -99,12 +102,15 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     }
 
     @Override
-    public List<IndirectCosts> getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost) {
+    public List<IndirectCosts> getCostTotalIndirect(Date dateConcurrent, int totalDaysNotProducer,ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost) {
 
         List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+        daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        indirectCostses.addAll(generateCosts(periodIndirectCost, productionOrder, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
-        indirectCostses.addAll(generateCosts(periodIndirectCost, productionOrder, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())));
+        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, productionOrder, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
+        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, productionOrder, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())));
 
         /*Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
         Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
@@ -149,7 +155,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         return periodIndirectCosts.get(0);
     }
 
-    private List<IndirectCosts> generateCosts( PeriodIndirectCost periodIndirectCost,ProductionOrder productionOrder, Double totalVolumDay, List<IndirectCosts> costses)
+    private List<IndirectCosts> generateCosts(int totalDaysNotProducer, PeriodIndirectCost periodIndirectCost,ProductionOrder productionOrder, Double totalVolumDay, List<IndirectCosts> costses)
     {
         List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
         for(IndirectCosts costs: costses)
@@ -159,9 +165,9 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             aux.setCompany(costs.getCompany());
             aux.setCostsConifg(costs.getCostsConifg());
             Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
-            Double amountCost = costs.getAmountBs().doubleValue() / daysInMonth;
+            Double amountCost = (costs.getAmountBs().doubleValue() / daysInMonth);
             Double costGeneral = amountCost * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
-            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral,2, RoundUtil.RoundMode.SYMMETRIC)));
+            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral * totalDaysNotProducer,2, RoundUtil.RoundMode.SYMMETRIC)));
             indirectCostses.add(aux);
         }
         return indirectCostses;
@@ -324,5 +330,30 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         }
 
         return processedProduct;
+    }
+    //Todo: muy importante este metodo toma la fecha de la orden para obtener los dias no producidos
+    public int calculateCantDaysProducer(Date date){
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(date);
+        int totalDays = 1;
+
+
+        int day = calender.get(Calendar.DAY_OF_MONTH) - 1;
+        for(int i= day; i > 1;i--)
+        {
+            try{
+            calender.set(Calendar.DAY_OF_MONTH,i);
+            ProductionPlanning planning =  (ProductionPlanning)getEntityManager().createQuery(" select productionPlanning from ProductionPlanning productionPlanning " +
+                    " where productionPlanning.date = :date ")
+                    .setParameter("date",calender, TemporalType.DATE)
+                    .getSingleResult();
+
+                return totalDays;
+            }catch(NoResultException e){
+                totalDays ++;
+            }
+        }
+
+        return totalDays;
     }
 }

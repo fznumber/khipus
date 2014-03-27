@@ -592,7 +592,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
     }
 
     @Override
-    public void createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
+    public String createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
                                                 BusinessUnit executorUnit,
                                                 String costCenterCode,
                                                 String gloss,
@@ -602,9 +602,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         BigDecimal voucherAmount = movementDetailService.sumWarehouseVoucherMovementDetailAmount(warehouseVoucher.getId().getCompanyNumber(), warehouseVoucher.getState(), warehouseVoucher.getId().getTransactionNumber());
 
-        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
+        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
-
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
@@ -616,15 +615,16 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         for(ProductionPlanningAction.AccountOrderProduction accountOrderProduction :accountOrderProductions)
         {
             voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
-                    accountOrderProduction.getCostCenterCode(),
+                    accountOrderProduction.getExecutorUnit().getExecutorUnitCode(),
                     accountOrderProduction.getCostCenterCode(),
                     accountOrderProduction.getCashAccount(),
                     accountOrderProduction.getVoucherAmount(),
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
         }
-
+        voucherForGeneration.setDate(warehouseVoucher.getDate());
         voucherService.create(voucherForGeneration);
+        return voucherForGeneration.getTransactionNumber();
     }
 
     private void createAccountEntryForReception(WarehouseVoucher warehouseVoucher,
@@ -850,7 +850,9 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException {
-        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
+        //todo:muy importante restablecer el cambio luego
+        //Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.ORDER_VOUCHER_FORM, gloss);
+        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.ORDER_VOUCHER_FORM, gloss);
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         List<MovementDetail> movementDetails = movementDetailService.findDetailByVoucherAndType(warehouseVoucher, MovementDetailType.S);
 
@@ -892,7 +894,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     total,
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
-
+            voucherForGeneration.setDate(warehouseVoucher.getDate());
             voucherService.create(voucherForGeneration);
         }
     }

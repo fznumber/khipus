@@ -72,11 +72,21 @@
                 </a4j:commandButton>
             </div>-->
 
+
+
             <div class="buttons">
                 <h:commandButton value="#{messages['Common.new']}" action="#{productionPlanningAction.createNew}"
                                  styleClass="button"
                                  rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"/>
             </div>
+
+          <!--  <div class="buttons">
+                <h:commandButton value="Verificar Total Costos indirectos"
+                                 action="#{productionPlanningAction.createNew}"
+                                 styleClass="button"
+                                 rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','CREATE')}"/>
+            </div>-->
+
             <rich:dataGrid value="#{productionPlanningDataModel}" var="productionPlanningItem"
                            id="productionPlanningList"
                            width="100%" columns="3" elements="6" border="0" rowClasses="row-borders"

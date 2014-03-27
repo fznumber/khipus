@@ -8,6 +8,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
     public void setModelCriteria(ModelCriteria modelCriteria) {
         this.modelCriteria = modelCriteria;
     }
+
     public List<ProductionPlanning> getListProductoPlannig(){
         return this.getList(1,getCount().intValue());
     }
@@ -80,7 +82,12 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getStartDate() {
-            return startDate;
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR,2014);
+            calendar.set(Calendar.MONTH,Calendar.JANUARY);
+            calendar.set(Calendar.DAY_OF_MONTH,1);
+            return calendar.getTime();
+            //return startDate;
         }
 
         public void setStartDate(Date startDate) {
@@ -88,7 +95,13 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getEndDate() {
-            return endDate;
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR,2014);
+            calendar.set(Calendar.MONTH,Calendar.JANUARY);
+            calendar.set(Calendar.DAY_OF_MONTH,31);
+            return calendar.getTime();
+            //return endDate;
         }
 
         public void setEndDate(Date endDate) {

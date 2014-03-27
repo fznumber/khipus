@@ -194,7 +194,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
     }
 
-    public void crateAccountEntry(WarehouseVoucher warehouseVoucher,String[] gloss,List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException
+    public String crateAccountEntry(WarehouseVoucher warehouseVoucher,String[] gloss,List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException
     {
         // Replace warehouse voucher number for current value
         gloss[0] = gloss[0].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
@@ -203,9 +203,10 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         }
 
         //todo: este servicio crea el asiento contable
-        warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher, warehouseVoucher.getExecutorUnit(), warehouseVoucher.getCostCenterCode(), gloss[0], accountOrderProductions);
+        String numTrans = warehouseAccountEntryService.createAccountEntryForReceptionProductionOrder(warehouseVoucher, warehouseVoucher.getExecutorUnit(), warehouseVoucher.getCostCenterCode(), gloss[0], accountOrderProductions);
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
+        return numTrans;
     }
 
     public void approveWarehouseVoucherOrderProduction(WarehouseVoucherPK id,
@@ -1315,9 +1316,16 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         }
     }
 
-    private InventoryMovement getPendantMovement(WarehouseVoucher warehouseVoucher) {
+    public InventoryMovement getPendantMovement(WarehouseVoucher warehouseVoucher) {
         return (InventoryMovement) getEntityManager().createNamedQuery("InventoryMovement.findByState").
                 setParameter("state", WarehouseVoucherState.PEN.name()).
+                setParameter("transactionNumber", warehouseVoucher.getId().getTransactionNumber()).
+                getSingleResult();
+    }
+
+    public InventoryMovement getMovement(WarehouseVoucher warehouseVoucher) {
+        return (InventoryMovement) getEntityManager().createNamedQuery("InventoryMovement.findByState").
+                setParameter("state", WarehouseVoucherState.APR.name()).
                 setParameter("transactionNumber", warehouseVoucher.getId().getTransactionNumber()).
                 getSingleResult();
     }

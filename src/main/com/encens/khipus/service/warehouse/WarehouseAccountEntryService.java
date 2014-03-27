@@ -37,7 +37,7 @@ public interface WarehouseAccountEntryService extends GenericService {
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException;
-    public void createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
+    public String createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
                                                   BusinessUnit executorUnit,
                                                   String costCenterCode,
                                                   String gloss,

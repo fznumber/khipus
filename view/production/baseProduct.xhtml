@@ -12,7 +12,7 @@
         <h:form id="baseProductionPlanningForm">
         <div class="buttons">
             <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
-                               rendered="#{baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and productionPlanning.state != 'INSTOCK' and productionPlanning.state != 'TABULATED' and s:hasPermission('ENTERPRODUCTTOEWAREHOUSE','VIEW')}"
+                               rendered="#{baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and productionPlanning.state != 'INSTOCK' and productionPlanning.state != 'TABULATED' and s:hasPermission('ENTERPRODUCTTOEWAREHOUSE','CREATE')}"
                                >
 
                 <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
@@ -25,7 +25,7 @@
                     action="#{productionPlanningReportReproAction.generateReportSummary(baseProduct)}"
                     value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
                     styleClass="button"
-                    rendered="#{productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','VIEW')}"/>
+                    rendered="#{productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
 
             <rich:spacer width="20"/>
             <a4j:commandButton id="cancelInnerButton2" action="#{productionPlanningAction.cancelReprossecing()}"
@@ -80,7 +80,7 @@
                                            immediate="true"
                                            oncomplete="Richfaces.showModalPanel('productListModalPanel');"
                                            actionListener="#{selectPopUpAction.select}"
-                                           rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','VIEW')}"
+                                           rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','CREATE')}"
                                            reRender="productListModalPanel">
                             <f:attribute name="entityManagerName" value=""/>
                             <f:attribute name="dataModelObject" value="#{productItemArticleSearchDataModel}"/>
@@ -155,7 +155,7 @@
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
                                                actionListener="#{selectPopUpAction.select}"
-                                               rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','VIEW')}"
+                                               rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','CREATE')}"
                                                reRender="productItemsListModalPanel">
                                 <f:attribute name="entityManagerName" value=""/>
                                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
@@ -224,14 +224,14 @@
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveBaseProduct}"
                                    value="#{messages['Common.save']}"
-                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('SAVEREPROCCED','VIEW')}"
+                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('SAVEREPROCCED','CREATE')}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                         />
                 <rich:spacer width="20"/>
 
                 <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
                                    action="#{productionPlanningAction.deleteReprocessedProduct}"
-                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('DELETEREPROCCED','VIEW')}"
+                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('DELETEREPROCCED','CREATE')}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                    ajaxSingle="true"/>
 

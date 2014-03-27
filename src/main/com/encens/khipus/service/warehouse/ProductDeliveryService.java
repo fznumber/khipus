@@ -35,6 +35,22 @@ public interface ProductDeliveryService extends GenericService {
             ConcurrencyException,
             ReferentialIntegrityException,
             ProductItemNotFoundException;
+    ProductDelivery createAll(String invoiceNumber,
+                           String warehouseDescription)
+            throws InventoryException,
+            WarehouseDocumentTypeNotFoundException,
+            PublicCostCenterNotFound,
+            ProductItemAmountException,
+            InventoryUnitaryBalanceException,
+            InventoryProductItemNotFoundException,
+            SoldProductDeliveredException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            EntryDuplicatedException,
+            ConcurrencyException,
+            ReferentialIntegrityException,
+            ProductItemNotFoundException;
 
     ProductDelivery select(ProductDelivery entity);
 

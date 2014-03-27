@@ -4,6 +4,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.warehouse.SoldProduct;
 
 import javax.ejb.Local;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,4 +18,6 @@ public interface SoldProductService extends GenericService {
     List<SoldProduct> getSoldProductsCashSale(String invoiceNumber, String companyNumber);
 
     List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber);
+
+    Date getDateFromSoldProductOrder(SoldProduct soldProduct);
 }

@@ -6,7 +6,9 @@ import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +56,27 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
                 .getResultList();
         if (null == result) {
             result = new ArrayList<SoldProduct>();
+        }
+        return result;
+    }
+
+    @Override
+    public Date getDateFromSoldProductOrder(SoldProduct soldProduct) {
+        Date result;
+        try{
+            result = (Date)getEntityManager().createNativeQuery("select pe.fecha_entrega from WISE.inv_ventart iv\n" +
+                    "inner join USER01_DAF.pedidos pe\n" +
+                    "on iv.pedido = pe.pedido\n" +
+                    "where iv.id_mov = :idSoldProduct")
+                    .setParameter("idSoldProduct",soldProduct.getId())
+                    .getSingleResult();
+        }catch (NoResultException e){
+            result = (Date)getEntityManager().createNativeQuery("select mo.fecha from WISE.inv_ventart iv\n" +
+                    "inner join USER01_DAF.b_movimientos mo\n" +
+                    "on mo.nrofactura = iv.no_fact\n" +
+                    "where iv.id_mov = :idSoldProduct")
+                    .setParameter("idSoldProduct",soldProduct.getId())
+                    .getSingleResult();
         }
         return result;
     }

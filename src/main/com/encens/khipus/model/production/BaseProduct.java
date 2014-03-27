@@ -50,6 +50,9 @@ public class BaseProduct implements BaseModel {
     @Enumerated(EnumType.STRING)
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
+    @Column(name = "NO_TRANS",nullable = true)
+    private String numberTransaction;
+
     @Column(name = "NO_VALE",nullable = true)
     private String numberVoucher;
 
@@ -174,5 +177,13 @@ public class BaseProduct implements BaseModel {
 
     public void setNumberVoucher(String numberVoucher) {
         this.numberVoucher = numberVoucher;
+    }
+
+    public String getNumberTransaction() {
+        return numberTransaction;
+    }
+
+    public void setNumberTransaction(String numberTransaction) {
+        this.numberTransaction = numberTransaction;
     }
 }

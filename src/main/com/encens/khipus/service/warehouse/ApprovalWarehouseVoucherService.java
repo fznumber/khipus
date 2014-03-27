@@ -55,7 +55,7 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ConcurrencyException,
             ReferentialIntegrityException, ProductItemNotFoundException;
 
-    public void crateAccountEntry(WarehouseVoucher warehouseVoucher,String[] gloss,List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions)
+    public String crateAccountEntry(WarehouseVoucher warehouseVoucher,String[] gloss,List<ProductionPlanningAction.AccountOrderProduction> accountOrderProductions)
             throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
 
     public void approveWarehouseVoucherOrderProduction(WarehouseVoucherPK id,
@@ -126,4 +126,6 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ReferentialIntegrityException, ProductItemNotFoundException, MovementDetailTypeException, WarehouseVoucherStateException;
 
     public WarehouseVoucher findWarehouseVoucherByNumber(String number);
+
+    public InventoryMovement getMovement(WarehouseVoucher warehouseVoucher);
 }
