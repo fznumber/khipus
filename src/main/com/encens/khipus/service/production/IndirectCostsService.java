@@ -29,9 +29,11 @@ public interface IndirectCostsService extends GenericService {
 
     public List<IndirectCosts> getCostTotalIndirect(Date dateConcurrent, int totalDaysNotProducer,ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost indirectCost);
 
-    public List<IndirectCosts> getCostTotalIndirectSingle(SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost);
+    public List<IndirectCosts> getCostTotalIndirectSingle(Date dateConcurrent, int totalDaysNotProducer,SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost);
 
     public PeriodIndirectCost getLastPeroidIndirectCost();
 
     public int calculateCantDaysProducer(Date date);
+
+    public PeriodIndirectCost getConcurrentPeroidIndirectCost(Date dateConcurrent);
 }

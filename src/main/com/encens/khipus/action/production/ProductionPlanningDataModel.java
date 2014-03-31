@@ -44,8 +44,9 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
                 "left join fetch productionPlanning.productionOrderList productionOrder " +
                 "left join fetch productionOrder.productComposition productComposition " +
                 "left join fetch productComposition.processedProduct ";*/
-        return "select productionPlanning " +
-                "from ProductionPlanning productionPlanning " ;
+        return "select DISTINCT productionPlanning " +
+                " from ProductionPlanning productionPlanning " +
+                " left join fetch productionPlanning.productionOrderList productionOrder " ;
     }
 
     @Override
@@ -82,12 +83,12 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getStartDate() {
-            Calendar calendar = Calendar.getInstance();
+           /* Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR,2014);
             calendar.set(Calendar.MONTH,Calendar.JANUARY);
             calendar.set(Calendar.DAY_OF_MONTH,1);
-            return calendar.getTime();
-            //return startDate;
+            return calendar.getTime();*/
+            return startDate;
         }
 
         public void setStartDate(Date startDate) {
@@ -96,12 +97,12 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
 
         public Date getEndDate() {
 
-            Calendar calendar = Calendar.getInstance();
+            /*Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR,2014);
             calendar.set(Calendar.MONTH,Calendar.JANUARY);
             calendar.set(Calendar.DAY_OF_MONTH,31);
-            return calendar.getTime();
-            //return endDate;
+            return calendar.getTime();  */
+            return endDate;
         }
 
         public void setEndDate(Date endDate) {

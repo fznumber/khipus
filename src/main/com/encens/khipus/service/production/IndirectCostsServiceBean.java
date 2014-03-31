@@ -122,12 +122,14 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     }
 
     @Override
-    public List<IndirectCosts> getCostTotalIndirectSingle(SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost) {
+    public List<IndirectCosts> getCostTotalIndirectSingle(Date dateConcurrent, int totalDaysNotProducer,SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost) {
 
         List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
-
-        indirectCostses.addAll(generateCosts(periodIndirectCost, single, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
-        indirectCostses.addAll(generateCosts(periodIndirectCost, single, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, single.getProductProcessingSingle().getMetaProduct().getProductItem().getSubGroup())));
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+        daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, single, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
+        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, single, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, single.getProductProcessingSingle().getMetaProduct().getProductItem().getSubGroup())));
 
         /*Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
         Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
@@ -173,7 +175,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         return indirectCostses;
     }
 
-    private List<IndirectCosts> generateCosts( PeriodIndirectCost periodIndirectCost,SingleProduct product, Double totalVolumDay, List<IndirectCosts> costses)
+    private List<IndirectCosts> generateCosts(int totalDaysNotProducer, PeriodIndirectCost periodIndirectCost,SingleProduct product, Double totalVolumDay, List<IndirectCosts> costses)
     {
         List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
         for(IndirectCosts costs: costses)
@@ -185,7 +187,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             Double totalVolumeOrder = getTotalVolumeSingle(product);
             Double amountCost = costs.getAmountBs().doubleValue() / daysInMonth;
             Double costGeneral = amountCost * getPorcent(totalVolumDay, totalVolumeOrder) / 100;
-            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral,2, RoundUtil.RoundMode.SYMMETRIC)));
+            aux.setAmountBs(new BigDecimal(RoundUtil.getRoundValue(costGeneral * totalDaysNotProducer,2, RoundUtil.RoundMode.SYMMETRIC)));
             indirectCostses.add(aux);
         }
         return indirectCostses;
@@ -339,7 +341,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
 
 
         int day = calender.get(Calendar.DAY_OF_MONTH) - 1;
-        for(int i= day; i > 1;i--)
+        for(int i= day; i >= 1;i--)
         {
             try{
             calender.set(Calendar.DAY_OF_MONTH,i);
@@ -355,5 +357,33 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         }
 
         return totalDays;
+    }
+
+    @Override
+    public PeriodIndirectCost getConcurrentPeroidIndirectCost(Date dateConcurrent) {
+
+        PeriodIndirectCost periodIndirectCost = new PeriodIndirectCost();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+
+
+        try{
+            Object[] datas =  (Object[])em.createNativeQuery("select pe.*\n" +
+                    "from PERIODOCOSTOINDIRECTO pe \n" +
+                    "inner join EOS.gestion ge\n" +
+                    "on pe.idgestion = ge.idgestion \n" +
+                    "where pe.MES= :month and ge.anio= :year ")
+                    //todo: se suma uno al mes para igualar con el periodo ya que el mes va 0-11
+                    .setParameter("month",calendar.get(Calendar.MONTH)+1)
+                    .setParameter("year",calendar.get(Calendar.YEAR))
+                    .getSingleResult();
+            periodIndirectCost.setId(((BigDecimal)datas[0]).longValue());
+            periodIndirectCost.setMonth(((BigDecimal)datas[1]).intValue());
+
+        }catch (NoResultException e){
+            return null;
+        }
+
+        return periodIndirectCost;
     }
 }

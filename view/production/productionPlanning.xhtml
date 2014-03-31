@@ -116,18 +116,6 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
-<a4j:commandButton value="Regularizar Materiales e Insumos"
-                   action="#{productionPlanningAction.regularizarOrdenes}"
-                   rendered="true"
-                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   ajaxSingle="true"/>
-
-<a4j:commandButton value="Regularizar Costos indirectos"
-                   action="#{productionPlanningAction.regularizarCostosIndirectos}"
-                   rendered="true"
-                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   ajaxSingle="true"/>
-
 <a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    rendered="#{productionPlanningAction.managed and productionPlanningAction.showGenerateAllVoucher and s:hasPermission('GENERATEALLVOUCHER','CREATE') and productionPlanning.state eq 'PENDING' }"

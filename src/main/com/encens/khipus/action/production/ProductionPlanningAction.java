@@ -254,7 +254,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 {
                     for(SingleProduct single:base.getSingleProducts())
                     {
-                        setTotalIndiRectCost(single);
+                        setTotalIndiRectCost(single,planning.getDate());
                         setTotalCostProducticionAndUnitPrice(single);
                     }
                 }
@@ -1880,7 +1880,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
                 setTotalsInputs(base,single);
-                setTotalIndiRectCost(single);
+                setTotalIndiRectCost(single,productionPlanning.getDate());
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
             }
@@ -2058,7 +2058,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
                 setTotalsInputs(base,single);
-                setTotalIndiRectCost(single);
+                setTotalIndiRectCost(single,productionPlanning.getDate());
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
             }
@@ -2098,7 +2098,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
                 setTotalsInputs(base,single);
-                setTotalIndiRectCost(single);
+                setTotalIndiRectCost(single,productionPlanning.getDate());
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
             }
@@ -2128,7 +2128,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
                 setTotalsInputs(base,single);
-                setTotalIndiRectCost(single);
+                setTotalIndiRectCost(single,productionPlanning.getDate());
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
             }
@@ -2161,7 +2161,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             for (SingleProduct single : base.getSingleProducts()) {
                 setTotalsMaterials(single);
                 setTotalsInputs(base,single);
-                setTotalIndiRectCost(single);
+                setTotalIndiRectCost(single,productionPlanning.getDate());
                 //setTotalHour(productionOrder);
                 setTotalCostProducticionAndUnitPrice(single);
             }
@@ -2200,7 +2200,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 for (SingleProduct single : base.getSingleProducts()) {
                     setTotalsMaterials(single);
                     setTotalsInputs(base,single);
-                    setTotalIndiRectCost(single);
+                    setTotalIndiRectCost(single,planning.getDate());
                     //setTotalHour(productionOrder);
                     setTotalCostProducticionAndUnitPrice(single);
                 }
@@ -2752,6 +2752,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setTotalIndiRectCost(ProductionOrder productionOrder, Date dateConcurrent) {
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+        int monthConcurrent = calendar.get(Calendar.MONTH);
+        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios
+        //todo: el mes comienza en 0 hasta el 11 que es diciembre
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
 
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirect(
@@ -2760,7 +2767,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 productionOrder,
                 getTotalVolumProductionPlaning(productionOrder),
                 getTotalVolumGeneralProductionPlaning(),
-                indirectCostsService.getLastPeroidIndirectCost());
+                periodIndirectCost);
         if(list.size() > 0)
         {
             productionPlanningService.deleteIndirectCost(productionOrder);
@@ -2775,13 +2782,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         setTotalIndirectCosts(productionOrder);
     }
 
-    public void setTotalIndiRectCost(SingleProduct single) {
+    public void setTotalIndiRectCost(SingleProduct single,Date dateConcurrent) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+        int monthConcurrent = calendar.get(Calendar.MONTH);
+        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios
+        //todo: el mes comienza en 0 hasta el 11 que es diciembre
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
+        int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
 
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirectSingle(
+                dateConcurrent,
+                totalDaysNotProducer,
                 single,
                 getTotalVolumProductionPlaning(single),
                 getTotalVolumGeneralProductionPlaning(),
-                indirectCostsService.getLastPeroidIndirectCost());
+                periodIndirectCost);
         if(list.size() > 0)
         {
             List<IndirectCosts> indirectCostFromSingle =productionPlanningService.findIndirectCostFromSingle(single);

@@ -17,14 +17,16 @@ import java.util.List;
  * @author
  * @version 1.4
  */
-@Name("markDataModel")
+@Name("markEmployeeDataModel")
 @Scope(ScopeType.PAGE)
-public class MarkDataModel extends QueryDataModel<Long, Mark> {
+public class MarkEmployeeDataModel extends QueryDataModel<Long, Mark> {
+
+    private Employee employee;
 
     private static final String[] RESTRICTIONS =
-            {"mark.marRefCard = #{markDataModel.criteria.marRefCard}",
-                    "mark.marDate >= #{markDataModel.criteria.startMarDate}",
-                    "mark.marDate <= #{markDataModel.criteria.endMarDate}"};
+            {"mark.marRefCard = #{markEmployeeDataModel.employee.markCode}",
+                    "mark.marDate >= #{markEmployeeDataModel.criteria.startMarDate}",
+                    "mark.marDate <= #{markEmployeeDataModel.criteria.endMarDate}"};
 
     @Create
     public void init() {
@@ -37,7 +39,7 @@ public class MarkDataModel extends QueryDataModel<Long, Mark> {
                 " left join mark.markStateList markState" +
                 " left join markState.markStateHoraryBandStateList markStateHoraryBandState" +
                 " left join markStateHoraryBandState.horaryBandState horaryBandState" +
-                " where #{true}=#{not empty markDataModel.criteria.marRefCard}";
+                " where #{true}=#{not empty markEmployeeDataModel.employee.markCode}";
     }
 
     @Override
@@ -45,4 +47,11 @@ public class MarkDataModel extends QueryDataModel<Long, Mark> {
         return Arrays.asList(RESTRICTIONS);
     }
 
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 }

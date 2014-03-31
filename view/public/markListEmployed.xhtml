@@ -26,7 +26,7 @@
                              columnClasses="width50percent,width50percent">
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RHMark.startMarDate']}</ui:define>
-                        <rich:calendar value="#{markDataModel.criteria.startMarDate}" styleClass="input"
+                        <rich:calendar value="#{markEmployeeDataModel.criteria.startMarDate}" styleClass="input"
                                        datePattern="#{messages['patterns.date']}" required="true"
                                        enableManualInput="true">
                             <s:convertDateTime pattern="#{messages['patterns.date']}"/>
@@ -34,7 +34,7 @@
                     </s:decorate>
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RHMark.endMarDate']}</ui:define>
-                        <rich:calendar value="#{markDataModel.criteria.endMarDate}"
+                        <rich:calendar value="#{markEmployeeDataModel.criteria.endMarDate}"
                                        styleClass="input"
                                        datePattern="#{messages['patterns.date']}"
                                        enableManualInput="true"
@@ -42,14 +42,19 @@
                             <s:convertDateTime pattern="#{messages['patterns.date']}"/>
                         </rich:calendar>
                     </s:decorate>
-                    <s:decorate id="marRefCardField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
-                        <h:inputText id="marRefCard" value="#{markDataModel.criteria.marRefCard}"
-                                     styleClass="input"
-                                     required="true"/>
+                    <s:decorate id="responsbleField"
+                                template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['WarehouseVoucher.responsible']}</ui:define>
+                        <app:selectPopUp id="employee"
+                                         textValue="#{markEmployeeDataModel.employee.fullName}"
+                                         value="#{markEmployeeDataModel.employee}"
+                                         clearAction="warehouseVoucherDataModel.cleanResponsible()"
+                                         searchModalPanel="generalEmployeeListModalPanel"
+                                         dataModel="#{generalEmployeeDataModel}"
+                                         reRender="responsbleField"/>
                     </s:decorate>
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                        <a4j:commandButton action="#{markDataModel.search}"
+                        <a4j:commandButton action="#{markEmployeeDataModel.search}"
                                            reRender="searchMarkTopPanel, markList, dataScroller"
                                            styleClass="button"
                                            value="#{messages['Common.search']}" id="searchButtonId" tabindex="3">
@@ -63,7 +68,7 @@
                 </h:panelGrid>
             </rich:panel>
 
-            <rich:dataTable value="#{markDataModel}" var="markItem" id="markList"
+            <rich:dataTable value="#{markEmployeeDataModel}" var="markItem" id="markList"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%" columnsWidth="15%, 20%, 20%, 20%, 15%, 10%">
                 <f:facet name="header">
@@ -80,12 +85,12 @@
                         <rich:column>
                             #{messages['RHMark.marIpPc']}
                         </rich:column>
-                        <rich:column>
+                        <!--<rich:column>
                             #{messages['RHMark.control']}
                         </rich:column>
                         <rich:column>
                             #{messages['RHMark.state']}
-                        </rich:column>
+                        </rich:column>-->
                     </rich:columnGroup>
                 </f:facet>
                 <rich:column>
@@ -104,7 +109,7 @@
                 <rich:column>
                     <h:outputText value="#{markItem.marIpPc}"/>
                 </rich:column>
-                <rich:column>
+                <!--<rich:column>
                     <h:panelGroup rendered="#{not empty markItem.marInOut}">
                         <h:graphicImage value="/img/employees/#{markItem.marInOut=='Entrada'?'in':'out'}.gif"/>
                         <h:outputText value="#{messages[markItem.marInOut=='Entrada'?'RHMark.in':'RHMark.out']}"/>
@@ -113,15 +118,30 @@
                 <rich:column>
                     <h:outputText value="#{messages[markItem.horaryBandStateType.resourceKey]}"
                                   rendered="#{not empty markItem.horaryBandStateType}"/>
-                </rich:column>
+                </rich:column>-->
             </rich:dataTable>
 
-            <app:dataScroller id="dataScroller" for="markList" dataModel="#{markDataModel}"/>
+            <app:dataScroller id="dataScroller" for="markList" dataModel="#{markEmployeeDataModel}"/>
 
         </h:form>
         <a4j:outputPanel ajaxRendered="true">
             <s:decorate id="rhMarkHelpModalPanelContainer" template="/employees/rHMarkHelpModalPanel.xhtml"/>
         </a4j:outputPanel>
         <rich:jQuery selector="#marRefCard" query="focus()" timing="onload"/>
+        <s:decorate id="generalEmployeeListModalPanelContainer"
+                    template="/employees/generalEmployeeListModalPanel.xhtml">
+            <ui:param name="dialogId" value="generalEmployeeListModalPanel"/>
+            <ui:param name="dataModel" value="#{generalEmployeeDataModel}"/>
+            <ui:define name="assignButton">
+                <a4j:commandButton id="assignButton"
+                                   title="#{messages['Common.choose']}"
+                                   action="#{markEmployeeDataModel.setEmployee(employeeItem)}"
+                                   image="/img/active.gif"
+                                   styleClass="select-image"
+                                   reRender="responsbleField"
+                                   oncomplete="Richfaces.hideModalPanel('generalEmployeeListModalPanel');"/>
+            </ui:define>
+        </s:decorate>
+
     </ui:define>
 </ui:composition>
