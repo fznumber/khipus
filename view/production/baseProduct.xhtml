@@ -12,7 +12,7 @@
         <h:form id="baseProductionPlanningForm">
         <div class="buttons">
             <a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
-                               rendered="#{baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and productionPlanning.state != 'INSTOCK' and productionPlanning.state != 'TABULATED' and s:hasPermission('ENTERPRODUCTTOEWAREHOUSE','CREATE')}"
+                               rendered="#{baseProduct.id != null and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and productionPlanning.state != 'INSTOCK' and productionPlanning.state != 'TABULATED' and s:hasPermission('ENTERPRODUCTTOEWAREHOUSE','CREATE')}"
                                >
 
                 <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
@@ -25,7 +25,7 @@
                     action="#{productionPlanningReportReproAction.generateReportSummary(baseProduct)}"
                     value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
                     styleClass="button"
-                    rendered="#{productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
+                    rendered="#{baseProduct.id != null and productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
 
             <rich:spacer width="20"/>
             <a4j:commandButton id="cancelInnerButton2" action="#{productionPlanningAction.cancelReprossecing()}"
@@ -231,7 +231,7 @@
 
                 <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
                                    action="#{productionPlanningAction.deleteReprocessedProduct}"
-                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('DELETEREPROCCED','CREATE')}"
+                                   rendered="#{baseProduct.id != null and baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and s:hasPermission('DELETEREPROCCED','CREATE')}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                    ajaxSingle="true"/>
 
