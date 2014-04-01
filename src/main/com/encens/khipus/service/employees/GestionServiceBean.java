@@ -9,6 +9,7 @@ import org.jboss.seam.log.Log;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * User: Ariel
@@ -34,6 +35,18 @@ public class GestionServiceBean implements GestionService {
                     setParameter("year", year).
                     getSingleResult();
 
+        } catch (Exception e) {
+            log.debug("Not found Gestion...");
+        }
+        return gestion;
+    }
+
+    public Gestion getLastGestion() {
+        Gestion gestion = null;
+        try {
+           List<Gestion> gestions = (List<Gestion>) em.createNamedQuery("Gestion.findLast").
+                    getResultList();
+            gestion = gestions.get(0);
         } catch (Exception e) {
             log.debug("Not found Gestion...");
         }

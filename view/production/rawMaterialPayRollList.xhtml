@@ -65,59 +65,6 @@
 
                 </s:div>
 
-                <!-- <s:div>
-
-                    <s:decorate id="gestionField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['Gestion.gestion']}</ui:define>
-                        <h:selectOneMenu id="gestion"
-                                         value="#{rawMaterialPayRollDataModel.gestion}"
-                                         styleClass="input"
-                                         required="true"
-                                         tabindex="3">
-                            <s:selectItems value="#{gestionList}"
-                                           var="gestion"
-                                           label="#{gestion.year}"
-                                           hideNoSelectionLabel="false"/>
-                            <a4j:support event="onchange"
-                                         action="#{rawMaterialPayRollDataModel.cleanGestionList}"
-                                         reRender="gestionField, gestionPayrollListField" ajaxSingle="true"/>
-                            <s:convertEntity/>
-                        </h:selectOneMenu>
-                    </s:decorate>
-
-                    <s:decorate id="monthField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['Month.month']}</ui:define>
-                        <h:selectOneMenu id="month"
-                                         value="#{rawMaterialPayRollDataModel.month}"
-                                         styleClass="input"
-                                         required="true">
-
-                            <s:selectItems value="#{monthEnumPayRoll}" var="month"
-                                           label="#{messages[month.resourceKey]}"
-                                           hideNoSelectionLabel="false"/>
-                            <s:convertEnum/>
-                        </h:selectOneMenu>
-                    </s:decorate>
-
-                    <s:decorate id="periodoField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['Reports.controlReport.period']}</ui:define>
-                        <h:selectOneMenu id="periodo"
-                                         value="#{rawMaterialPayRollDataModel.periodo}"
-                                         styleClass="input" required="true">
-
-                            <s:selectItems value="#{periodosPayRollGenerate}" var="periodos"
-                                           label="#{messages[periodos.resourceKey]}"
-                                           hideNoSelectionLabel="false"/>
-                            <s:convertEnum/>
-                        </h:selectOneMenu>
-                        <a4j:commandButton action="#{rawMaterialPayRollDataModel.search}" reRender="rawMaterialPayRollList, dataScroller"
-                                           styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                           tabindex="6">
-                            <s:defaultAction/>
-                        </a4j:commandButton>
-                    </s:decorate>
-
-                </s:div>-->
 
             </h:panelGrid>
 
@@ -139,10 +86,7 @@
             <f:facet name="header">
                 <rich:columnGroup>
                     <rich:column>
-                        <app:commandSortHeader dataModel="#{rawMaterialPayRollDataModel}"
-                                               reRender="rawMaterialPayRollList, dataScroller">
                             #{messages['RawMaterialPayRoll.productiveZone.fullName']}
-                        </app:commandSortHeader>
                     </rich:column>
                     <rich:column>
                         <app:commandSortHeader sortProperty="rawMaterialPayRoll.startDate"

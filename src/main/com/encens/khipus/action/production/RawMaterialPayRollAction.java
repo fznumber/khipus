@@ -13,6 +13,7 @@ import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.employees.GestionService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
@@ -22,6 +23,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
@@ -50,6 +52,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     @In
     private ProductiveZoneService productiveZoneService;
 
+    @In
+    private GestionService gestionService;
+
     @Override
     protected GenericService getService() {
         return rawMaterialPayRollService;
@@ -57,6 +62,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @Factory(value = "rawMaterialPayRoll", scope = ScopeType.STATELESS)
     public RawMaterialPayRoll initRawMaterialPayRoll() {
+
         return getInstance();
     }
 
@@ -298,6 +304,14 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Gestion getGestion() {
+        if(getInstance().getId() != null)
+        {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getInstance().getStartDate());
+            this.gestion = gestionService.getGestion(cal.get(Calendar.YEAR));
+        }else
+            gestion = gestionService.getLastGestion();
+
         return gestion;
     }
 
@@ -306,6 +320,15 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Month getMonth() {
+        if(getInstance().getId() != null)
+        {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getInstance().getStartDate());
+            this.month = Month.getMonth(cal.getTime());
+        }
+        else
+           month = Month.getMonth(new Date());
+
         return month;
     }
 
@@ -314,6 +337,23 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Periodo getPeriodo() {
+        if(getInstance().getId() != null)
+        {
+            Calendar end = Calendar.getInstance();
+            end.setTime(getInstance().getEndDate());
+            if(end.get(Calendar.DAY_OF_MONTH) > 15)
+                this.periodo = Periodo.SECONDPERIODO;
+            else
+                this.periodo = Periodo.FIRSTPERIODO;
+        }else
+        {
+            Calendar end = Calendar.getInstance();
+            end.setTime(new Date());
+            if(end.get(Calendar.DAY_OF_MONTH) > 15)
+                this.periodo = Periodo.SECONDPERIODO;
+            else
+                this.periodo = Periodo.FIRSTPERIODO;
+        }
         return periodo;
     }
 

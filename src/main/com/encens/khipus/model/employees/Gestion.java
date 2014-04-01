@@ -25,6 +25,7 @@ import javax.persistence.*;
 @NamedQueries(
         {
                 @NamedQuery(name = "Gestion.findAll", query = "select o from Gestion o order by o.year asc"),
+                @NamedQuery(name = "Gestion.findLast", query = "select o from Gestion o order by o.year desc"),
                 @NamedQuery(name = "Gestion.findById", query = "select o from Gestion o where o.id=:id"),
                 @NamedQuery(name = "Gestion.findByYear", query = "select o from Gestion o " +
                         "where o.year=:year order by o.year asc"),

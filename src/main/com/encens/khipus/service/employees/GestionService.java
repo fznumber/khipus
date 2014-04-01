@@ -12,4 +12,5 @@ import javax.ejb.Local;
 @Local
 public interface GestionService {
     Gestion getGestion(Integer year);
+    public Gestion getLastGestion();
 }

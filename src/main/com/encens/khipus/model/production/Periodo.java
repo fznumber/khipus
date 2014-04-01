@@ -1,5 +1,6 @@
 package com.encens.khipus.model.production;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -24,6 +25,16 @@ public enum Periodo {
         this.endDay = endDay;
         this.resourceKey = resourceKey;
     }
+
+   /* public static Periodo getPeriodo(int initDay, int endDay) {
+        this.initDay = initDay;
+        this.endDay = endDay;
+        if(endDay > 15)
+            this.resourceKey = "Periodo.second";
+        else
+            this.resourceKey = "Periodo.first";
+        return this;
+    }*/
 
     public String getResourceKey() {
         return resourceKey;
