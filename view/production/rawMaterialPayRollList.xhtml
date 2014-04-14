@@ -74,6 +74,11 @@
             <s:button value="#{messages['RawMaterialPayRoll.new']}" action="#{rawMaterialPayRollAction.startNew}"
                       styleClass="button"
                       propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+
+            <s:button value="#{messages['RawMaterialPayRoll.approve']}" action="#{rawMaterialPayRollAction.startNewApprove}"
+                      styleClass="button"
+                      propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
+
             <!-- <s:button value="#{messages['Common.new']}" action="#{rawMaterialPayRollAction.generateResumen}" styleClass="button"
             propagation="none" rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEWRESUMENRAWMATERILPAYROLL')}" />
             -->

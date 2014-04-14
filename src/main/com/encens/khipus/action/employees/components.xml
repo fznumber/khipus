@@ -353,7 +353,7 @@
 
     <factory name="gestionList" value="#{gestionQuery}"/>
     <framework:entity-query name="gestionQuery"
-                            ejbql="select o from Gestion o order by o.year ASC"/>
+                            ejbql="select o from Gestion o order by o.year desc"/>
 
     <factory name="cycleTypeList" value="#{cycleTypeQuery}"/>
     <framework:entity-query name="cycleTypeQuery"

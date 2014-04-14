@@ -36,4 +36,6 @@ public interface IndirectCostsService extends GenericService {
     public int calculateCantDaysProducer(Date date);
 
     public PeriodIndirectCost getConcurrentPeroidIndirectCost(Date dateConcurrent);
+
+    public List<IndirectCosts> getIndirectCostGeneral(PeriodIndirectCost indirectCost);
 }

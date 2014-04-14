@@ -76,6 +76,11 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         return Outcome.SUCCESS;
     }
 
+    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    public String startNewApprove() {
+        return Outcome.SUCCESS;
+    }
+
     @Factory(value = "periodosPayRollGenerate", scope = ScopeType.STATELESS)
     public Periodo[] getPeriodos() {
         return Periodo.values();

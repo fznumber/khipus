@@ -116,6 +116,22 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
+<!--
+
+<a4j:commandButton value="Regularizar Materiales e Insumos"
+                   action="#{productionPlanningAction.regularizarOrdenes}"
+                   rendered="true"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                   ajaxSingle="true"/>
+
+<a4j:commandButton value="Regularizar Costos indirectos"
+                   action="#{productionPlanningAction.regularizarCostosIndirectos}"
+                   rendered="true"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                   ajaxSingle="true"/>
+-->
+
+
 <a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    rendered="#{productionPlanningAction.managed and productionPlanningAction.showGenerateAllVoucher and s:hasPermission('GENERATEALLVOUCHER','CREATE') and productionPlanning.state eq 'PENDING' }"
@@ -126,7 +142,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
 <a4j:commandButton id="generateAllAccounts" value="#{messages['ProductionPlanning.generateAccountingByProductionDay']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   rendered="#{productionPlanningAction.showGenerateAllVoucher and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
+                   rendered="#{productionPlanningAction.showGenerateAllAccountEntries and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
                    ajaxSingle="true">
     <rich:componentControl for="confirmationGenerationAccounting" event="onclick" disableDefault="true"
                            operation="show"/>
@@ -960,7 +976,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <a4j:commandButton action="#{productionPlanningAction.generateAllAccountingEntries}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
-                           reRender="baseProductionList,productionList"
+                           reRender="baseProductionList,productionList,formulaSet"
                            styleClass="button">
             <rich:componentControl for="confirmationGenerationAccounting" event="onclick" disableDefault="true"
                                    operation="hide"/>
@@ -983,7 +999,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <a4j:commandButton action="#{productionPlanningAction.generateOnlyAllVoucher}"
                            value="#{messages['Common.confirm']}"
                            immediate="true"
-                           reRender="baseProductionList,productionList"
+                           reRender="baseProductionList,productionList,formulaSet"
                            styleClass="button">
             <rich:componentControl for="confirmationGenerateAllVouchers" event="onclick" disableDefault="true"
                                    operation="hide"/>

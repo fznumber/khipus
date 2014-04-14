@@ -83,10 +83,10 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getStartDate() {
-           /* Calendar calendar = Calendar.getInstance();
+            /*Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR,2014);
-            calendar.set(Calendar.MONTH,Calendar.JANUARY);
-            calendar.set(Calendar.DAY_OF_MONTH,1);
+            calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+            calendar.set(Calendar.DAY_OF_MONTH,28);
             return calendar.getTime();*/
             return startDate;
         }
@@ -99,9 +99,9 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
 
             /*Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.YEAR,2014);
-            calendar.set(Calendar.MONTH,Calendar.JANUARY);
+            calendar.set(Calendar.MONTH,Calendar.MARCH);
             calendar.set(Calendar.DAY_OF_MONTH,31);
-            return calendar.getTime();  */
+            return calendar.getTime();*/
             return endDate;
         }
 

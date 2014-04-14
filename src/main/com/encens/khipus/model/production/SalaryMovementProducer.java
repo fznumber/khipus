@@ -13,7 +13,8 @@ import java.util.Date;
                                 " from SalaryMovementProducer salaryMovementProducer " +
                                 " join SalaryMovementProducer.typeMovementProducer typeMovementProducer" +
                                 " where salaryMovementProducer.date between :startDate and :endDate " +
-                                " and salaryMovementProducer.rawMaterialProducer = :rawMaterialProducer ")
+                                " and salaryMovementProducer.rawMaterialProducer = :rawMaterialProducer " +
+                                " and salaryMovementProducer.rawMaterialProducer.productiveZone = :productiveZone")
         }
 )
 

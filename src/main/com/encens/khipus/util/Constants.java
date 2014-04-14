@@ -119,7 +119,7 @@ public final class Constants {
     public static final String RECEIVABLES_VOUCHER_FORM = "CXC";
     public static final String HUMANRESOURCE_VOUCHER_FORM = "RRHH";
     public static final String WAREHOUSE_VOUCHER_FORM = "INV";
-    public static final String INPUT_PROD_WAREHOUSE = "ING_PRO_ALM";
+    public static final String INPUT_PROD_WAREHOUSE = "ENT_PRO_ALM";
     public static final String ORDER_VOUCHER_FORM = "PED";
     public static final String DEFAULT_VOUCHER_FORM = "INTERFAZ";
     public static final String PAYABLES_VOUCHER_FORM = "CXP";
@@ -174,6 +174,7 @@ public final class Constants {
     //DELIVERED
     public static final String ESTATE_ORDER_DELIVERED_INCASH = "DELIVERED";
     public static final String ESTATE_ORDER_DELIVERED = "ECH";
+    public static final String COD_CUT_CHEESE = "147";
     //PRODUCTION
     public static final Double PRICE_UNIT_MILK = 3.0;
 

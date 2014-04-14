@@ -90,6 +90,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showProductionList = true;
     private Boolean showDetailSingleProduct = false;
     private Boolean showGenerateAllVoucher = true;
+    private Boolean showGenerateAllAccountEntries = true;
 
     private Double expendOld;
     private Double containerOld;
@@ -203,36 +204,41 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         startDate.set(2014,Calendar.JANUARY,1);
         endDate.set(2014,Calendar.JANUARY,31);
 
-        List<ProductionPlanning> planningConcurrents = productionPlanningService.getAllProductionPlanningByDates(startDate.getTime(),endDate.getTime());
-
-        for(ProductionPlanning planning: planningConcurrents){
+        //List<ProductionPlanning> planningConcurrents = productionPlanningService.getAllProductionPlanningByDates(startDate.getTime(),endDate.getTime());
+        ProductionPlanning planning = getInstance();
+        //for(ProductionPlanning planning: planningConcurrents){
                 for(ProductionOrder order:planning.getProductionOrderList())
                 {
+
                     Double totalMaterial = 0.0;
                     Double totalInput = 0.0;
                     for(OrderInput input: order.getOrderInputs())
                     {
                         Double cost = RoundUtil.getRoundValue(input.getCostTotal().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC);
                         input.setCostTotal(new BigDecimal(cost));
-                        totalInput += totalInput + cost;
+                        totalInput += cost;
                     }
+                    order.setTotalPriceInput(totalInput);
                     for(OrderMaterial material: order.getOrderMaterials())
                     {
                         Double cost = RoundUtil.getRoundValue(material.getCostTotal().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC);
                         material.setCostTotal(new BigDecimal(cost));
-                        totalMaterial  += totalMaterial + cost;
+                        totalMaterial  += cost;
                     }
+                    order.setTotalPriceMaterial(totalMaterial);
                     order.setTotalCostProduction(totalInput+totalMaterial+order.getTotalPriceJourney()+order.getTotalIndirectCosts());
+
                 }
 
-            try {
+            /*try {
                 getService().update(planning);
             } catch (EntryDuplicatedException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (ConcurrencyException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
+            }*/
+        //}
+        update();
     }
 
     public void regularizarCostosIndirectos(){
@@ -380,6 +386,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 return;
             }
         }
+
+        if(isCostIndirectValid(getInstance().getProductionOrderList(),getInstance().getBaseProducts(), getInstance().getDate()))
+        {
+            return;
+        }
+
         List<ProductionOrder> orderList = new ArrayList<ProductionOrder>();
         orderList.addAll(getInstance().getProductionOrderList());
         for(ProductionOrder order:orderList)
@@ -402,6 +414,53 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
+    }
+
+    private boolean isCostIndirectValid(List<ProductionOrder> productionOrderList,List<BaseProduct> baseProducts, Date dateConcurrent) {
+
+        Double totalCostIndirectPlanificacion = 0.0;
+        for(ProductionOrder order:productionOrderList){
+            for(IndirectCosts costs:order.getIndirectCostses())
+            {
+                totalCostIndirectPlanificacion += costs.getAmountBs().doubleValue();
+            }
+        }
+        for(BaseProduct product: baseProducts)
+            for(SingleProduct singleProduct:product.getSingleProducts()){
+                for(IndirectCosts costs:singleProduct.getIndirectCostses())
+                {
+                    totalCostIndirectPlanificacion += costs.getAmountBs().doubleValue();
+                }
+            }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateConcurrent);
+        int monthConcurrent = calendar.get(Calendar.MONTH);
+        int daysOfMounth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
+
+        Double totalCostIndirectGeneral = 0.0;
+        List<IndirectCosts> indirectCostsesOfMounth = indirectCostsService.getIndirectCostGeneral(periodIndirectCost);
+
+        for(IndirectCosts costs: indirectCostsesOfMounth)
+        {
+            totalCostIndirectGeneral += costs.getAmountBs().doubleValue();
+        }
+
+        Double costIdirectByDay = totalCostIndirectGeneral /daysOfMounth;
+
+        if((totalCostIndirectPlanificacion-costIdirectByDay ) >= 1)
+        {
+            addMessageCostIndirectError(totalCostIndirectPlanificacion, costIdirectByDay);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void addMessageCostIndirectError(Double totalCostIndirectPlanificacion, Double costIdirectByDay) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "ProductionPlanning.message.MessageCostIndirectError",totalCostIndirectPlanificacion,costIdirectByDay);
     }
 
     public void generateAllVoucher(List<ProductionPlanning> productionPlannings)
@@ -898,7 +957,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void addMessageCantProducerCero()
     {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN, "ProductionPlanning.waning.amountCero");
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "ProductionPlanning.waning.amountCero");
+    }
+
+    public void addMessageCantCeroMaterial()
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "ProductionPlanning.waning.amountCeroMaterial");
+    }
+
+    public void addMessageMaterialCantUsedMajorRequerided()
+    {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "ProductionPlanning.error.cantUsedMajorRequerided");
     }
 
     public void addMessageCreateWarehouseVoucherInput()
@@ -2034,9 +2103,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         //orderMaterials = new ArrayList<OrderMaterial>();
         //orderMaterials.addAll(order.getOrderMaterials());
-        if(order.getProducedAmount() == 0.0 && order.getEstateOrder().equals(EXECUTED)){
-            addMessageCantProducerCero();
-        }
         showDetailOrder = true;
         showProductionOrders = false;
         hideButtonGeneral();
@@ -2116,6 +2182,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void makeFinalizedOrderSingle() {
+        if(verifyAmounts(singleProduct))
+        {
+            return;
+        }
         singleProduct.setState(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
@@ -2145,8 +2215,50 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         refreshInstance();
     }
 
+    private boolean verifyAmounts(ProductionOrder order)
+    {
+        Boolean result = false;
+        if(order.getProducedAmount() == 0)
+        {
+            addMessageCantProducerCero();
+            result = true;
+        }
+        for(OrderMaterial material:order.getOrderMaterials())
+        {
+            if(material.getAmountUsed() == 0)
+            {
+                addMessageCantCeroMaterial();
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private boolean verifyAmounts(SingleProduct single)
+    {
+        Boolean result = false;
+        if(single.getAmount() == 0)
+        {
+            addMessageCantProducerCero();
+            result = true;
+        }
+        for(OrderMaterial material:single.getOrderMaterials())
+        {
+            if(material.getAmountUsed() == 0)
+            {
+                addMessageCantCeroMaterial();
+                result = true;
+            }
+        }
+        return result;
+    }
+
     public void makeFinalizedOrder() {
         //getInstance().setState(FINALIZED);
+        if(verifyAmounts(productionOrder))
+        {
+            return;
+        }
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
@@ -2270,6 +2382,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
         showButtonReprocessed = true;
         showGenerateAllVoucher = true;
+        showGenerateAllAccountEntries = true;
         showButtonAddProduct = true;
         showSingleProduct = false;
         disableEditingFormula();
@@ -2365,6 +2478,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void addOrderProduced() {
         Double totalMaterial = 0.0;
+        if(productionOrder.getEstateOrder() == EXECUTED)
+        {
+            for (OrderMaterial material : orderMaterials) {
+                if (material.getAmountUsed() > material.getAmountRequired()) {
+                    addMessageMaterialCantUsedMajorRequerided();
+                    return;
+                }
+            }
+        }
         for (OrderMaterial material : orderMaterials) {
             if (material.getAmountUsed() > 0) {
                 Double amountReturn = material.getAmountRequired() - material.getAmountUsed();
@@ -2482,6 +2604,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showListReprocessedProduct = false;
         showButtonReprocessed = false;
         showGenerateAllVoucher = false;
+        showGenerateAllAccountEntries = false;
         showButtonAddProduct = false;
         showInit();
     }
@@ -2755,7 +2878,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dateConcurrent);
         int monthConcurrent = calendar.get(Calendar.MONTH);
-        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios
+        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
         calendar.set(Calendar.MONTH,monthConcurrent -1);
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
@@ -2787,12 +2910,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dateConcurrent);
         int monthConcurrent = calendar.get(Calendar.MONTH);
-        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios
+        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
         calendar.set(Calendar.MONTH,monthConcurrent -1);
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
-
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirectSingle(
                 dateConcurrent,
                 totalDaysNotProducer,
@@ -3230,6 +3352,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showButtonAddProduct = false;
         showButtonReprocessed = false;
         showGenerateAllVoucher = false;
+        showGenerateAllAccountEntries = false;
         showProductionOrders = true;
     }
 
@@ -3366,5 +3489,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowGenerateAllVoucher(Boolean showGenerateAllVoucher) {
         this.showGenerateAllVoucher = showGenerateAllVoucher;
+    }
+
+    public Boolean getShowGenerateAllAccountEntries() {
+        return showGenerateAllAccountEntries;
+    }
+
+    public void setShowGenerateAllAccountEntries(Boolean showGenerateAllAccountEntries) {
+        this.showGenerateAllAccountEntries = showGenerateAllAccountEntries;
     }
 }

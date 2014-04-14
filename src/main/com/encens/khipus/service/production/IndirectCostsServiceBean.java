@@ -381,7 +381,14 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
             periodIndirectCost.setMonth(((BigDecimal)datas[1]).intValue());
 
         }catch (NoResultException e){
-            return null;
+            List<Object[]> datas =  (List<Object[]>)em.createNativeQuery("select pe.*\n" +
+                    "from PERIODOCOSTOINDIRECTO pe \n" +
+                    "inner join EOS.gestion ge\n" +
+                    "on pe.idgestion = ge.idgestion ")
+                    .getResultList();
+            Object[] data = datas.get(0);
+            periodIndirectCost.setId(((BigDecimal)data[0]).longValue());
+            periodIndirectCost.setMonth(((BigDecimal)data[1]).intValue());
         }
 
         return periodIndirectCost;

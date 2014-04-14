@@ -31,7 +31,7 @@
                                 <rich:spacer width="10"/>
                                 <a4j:commandButton value="#{ baseProduct.state == 'TABULATED' ? messages['BaseProduct.action.select'] :messages['BaseProduct.action.edit']}"
                                                    action="#{productionPlanningAction.editReprocessedProduct(baseProduct)}"
-
+                                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
                                 <rich:spacer width="10"/>
@@ -39,7 +39,7 @@
 
                                 <a4j:commandButton value="#{messages['BaseProduct.action.addProduct']}"
                                                    action="#{productionPlanningAction.addProduct(baseProduct)}"
-                                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
+                                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK'}"
                                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                                    ajaxSingle="true"/>
 

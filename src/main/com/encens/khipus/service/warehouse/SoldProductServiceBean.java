@@ -2,6 +2,7 @@ package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.warehouse.SoldProduct;
+import com.encens.khipus.util.Constants;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
 
@@ -33,6 +34,23 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
 
         return result;
     }
+
+    @SuppressWarnings(value = "unchecked")
+    public List<SoldProduct> getSoldProductsWithoutCutCheese(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findByInvoiceNumberWithoutCutCheese")
+                .setParameter("codCutCheese", Constants.COD_CUT_CHEESE)
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+
+        return result;
+    }
+
+
 
     @SuppressWarnings(value = "unchecked")
     public List<SoldProduct> getSoldProductsCashSale(String invoiceNumber, String companyNumber) {

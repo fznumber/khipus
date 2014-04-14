@@ -107,6 +107,7 @@ public class InventoryHistoryServiceBean extends GenericServiceBean implements I
         Calendar calendar = Calendar.getInstance();
 
         int year = calendar.get(Calendar.YEAR);
+        //calendar.set(Calendar.MONTH,Calendar.MARCH);
         int month = calendar.get(Calendar.MONTH);
 
         String monthAsString = String.valueOf(month);

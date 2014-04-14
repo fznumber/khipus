@@ -15,6 +15,8 @@ import java.util.List;
 public interface SoldProductService extends GenericService {
     List<SoldProduct> getSoldProducts(String invoiceNumber, String companyNumber);
 
+    public List<SoldProduct> getSoldProductsWithoutCutCheese(String invoiceNumber, String companyNumber);
+
     List<SoldProduct> getSoldProductsCashSale(String invoiceNumber, String companyNumber);
 
     List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber);

@@ -200,7 +200,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             }
 
             //RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
-            RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer, rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
+            RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer, rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(),rawMaterialPayRoll.getProductiveZone());
             //todo: arreglar el alcohol
             alcoholDiff += ((alcoholByGAB * (aux.procentaje)) - RoundUtil.getRoundValue(alcoholByGAB * (aux.procentaje), 2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setAlcohol(RoundUtil.getRoundValue(alcoholByGAB * (aux.procentaje), 2, RoundUtil.RoundMode.SYMMETRIC));

@@ -30,7 +30,7 @@ import java.util.List;
 public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBean implements SalaryMovementProducerService {
 
     @Override
-    public RawMaterialProducerDiscount prepareDiscount(RawMaterialProducer rawMaterialProducer, Date startDate, Date endDate) throws EntryNotFoundException {
+    public RawMaterialProducerDiscount prepareDiscount(RawMaterialProducer rawMaterialProducer, Date startDate, Date endDate,ProductiveZone productiveZone) throws EntryNotFoundException {
 
         RawMaterialProducerDiscount rawMaterialProducerDiscount = new RawMaterialProducerDiscount();
 
@@ -50,11 +50,12 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
         Double cans = 0.0;
         Double otherDiscount = 0.0;
         Double otherIncoming = 0.0;
-
+        //Todo: se toma en cuenta tambien el gab en caso que el productor haya sido movido de gab
         List<Object[]> salaryMovementProducers = getEntityManager().createNamedQuery("SalaryMovementProducer.getDiscount")
                                                                .setParameter("startDate",startDate,TemporalType.DATE)
                                                                .setParameter("endDate",endDate,TemporalType.DATE)
                                                                .setParameter("rawMaterialProducer",rawMaterialProducer)
+                                                               .setParameter("productiveZone",productiveZone)
                                                                .getResultList();
         if(salaryMovementProducers.size()>0)
         {

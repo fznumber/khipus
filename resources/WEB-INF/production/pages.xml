@@ -42,6 +42,11 @@
                 <redirect view-id="/production/rawMaterialPayRoll.xhtml"/>
             </rule>
         </navigation>
+        <navigation from-action="#{rawMaterialPayRollAction.startNewApprove}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/rawMaterialPayRollApprove.xhtml"/>
+            </rule>
+        </navigation>
     </page>
 
     <page view-id="/production/rawMaterialPayRoll.xhtml"

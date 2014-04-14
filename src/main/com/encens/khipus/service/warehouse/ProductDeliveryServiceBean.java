@@ -94,6 +94,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
+        //List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
         List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
         WarehouseDocumentType documentType = getFirstConsumptionType();
 
@@ -114,6 +115,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
+        //productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
         productItemStockChecker(invoiceNumber, warehouse, costCenter);
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
@@ -436,6 +438,39 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
     }
 
+    @SuppressWarnings(value = "unchecked")
+    private void productItemStockCheckerWithoutCutCheese(String invoiceNumber,
+                                         Warehouse warehouse,
+                                         CostCenter costCenter) throws InventoryException {
+        List<ProductItem> productItems = getEntityManager()
+                .createNamedQuery("SoldProduct.findByProductItemWithouCutCheese")
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", warehouse.getId().getCompanyNumber())
+                .setParameter("codCutCheese",Constants.COD_CUT_CHEESE)
+                .getResultList();
+
+        List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
+        for (ProductItem productItem : productItems) {
+            BigDecimal total = (BigDecimal) getEntityManager()
+                    .createNamedQuery("SoldProduct.sunQuantitiesByProductItem")
+                    .setParameter("invoiceNumber", invoiceNumber)
+                    .setParameter("productItem", productItem)
+                    .setParameter("companyNumber", warehouse.getId().getCompanyNumber()).getSingleResult();
+
+            try {
+                approvalWarehouseVoucherService.validateOutputQuantity(total,
+                        warehouse,
+                        productItem,
+                        costCenter);
+            } catch (InventoryException e) {
+                errorMessages.addAll(e.getInventoryMessages());
+            }
+        }
+
+        if (!errorMessages.isEmpty()) {
+            throw new InventoryException(errorMessages);
+        }
+    }
 
     @SuppressWarnings(value = "unchecked")
     private WarehouseDocumentType getFirstConsumptionType() {
