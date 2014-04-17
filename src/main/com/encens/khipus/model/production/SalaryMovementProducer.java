@@ -53,6 +53,10 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
     @Column(name = "VALOR",columnDefinition = "NUMBER(16,2)", nullable = false)
     private double valor;
 
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = true, updatable = false, insertable = true)
+    private ProductiveZone productiveZone;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
@@ -111,5 +115,13 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public ProductiveZone getProductiveZone() {
+        return productiveZone;
+    }
+
+    public void setProductiveZone(ProductiveZone productiveZone) {
+        this.productiveZone = productiveZone;
     }
 }

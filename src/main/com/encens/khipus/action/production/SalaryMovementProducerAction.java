@@ -49,6 +49,7 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
                 addMessgeFailBalance(getInstance().getRawMaterialProducer().getFullName(),totalCollected);
                 return Outcome.REDISPLAY;
             }
+            getInstance().setProductiveZone(getInstance().getRawMaterialProducer().getProductiveZone());
             getService().create(getInstance());
             addCreatedMessage();
             return Outcome.SUCCESS;
