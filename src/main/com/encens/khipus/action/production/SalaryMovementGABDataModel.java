@@ -1,10 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialProducer;
-import com.encens.khipus.model.production.SalaryMovementGAB;
-import com.encens.khipus.model.production.SalaryMovementProducer;
+import com.encens.khipus.model.production.*;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -30,6 +27,7 @@ public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovem
     private static final String[] RESTRICTIONS = {
             "salaryMovementGAB.date >= #{salaryMovementGABDataModel.privateCriteria.startDate}",
             "salaryMovementGAB.date <= #{salaryMovementGABDataModel.privateCriteria.endDate}",
+            "salaryMovementGAB.state = #{salaryMovementGABDataModel.privateCriteria.state}",
             "upper(productiveZone.number) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.number})), '%')",
             "upper(productiveZone.group) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.group})), '%')",
             "upper(productiveZone.name) like concat(upper(concat('%',#{salaryMovementGABDataModel.criteria.productiveZone.name})), '%')",
@@ -63,6 +61,7 @@ public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovem
     public static class PrivateCriteria{
         private Date startDate;
         private Date endDate;
+        private ProductionCollectionState state;
 
         public Date getStartDate() {
             return startDate;
@@ -79,11 +78,20 @@ public class SalaryMovementGABDataModel extends QueryDataModel<Long, SalaryMovem
         public void setEndDate(Date endDate) {
             this.endDate = endDate;
         }
+
+        public ProductionCollectionState getState() {
+            return state;
+        }
+
+        public void setState(ProductionCollectionState state) {
+            this.state = state;
+        }
     }
 
     public PrivateCriteria getPrivateCriteria() {
         if (privateCriteria == null) {
             privateCriteria = new PrivateCriteria();
+            privateCriteria.setState(ProductionCollectionState.PENDING);
         }
         return privateCriteria;
     }

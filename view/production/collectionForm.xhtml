@@ -207,15 +207,21 @@
     </rich:dataTable>
 
     <div class="buttons">
+        <h:commandButton value="#{messages['CollectionForm.approve']}"
+                         styleClass="button"
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and s:hasPermission('COLLECTIONFORMAPPROVAL','VIEW')}">
+            <rich:componentControl for="approveConfirmation" event="onclick" disableDefault="true" operation="show"/>
+        </h:commandButton>
+
         <h:commandButton action="#{collectionFormAction.create}" value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{!collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','CREATE')}"/>
         <h:commandButton action="#{collectionFormAction.update}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','UPDATE')}"/>
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and  s:hasPermission('COLLECTIONFORM','UPDATE')}"/>
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','DELETE')}">
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and s:hasPermission('COLLECTIONFORM','DELETE')}">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                    operation="show"/>
         </h:commandButton>

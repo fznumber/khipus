@@ -3,11 +3,12 @@
 --Fecha de creacion: 10/04/2014
 --ALTER TABLE PLANILLAACOPIO ADD (ESTATO VARCHAR(10) default 'PENDING'); ya cuenta con un estado
 ALTER TABLE SESIONACOPIO ADD (ESTADO VARCHAR(10) default 'PENDING');
-ALTER TABLE NOTARECHAZOMATERIAPRIMA ADD (ESTADO VARCHAR(10) default 'PENDING');
+ALTER TABLE NOTARECHAZOMATERIAPRIMA ADD (ESTADO VARCHAR(10) DEFAULT 'PENDING');
 ALTER TABLE MOVIMIENTOSALARIOPRODUCTOR ADD (ESTADO VARCHAR(10) default 'PENDING');
 ALTER TABLE MOVIMIENTOSALARIOGAB ADD (ESTADO VARCHAR(10) default 'PENDING');
 ALTER TABLE PLANILLAPAGOMATERIAPRIMA ADD (ESTADO VARCHAR(10) default 'PENDING');
---
+
+--COMMIT
 ALTER TABLE movimientosalarioproductor ADD (IDZONAPRODUCTIVA NUMBER(24,0) NULL);
 --select * from movimientosalarioproductor;
 --select * from PRODUCTORMATERIAPRIMA;
@@ -25,6 +26,16 @@ ALTER TABLE LOGZONAPRODUCTIVA ADD CONSTRAINT FK_LOGZONAPROD_PRODMATPRIM FOREIGN 
 REFERENCES PRODUCTORMATERIAPRIMA(IDPRODUCTORMATERIAPRIMA);
 ALTER TABLE LOGZONAPRODUCTIVA ADD CONSTRAINT FK_LOGZONAPROD_ZONAPROD FOREIGN KEY (IDZONAPRODUCTIVA)
 REFERENCES ZONAPRODUCTIVA(IDZONAPRODUCTIVA);
+
+update MOVIMIENTOSALARIOPRODUCTOR 
+set idzonaproductiva = (
+                        select idzonaproductiva from productormateriaprima 
+                        where movimientosalarioproductor.idproductormateriaprima = productormateriaprima.idproductormateriaprima
+                       )
+where exists (
+              select idzonaproductiva from productormateriaprima 
+                        where movimientosalarioproductor.idproductormateriaprima = productormateriaprima.idproductormateriaprima
+          );
 --COMMIT
 
 --commit

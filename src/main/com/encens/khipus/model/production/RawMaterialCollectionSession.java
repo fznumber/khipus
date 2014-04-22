@@ -48,6 +48,10 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
     @Column(name = "FECHA",columnDefinition = "DATE" , nullable = false)
     private Date date;
 
+    @Column(name = "ESTADO", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
@@ -130,5 +134,13 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
 
     public void setMetaProduct(MetaProduct metaProduct) {
         this.metaProduct = metaProduct;
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

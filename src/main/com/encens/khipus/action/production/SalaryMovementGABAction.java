@@ -1,6 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.GenericAction;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialProducer;
 import com.encens.khipus.model.production.SalaryMovementGAB;
@@ -43,5 +44,9 @@ public class SalaryMovementGABAction extends GenericAction<SalaryMovementGAB> {
 
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
+    }
+
+    public boolean isPending() {
+        return ProductionCollectionState.PENDING.equals(getInstance().getState());
     }
 }

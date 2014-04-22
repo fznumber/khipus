@@ -25,10 +25,24 @@
                             </rich:calendar>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['RawMaterialCollectionSession.endDate']}</ui:define>
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.state']}</ui:define>
                             <rich:calendar value="#{salaryMovementProducerDataModel.privateCriteria.endDate}"
                                            tabindex="2" styleClass="input">
                             </rich:calendar>
+                        </s:decorate>
+
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.state']}</ui:define>
+                            <h:selectOneMenu id="state"
+                                             value="#{salaryMovementProducerDataModel.privateCriteria.state}"
+                                             styleClass="inputMedium"
+                                             tabindex="3">
+                                <s:selectItems value="#{productionCollentionStateEnum}"
+                                               var="element"
+                                               label="#{messages[element.resourceKey]}"
+                                               noSelectionLabel=""
+                                               hideNoSelectionLabel="false"/>
+                            </h:selectOneMenu>
                         </s:decorate>
 
                     </s:div>
@@ -99,6 +113,13 @@
                         <rich:column>
                                 #{messages['SalaryMovementProducer.concept']}
                         </rich:column>
+                        <rich:column>
+                            <app:commandSortHeader sortProperty="salaryMovementProducer.state"
+                                                   dataModel="#{salaryMovementProducerDataModel}"
+                                                   reRender="salaryMovementProducerList,dataScroller">
+                                #{messages['SalaryMovementProducer.state']}
+                            </app:commandSortHeader>
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -119,6 +140,14 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{salaryMovementProducerItem.typeMovementProducer.name}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText
+                            value="#{salaryMovementProducerItem.state == 'PENDING'
+                            ? messages['RawMaterialCollectionSession.state.pending']
+                            : messages['RawMaterialCollectionSession.state.approved']}"
+                            />
+
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"

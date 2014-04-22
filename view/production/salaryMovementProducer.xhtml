@@ -30,9 +30,9 @@
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementProducerAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and s:hasPermission('SALARYMOVEMENTPRODUCER','UPDATE')}"/>
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and salaryMovementProducerAction.pending and s:hasPermission('SALARYMOVEMENTPRODUCER','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and s:hasPermission('SALARYMOVEMENTPRODUCER','DELETE')}">
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and salaryMovementProducerAction.pending and s:hasPermission('SALARYMOVEMENTPRODUCER','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -125,9 +125,9 @@
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementProducerAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and s:hasPermission('SALARYMOVEMENTPRODUCER','UPDATE')}"/>
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and salaryMovementProducerAction.pending and s:hasPermission('SALARYMOVEMENTPRODUCER','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and s:hasPermission('SALARYMOVEMENTPRODUCER','DELETE')}">
+                                 styleClass="button" rendered="#{salaryMovementProducerAction.managed and salaryMovementProducerAction.pending and s:hasPermission('SALARYMOVEMENTPRODUCER','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

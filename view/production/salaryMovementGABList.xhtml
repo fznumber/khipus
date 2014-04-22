@@ -31,6 +31,20 @@
                             </rich:calendar>
                         </s:decorate>
 
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.state']}</ui:define>
+                            <h:selectOneMenu id="state"
+                                             value="#{salaryMovementGABDataModel.privateCriteria.state}"
+                                             styleClass="inputMedium"
+                                             tabindex="3">
+                                <s:selectItems value="#{productionCollentionStateEnum}"
+                                               var="element"
+                                               label="#{messages[element.resourceKey]}"
+                                               noSelectionLabel=""
+                                               hideNoSelectionLabel="false"/>
+                            </h:selectOneMenu>
+                        </s:decorate>
+
                     </s:div>
 
                     <s:div>
@@ -38,23 +52,23 @@
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.number']}</ui:define>
                             <h:inputText id="firstName" value="#{salaryMovementGABDataModel.criteria.productiveZone.number}"
-                                         maxlength="100" tabindex="3" styleClass="input">
+                                         maxlength="100" tabindex="4" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
                             <h:inputText id="lastName" value="#{salaryMovementGABDataModel.criteria.productiveZone.group}"
-                                         maxlength="100" tabindex="4" styleClass="input">
+                                         maxlength="100" tabindex="5" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
                             <h:inputText id="maidenName" value="#{salaryMovementGABDataModel.criteria.productiveZone.name}"
-                                         maxlength="100" tabindex="5" styleClass="input">
+                                         maxlength="100" tabindex="6" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{salaryMovementGABDataModel.search}" reRender="salaryMovementGABList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                               tabindex="6">
+                                               tabindex="7">
                                 <s:defaultAction/>
                             </a4j:commandButton>
                         </s:decorate>
@@ -98,8 +112,15 @@
                         </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="salaryMovementGAB.typeMovementGAB.name" dataModel="#{salaryMovementGABDataModel}"
-                                                   reRender="salaryMovementGAB, dataScroller">
+                                                   reRender="salaryMovementGABList, dataScroller">
                                 #{messages['SalaryMovementGAB.concept']}
+                            </app:commandSortHeader>
+                        </rich:column>
+                        <rich:column>
+                            <app:commandSortHeader sortProperty="salaryMovementGAB.state"
+                                                   dataModel="#{salaryMovementGABDataModel}"
+                                                   reRender="salaryMovementGABList,dataScroller">
+                                #{messages['SalaryMovementGAB.state']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column styleClass="center">
@@ -122,6 +143,14 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{salaryMovementGABItem.typeMovementGAB.name}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText
+                            value="#{salaryMovementGABItem.state == 'PENDING'
+                            ? messages['RawMaterialCollectionSession.state.pending']
+                            : messages['RawMaterialCollectionSession.state.approved']}"
+                            />
+
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"

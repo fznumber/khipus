@@ -1,10 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialProducer;
-import com.encens.khipus.model.production.SalaryMovementGAB;
-import com.encens.khipus.model.production.SalaryMovementProducer;
+import com.encens.khipus.model.production.*;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -30,6 +27,7 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
     private static final String[] RESTRICTIONS = {
             "salaryMovementProducer.date >= #{salaryMovementProducerDataModel.privateCriteria.startDate}",
             "salaryMovementProducer.date <= #{salaryMovementProducerDataModel.privateCriteria.endDate}",
+            "salaryMovementProducer.state = #{salaryMovementProducerDataModel.privateCriteria.state}",
             "upper(rawMaterialProducer.firstName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.firstName})), '%')",
             "upper(rawMaterialProducer.lastName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.lastName})), '%')",
             "upper(rawMaterialProducer.maidenName) like concat(concat('%',upper(#{salaryMovementProducerDataModel.criteria.rawMaterialProducer.maidenName})), '%')"
@@ -63,6 +61,15 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
     public static class PrivateCriteria{
         private Date startDate;
         private Date endDate;
+        private ProductionCollectionState state;
+
+        public ProductionCollectionState getState() {
+            return state;
+        }
+
+        public void setState(ProductionCollectionState state) {
+            this.state = state;
+        }
 
         public Date getStartDate() {
             return startDate;
@@ -84,6 +91,7 @@ public class SalaryMovementProducerDataModel extends QueryDataModel<Long, Salary
     public PrivateCriteria getPrivateCriteria() {
         if (privateCriteria == null) {
             privateCriteria = new PrivateCriteria();
+            privateCriteria.setState(ProductionCollectionState.PENDING);
         }
         return privateCriteria;
     }

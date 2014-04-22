@@ -47,18 +47,32 @@
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.startDate']}</ui:define>
                         <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.startDate}"
-                                       tabindex="4" styleClass="input">
+                                       tabindex="5" styleClass="input">
                         </rich:calendar>
                     </s:decorate>
                     <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialPayRoll.endDate']}</ui:define>
                         <rich:calendar value="#{rawMaterialPayRollDataModel.privateCriteria.endDate}"
-                                       tabindex="5" styleClass="input">
+                                       tabindex="6" styleClass="input">
                         </rich:calendar>
+                    </s:decorate>
+
+                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['RawMaterialCollectionSession.state']}</ui:define>
+                        <h:selectOneMenu id="state"
+                                         value="#{rawMaterialPayRollDataModel.privateCriteria.state}"
+                                         styleClass="inputMedium"
+                                         tabindex="4">
+                            <s:selectItems value="#{productionCollentionStateEnum}"
+                                           var="element"
+                                           label="#{messages[element.resourceKey]}"
+                                           noSelectionLabel=""
+                                           hideNoSelectionLabel="false"/>
+                        </h:selectOneMenu>
                         <a4j:commandButton action="#{rawMaterialPayRollDataModel.search}"
                                            reRender="rawMaterialPayRollList, dataScroller"
                                            styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                           tabindex="6">
+                                           tabindex="7">
                             <s:defaultAction/>
                         </a4j:commandButton>
                     </s:decorate>
@@ -107,12 +121,12 @@
                             #{messages['RawMaterialPayRoll.endDate']}
                         </app:commandSortHeader>
                     </rich:column>
-                    <!--<rich:column>
+                    <rich:column>
                         <app:commandSortHeader sortProperty="rawMaterialPayRoll.state" dataModel="#{rawMaterialPayRollDataModel}"
                                                reRender="rawMaterialPayRollList,dataScroller">
                             #{messages['RawMaterialPayRoll.state']}
                         </app:commandSortHeader>
-                    </rich:column>-->
+                    </rich:column>
                     <rich:column styleClass="center">
                         #{messages['Common.action']}
                     </rich:column>
@@ -128,9 +142,14 @@
             <rich:column>
                 <h:outputText value="#{rawMaterialPayRollItem.endDate}"/>
             </rich:column>
-            <!--<rich:column>
-                <h:outputText value="#{rawMaterialPayRollItem.state}"/>
-            </rich:column>-->
+            <rich:column>
+                <h:outputText
+                        value="#{rawMaterialPayRollItem.state == 'PENDING'
+                            ? messages['RawMaterialCollectionSession.state.pending']
+                            : messages['RawMaterialCollectionSession.state.approved']}"
+                        />
+
+            </rich:column>
             <rich:column styleClass="center">
                 <h:commandLink value="#{messages['Common.select']}"
                                action="#{rawMaterialPayRollAction.select(rawMaterialPayRollItem)}">

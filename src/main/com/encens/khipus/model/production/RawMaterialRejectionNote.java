@@ -49,6 +49,11 @@ public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseMod
     @Column(name = "OBSERVACIONES", nullable = true, length = 1000)
     private String observations;
 
+    @Column(name = "ESTADO",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
+
+
     @Version
     @Column(name = "VERSION", nullable = false)
     private Long version;
@@ -184,5 +189,13 @@ public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseMod
 
     public void setMetaProduct(MetaProduct metaProduct) {
         this.metaProduct = metaProduct;
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

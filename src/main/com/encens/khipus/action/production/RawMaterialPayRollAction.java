@@ -11,6 +11,7 @@ import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.Periodo;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.employees.GestionService;
@@ -18,6 +19,7 @@ import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+import org.jboss.seam.international.StatusMessage;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -259,10 +261,35 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
 
         List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(), rawMaterialPayRoll.getMetaProduct());
+        if(rawMaterialPayRolls.size() == 0)
+        {
+            addWarnGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
+            return Outcome.SUCCESS;
+        }
+        for (RawMaterialPayRoll payRoll : rawMaterialPayRolls) {
+            if(payRoll.getState().equals(ProductionCollectionState.APPROVED))
+            {
+                addErrorGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+                return Outcome.SUCCESS;
+            }
+        }
         for (RawMaterialPayRoll payRoll : rawMaterialPayRolls) {
             rawMaterialPayRollService.delete(payRoll);
         }
+        addDeleteGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
         return Outcome.SUCCESS;
+    }
+
+    private void addWarnGeneratePayRollMessage(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,"RawMaterialPayRoll.warning.deleteAllPayRoll",startDate,endDate);
+    }
+
+    private void addDeleteGeneratePayRollMessage(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.message.deleteAllPayRoll",startDate,endDate);
+    }
+
+    private void addErrorGeneratePayRollMessage(Date startDate,Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.error.deleteAllPayRoll",startDate,endDate);
     }
 
     public void redefine() {
@@ -383,5 +410,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             return periodo.getPeriodoLiteral() + "del mes de " + month.getMonthLiteral();
         else
             return "";
+    }
+
+    public boolean isPending() {
+        return ProductionCollectionState.PENDING.equals(getInstance().getState());
     }
 }

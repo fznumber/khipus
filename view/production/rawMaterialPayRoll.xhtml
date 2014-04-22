@@ -34,7 +34,7 @@
                      rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
     <h:commandButton value="#{messages['Common.delete']}"
                      styleClass="button"
-                     rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
+                     rendered="#{rawMaterialPayRollAction.managed and rawMaterialPayRollAction.pending and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
         <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </h:commandButton>
@@ -431,7 +431,7 @@
                      rendered="#{!rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','CREATE')}"/>
     <h:commandButton value="#{messages['Common.delete']}"
                      styleClass="button"
-                     rendered="#{rawMaterialPayRollAction.managed and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
+                     rendered="#{rawMaterialPayRollAction.managed and rawMaterialPayRollAction.pending and s:hasPermission('RAWMATERIALPAYROLL','DELETE')}">
         <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </h:commandButton>

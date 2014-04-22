@@ -254,11 +254,11 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
         session.getCollectedRawMaterialList().add(collectedRawMaterial);
 
         getEntityManager().persist(session);
-
-        getEntityManager().createNativeQuery("update acopiomateriaprima set idsesionacopio = :session where idacopiomateriaprima = :collectedRawMaterial")
+        getEntityManager().flush();
+       /* getEntityManager().createNativeQuery("update acopiomateriaprima set idsesionacopio = :session where idacopiomateriaprima = :collectedRawMaterial")
                 .setParameter("session",session)
                 .setParameter("collectedRawMaterial",collectedRawMaterial)
-                .executeUpdate();
+                .executeUpdate();*/
 
 
     }
@@ -271,8 +271,8 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
                     " inner join rawMaterialCollectionSession.collectedRawMaterialList collectedRawMaterial" +
                     " where rawMaterialCollectionSession.date between :startDate and :endDate" +
                     " and rawMaterialCollectionSession.productiveZone = :productiveZone")
-                    .setParameter("startDate",startDate)
-                    .setParameter("endDate",endDate)
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
                     .setParameter("productiveZone",productiveZone)
                     .getResultList();
         }catch (NoResultException e){
@@ -291,8 +291,8 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
                                            " where rawMaterialCollectionSession.date between :startDate and :endDate" +
                                            " and rawMaterialCollectionSession.productiveZone = :productiveZone" +
                                            " and collectedRawMaterial.rawMaterialProducer = :rawMaterialProducer")
-                                           .setParameter("startDate",startDate)
-                                           .setParameter("endDate",endDate)
+                                           .setParameter("startDate",startDate,TemporalType.DATE)
+                                           .setParameter("endDate",endDate,TemporalType.DATE)
                                            .setParameter("productiveZone",productiveZone)
                                            .setParameter("rawMaterialProducer",rawMaterialProducer)
                                            .getResultList();

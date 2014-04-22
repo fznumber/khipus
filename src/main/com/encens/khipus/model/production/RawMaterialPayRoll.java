@@ -211,7 +211,7 @@ public class RawMaterialPayRoll implements BaseModel {
 
     @Column(name = "ESTADO", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    private String state = StatePayRoll.PENDING.getValue();
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -302,11 +302,11 @@ public class RawMaterialPayRoll implements BaseModel {
         this.endDate = endDate;
     }
 
-    public String getState() {
+    public ProductionCollectionState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(ProductionCollectionState state) {
         this.state = state;
     }
 

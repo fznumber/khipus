@@ -24,37 +24,50 @@
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.group']}</ui:define>
                             <h:inputText id="group" value="#{productiveZoneForSearch.group}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="2" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['ProductiveZone.name']}</ui:define>
                             <h:inputText id="name" value="#{productiveZoneForSearch.name}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="3" styleClass="input">
                             </h:inputText>
+                        </s:decorate>
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialRejectionNote.state']}</ui:define>
+                            <h:selectOneMenu id="state"
+                                             value="#{rawMaterialRejectionNoteDataModel.state}"
+                                             styleClass="inputMedium"
+                                             tabindex="4">
+                                <s:selectItems value="#{productionCollentionStateEnum}"
+                                               var="element"
+                                               label="#{messages[element.resourceKey]}"
+                                               noSelectionLabel=""
+                                               hideNoSelectionLabel="false"/>
+                            </h:selectOneMenu>
                         </s:decorate>
                     </s:div>
                     <s:div>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.firstName']}</ui:define>
                             <h:inputText id="firstName" value="#{rawMaterialProducerForSearch.firstName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="5" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.lastName']}</ui:define>
                             <h:inputText id="lastName" value="#{rawMaterialProducerForSearch.lastName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="6" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Person.maidenName']}</ui:define>
                             <h:inputText id="maidenName" value="#{rawMaterialProducerForSearch.maidenName}"
-                                         maxlength="100" tabindex="1" styleClass="input">
+                                         maxlength="100" tabindex="7" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{rawMaterialRejectionNoteDataModel.search}" reRender="rawMaterialRejectionNoteList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"
-                                               tabindex="4">
+                                               tabindex="8">
                                 <s:defaultAction/>
                             </a4j:commandButton>
                         </s:decorate>
@@ -109,6 +122,9 @@
                         <rich:column>
                             #{messages['RawMaterialRejectionNote.amount']}
                         </rich:column>
+                        <rich:column>
+                            #{messages['RawMaterialRejectionNote.state']}
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -135,6 +151,13 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialRejectionNoteItem.rejectedAmount}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText
+                            value="#{rawMaterialRejectionNoteItem.state == 'PENDING'
+                            ? messages['RawMaterialCollectionSession.state.pending']
+                            : messages['RawMaterialCollectionSession.state.approved']}"
+                            />
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"

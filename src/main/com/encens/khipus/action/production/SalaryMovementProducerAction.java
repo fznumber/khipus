@@ -4,6 +4,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.RawMaterialProducer;
 import com.encens.khipus.model.production.SalaryMovementProducer;
 import com.encens.khipus.service.production.SalaryMovementProducerService;
@@ -74,5 +75,9 @@ public class SalaryMovementProducerAction extends GenericAction<SalaryMovementPr
 
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
+    }
+
+    public boolean isPending() {
+        return ProductionCollectionState.PENDING.equals(getInstance().getState());
     }
 }

@@ -30,9 +30,9 @@
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementGABAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and salaryMovementGABAction.pending and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and salaryMovementGABAction.pending and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -125,9 +125,9 @@
                     <s:defaultAction/>
                 </h:commandButton>
                 <h:commandButton action="#{salaryMovementGABAction.update}" value="#{messages['Common.update']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and salaryMovementGABAction.pending and s:hasPermission('SALARYMOVEMENTGAB','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
+                                 styleClass="button" rendered="#{salaryMovementGABAction.managed and salaryMovementGABAction.pending and s:hasPermission('SALARYMOVEMENTGAB','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
