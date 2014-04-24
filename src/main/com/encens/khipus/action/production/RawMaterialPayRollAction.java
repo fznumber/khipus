@@ -17,6 +17,7 @@ import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.employees.GestionService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
+import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -45,6 +46,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     private Month month;
     private Periodo periodo;
     private List<GestionPayroll> gestionPayrollList;
+    private ProductiveZone productiveZone = null;
 
     private List<RawMaterialPayRoll> rawMaterialPayRollList;
 
@@ -161,7 +163,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void selectProductiveZone(ProductiveZone productiveZone) {
         try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
+            this.productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
             getInstance().setProductiveZone(productiveZone);
             generateAll = false;
         } catch (Exception ex) {
@@ -201,6 +203,37 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
         return Outcome.REDISPLAY;
+    }
+
+    public String approvedPayRoll() {
+            Calendar startDate = Calendar.getInstance();
+            Calendar endDate = Calendar.getInstance();
+            startDate.set(gestion.getYear(), month.getValue(), periodo.getInitDay());
+            endDate.set(gestion.getYear(), month.getValue(), periodo.getEndDay(month.getValue() + 1, gestion.getYear()));
+
+        if(rawMaterialPayRollService.findAllPayRollesByGAB(startDate.getTime(),endDate.getTime(),productiveZone).size() == 0)
+        {
+            addNotFoundPayRollesPendingMessage(startDate, endDate);
+
+            return Outcome.REDISPLAY;
+        }
+
+        rawMaterialPayRollService.approvedSession(startDate, endDate, productiveZone);
+        rawMaterialPayRollService.approvedNoteRejection(startDate, endDate);
+        rawMaterialPayRollService.approvedDiscounts(startDate,endDate,productiveZone);
+        rawMaterialPayRollService.approvedDiscountsGAB(startDate, endDate, productiveZone);
+        rawMaterialPayRollService.approvedRawMaterialPayRoll(startDate,endDate,productiveZone);
+
+            addSuccessApprobedPayRoll(startDate,endDate);
+        return Outcome.SUCCESS;
+    }
+
+    private void addSuccessApprobedPayRoll(Calendar startDate, Calendar endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.SuccessApprobedPayRoll",startDate.getTime(),endDate.getTime());
+    }
+
+    private void addNotFoundPayRollesPendingMessage(Calendar startDate, Calendar endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.error.NotFoundPayRolles",startDate.getTime(),endDate.getTime());
     }
 
     public String generateAll() {
@@ -246,7 +279,12 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 return Outcome.REDISPLAY;
             }
         }
+        addSuccessGenerateAllPayRoll(initRawMaterialPayRoll().getStartDate(), initRawMaterialPayRoll().getEndDate());
         return Outcome.SUCCESS;
+    }
+
+    private void addSuccessGenerateAllPayRoll(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.SuccessGenerateAllPayRoll",startDate,endDate);
     }
 
     public String deleteAll() throws ReferentialIntegrityException, ConcurrencyException, ParseException {
@@ -285,7 +323,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     private void addDeleteGeneratePayRollMessage(Date startDate, Date endDate) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.message.deleteAllPayRoll",startDate,endDate);
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.message.deleteAllPayRoll",startDate,endDate);
     }
 
     private void addErrorGeneratePayRollMessage(Date startDate,Date endDate) {
@@ -414,5 +452,13 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public boolean isPending() {
         return ProductionCollectionState.PENDING.equals(getInstance().getState());
+    }
+
+    public ProductiveZone getProductiveZone() {
+        return productiveZone;
+    }
+
+    public void setProductiveZone(ProductiveZone productiveZone) {
+        this.productiveZone = productiveZone;
     }
 }

@@ -53,7 +53,6 @@ public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseMod
     @Enumerated(EnumType.STRING)
     private ProductionCollectionState state = ProductionCollectionState.PENDING;
 
-
     @Version
     @Column(name = "VERSION", nullable = false)
     private Long version;

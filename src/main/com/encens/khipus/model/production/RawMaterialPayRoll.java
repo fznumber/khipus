@@ -172,6 +172,23 @@ import java.util.List;
                         " and rawMaterialPayRoll.endDate = :endDate " +
                         " and rawMaterialPayRoll.metaProduct = :metaProduct "
         ),
+        @NamedQuery(name = "RawMaterialPayRoll.getPayRollInDatesAndGAB",
+                query = " select " +
+                        " rawMaterialPayRoll " +
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.productiveZone = :productiveZone " +
+                        " and rawMaterialPayRoll.state = 'PENDING'"
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getPayRollInDates",
+                query = " select " +
+                        " rawMaterialPayRoll " +
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.state = 'PENDING'"
+        ),
         @NamedQuery(name = "RawMaterialPayRoll.getAllMaterialPayRoll",
                 query = " select " +
                         " rawMaterialPayRoll " +

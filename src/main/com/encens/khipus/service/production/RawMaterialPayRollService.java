@@ -46,4 +46,16 @@ public interface RawMaterialPayRollService extends GenericService {
     List<RawMaterialPayRoll> findAll();
 
     boolean verifDayColected(Calendar date_aux, ProductiveZone zone);
+
+    void approvedSession(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
+
+    public List<RawMaterialPayRoll> findAllPayRollesByGAB(Date startDate, Date endDate, ProductiveZone productiveZone);
+
+    public void approvedNoteRejection(Calendar startDate, Calendar endDate);
+
+    void approvedDiscounts(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
+
+    void approvedDiscountsGAB(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
+
+    void approvedRawMaterialPayRoll(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
 }

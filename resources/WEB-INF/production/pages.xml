@@ -49,6 +49,14 @@
         </navigation>
     </page>
 
+    <page view-id="/production/rawMaterialPayRollApprove.xhtml" >
+        <navigation>
+            <rule>
+                <redirect view-id="/production/rawMaterialPayRollList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
     <page view-id="/production/rawMaterialPayRoll.xhtml"
           no-conversation-view-id="/production/rawMaterialPayRollList.xhtml">
         <navigation from-action="#{rawMaterialPayRecordDetailsAction.select(rawMaterialPayRecordItem)}">

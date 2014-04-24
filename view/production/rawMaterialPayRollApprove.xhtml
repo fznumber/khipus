@@ -26,7 +26,7 @@
     <f:facet name="header">
                 #{messages['RawMaterialPayRoll.approve']}
     </f:facet>
-    <h:panelGrid columns="2" width="100%">
+    <h:panelGrid columns="2" width="75%">
 
         <s:div>
 
@@ -82,9 +82,9 @@
 
             <s:decorate id="productiveZoneField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
-                <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}"
+                <h:inputText id="productiveZone" value="#{rawMaterialPayRollAction.productiveZone.fullName}"
                              styleClass="input"
-                             maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}">
+                             maxlength="150" tabindex="1" readonly="true">
                 </h:inputText>
                 <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                                  title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
@@ -94,17 +94,14 @@
                 </a4j:commandLink>
             </s:decorate>
 
-            <s:div style="buttons">
-
+            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                 <a4j:commandButton reRender="formPanel,collectedRawMaterialList"
-                                   rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}"
-                                   value="#{messages['RawMaterialPayRoll.generatePayroll']}"
-                                   action="#{rawMaterialPayRollAction.generate}"></a4j:commandButton>
-
+                                   value="#{messages['RawMaterialPayRoll.approvedPayroll']}"
+                                   action="#{rawMaterialPayRollAction.approvedPayRoll}"></a4j:commandButton>
+                <rich:spacer width="20"/>
                 <h:commandButton action="#{rawMaterialPayRollAction.cancel}" value="#{messages['Common.cancel']}"
                                  styleClass="button" immediate="true"/>
-
-            </s:div>
+            </s:decorate>
 
         </s:div>
 
