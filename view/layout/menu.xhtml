@@ -223,7 +223,8 @@
         s:hasPermission('WAREHOUSE','VIEW') or
         s:hasPermission('WAREHOUSEDOCUMENTTYPE','VIEW') or
         s:hasPermission('PRODUCTITEM','VIEW') or
-        s:hasPermission('WAREHOUSEPROVIDERMAN','VIEW')}">
+        s:hasPermission('WAREHOUSEPROVIDERMAN','VIEW') or
+        s:hasPermission('APPROVEDALLACCOUNTENTRIES','VIEW')}">
     <rich:menuItem submitMode="none"
                    rendered="#{s:hasPermission('WAREHOUSEPURCHASEORDER','VIEW')}"
                    styleClass="main-menu-item">
@@ -247,9 +248,9 @@
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTDELIVERY','VIEW')}">
+                   rendered="#{s:hasPermission('APPROVEDALLACCOUNTENTRIES','VIEW')}">
         <s:link view="/warehouse/productDeliveryList.xhtml"
-                value="#{messages['menu.warehouse.productDelivery']}"
+                value="#{messages['menu.warehouse.accountEntries']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
