@@ -241,15 +241,8 @@
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}">
-        <s:link view="/warehouse/warehouseVoucherList.xhtml"
-                value="#{messages['menu.warehouse.warehouseVoucher']}"
-                propagation="none"/>
-    </rich:menuItem>
-    <rich:menuItem submitMode="none"
-                   styleClass="main-menu-item"
                    rendered="#{s:hasPermission('APPROVEDALLACCOUNTENTRIES','VIEW')}">
-        <s:link view="/warehouse/productDeliveryList.xhtml"
+        <s:link view="/warehouse/accountEntriesList.xhtml"
                 value="#{messages['menu.warehouse.accountEntries']}"
                 propagation="none"/>
     </rich:menuItem>

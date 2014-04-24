@@ -13,6 +13,10 @@
     <framework:entity-query name="businessUnitQuery"
                             ejbql="select b from BusinessUnit b left join fetch b.organization order by b.position asc"/>
 
+    <factory name="modulesFinancesList" value="#{businessUnitQuery}"/>
+    <framework:entity-query name="modulesFinancesQuery"
+                            ejbql="select b from FinancesModule b "/>
+
     <factory name="businessUnitsByUserList" value="#{businessUnitsByUserQuery}"/>
     <framework:entity-query name="businessUnitsByUserQuery"
                             ejbql="select businessUnit from com.encens.khipus.model.admin.BusinessUnit businessUnit left join fetch b.organization"
