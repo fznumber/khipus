@@ -148,20 +148,19 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
 
     @Override
     public void moveSessionsProductor(RawMaterialProducer rawMaterialProducer, Date date,ProductiveZone productiveZone) throws SalaryMovementProducerException{
-        Calendar calendar = Calendar.getInstance();
+        /*Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.MONTH,Calendar.MARCH);
-        calendar.set(Calendar.DAY_OF_MONTH,1);
-        //Date initDate = DateUtils.getFirsDayFromPeriod(date);
-        Date initDate = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_MONTH,15);
-        //Date endDate = DateUtils.getLastDayFromPeriod(date);
-        Date endDate = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH,1);*/
+        Date initDate = DateUtils.getFirsDayFromPeriod(date);
+       /* Date initDate = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH,15);*/
+        Date endDate = DateUtils.getLastDayFromPeriod(date);
+        //Date endDate = calendar.getTime();
 
         List<RawMaterialPayRoll> rawMaterialPayRolls = getRawMaterialPayRollByGAB(initDate,endDate,productiveZone,rawMaterialProducer.getProductiveZone());
 
-        //if(rawMaterialPayRolls.size() > 0)
-        if(false)
+        if(rawMaterialPayRolls.size() > 0)
         {
            throw new SalaryMovementProducerException();
         }else{
@@ -190,9 +189,6 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
                     if(aux)
                     {
                         createNewRawMaterialCollectionSession(rawMaterialProducer.getProductiveZone(),cocurrent,collectedRawMaterial);
-                        /*cocurrent.getCollectedRawMaterialList().remove(collectedRawMaterial);
-                        getEntityManager().merge(cocurrent);
-                        getEntityManager().flush();*/
                     }
                 }
 

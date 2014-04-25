@@ -128,22 +128,21 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
                return Outcome.REDISPLAY;
            }
 
-          /* if(moveDiscoints)
+           if(moveDiscoints)
            {
                try {
-               salaryMovementProducerService.moveDiscountsProductor(getInstance(),new Date(), productiveZoneConcurrent);
+                    salaryMovementProducerService.moveDiscountsProductor(getInstance(),new Date(), productiveZoneConcurrent);
                } catch (SalaryMovementProducerException e) {
                    addErrorHasRawMaterialPayRoll();
                    return Outcome.REDISPLAY;
                }
-           }*/
+           }
 
            if(moveSessions)
            {
                try {
                    salaryMovementProducerService.moveSessionsProductor(getInstance(), new Date(), productiveZoneConcurrent);
                } catch (SalaryMovementProducerException e) {
-                   //agregar mensage
                    addErrorHasRawMaterialPayRoll();
                    return Outcome.REDISPLAY;
                }
