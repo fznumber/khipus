@@ -14,6 +14,7 @@ import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
+import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.MoneyUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
@@ -311,9 +312,18 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
     @Create
     public void init() {
 
+        this.month = Month.getMonth(new Date());
+        Calendar end = Calendar.getInstance();
+        end.setTime(new Date());
+        if(end.get(Calendar.DAY_OF_MONTH) > 15)
+            this.periodo = Periodo.SECONDPERIODO;
+        else
+            this.periodo = Periodo.FIRSTPERIODO;
+
         restrictions = new String[]{"rawMaterialPayRoll.productiveZone = #{rawMaterialPayRollReportAction.zone}",
                 "rawMaterialPayRoll.metaProduct = #{rawMaterialPayRollReportAction.metaProduct}",
                 "rawMaterialPayRoll.startDate = #{rawMaterialPayRollReportAction.startDate}",
+                "rawMaterialPayRecord.totalAmount <> #{0.0}",
                 "rawMaterialPayRoll.endDate = #{rawMaterialPayRollReportAction.endDate}"
         };
 
@@ -481,7 +491,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         String fileReport = (isFirst) ? "rawMaterialCollectedByGAB1daReport.jrxml" : "rawMaterialCollectedByGAB2daReport.jrxml";
 
         int cont = periodo.getInitDay();
-        for (int i = periodo.getInitDay(); i <= periodo.getEndDay(month.getValue() + 1, gestion.getYear()); i++) {
+        for (int i = periodo.getInitDay(); i <= (isFirst?15:31); i++) {
 
             params.put("DAY" + cont, "D" + i);
             cont++;
@@ -500,8 +510,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/production/reports/" + fileReport,
-               // getSqlCollected(),
-                getSqlOld(),
+                getSqlCollected(),
+                //getSqlOld(),
                 params,
                 "rotatoryFundReport");
 
@@ -540,6 +550,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         int initDay = periodo.getInitDay();
         int endDay = periodo.getEndDay(month.getValue() + 1, gestion.getYear());
         int cont = 1;
+        int cantDays = 1;
         String sql = "";
         int month_act = (month.getValue()) + 1;
         sql += "select productor\n" ;
@@ -548,13 +559,19 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             //sql += ((cont == 1) ? "" : " , ")+"max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0)) AS D"+cont+"\n";
             sql += ", max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0)) AS D"+cont+"\n";
             cont++;
+            cantDays ++;
         }
         cont = 1;
         if (periodo.getResourceKey().toString().compareTo("Periodo.first") == 0) {
-            sql += ", 0 AS D16";
+            sql += ", 0 AS D16 \n";
+        }
+        else{
+            for(int i= cantDays ; i<=17;i++){
+                sql += ", 0 as D"+i+"\n";
+            }
         }
         for (int i = initDay; i <= endDay; i++) {
-            sql += ((cont == 1) ? "," : " + ")+"max(decode(fecha,to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy'),cantidad,0))\n";
+            sql += ((cont == 1) ? "," : " + ")+"max(cantidad)\n";
             cont++;
         }
 
@@ -567,6 +584,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 "on pe.idpersona = am.idproductormateriaprima\n" +
                 "where sa.fecha between to_date('" + initDay + "/" + month_act + "/" + gestion.getYear() + "') and to_date('" + endDay + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy')\n" +
                 "and sa.idzonaproductiva = "+ zone.getId().toString() + "\n" +
+                "and am.cantidad <> 0\n" +
                 "order by sa.fecha\n" +
                 ")\n" +
                 "group by productor\n" +

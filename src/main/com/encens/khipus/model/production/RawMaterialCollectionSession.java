@@ -11,6 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +47,10 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
 
     @Column(name = "FECHA",columnDefinition = "DATE" , nullable = false)
     private Date date;
+
+    @Column(name = "ESTADO", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
@@ -83,11 +88,11 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
         this.date = date;
     }
 
-    public com.encens.khipus.model.admin.Company getCompany() {
+    public Company getCompany() {
         return company;
     }
 
-    public void setCompany(com.encens.khipus.model.admin.Company company) {
+    public void setCompany(Company company) {
         this.company = company;
     }
 
@@ -129,5 +134,13 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
 
     public void setMetaProduct(MetaProduct metaProduct) {
         this.metaProduct = metaProduct;
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

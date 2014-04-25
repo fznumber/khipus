@@ -462,6 +462,9 @@ public class ProductionPlanningReportAction extends GenericReportAction {
         if (statePlaning == ProductionPlanningState.PENDING)
             estateLiteral = MessageUtils.getMessage("ProductionPlanning.state.pending");
 
+        if (statePlaning == ProductionPlanningState.TABULATED)
+            estateLiteral = MessageUtils.getMessage("productionOrderForPlanning.estateOrder.tabulated");
+
         return estateLiteral;
     }
 

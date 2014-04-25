@@ -1,18 +1,20 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.production.SalaryMovementProducerException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.contacts.Extension;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.customers.ExtensionService;
-import com.encens.khipus.service.production.ProductiveZoneService;
-import com.encens.khipus.service.production.RawMaterialProducerService;
+import com.encens.khipus.service.production.*;
+import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static org.jboss.seam.international.StatusMessage.Severity.WARN;
@@ -30,10 +32,23 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
     @In
     private ProductiveZoneService productiveZoneService;
 
+    @In
+    private LogProductiveZoneService logProductiveZoneService;
+
+    @In
+    private CollectedRawMaterialService collectedRawMaterialService;
+
+    @In
+    private SalaryMovementProducerService salaryMovementProducerService;
+
     public List<Extension> extensionList;
     private boolean showExtension = false;
+    private boolean moveDiscoints = false;
+    private boolean moveSessions = false;
+    private boolean showOptionsProductiveZone = false;
 
     private List<ProductiveZone> productiveZones;
+    private ProductiveZone  productiveZoneConcurrent;
 
     @Override
     protected GenericService getService() {
@@ -75,8 +90,13 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
 
     public void selectProductiveZone(ProductiveZone productiveZone) {
         try {
+            productiveZoneConcurrent = getInstance().getProductiveZone();
             productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
             getInstance().setProductiveZone(productiveZone);
+            if(productiveZone != productiveZoneConcurrent)
+                showOptionsProductiveZone = true;
+            else
+                showOptionsProductiveZone = false;
         } catch (Exception ex) {
             log.error(ex);
             facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "Common.globalError.description");
@@ -94,8 +114,102 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
         if (checkLicenseBoundaries() == false) {
             return Outcome.REDISPLAY;
         }
+        if(getInstance().getProductiveZone() != productiveZoneConcurrent)
+        {
+           if(!moveSessions)
+           if(verifySessionsToRawMaterialProducer())
+           {
+              return Outcome.REDISPLAY;
+           }
+
+           if(!moveDiscoints)
+           if(verifyDiscointToRawMaterialProducer())
+           {
+               return Outcome.REDISPLAY;
+           }
+
+           if(moveDiscoints)
+           {
+               try {
+                    salaryMovementProducerService.moveDiscountsProductor(getInstance(),new Date(), productiveZoneConcurrent);
+               } catch (SalaryMovementProducerException e) {
+                   addErrorHasRawMaterialPayRoll();
+                   return Outcome.REDISPLAY;
+               }
+           }
+
+           if(moveSessions)
+           {
+               try {
+                   salaryMovementProducerService.moveSessionsProductor(getInstance(), new Date(), productiveZoneConcurrent);
+               } catch (SalaryMovementProducerException e) {
+                   addErrorHasRawMaterialPayRoll();
+                   return Outcome.REDISPLAY;
+               }
+           }
+
+           LogProductiveZone logProductiveZone = new LogProductiveZone();
+           logProductiveZone.setDate(new Date());
+           logProductiveZone.setProductiveZone(productiveZoneConcurrent);
+           logProductiveZone.setRawMaterialProducer(getInstance());
+           logProductiveZoneService.createLog(logProductiveZone);
+        }
 
         return super.update();
+    }
+
+    private void addErrorHasRawMaterialPayRoll() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialProducer.error.errorHasRawMaterialPayRoll");
+    }
+
+    private Boolean verifyDiscointToRawMaterialProducer()
+    {
+        /*Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MONTH, Calendar.MARCH);
+        calendar.set(Calendar.DAY_OF_MONTH,1);*/
+        Date startDate = DateUtils.getFirsDayFromPeriod(new Date());
+        Date endDate = DateUtils.getLastDayFromPeriod(new Date());
+        /*Date startDate = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH,15);
+        Date endDate = calendar.getTime();*/
+
+
+        if(collectedRawMaterialService.getHasDiscounts(startDate, endDate, getInstance()))
+        {
+            addErrorHasDiscounts(getInstance().getName());
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean verifySessionsToRawMaterialProducer()
+    {
+        /*Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MONTH,Calendar.MARCH);
+        calendar.set(Calendar.DAY_OF_MONTH,1);*/
+        Date startDate = DateUtils.getFirsDayFromPeriod(new Date());
+        Date endDate = DateUtils.getLastDayFromPeriod(new Date());
+        /*Date startDate = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH,15);
+        Date endDate = calendar.getTime();*/
+
+
+
+        if(collectedRawMaterialService.getHasCollected(startDate, endDate, getInstance()))
+        {
+            addErrorHasSessions(getInstance().getName());
+            return true;
+        }
+        return false;
+    }
+
+    protected void addErrorHasDiscounts(String name) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialProducer.error.errorHasDiscounts",name);
+    }
+    protected void addErrorHasSessions(String name) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialProducer.error.errorHasSessions",name);
     }
 
     @Override
@@ -120,5 +234,37 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
         }
 
         return true;
+    }
+
+    public ProductiveZone getProductiveZoneConcurrent() {
+        return productiveZoneConcurrent;
+    }
+
+    public void setProductiveZoneConcurrent(ProductiveZone productiveZoneConcurrent) {
+        this.productiveZoneConcurrent = productiveZoneConcurrent;
+    }
+
+    public boolean isMoveDiscoints() {
+        return moveDiscoints;
+    }
+
+    public void setMoveDiscoints(boolean moveDiscoints) {
+        this.moveDiscoints = moveDiscoints;
+    }
+
+    public boolean isMoveSessions() {
+        return moveSessions;
+    }
+
+    public void setMoveSessions(boolean moveSessions) {
+        this.moveSessions = moveSessions;
+    }
+
+    public boolean isShowOptionsProductiveZone() {
+        return showOptionsProductiveZone;
+    }
+
+    public void setShowOptionsProductiveZone(boolean showOptionsProductiveZone) {
+        this.showOptionsProductiveZone = showOptionsProductiveZone;
     }
 }

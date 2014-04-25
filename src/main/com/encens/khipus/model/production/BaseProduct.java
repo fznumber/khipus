@@ -50,6 +50,12 @@ public class BaseProduct implements BaseModel {
     @Enumerated(EnumType.STRING)
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
+    @Column(name = "NO_TRANS",nullable = true)
+    private String numberTransaction;
+
+    @Column(name = "NO_VALE",nullable = true)
+    private String numberVoucher;
+
     @OneToMany(mappedBy = "baseProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
@@ -163,5 +169,21 @@ public class BaseProduct implements BaseModel {
 
     public void setState(ProductionPlanningState state) {
         this.state = state;
+    }
+
+    public String getNumberVoucher() {
+        return numberVoucher;
+    }
+
+    public void setNumberVoucher(String numberVoucher) {
+        this.numberVoucher = numberVoucher;
+    }
+
+    public String getNumberTransaction() {
+        return numberTransaction;
+    }
+
+    public void setNumberTransaction(String numberTransaction) {
+        this.numberTransaction = numberTransaction;
     }
 }

@@ -46,6 +46,10 @@ public class SalaryMovementGAB implements com.encens.khipus.model.BaseModel {
     @Column(name = "DESCRIPCION",nullable = true)
     private String description;
 
+    @Column(name = "ESTADO",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
+
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
     private Date date;
 
@@ -110,5 +114,13 @@ public class SalaryMovementGAB implements com.encens.khipus.model.BaseModel {
 
     public void setTypeMovementGAB(TypeMovementGAB typeMovementGAB) {
         this.typeMovementGAB = typeMovementGAB;
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

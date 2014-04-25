@@ -44,6 +44,13 @@ public class ProductionOrder implements BaseModel {
     @Enumerated(EnumType.STRING)
     private ProductionPlanningState estateOrder = ProductionPlanningState.PENDING;
 
+    @Column(name = "NO_VALE",nullable = true)
+    private String numberVoucher;
+
+    @Column(name = "NO_TRANS",nullable = true)
+    private String numberTransaction;
+
+
     @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double expendAmount;
 
@@ -315,5 +322,20 @@ public class ProductionOrder implements BaseModel {
 
     public void setGreasePercentage(Double greasePercentage) {
         this.greasePercentage = greasePercentage;
+    }
+
+    public String getNumberVoucher() {
+        return numberVoucher;
+    }
+
+    public void setNumberVoucher(String numberVoucher) {
+        this.numberVoucher = numberVoucher;
+    }
+    public String getNumberTransaction() {
+        return numberTransaction;
+    }
+
+    public void setNumberTransaction(String numberTransaction) {
+        this.numberTransaction = numberTransaction;
     }
 }

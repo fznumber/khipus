@@ -1,5 +1,6 @@
 package com.encens.khipus.model.finances;
 
+import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyNumberListener;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.util.Constants;
@@ -23,7 +24,7 @@ import java.util.List;
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 @Table(name = "SF_TMPENC", schema = Constants.FINANCES_SCHEMA)
-public class Voucher {
+public class Voucher implements BaseModel{
     @Id
     @GeneratedValue(generator = "Voucher.sequenceGenerator")
     @Column(name = "NO_TRANS", nullable = false, insertable = true, updatable = false, length = 10)
@@ -446,5 +447,11 @@ public class Voucher {
                 ", userNumber='" + userNumber + '\'' +
                 ", gloss='" + gloss + '\'' +
                 '}';
+    }
+
+
+    @Override
+    public Object getId() {
+        return this.transactionNumber;
     }
 }

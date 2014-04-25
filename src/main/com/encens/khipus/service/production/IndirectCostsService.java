@@ -8,6 +8,7 @@ import com.encens.khipus.model.production.SingleProduct;
 import com.encens.khipus.model.warehouse.SubGroup;
 
 import javax.ejb.Local;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,9 +27,15 @@ public interface IndirectCostsService extends GenericService {
 
     public Double getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay);
 
-    public List<IndirectCosts> getCostTotalIndirect(ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost indirectCost);
+    public List<IndirectCosts> getCostTotalIndirect(Date dateConcurrent, int totalDaysNotProducer,ProductionOrder productionOrder, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost indirectCost);
 
-    public List<IndirectCosts> getCostTotalIndirectSingle(SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost);
+    public List<IndirectCosts> getCostTotalIndirectSingle(Date dateConcurrent, int totalDaysNotProducer,SingleProduct single, Double totalVolumDay, Double totalVolumGeneralDay, PeriodIndirectCost periodIndirectCost);
 
     public PeriodIndirectCost getLastPeroidIndirectCost();
+
+    public int calculateCantDaysProducer(Date date);
+
+    public PeriodIndirectCost getConcurrentPeroidIndirectCost(Date dateConcurrent);
+
+    public List<IndirectCosts> getIndirectCostGeneral(PeriodIndirectCost indirectCost);
 }

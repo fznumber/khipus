@@ -13,7 +13,8 @@ import java.util.Date;
                                 " from SalaryMovementProducer salaryMovementProducer " +
                                 " join SalaryMovementProducer.typeMovementProducer typeMovementProducer" +
                                 " where salaryMovementProducer.date between :startDate and :endDate " +
-                                " and salaryMovementProducer.rawMaterialProducer = :rawMaterialProducer ")
+                                " and salaryMovementProducer.rawMaterialProducer = :rawMaterialProducer " +
+                                " and salaryMovementProducer.rawMaterialProducer.productiveZone = :productiveZone")
         }
 )
 
@@ -51,6 +52,14 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
 
     @Column(name = "VALOR",columnDefinition = "NUMBER(16,2)", nullable = false)
     private double valor;
+
+    @Column(name = "ESTADO", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
+
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = true, updatable = false, insertable = true)
+    private ProductiveZone productiveZone;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
@@ -110,5 +119,21 @@ public class SalaryMovementProducer implements com.encens.khipus.model.BaseModel
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public ProductiveZone getProductiveZone() {
+        return productiveZone;
+    }
+
+    public void setProductiveZone(ProductiveZone productiveZone) {
+        this.productiveZone = productiveZone;
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

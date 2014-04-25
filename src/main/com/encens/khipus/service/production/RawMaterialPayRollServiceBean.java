@@ -200,7 +200,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             }
 
             //RawMaterialProducerDiscount discount = rawMaterialProducerDiscountService.prepareDiscount(aux.producer);
-            RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer, rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
+            RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer, rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(),rawMaterialPayRoll.getProductiveZone());
             //todo: arreglar el alcohol
             alcoholDiff += ((alcoholByGAB * (aux.procentaje)) - RoundUtil.getRoundValue(alcoholByGAB * (aux.procentaje), 2, RoundUtil.RoundMode.SYMMETRIC));
             discount.setAlcohol(RoundUtil.getRoundValue(alcoholByGAB * (aux.procentaje), 2, RoundUtil.RoundMode.SYMMETRIC));
@@ -964,6 +964,93 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     }
 
     @Override
+    public List<RawMaterialPayRoll> findAllPayRollesByGAB(Date startDate, Date endDate, ProductiveZone productiveZone) {
+        List<RawMaterialPayRoll> rawMaterialPayRolls;
+        if(productiveZone != null) {
+            rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getPayRollInDatesAndGAB")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .getResultList();
+        }
+        else{
+            rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getPayRollInDates")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .getResultList();
+        }
+        return rawMaterialPayRolls;
+    }
+
+    @Override
+    public void approvedNoteRejection(Calendar startDate, Calendar endDate) {
+        getEntityManager().createQuery("update RawMaterialRejectionNote rawMaterialRejectionNote set rawMaterialRejectionNote.state = 'APPROVED'" +
+                " where rawMaterialRejectionNote.date between :startDate and :endDate ")
+                .setParameter("startDate", startDate, TemporalType.DATE)
+                .setParameter("endDate", endDate, TemporalType.DATE)
+                .executeUpdate();
+    }
+
+    @Override
+    public void approvedDiscounts(Calendar startDate, Calendar endDate, ProductiveZone productiveZone) {
+        if(productiveZone != null) {
+            getEntityManager().createQuery("update SalaryMovementProducer salaryMovementProducer set salaryMovementProducer.state = 'APPROVED'" +
+                    " where salaryMovementProducer.date between :startDate and :endDate " +
+                    " and salaryMovementProducer.productiveZone = :productiveZone")
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .executeUpdate();
+        }else{
+            getEntityManager().createQuery("update SalaryMovementProducer salaryMovementProducer set salaryMovementProducer.state = 'APPROVED'" +
+                    " where salaryMovementProducer.date between :startDate and :endDate ")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .executeUpdate();
+        }
+    }
+
+    @Override
+    public void approvedDiscountsGAB(Calendar startDate, Calendar endDate, ProductiveZone productiveZone) {
+        if(productiveZone != null) {
+            getEntityManager().createQuery("update SalaryMovementGAB salaryMovementGAB set salaryMovementGAB.state = 'APPROVED'" +
+                    " where salaryMovementGAB.date between :startDate and :endDate " +
+                    " and salaryMovementGAB.productiveZone = :productiveZone")
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .executeUpdate();
+        }else{
+            getEntityManager().createQuery("update SalaryMovementGAB salaryMovementGAB set salaryMovementGAB.state = 'APPROVED'" +
+                    " where salaryMovementGAB.date between :startDate and :endDate ")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .executeUpdate();
+        }
+    }
+
+    @Override
+    public void approvedRawMaterialPayRoll(Calendar startDate, Calendar endDate, ProductiveZone productiveZone) {
+        if(productiveZone != null) {
+            getEntityManager().createQuery("update RawMaterialPayRoll rawMaterialPayRoll set rawMaterialPayRoll.state = 'APPROVED'" +
+                    " where rawMaterialPayRoll.startDate = :startDate " +
+                    " and rawMaterialPayRoll.endDate = :endDate " +
+                    " and rawMaterialPayRoll.productiveZone = :productiveZone")
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .executeUpdate();
+        }else{
+            getEntityManager().createQuery("update RawMaterialPayRoll rawMaterialPayRoll set rawMaterialPayRoll.state = 'APPROVED'" +
+                    " where rawMaterialPayRoll.startDate = :startDate " +
+                    " and rawMaterialPayRoll.endDate = :endDate " )
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .executeUpdate();
+        }
+    }
+
+    @Override
     public List<RawMaterialPayRoll> findAll() {
         List<RawMaterialPayRoll> rawMaterialPayRolls = getEntityManager().createNamedQuery("RawMaterialPayRoll.getAllMaterialPayRoll")
                 .getResultList();
@@ -981,5 +1068,24 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 .getResultList();
 
         return (list.size() == 0) ? false : true;
+    }
+
+    @Override
+    public void approvedSession(Calendar startDate, Calendar endDate, ProductiveZone productiveZone) {
+        if(productiveZone !=null) {
+            getEntityManager().createQuery("update RawMaterialCollectionSession rawMaterialCollectionSession set rawMaterialCollectionSession.state = 'APPROVED'" +
+                    " where rawMaterialCollectionSession.date between :startDate and :endDate " +
+                    " and rawMaterialCollectionSession.productiveZone = :productiveZone")
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("productiveZone",productiveZone)
+                    .executeUpdate();
+        }else{
+            getEntityManager().createQuery("update RawMaterialCollectionSession rawMaterialCollectionSession set rawMaterialCollectionSession.state = 'APPROVED'" +
+                    " where rawMaterialCollectionSession.date between :startDate and :endDate ")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate", endDate, TemporalType.DATE)
+                    .executeUpdate();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.production.CollectionForm;
+import com.encens.khipus.model.production.CollectionFormState;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -20,7 +21,8 @@ public class CollectionFormDataModel extends QueryDataModel<Long, CollectionForm
 
     private static final String[] RESTRICTIONS = {
             "collectionForm.date >= #{collectionFormDataModel.privateCriteria.startDate}",
-            "collectionForm.date <= #{collectionFormDataModel.privateCriteria.endDate}"
+            "collectionForm.date <= #{collectionFormDataModel.privateCriteria.endDate}",
+            "collectionForm.state = #{collectionFormDataModel.privateCriteria.state}"
     };
 
     @Create
@@ -42,6 +44,7 @@ public class CollectionFormDataModel extends QueryDataModel<Long, CollectionForm
     public PrivateCriteria getPrivateCriteria() {
         if (privateCriteria == null) {
             privateCriteria = new PrivateCriteria();
+            privateCriteria.setState(CollectionFormState.PEN);
         }
         return privateCriteria;
     }
@@ -49,11 +52,20 @@ public class CollectionFormDataModel extends QueryDataModel<Long, CollectionForm
     public static class PrivateCriteria {
         private Date startDate;
         private Date endDate;
+        private CollectionFormState state;
 
         public Date getStartDate() { return startDate; }
         public void setStartDate(Date startDate) { this.startDate = startDate; }
 
         public Date getEndDate() { return endDate; }
         public void setEndDate(Date endDate) { this.endDate = endDate; }
+
+        public CollectionFormState getState() {
+            return state;
+        }
+
+        public void setState(CollectionFormState state) {
+            this.state = state;
+        }
     }
 }

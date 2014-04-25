@@ -1,6 +1,7 @@
 package com.encens.khipus.action.integration.rrhhmark;
 
 import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.employees.Mark;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;

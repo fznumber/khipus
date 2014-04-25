@@ -9,6 +9,7 @@ import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 
@@ -31,6 +32,8 @@ public interface ProductionPlanningService extends GenericService {
 
     public void updateProductionPlanning(ProductionPlanning instance,ProductionOrder order) throws ConcurrencyException, EntryDuplicatedException;
 
+    public void updateProductionPlanning(ProductionPlanning instance) throws ConcurrencyException, EntryDuplicatedException;
+
     public void deleteIndirectCost(ProductionOrder order);
 
     public void deleteIndirectCost(SingleProduct singleProduct);
@@ -42,4 +45,14 @@ public interface ProductionPlanningService extends GenericService {
     public void addIndirectCostToSingleProduct(IndirectCosts indirectCosts);
 
     public Double calculateTotalMilk(ProductionPlanning planning);
+
+    public void updateOrdenProduction(ProductionOrder order);
+
+    public void updateProductionBase(BaseProduct base);
+
+    public void updateSingleProduct(SingleProduct singleProduct);
+
+    public List<ProductionPlanning> getAllProductionPlanningByDates(Date startDate,Date endDate);
+
+    public void updateProductionPlanningDirect(ProductionPlanning instance);
 }

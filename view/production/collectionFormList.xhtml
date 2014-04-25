@@ -19,9 +19,24 @@
                     <ui:define name="label">#{messages['CollectionForm.startDate']}</ui:define>
                     <rich:calendar value="#{collectionFormDataModel.privateCriteria.startDate}"/>
                 </s:decorate>
+
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['CollectionForm.endDate']}</ui:define>
                     <rich:calendar value="#{collectionFormDataModel.privateCriteria.endDate}"/>
+                </s:decorate>
+
+                <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['CollectionForm.state']}</ui:define>
+                    <h:selectOneMenu id="state"
+                                     value="#{collectionFormDataModel.privateCriteria.state}"
+                                     styleClass="inputMedium"
+                                     tabindex="3">
+                        <s:selectItems value="#{collectionFormStateEnum}"
+                                       var="element"
+                                       label="#{messages[element.resourceKey]}"
+                                       noSelectionLabel=""
+                                       hideNoSelectionLabel="false"/>
+                    </h:selectOneMenu>
                     <a4j:commandButton action="#{collectionFormDataModel.search}"
                                        reRender="collectionFormList, dataScroller"
                                        styleClass="button" value="#{messages['Common.search']}" id="searchButtonId"

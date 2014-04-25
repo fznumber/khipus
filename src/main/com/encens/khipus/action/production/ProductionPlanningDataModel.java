@@ -8,6 +8,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,8 +44,9 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
                 "left join fetch productionPlanning.productionOrderList productionOrder " +
                 "left join fetch productionOrder.productComposition productComposition " +
                 "left join fetch productComposition.processedProduct ";*/
-        return "select productionPlanning " +
-                "from ProductionPlanning productionPlanning " ;
+        return "select DISTINCT productionPlanning " +
+                " from ProductionPlanning productionPlanning " +
+                " left join fetch productionPlanning.productionOrderList productionOrder " ;
     }
 
     @Override
@@ -63,6 +65,10 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         this.modelCriteria = modelCriteria;
     }
 
+    public List<ProductionPlanning> getListProductoPlannig(){
+        return this.getList(1,getCount().intValue());
+    }
+
     public static class ModelCriteria {
         private String order;
         private Date startDate;
@@ -77,6 +83,11 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getStartDate() {
+            /*Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR,2014);
+            calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
+            calendar.set(Calendar.DAY_OF_MONTH,28);
+            return calendar.getTime();*/
             return startDate;
         }
 
@@ -85,6 +96,12 @@ public class ProductionPlanningDataModel extends QueryDataModel<Long, Production
         }
 
         public Date getEndDate() {
+
+            /*Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR,2014);
+            calendar.set(Calendar.MONTH,Calendar.MARCH);
+            calendar.set(Calendar.DAY_OF_MONTH,31);
+            return calendar.getTime();*/
             return endDate;
         }
 

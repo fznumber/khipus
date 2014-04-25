@@ -167,6 +167,13 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
 
     @Create
     public void init() {
+        this.month = Month.getMonth(new Date());
+        Calendar end = Calendar.getInstance();
+        end.setTime(new Date());
+        if(end.get(Calendar.DAY_OF_MONTH) > 15)
+            this.periodo = Periodo.SECONDPERIODO;
+        else
+            this.periodo = Periodo.FIRSTPERIODO;
     }
 
     public RawMaterialPayRollService getRawMaterialPayRollService() {

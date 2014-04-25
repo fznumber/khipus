@@ -1,27 +1,20 @@
 package com.encens.khipus.action.warehouse;
 
-import com.encens.khipus.action.fixedassets.LiquidationPaymentAction;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
-import com.encens.khipus.exception.purchase.*;
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.interceptor.BusinessUnitRestrict;
 import com.encens.khipus.interceptor.BusinessUnitRestriction;
-import com.encens.khipus.model.finances.Voucher;
-import com.encens.khipus.model.purchases.PurchaseOrder;
 import com.encens.khipus.model.warehouse.*;
-import com.encens.khipus.service.finances.VoucherService;
 import com.encens.khipus.service.warehouse.ApprovalWarehouseVoucherService;
 import com.encens.khipus.service.warehouse.MovementDetailService;
-import com.encens.khipus.service.warehouse.WarehousePurchaseOrderService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
-import com.encens.khipus.util.purchases.PurchaseOrderValidator;
 import com.encens.khipus.util.query.QueryUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
@@ -40,8 +33,6 @@ import java.math.BigDecimal;
 @BusinessUnitRestrict
 public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction {
 
-    public static final String FINALIZED_OUTCOME = "Finalized";
-    public static final String LIQUIDATED_OUTCOME = "Liquidated";
     public static String APPROVED_OUTCOME = "Approved";
 
 
@@ -49,19 +40,7 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
 
     @In
-    private VoucherService voucherService;
-
-    @In
     private MovementDetailService movementDetailService;
-
-    @In(value = "warehousePurchaseOrderService")
-    private WarehousePurchaseOrderService warehousePurchaseOrderService;
-
-    @In(create = true)
-    private PurchaseOrderValidator purchaseOrderValidator;
-
-    @In(create = true, value = "liquidationPaymentAction")
-    private LiquidationPaymentAction liquidationPaymentAction;
 
     @Override
     @BusinessUnitRestriction(value = "#{warehouseVoucherUpdateAction.warehouseVoucher}", postValidation = true)
@@ -138,15 +117,7 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     @Restrict("#{s:hasPermission('WAREHOUSEVOUCHERAPPROVAL','VIEW')}")
     public String approve() {
         resetValidateQuantityMappings();
-        Voucher voucher = new Voucher();
         try {
-            //primeramente ejecuta las operacion y verifica que no haya errores
-
-            if(warehouseVoucher.getPurchaseOrder() != null)
-            {
-                voucher = warehousePurchaseOrderService.liquidatePurchaseOrder(warehouseVoucher.getPurchaseOrder());
-            }
-
             for (MovementDetail movementDetail : inventoryMovement.getMovementDetailList()) {
                 buildValidateQuantityMappings(movementDetail);
             }
@@ -156,93 +127,45 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
                     movementDetailWithoutWarnings);
             addWarehouseVoucherApproveMessage();
             showMovementDetailWarningMessages();
-
-            //luego hace persistente los cambios si es que no hubo ningun error en ambos el vale y la orden de compra
-
-        } catch (WarehouseDocumentTypeNotFoundException e) {
-            addWarehouseDocumentTypeErrorMessage();
-            voucherService.deleteVoucher(voucher);
-            return Outcome.REDISPLAY;
-        } catch (PurchaseOrderDetailEmptyException e) {
-            addPurchaseOrderEmptyMessage(warehouseVoucher.getPurchaseOrder());
-            voucherService.deleteVoucher(voucher);
-            return Outcome.REDISPLAY;
-        } catch (PurchaseOrderLiquidatedException e) {
-            addPurchaseOrderLiquidatedErrorMessage(warehouseVoucher.getPurchaseOrder());
-            voucherService.deleteVoucher(voucher);
-            return LIQUIDATED_OUTCOME;
-        } catch (AdvancePaymentPendingException e) {
-            addAdvancePaymentPendingErrorMessage(warehouseVoucher.getPurchaseOrder());
-            voucherService.deleteVoucher(voucher);
-            return Outcome.REDISPLAY;
-        } catch (RotatoryFundNullifiedException e) {
-            liquidationPaymentAction.addRotatoryFundAnnulledError();
-            voucherService.deleteVoucher(voucher);
-            return Outcome.FAIL;
-        } catch (RotatoryFundLiquidatedException e) {
-            liquidationPaymentAction.addRotatoryFundLiquidatedError();
-            voucherService.deleteVoucher(voucher);
-            return Outcome.FAIL;
-        } catch (CollectionSumExceedsRotatoryFundAmountException e) {
-            liquidationPaymentAction.addCollectionSumExceedsRotatoryFundAmountError();
-            voucherService.deleteVoucher(voucher);
-            return Outcome.FAIL;
-        } catch (RotatoryFundConcurrencyException e) {
-            liquidationPaymentAction.addRotatoryFundConcurrencyMessage();
-            voucherService.deleteVoucher(voucher);
-            return Outcome.FAIL;
         } catch (InventoryException e) {
             addInventoryMessages(e.getInventoryMessages());
-            voucherService.deleteVoucher(voucher);
             return Outcome.REDISPLAY;
         } catch (WarehouseVoucherApprovedException e) {
             addWarehouseVoucherApprovedMessage();
-            voucherService.deleteVoucher(voucher);
             return APPROVED_OUTCOME;
         } catch (WarehouseVoucherEmptyException e) {
             addWarehouseVoucherEmptyException();
-            voucherService.deleteVoucher(voucher);
             return Outcome.REDISPLAY;
         } catch (WarehouseVoucherNotFoundException e) {
             addNotFoundMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (ProductItemAmountException e) {
             addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (InventoryUnitaryBalanceException e) {
             addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (InventoryProductItemNotFoundException e) {
             addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
                     e.getProductItem(), e.getWarehouse());
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (CompanyConfigurationNotFoundException e) {
             addCompanyConfigurationNotFoundErrorMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (FinancesExchangeRateNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (FinancesCurrencyNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (ConcurrencyException e) {
             addUpdateConcurrencyMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (ReferentialIntegrityException e) {
             addDeleteReferentialIntegrityMessage();
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
-            voucherService.deleteVoucher(voucher);
             return Outcome.FAIL;
         }
 
@@ -495,24 +418,5 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     public void addWarehouseVoucherStateChangedErrorMessage(WarehouseVoucherStateException e) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
                 "WarehouseVoucher.error.annulled");
-    }
-
-    private void addReComputePaymentRequiredMessage() {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR, "PurchaseOrder.error.reComputePaymentRequired");
-    }
-
-    private void addPurchaseOrderEmptyMessage(PurchaseOrder purchaseOrder) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "PurchaseOrder.error.purchaseOrderDetailEmpty", purchaseOrder.getOrderNumber());
-    }
-
-    public void addPurchaseOrderLiquidatedErrorMessage(PurchaseOrder purchaseOrder) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "PurchaseOrder.error.purchaseOrderNotLiquidated", purchaseOrder.getOrderNumber());
-    }
-
-    private void addAdvancePaymentPendingErrorMessage(PurchaseOrder purchaseOrder) {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "PurchaseOrder.error.purchaseOrderPaymentPending", purchaseOrder.getOrderNumber());
     }
 }

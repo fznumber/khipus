@@ -5,6 +5,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.model.production.CollectedRawMaterial;
 import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialProducer;
 
 import javax.ejb.Local;
 import java.util.Date;
@@ -25,4 +26,8 @@ public interface CollectedRawMaterialService {
     void save(ProductiveZone productiveZone, List<CollectedRawMaterial> collectedRawMaterialList, Date date) throws ConcurrencyException, EntryDuplicatedException;
 
     void delete(ProductiveZone productiveZone, Date date) throws ConcurrencyException, ReferentialIntegrityException;
+
+    boolean getHasCollected(Date startDate, Date endDate, RawMaterialProducer rawMaterialProducer);
+
+    boolean getHasDiscounts(Date startDate, Date endDate, RawMaterialProducer rawMaterialProducer);
 }

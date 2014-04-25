@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import java.util.*;
 
 /**
@@ -40,6 +41,20 @@ public class RHMarkServiceBean implements RHMarkService {
             return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<RHMark>(0);
+        }
+    }
+
+    public void registerMark(RHMark rhMark){
+        try{
+        em.createNativeQuery("insert into marcados.RHMARCADO (IDRHMARCADO,MARFECHA,MARIPPC,MARPERID,MARREFTARJETA,MARESTADO,SEDE,IDCOMPANIA,MAR_IN_OUT,MARHORA) \n" +
+                "values (marcados.seq_idrhmarcado.NEXTVAL,:date,:ip,:narPerID,:narPerID,null,'COCHABAMBA','1','GENERAL',:date)")
+                .setParameter("date",new Date())
+                .setParameter("ip",rhMark.getMarIpPc())
+                .setParameter("narPerID",rhMark.getMarRefCard())
+                .executeUpdate();
+        } catch (Exception e)
+        {
+
         }
     }
 

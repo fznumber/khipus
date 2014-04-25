@@ -6,10 +6,7 @@ import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.RHMark;
-import com.encens.khipus.model.production.CollectedRawMaterial;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialCollectionSession;
-import com.encens.khipus.model.production.RawMaterialProducer;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.production.RawMaterialCollectionSessionService;
 import com.encens.khipus.service.production.RawMaterialProducerService;
 import org.apache.poi.hssf.record.formula.functions.T;
@@ -121,6 +118,10 @@ public class RawMaterialCollectionSessionAction extends GenericAction<RawMateria
             rawMaterial.setRawMaterialCollectionSession(session);
             session.getCollectedRawMaterialList().add(rawMaterial);
         }
+    }
+
+    public boolean isPending() {
+        return ProductionCollectionState.PENDING.equals(getInstance().getState());
     }
 
 }

@@ -28,4 +28,6 @@ public interface RHMarkService {
     List<RHMark> findRHMarkByInitDateByEndDate(Date initDate, Date endDate);
 
     boolean verificateIdPerson(int idPerson);
+
+    public void registerMark(RHMark rhMark);
 }

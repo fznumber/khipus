@@ -172,6 +172,23 @@ import java.util.List;
                         " and rawMaterialPayRoll.endDate = :endDate " +
                         " and rawMaterialPayRoll.metaProduct = :metaProduct "
         ),
+        @NamedQuery(name = "RawMaterialPayRoll.getPayRollInDatesAndGAB",
+                query = " select " +
+                        " rawMaterialPayRoll " +
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.productiveZone = :productiveZone " +
+                        " and rawMaterialPayRoll.state = 'PENDING'"
+        ),
+        @NamedQuery(name = "RawMaterialPayRoll.getPayRollInDates",
+                query = " select " +
+                        " rawMaterialPayRoll " +
+                        " from RawMaterialPayRoll rawMaterialPayRoll " +
+                        " where rawMaterialPayRoll.startDate = :startDate " +
+                        " and rawMaterialPayRoll.endDate = :endDate " +
+                        " and rawMaterialPayRoll.state = 'PENDING'"
+        ),
         @NamedQuery(name = "RawMaterialPayRoll.getAllMaterialPayRoll",
                 query = " select " +
                         " rawMaterialPayRoll " +
@@ -211,7 +228,7 @@ public class RawMaterialPayRoll implements BaseModel {
 
     @Column(name = "ESTADO", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    private String state = StatePayRoll.PENDING.getValue();
+    private ProductionCollectionState state = ProductionCollectionState.PENDING;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -302,11 +319,11 @@ public class RawMaterialPayRoll implements BaseModel {
         this.endDate = endDate;
     }
 
-    public String getState() {
+    public ProductionCollectionState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(ProductionCollectionState state) {
         this.state = state;
     }
 

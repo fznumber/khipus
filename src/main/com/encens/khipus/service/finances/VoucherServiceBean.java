@@ -1,10 +1,13 @@
 package com.encens.khipus.service.finances;
 
+import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.interceptor.FinancesUser;
+import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.admin.User;
-import com.encens.khipus.model.finances.Voucher;
-import com.encens.khipus.model.finances.VoucherDetail;
+import com.encens.khipus.model.finances.*;
+import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.util.BigDecimalUtil;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.ValidatorUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -12,6 +15,8 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.TemporalType;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +37,9 @@ public class VoucherServiceBean implements VoucherService {
 
     @In
     private User currentUser;
+
+    @In
+    private CompanyConfigurationService companyConfigurationService;
 
     /**
      * Creates the voucher, then gets the transaction number, sets it to the detail and persist the detail list
@@ -91,5 +99,32 @@ public class VoucherServiceBean implements VoucherService {
     public void deleteVoucher(Voucher voucher) {
         em.remove(voucher);
         em.flush();
+    }
+
+    public void approvedAllVoucherEntries(String defaultCompanyNumber,
+                                          BusinessUnit businessUnit,
+                                          Date startDate,
+                                          Date endDate,
+                                          String numberTransction,
+                                          FinanceUser financeUser,
+                                          FinancesModule financesModule) throws CompanyConfigurationNotFoundException {
+        CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+          em.createNativeQuery("call wise.aprobar_asientos.gen_compro( " +
+                              ":financesModule, \n" + //MODULO
+                              ":cia,\n" + //CIA
+                              ":businessUnit,\n" + //UNIDAD EJECUTORA
+                              ":startDate, \n" + //FECHA DESDE
+                              ":endDate, \n" + //FECHA HASTA
+                              ":financeUser, \n" + //USUARIO Q REALIZA LA APROBACION
+                              "'%' \n" + //TODAS LAS TRANSACCIONES
+                              ")")
+                  .setParameter("financesModule", financesModule.getId().getModule())
+                  .setParameter("cia", companyConfiguration.getCompanyNumber())
+                  .setParameter("businessUnit", businessUnit.getExecutorUnitCode())
+                  .setParameter("startDate", startDate, TemporalType.DATE)
+                  .setParameter("endDate", endDate, TemporalType.DATE)
+                  .setParameter("financeUser",financeUser.getId())
+                  .executeUpdate();
+
     }
 }

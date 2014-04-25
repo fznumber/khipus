@@ -24,8 +24,21 @@
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RawMaterialCollectionSession.endDate']}</ui:define>
                             <rich:calendar value="#{rawMaterialCollectionSessionDataModel.privateCriteria.endDate}"
-                                           tabindex="1" styleClass="input">
+                                           tabindex="2" styleClass="input">
                             </rich:calendar>
+                        </s:decorate>
+                        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">#{messages['RawMaterialCollectionSession.state']}</ui:define>
+                            <h:selectOneMenu id="state"
+                                             value="#{rawMaterialCollectionSessionDataModel.privateCriteria.state}"
+                                             styleClass="inputMedium"
+                                             tabindex="3">
+                                <s:selectItems value="#{productionCollentionStateEnum}"
+                                               var="element"
+                                               label="#{messages[element.resourceKey]}"
+                                               noSelectionLabel=""
+                                               hideNoSelectionLabel="false"/>
+                            </h:selectOneMenu>
                         </s:decorate>
                     </s:div>
                     <s:div>
@@ -33,21 +46,21 @@
                             <ui:define
                                     name="label">#{messages['RawMaterialCollectionSession.productiveZoneName']}</ui:define>
                             <h:inputText value="#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.name}"
-                                         maxlength="50" tabindex="1" styleClass="input">
+                                         maxlength="50" tabindex="4" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define
                                     name="label">#{messages['RawMaterialCollectionSession.productiveZoneGroup']}</ui:define>
                             <h:inputText value="#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.group}"
-                                         maxlength="50" tabindex="1" styleClass="input">
+                                         maxlength="50" tabindex="5" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define
                                     name="label">#{messages['RawMaterialCollectionSession.productiveZoneNumber']}</ui:define>
                             <h:inputText value="#{rawMaterialCollectionSessionDataModel.criteria.productiveZone.number}"
-                                         maxlength="50" tabindex="1" styleClass="input">
+                                         maxlength="50" tabindex="6" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                     </s:div>
@@ -57,7 +70,7 @@
                                     name="label">#{messages['RawMaterialCollectionSession.rawMaterialProducerFirstName']}</ui:define>
                             <h:inputText
                                     value="#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.firstName}"
-                                    maxlength="50" tabindex="1" styleClass="input">
+                                    maxlength="50" tabindex="7" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -65,7 +78,7 @@
                                     name="label">#{messages['RawMaterialCollectionSession.rawMaterialProducerLastName']}</ui:define>
                             <h:inputText
                                     value="#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.lastName}"
-                                    maxlength="50" tabindex="1" styleClass="input">
+                                    maxlength="50" tabindex="8" styleClass="input">
                             </h:inputText>
                         </s:decorate>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -73,13 +86,13 @@
                                     name="label">#{messages['RawMaterialCollectionSession.rawMaterialProducerMaidenName']}</ui:define>
                             <h:inputText
                                     value="#{rawMaterialCollectionSessionDataModel.privateCriteria.rawMaterialProducer.maidenName}"
-                                    maxlength="50" tabindex="1" styleClass="input">
+                                    maxlength="50" tabindex="9" styleClass="input">
                             </h:inputText>
                             <a4j:commandButton action="#{rawMaterialCollectionSessionDataModel.search}"
                                                reRender="rawMaterialCollectionSessionList, dataScroller"
                                                styleClass="button" value="#{messages['Common.search']}"
                                                id="searchButtonId"
-                                               tabindex="4">
+                                               tabindex="10">
                                 <s:defaultAction/>
                             </a4j:commandButton>
                         </s:decorate>
@@ -137,6 +150,13 @@
                                 #{messages['RawMaterialCollectionSession.productiveZoneGroup']}
                             </app:commandSortHeader>
                         </rich:column>
+                        <rich:column>
+                            <app:commandSortHeader sortProperty="rawMaterialCollectionSession.state"
+                                                   dataModel="#{rawMaterialCollectionSessionDataModel}"
+                                                   reRender="rawMaterialCollectionSessionList,dataScroller">
+                                #{messages['RawMaterialCollectionSession.state']}
+                            </app:commandSortHeader>
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -161,6 +181,14 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{rawMaterialCollectionSessionItem.productiveZone.group}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText
+                            value="#{rawMaterialCollectionSessionItem.state == 'PENDING'
+                            ? messages['RawMaterialCollectionSession.state.pending']
+                            : messages['RawMaterialCollectionSession.state.approved']}"
+                    />
+
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"

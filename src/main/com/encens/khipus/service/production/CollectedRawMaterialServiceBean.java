@@ -5,15 +5,19 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
 import com.encens.khipus.framework.service.DataBaseCommand;
 import com.encens.khipus.framework.service.DataBaseExecutor;
+import com.encens.khipus.model.employees.SalaryMovement;
 import com.encens.khipus.model.production.CollectedRawMaterial;
 import com.encens.khipus.model.production.CollectionForm;
 import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialProducer;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +62,52 @@ public class CollectedRawMaterialServiceBean implements CollectedRawMaterialServ
     @Override
     public void delete(ProductiveZone productiveZone, Date date) throws ConcurrencyException, ReferentialIntegrityException {
         new DataBaseExecutor(new DeleteCommand(productiveZone, date)).delete();
+    }
+
+    @Override
+    public boolean getHasCollected(Date startDate, Date endDate, RawMaterialProducer rawMaterialProducer) {
+
+        Double total = 0.0;
+        try {
+            total = (Double) em.createQuery("select nvl(sum(collectedRawMaterial.amount),0) from RawMaterialCollectionSession rawMaterialCollectionSession " +
+                    " inner join rawMaterialCollectionSession.collectedRawMaterialList collectedRawMaterial " +
+                    " where rawMaterialCollectionSession.date between :startDate and :endDate" +
+                    " and collectedRawMaterial.rawMaterialProducer = :rawMaterialProducer")
+                    .setParameter("startDate",startDate, TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("rawMaterialProducer",rawMaterialProducer)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            total = 0.0;
+        }
+
+        if(total > 0.0 )
+            return true;
+
+        return false;
+    }
+
+    @Override
+    public boolean getHasDiscounts(Date startDate, Date endDate, RawMaterialProducer rawMaterialProducer) {
+        List<SalaryMovement> salaryMovements = null;
+        try{
+
+            salaryMovements = (List<SalaryMovement>)em.createQuery(" select salaryMovement from SalaryMovementProducer salaryMovement " +
+                                                                   " where salaryMovement.date between :startDate and :endDate " +
+                                                                   " and salaryMovement.rawMaterialProducer = :rawMaterialProducer ")
+                                                      .setParameter("startDate",startDate)
+                                                      .setParameter("endDate",endDate)
+                                                      .setParameter("rawMaterialProducer",rawMaterialProducer)
+                                                      .getResultList();
+
+        }catch (NoResultException e){
+
+        }
+
+        if(salaryMovements.size() == 0)
+            return false;
+
+        return true;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

@@ -119,6 +119,8 @@ public final class Constants {
     public static final String RECEIVABLES_VOUCHER_FORM = "CXC";
     public static final String HUMANRESOURCE_VOUCHER_FORM = "RRHH";
     public static final String WAREHOUSE_VOUCHER_FORM = "INV";
+    public static final String INPUT_PROD_WAREHOUSE = "ENTPRO";
+    public static final String ORDER_VOUCHER_FORM = "PED";
     public static final String DEFAULT_VOUCHER_FORM = "INTERFAZ";
     public static final String PAYABLES_VOUCHER_FORM = "CXP";
     public static final String CASHBOX_PAYMENT_VOUCHER_FORM = "PAGO_CAJA";
@@ -166,6 +168,16 @@ public final class Constants {
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
     //id Milk
     public static final String ID_ART_RAW_MILK = "26";
+    public static final String ID_ART_GROUP_CHEESE = "9";
+    public static final String ID_ART_GROUP_UHT = "7";
+    public static final String ID_ART_GROUP_YOGURT = "8";
+    //DELIVERED
+    public static final String ESTATE_ORDER_DELIVERED_INCASH = "DELIVERED";
+    public static final String ESTATE_ORDER_DELIVERED = "ECH";
+    public static final String COD_CUT_CHEESE = "147";
+    //PRODUCTION
+    public static final Double PRICE_UNIT_MILK = 3.0;
+
 
     private Constants() {
     }

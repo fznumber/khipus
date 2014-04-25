@@ -10,6 +10,31 @@
     <s:div rendered="#{productionPlanningAction.showReprocessedProduct}" id = "detailBaseProduct">
 
         <h:form id="baseProductionPlanningForm">
+        <div class="buttons">
+            <!--<a4j:commandButton value="#{messages['ProductionPlanning.generateValeOrder']}"
+                               rendered="#{baseProduct.id != null and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and productionPlanning.state != 'INSTOCK' and productionPlanning.state != 'TABULATED' and s:hasPermission('ENTERPRODUCTTOEWAREHOUSE','CREATE')}"
+                               >
+
+                <rich:componentControl for="confirmationVoucherSingle" event="onclick" disableDefault="true"
+                                       operation="show">
+                </rich:componentControl>
+            </a4j:commandButton>
+            <rich:spacer width="10"/>-->
+
+            <h:commandButton
+                    action="#{productionPlanningReportReproAction.generateReportSummary(baseProduct)}"
+                    value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
+                    styleClass="button"
+                    rendered="#{baseProduct.id != null and productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
+
+            <rich:spacer width="20"/>
+            <a4j:commandButton id="cancelInnerButton2" action="#{productionPlanningAction.cancelReprossecing()}"
+                               ajaxSingle="true"
+                               value="#{messages['ProductionPlanning.innerButtonCancel']}"
+                               reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                    />
+        </div>
+
         <app:fieldset id="baseProductDetailFields" title="#{messages['ProductionOrder.processedProduct.detail']}">
             <h:panelGrid columns="1"
                          width="100%"
@@ -55,6 +80,7 @@
                                            immediate="true"
                                            oncomplete="Richfaces.showModalPanel('productListModalPanel');"
                                            actionListener="#{selectPopUpAction.select}"
+                                           rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','CREATE')}"
                                            reRender="productListModalPanel">
                             <f:attribute name="entityManagerName" value=""/>
                             <f:attribute name="dataModelObject" value="#{productItemArticleSearchDataModel}"/>
@@ -100,6 +126,7 @@
                             <a4j:commandLink immediate="true"
                                              title="#{messages['Common.remove']}"
                                              action="#{productionPlanningAction.removeProductProcessing(productProcessing)}"
+                                             rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                              ajaxSingle="true"
                                              reRender="detailProductBase">
                                 <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
@@ -128,6 +155,7 @@
                                                immediate="true"
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
                                                actionListener="#{selectPopUpAction.select}"
+                                               rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','CREATE')}"
                                                reRender="productItemsListModalPanel">
                                 <f:attribute name="entityManagerName" value=""/>
                                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
@@ -181,6 +209,7 @@
                                                  title="#{messages['Common.remove']}"
                                                  action="#{productionPlanningAction.removeInput(productionIngredientItem)}"
                                                  ajaxSingle="true"
+                                                 rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED'}"
                                                  reRender="detailBaseProductInput">
                                     <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                                 </a4j:commandLink>
@@ -195,12 +224,14 @@
             <div class="buttons">
                 <a4j:commandButton action="#{productionPlanningAction.saveBaseProduct}"
                                    value="#{messages['Common.save']}"
+                                   rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and s:hasPermission('SAVEREPROCCED','CREATE')}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                         />
                 <rich:spacer width="20"/>
 
                 <a4j:commandButton value="#{messages['BaseProduct.action.delete']}"
                                    action="#{productionPlanningAction.deleteReprocessedProduct}"
+                                   rendered="#{baseProduct.id != null and baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and s:hasPermission('DELETEREPROCCED','CREATE')}"
                                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                                    ajaxSingle="true"/>
 

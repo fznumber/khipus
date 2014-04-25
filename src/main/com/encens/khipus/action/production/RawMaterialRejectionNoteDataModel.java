@@ -1,6 +1,7 @@
 package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialProducer;
 import com.encens.khipus.model.production.RawMaterialRejectionNote;
@@ -22,8 +23,11 @@ public class RawMaterialRejectionNoteDataModel extends QueryDataModel<Long, RawM
             "upper(rawMaterialProducer.maidenName) like concat(concat('%',upper(#{rawMaterialProducerForSearch.maidenName})), '%')",
             "upper(productiveZone.name) like concat(concat('%',upper(#{productiveZoneForSearch.name})), '%')",
             "upper(productiveZone.group) like concat(concat('%',upper(#{productiveZoneForSearch.group})), '%')",
-            "upper(productiveZone.number) like concat(#{productiveZoneForSearch.number}, '%')"
+            "upper(productiveZone.number) like concat(#{productiveZoneForSearch.number}, '%')",
+            "rawMaterialRejectionNote.state = #{rawMaterialRejectionNoteDataModel.state}"
     };
+
+    private ProductionCollectionState state;
 
     @Factory(value = "productiveZoneForSearch", scope = ScopeType.PAGE)
     public ProductiveZone initProductiveZone() {
@@ -37,6 +41,7 @@ public class RawMaterialRejectionNoteDataModel extends QueryDataModel<Long, RawM
 
     @Create
     public void init() {
+        this.state = ProductionCollectionState.PENDING;
         sortProperty = "rawMaterialRejectionNote.rawMaterialProducer.lastName";
     }
 
@@ -51,5 +56,13 @@ public class RawMaterialRejectionNoteDataModel extends QueryDataModel<Long, RawM
     @Override
     public List<String> getRestrictions() {
         return Arrays.asList(RESTRICTIONS);
+    }
+
+    public ProductionCollectionState getState() {
+        return state;
+    }
+
+    public void setState(ProductionCollectionState state) {
+        this.state = state;
     }
 }

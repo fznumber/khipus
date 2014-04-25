@@ -104,7 +104,38 @@
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="46"/>
+		<band height="46">
+			<staticText>
+				<reportElement x="305" y="12" width="173" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Encargado de Camara Fría]]></text>
+			</staticText>
+			<line>
+				<reportElement x="305" y="12" width="173" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="648" y="13" width="173" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Chofer]]></text>
+			</staticText>
+			<line>
+				<reportElement x="648" y="11" width="173" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="1011" y="13" width="173" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Sereno]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1011" y="13" width="173" height="1"/>
+			</line>
+		</band>
 	</columnFooter>
 	<pageFooter>
 		<band height="16" splitType="Stretch">

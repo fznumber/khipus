@@ -4,6 +4,7 @@ import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.Periodo;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
 import org.jboss.seam.ScopeType;
@@ -30,7 +31,8 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
             "upper(productiveZone.group) like concat(concat('%',upper(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.group})), '%')",
             "productiveZone.number like concat(#{rawMaterialPayRollDataModel.privateCriteria.productiveZone.number}, '%')",
             "rawMaterialPayRoll.startDate >= #{rawMaterialPayRollDataModel.privateCriteria.startDate}",
-            "rawMaterialPayRoll.endDate <= #{rawMaterialPayRollDataModel.privateCriteria.endDate}"
+            "rawMaterialPayRoll.endDate <= #{rawMaterialPayRollDataModel.privateCriteria.endDate}",
+            "rawMaterialPayRoll.state = #{rawMaterialPayRollDataModel.privateCriteria.state}"
     };
 
     @Create
@@ -54,6 +56,7 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     public PrivateCriteria getPrivateCriteria() {
         if (privateCriteria == null) {
             privateCriteria = new PrivateCriteria();
+            privateCriteria.setState(ProductionCollectionState.PENDING);
         }
         return privateCriteria;
     }
@@ -111,7 +114,16 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     public static class PrivateCriteria {
         private Date startDate;
         private Date endDate;
+        private ProductionCollectionState state;
         private ProductiveZone productiveZone = new ProductiveZone();
+
+        public ProductionCollectionState getState() {
+            return state;
+        }
+
+        public void setState(ProductionCollectionState state) {
+            this.state = state;
+        }
 
         public Date getStartDate() {
             return startDate;

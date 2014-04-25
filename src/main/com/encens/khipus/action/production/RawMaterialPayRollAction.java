@@ -11,17 +11,22 @@ import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.Periodo;
+import com.encens.khipus.model.production.ProductionCollectionState;
 import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.service.employees.GestionService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
+import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+import org.jboss.seam.international.StatusMessage;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.encens.khipus.exception.production.RawMaterialPayRollException.*;
@@ -41,6 +46,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     private Month month;
     private Periodo periodo;
     private List<GestionPayroll> gestionPayrollList;
+    private ProductiveZone productiveZone = null;
 
     private List<RawMaterialPayRoll> rawMaterialPayRollList;
 
@@ -50,6 +56,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     @In
     private ProductiveZoneService productiveZoneService;
 
+    @In
+    private GestionService gestionService;
+
     @Override
     protected GenericService getService() {
         return rawMaterialPayRollService;
@@ -57,6 +66,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @Factory(value = "rawMaterialPayRoll", scope = ScopeType.STATELESS)
     public RawMaterialPayRoll initRawMaterialPayRoll() {
+
         return getInstance();
     }
 
@@ -67,6 +77,11 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     public String startNew() {
+        return Outcome.SUCCESS;
+    }
+
+    @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    public String startNewApprove() {
         return Outcome.SUCCESS;
     }
 
@@ -148,7 +163,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void selectProductiveZone(ProductiveZone productiveZone) {
         try {
-            productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
+            this.productiveZone = getService().findById(ProductiveZone.class, productiveZone.getId());
             getInstance().setProductiveZone(productiveZone);
             generateAll = false;
         } catch (Exception ex) {
@@ -188,6 +203,37 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
         return Outcome.REDISPLAY;
+    }
+
+    public String approvedPayRoll() {
+            Calendar startDate = Calendar.getInstance();
+            Calendar endDate = Calendar.getInstance();
+            startDate.set(gestion.getYear(), month.getValue(), periodo.getInitDay());
+            endDate.set(gestion.getYear(), month.getValue(), periodo.getEndDay(month.getValue() + 1, gestion.getYear()));
+
+        if(rawMaterialPayRollService.findAllPayRollesByGAB(startDate.getTime(),endDate.getTime(),productiveZone).size() == 0)
+        {
+            addNotFoundPayRollesPendingMessage(startDate, endDate);
+
+            return Outcome.REDISPLAY;
+        }
+
+        rawMaterialPayRollService.approvedSession(startDate, endDate, productiveZone);
+        rawMaterialPayRollService.approvedNoteRejection(startDate, endDate);
+        rawMaterialPayRollService.approvedDiscounts(startDate,endDate,productiveZone);
+        rawMaterialPayRollService.approvedDiscountsGAB(startDate, endDate, productiveZone);
+        rawMaterialPayRollService.approvedRawMaterialPayRoll(startDate,endDate,productiveZone);
+
+            addSuccessApprobedPayRoll(startDate,endDate);
+        return Outcome.SUCCESS;
+    }
+
+    private void addSuccessApprobedPayRoll(Calendar startDate, Calendar endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.SuccessApprobedPayRoll",startDate.getTime(),endDate.getTime());
+    }
+
+    private void addNotFoundPayRollesPendingMessage(Calendar startDate, Calendar endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.error.NotFoundPayRolles",startDate.getTime(),endDate.getTime());
     }
 
     public String generateAll() {
@@ -233,7 +279,12 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 return Outcome.REDISPLAY;
             }
         }
+        addSuccessGenerateAllPayRoll(initRawMaterialPayRoll().getStartDate(), initRawMaterialPayRoll().getEndDate());
         return Outcome.SUCCESS;
+    }
+
+    private void addSuccessGenerateAllPayRoll(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.SuccessGenerateAllPayRoll",startDate,endDate);
     }
 
     public String deleteAll() throws ReferentialIntegrityException, ConcurrencyException, ParseException {
@@ -248,10 +299,35 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
 
         List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(), rawMaterialPayRoll.getMetaProduct());
+        if(rawMaterialPayRolls.size() == 0)
+        {
+            addWarnGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
+            return Outcome.SUCCESS;
+        }
+        for (RawMaterialPayRoll payRoll : rawMaterialPayRolls) {
+            if(payRoll.getState().equals(ProductionCollectionState.APPROVED))
+            {
+                addErrorGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
+                return Outcome.SUCCESS;
+            }
+        }
         for (RawMaterialPayRoll payRoll : rawMaterialPayRolls) {
             rawMaterialPayRollService.delete(payRoll);
         }
+        addDeleteGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
         return Outcome.SUCCESS;
+    }
+
+    private void addWarnGeneratePayRollMessage(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,"RawMaterialPayRoll.warning.deleteAllPayRoll",startDate,endDate);
+    }
+
+    private void addDeleteGeneratePayRollMessage(Date startDate, Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.message.deleteAllPayRoll",startDate,endDate);
+    }
+
+    private void addErrorGeneratePayRollMessage(Date startDate,Date endDate) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"RawMaterialPayRoll.error.deleteAllPayRoll",startDate,endDate);
     }
 
     public void redefine() {
@@ -298,6 +374,14 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Gestion getGestion() {
+        if(getInstance().getId() != null)
+        {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getInstance().getStartDate());
+            this.gestion = gestionService.getGestion(cal.get(Calendar.YEAR));
+        }else
+            gestion = gestionService.getLastGestion();
+
         return gestion;
     }
 
@@ -306,6 +390,15 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Month getMonth() {
+        if(getInstance().getId() != null)
+        {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(getInstance().getStartDate());
+            this.month = Month.getMonth(cal.getTime());
+        }
+        else
+           month = Month.getMonth(new Date());
+
         return month;
     }
 
@@ -314,6 +407,23 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public Periodo getPeriodo() {
+        if(getInstance().getId() != null)
+        {
+            Calendar end = Calendar.getInstance();
+            end.setTime(getInstance().getEndDate());
+            if(end.get(Calendar.DAY_OF_MONTH) > 15)
+                this.periodo = Periodo.SECONDPERIODO;
+            else
+                this.periodo = Periodo.FIRSTPERIODO;
+        }else
+        {
+            Calendar end = Calendar.getInstance();
+            end.setTime(new Date());
+            if(end.get(Calendar.DAY_OF_MONTH) > 15)
+                this.periodo = Periodo.SECONDPERIODO;
+            else
+                this.periodo = Periodo.FIRSTPERIODO;
+        }
         return periodo;
     }
 
@@ -338,5 +448,17 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             return periodo.getPeriodoLiteral() + "del mes de " + month.getMonthLiteral();
         else
             return "";
+    }
+
+    public boolean isPending() {
+        return ProductionCollectionState.PENDING.equals(getInstance().getState());
+    }
+
+    public ProductiveZone getProductiveZone() {
+        return productiveZone;
+    }
+
+    public void setProductiveZone(ProductiveZone productiveZone) {
+        this.productiveZone = productiveZone;
     }
 }

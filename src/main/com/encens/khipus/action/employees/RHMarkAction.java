@@ -4,6 +4,7 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.admin.Company;
+import com.encens.khipus.model.employees.Mark;
 import com.encens.khipus.model.employees.RHMark;
 import com.encens.khipus.service.employees.RHMarkService;
 import com.encens.khipus.util.Constants;
@@ -67,7 +68,7 @@ public class RHMarkAction extends GenericAction<RHMark> {
             rhMark.setCompany(new Company(Constants.defaultCompanyId, Constants.defaultCompanyName));
             rhMark.setSeat("1");
             rhMark.setMarRefCard((String)result.get(0)[0]);
-            rhMark.setMarIpPc("10.0.0.201");
+            rhMark.setMarIpPc("10.0.0.200");//ip por defecto del servidor
             rhMark.setControl(1);
             rhMark.setMarState("ACTIVO");
             rhMark.setMarTime(rhMark.getStartMarDate());

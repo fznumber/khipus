@@ -17,6 +17,8 @@ import java.math.BigDecimal;
 @NamedQueries({
         @NamedQuery(name = "SoldProduct.findByInvoiceNumber",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
+        @NamedQuery(name = "SoldProduct.findByInvoiceNumberWithoutCutCheese",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codCutCheese"),
         @NamedQuery(name = "SoldProduct.findByCashSale",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.orderNumber is null"),
         @NamedQuery(name = "SoldProduct.findByCashOrder",
@@ -25,6 +27,8 @@ import java.math.BigDecimal;
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.state=:state"),
         @NamedQuery(name = "SoldProduct.findByProductItem",
                 query = "select distinct(soldProduct.productItem) from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
+        @NamedQuery(name = "SoldProduct.findByProductItemWithouCutCheese",
+                query = "select distinct(soldProduct.productItem) from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codCutCheese"),
         @NamedQuery(name = "SoldProduct.sunQuantitiesByProductItem",
                 query = "select sum(soldProduct.quantity) from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.productItem =:productItem and soldProduct.companyNumber =:companyNumber"),
         @NamedQuery(name = "SoldProduct.findByState",

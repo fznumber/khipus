@@ -69,7 +69,6 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                     MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", getInstance().getInvoiceNumber()));
             addSoldProductDeliveredInfoMessage();
             select(productDelivery);
-            productDeliveryService.updateOrderEstate(getInstance().getInvoiceNumber());
             return Outcome.SUCCESS;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
@@ -114,6 +113,103 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
             return Outcome.FAIL;
         }
+    }
+
+    public void myCreate() {
+
+        String numbers[] = {
+//AL CONTADO
+                "26002130",
+                "26002141",
+                "26002142",
+                "26002145",
+                "26002152",
+                "26002153",
+                "26002154",
+                "26002162",
+                "26002167",
+                "26002168",
+                "26002175",
+                "26002176",
+                "26002179",
+                "26002182",
+                "26002193",
+                "26002195",
+                "26002200",
+                "26002201",
+                "26002202",
+                "26002203",
+                "26002204",
+                "26002211",
+                "26002224",
+                "26002226",
+                "26002229",
+                "26002230",
+                "26002231",
+                "26002232",
+                "26002250",
+                "26002253",
+
+
+
+
+        };
+        for(String number :numbers)
+        {
+
+        try {
+            //for()
+            System.out.println("NUMERO DE FACTURA -> "+number);
+            ProductDelivery productDelivery = productDeliveryService.createAll(number,
+                    MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", number));
+            addSoldProductDeliveredInfoMessage();
+            select(productDelivery);
+            //update();
+
+        } catch (InventoryException e) {
+            addInventoryErrorMessages(e.getInventoryMessages());
+            continue;
+        } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
+            continue;
+        } catch (WarehouseDocumentTypeNotFoundException e) {
+            addWarehouseDocumentTypeErrorMessage();
+            continue;
+        } catch (ProductItemAmountException e) {
+            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            continue;
+        } catch (InventoryUnitaryBalanceException e) {
+            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            continue;
+        } catch (InventoryProductItemNotFoundException e) {
+            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                    e.getProductItem(), e.getWarehouse());
+            continue;
+        } catch (SoldProductDeliveredException e) {
+            addSoldProductDeliveredErrorMessage();
+            continue;
+        } catch (CompanyConfigurationNotFoundException e) {
+            addCompanyConfigurationNotFoundErrorMessage();
+            continue;
+        } catch (FinancesExchangeRateNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            continue;
+        } catch (FinancesCurrencyNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            continue;
+        } catch (ConcurrencyException e) {
+            addUpdateConcurrencyMessage();
+            continue;
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            continue;
+        } catch (ReferentialIntegrityException e) {
+            addDeleteReferentialIntegrityMessage();
+            continue;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            continue;
+        }
+      }
     }
 
     @Override

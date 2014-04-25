@@ -28,9 +28,9 @@
                 <h:commandButton action="#{rawMaterialRejectionNoteAction.create}" value="#{messages['Common.save']}"
                                  styleClass="button" rendered="#{!rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"/>
                 <h:commandButton action="#{rawMaterialRejectionNoteAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','UPDATE')}"/>
+                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and rawMaterialRejectionNoteAction.pending and s:hasPermission('RAWMATERIALREJECTIONNOTE','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','DELETE')}">
+                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and rawMaterialRejectionNoteAction.pending and s:hasPermission('RAWMATERIALREJECTIONNOTE','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -166,9 +166,9 @@
                 <h:commandButton action="#{rawMaterialRejectionNoteAction.create}" value="#{messages['Common.save']}"
                                  styleClass="button" rendered="#{!rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','CREATE')}"/>
                 <h:commandButton action="#{rawMaterialRejectionNoteAction.update}" value="#{messages['Common.save']}"
-                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','UPDATE')}"/>
+                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and rawMaterialRejectionNoteAction.pending and s:hasPermission('RAWMATERIALREJECTIONNOTE','UPDATE')}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
-                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and s:hasPermission('RAWMATERIALREJECTIONNOTE','DELETE')}">
+                                 styleClass="button" rendered="#{rawMaterialRejectionNoteAction.managed and rawMaterialRejectionNoteAction.pending and s:hasPermission('RAWMATERIALREJECTIONNOTE','DELETE')}">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
