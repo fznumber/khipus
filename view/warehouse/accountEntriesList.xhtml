@@ -35,7 +35,7 @@
                              maxlength="10"
                              tabindex="1"/>
             </s:decorate>
-            <s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
+            <!--<s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['AccountEntries.voucher.state']}</ui:define>
                 <h:selectOneMenu id="state"
                                  value="#{accountEntriesDataModel.state}"
@@ -48,8 +48,8 @@
                                    hideNoSelectionLabel="false"/>
                     <s:convertEnum/>
                 </h:selectOneMenu>
-            </s:decorate>
-            <s:decorate id="providerField" template="/include/inputField.xhtml" styleClass="formRow">
+            </s:decorate>-->
+            <!--<s:decorate id="providerField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['AccountEntries.voucher.provider']}</ui:define>
                 <app:selectPopUp id="provider"
                                  required="false"
@@ -66,6 +66,22 @@
                                 target="#{providerDataModel.financesEntityState}"/>
                     </ui:define>
                 </app:selectPopUp>
+            </s:decorate>-->
+
+            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['AccountEntries.voucher.executorUnit']}</ui:define>
+                <ui:param name="validate" value="false"/>
+                <h:selectOneMenu id="executorUnitCode"
+                                 value="#{voucherEntriesApproveAction.businessUnit}"
+                                 styleClass="input"
+                                 tabindex="6" immediate="true">
+                    <s:selectItems value="#{businessUnitList.resultList}"
+                                   var="businessUnit"
+                                   label="#{businessUnit.fullName}"
+                                   noSelectionLabel=""
+                                   hideNoSelectionLabel="false"/>
+                    <s:convertEntity/>
+                </h:selectOneMenu>
             </s:decorate>
 
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -77,7 +93,7 @@
                                  tabindex="4" immediate="true">
                     <s:selectItems value="#{modulesFinancesList.resultList}"
                                    var="modulesFinance"
-                                   label="#{modulesFinance.acronym}"
+                                   label="#{modulesFinance.description}"
                                    noSelectionLabel=""
                                    hideNoSelectionLabel="false"/>
                     <s:convertEntity/>
@@ -119,22 +135,6 @@
                 </h:panelGrid>
             </s:decorate>
 
-            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['AccountEntries.voucher.executorUnit']}</ui:define>
-                <ui:param name="validate" value="false"/>
-                <h:selectOneMenu id="executorUnitCode"
-                                 value="#{voucherEntriesApproveAction.businessUnit}"
-                                 styleClass="input"
-                                 tabindex="6" immediate="true">
-                    <s:selectItems value="#{businessUnitList.resultList}"
-                                   var="businessUnit"
-                                   label="#{businessUnit.fullName}"
-                                   noSelectionLabel=""
-                                   hideNoSelectionLabel="false"/>
-                    <s:convertEntity/>
-                </h:selectOneMenu>
-            </s:decorate>
-
             <s:div id="financeUserDiv">
                 <s:decorate id="financeUserId"
                             template="/include/inputField.xhtml"
@@ -154,14 +154,14 @@
 
             <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                 <s:div styleClass="right input">
-                    <a4j:commandButton action="#{accountEntriesDataModel.search}"
+                    <!--<a4j:commandButton action="#{accountEntriesDataModel.search}"
                                        reRender="accountEntriesSearchPanelId, voucherList, dataScroller"
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
                                        id="searchButtonId"
                                        tabindex="8">
                         <s:defaultAction/>
-                    </a4j:commandButton>
+                    </a4j:commandButton>-->
                     <a4j:commandButton action="#{accountEntriesDataModel.clear}"
                                        reRender="accountEntriesSearchPanelId, voucherList, dataScroller"
                                        ajaxSingle="true"
@@ -179,128 +179,75 @@
 </rich:simpleTogglePanel>
 
 <div class="buttons">
-    <h:commandButton action="#{voucherEntriesApproveAction.approvedAllVoucherEntries()}"
-                     value="#{messages['Warehouse.button.closeProcessMonth']}"
+    <h:commandButton action="#{voucherEntriesApproveAction.approvedAllVoucherEntries(accountEntriesDataModel.startDate,accountEntriesDataModel.endDate,accountEntriesDataModel.transactionNumber,accountEntriesDataModel)}"
+                     value="#{messages['AccountEntries.voucher.approvedAllVoucherEntries']}"
                      styleClass="button"/>
 </div>
-<!--<rich:dataTable id="voucherList"
-                value="#{warehouseVoucherDataModel}"
-                var="warehouseVoucherItem"
+<rich:dataTable id="voucherList"
+                value="#{accountEntriesDataModel}"
+                var="voucherItem"
                 rows="#{sessionUser.rowsPerPage}"
                 width="100%"
-                columnsWidth="10%, 15%, 10%, 10%, 10%, 10%, 15%, 10%, 10%">
+                columnsWidth="10%, 10%, 10%, 60%, 10%">
     <f:facet name="header">
         <rich:columnGroup>
             <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.executorUnit"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.executorUnitCode']}
+                <app:commandSortHeader sortProperty="voucher.transactionNumber"
+                                       dataModel="#{accountEntriesDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['AccountEntries.voucher.numberTransactionAB']}
                 </app:commandSortHeader>
             </rich:column>
             <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.costCenterCode"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.costCenter']}
+                <app:commandSortHeader sortProperty="voucher.date"
+                                       dataModel="#{accountEntriesDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['AccountEntries.voucher.date']}
                 </app:commandSortHeader>
             </rich:column>
             <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.purchaseOrder.provider"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehousePurchaseOrder.provider']}
+                <app:commandSortHeader sortProperty="voucher.state"
+                                       dataModel="#{accountEntriesDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['AccountEntries.voucher.state']}
                 </app:commandSortHeader>
             </rich:column>
             <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.documentType.name"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.documentType']}
-                </app:commandSortHeader>
-            </rich:column>
-            <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.purchaseOrder.orderNumber"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.purchaseOrder.orderNumber']}
-                </app:commandSortHeader>
-            </rich:column>
-            <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.number"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.number']}
-                </app:commandSortHeader>
-            </rich:column>
-            <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.warehouse.name"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.warehouse']}
-                </app:commandSortHeader>
-            </rich:column>
-            <rich:column>
-                <app:commandSortHeader sortProperty="warehouseVoucher.state"
-                                       dataModel="#{warehouseVoucherDataModel}"
-                                       reRender="warehouseVoucherList, dataScroller">
-                    #{messages['WarehouseVoucher.state']}
-                </app:commandSortHeader>
+                    #{messages['AccountEntries.voucher.gloss']}
             </rich:column>
             <rich:column styleClass="center">
-                #{messages['Common.action']}
+                #{messages['AccountEntries.showDetailError']}
             </rich:column>
         </rich:columnGroup>
     </f:facet>
     <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.executorUnit.fullName}"/>
+        <h:outputText value="#{voucherItem.transactionNumber}"/>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.costCenter.fullName}"/>
+        <h:outputText value="#{voucherItem.date}"/>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.purchaseOrder.provider.fullName}"/>
+        <h:outputText value="#{voucherItem.state == 'PEN'? messages['VoucherState.PEN'] :(voucherItem.state == 'APR'? messages['VoucherState.APR'] : messages['VoucherState.ANL'])}"/>
     </rich:column>
     <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.documentType.name}"/>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.purchaseOrder.orderNumber}"/>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.number}"/>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{warehouseVoucherItem.warehouse.name}"/>
-    </rich:column>
-    <rich:column>
-        <h:outputText value="#{messages[warehouseVoucherItem.state.resourceKey]}"/>
+        <h:outputText value="#{voucherItem.gloss}"/>
     </rich:column>
     <rich:column styleClass="center">
-        <h:commandLink value="#{messages['Common.select']}"
+
+        <a4j:commandLink title="#{messages['Common.help']}"
+                         oncomplete="Richfaces.showModalPanel('accountEntriesErrorListModalPanel');" action="#{voucherEntriesApproveAction.setNumberTransaction(voucherItem.transactionNumber)}">
+            <h:graphicImage value="/img/errorIcon.gif" style="cursor:pointer;border:0px;"/>
+        </a4j:commandLink>
+
+        <!--<h:commandLink value="#{messages['AccountEntries.showDetailError']}"
                        immediate="true"
-                       action="#{warehouseVoucherUpdateAction.select(warehouseVoucherItem)}"
-                       rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}">
+                       action="#{voucherEntriesApproveAction.showDetailError(voucherItem)}">
             <s:conversationPropagation value="none"/>
-        </h:commandLink>
-        &#160;
-        <h:commandLink action="#{voucherDocumentReportAction.generateReport(warehouseVoucherItem)}"
-                       immediate="true"
-                       rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}">
-            <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
-                            title="#{messages['WarehouseVoucher.button.generateDocument']}"/>
-        </h:commandLink>
+        </h:commandLink>-->
     </rich:column>
-</rich:dataTable>-->
+</rich:dataTable>
 
-<!--<app:dataScroller id="dataScroller" for="voucherList" dataModel="#{accountEntriesDataModel}"/>-->
-
-<div class="buttons">
-    <h:commandButton action="#{warehouseVoucherCreateAction.closeCurrentMonthProcess}"
-                     value="#{messages['Warehouse.button.closeProcessMonth']}"
-                     styleClass="button"/>
-
-</div>
+<app:dataScroller id="dataScroller" for="voucherList" dataModel="#{accountEntriesDataModel}"/>
 </h:form>
 
 <s:decorate id="providerListModalPanelContainer" template="/finances/providerListModalPanel.xhtml">
@@ -328,6 +275,11 @@
                            oncomplete="Richfaces.hideModalPanel('financeUserListModalPanel');"/>
     </ui:define>
 </s:decorate>
+
+<a4j:outputPanel ajaxRendered="true">
+    <s:decorate id="accountEntriesErrorListModalPanelContainer" template="/warehouse/accountEntriesErrorListModalPanel.xhtml"/>
+</a4j:outputPanel>
+
 </ui:define>
 
 </ui:composition>

@@ -13,7 +13,7 @@
     <framework:entity-query name="businessUnitQuery"
                             ejbql="select b from BusinessUnit b left join fetch b.organization order by b.position asc"/>
 
-    <factory name="modulesFinancesList" value="#{businessUnitQuery}"/>
+    <factory name="modulesFinancesList" value="#{modulesFinancesQuery}"/>
     <framework:entity-query name="modulesFinancesQuery"
                             ejbql="select b from FinancesModule b "/>
 

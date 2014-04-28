@@ -33,4 +33,8 @@ public interface VoucherService {
     void deleteVoucher(Voucher voucher);
 
     void approvedAllVoucherEntries(String defaultCompanyNumber, BusinessUnit businessUnit, Date startDate, Date endDate, String numberTransction, FinanceUser financeUser, FinancesModule financesModule) throws CompanyConfigurationNotFoundException;
+
+    List<VoucherServiceBean.ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction);
+
+    List<VoucherServiceBean.ObsApprovedEntries> getInfoTrasaction( String numberTransction);
 }

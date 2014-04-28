@@ -7,15 +7,19 @@ import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.finances.*;
 import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.util.BigDecimalUtil;
-import com.encens.khipus.util.Constants;
+import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.ValidatorUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import sun.util.calendar.CalendarSystem;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.TemporalType;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -108,23 +112,134 @@ public class VoucherServiceBean implements VoucherService {
                                           String numberTransction,
                                           FinanceUser financeUser,
                                           FinancesModule financesModule) throws CompanyConfigurationNotFoundException {
+        if(numberTransction.isEmpty())
+            numberTransction = "%";
+
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
           em.createNativeQuery("call wise.aprobar_asientos.gen_compro( " +
                               ":financesModule, \n" + //MODULO
                               ":cia,\n" + //CIA
                               ":businessUnit,\n" + //UNIDAD EJECUTORA
-                              ":startDate, \n" + //FECHA DESDE
-                              ":endDate, \n" + //FECHA HASTA
+                              "to_char(:startDate,'dd-mm-yyyy'), \n" + //FECHA DESDE
+                              "to_char(:endDate,'dd-mm-yyyy'), \n" + //FECHA HASTA
                               ":financeUser, \n" + //USUARIO Q REALIZA LA APROBACION
-                              "'%' \n" + //TODAS LAS TRANSACCIONES
+                              ":numberTransction \n" + //TODAS LAS TRANSACCIONES
                               ")")
                   .setParameter("financesModule", financesModule.getId().getModule())
                   .setParameter("cia", companyConfiguration.getCompanyNumber())
                   .setParameter("businessUnit", businessUnit.getExecutorUnitCode())
-                  .setParameter("startDate", startDate, TemporalType.DATE)
-                  .setParameter("endDate", endDate, TemporalType.DATE)
+                  .setParameter("startDate", startDate,TemporalType.DATE)
+                  .setParameter("endDate", endDate,TemporalType.DATE)
                   .setParameter("financeUser",financeUser.getId())
+                  .setParameter("numberTransction",numberTransction)
                   .executeUpdate();
 
+    }
+
+    private String toString(Date date)
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return ((calendar.get(Calendar.DAY_OF_MONTH)) > 9 ? (calendar.get(Calendar.DAY_OF_MONTH)) :"0"+(calendar.get(Calendar.DAY_OF_MONTH))) +
+                "-" + (((calendar.get(Calendar.MONTH))+1) >9 ? (((calendar.get(Calendar.MONTH))+1)) :"0"+((calendar.get(Calendar.MONTH))+1))  +
+                "-" +calendar.get(Calendar.YEAR);
+    }
+
+    @Override
+    public List<ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction) {
+        List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
+                List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS\n" +
+                                                                "WHERE  TRUNC(FECHA) = TRUNC(SYSDATE) \n" +
+                                                                "AND MODULO  =  :financesModule \n"
+                                                                //"AND NO_TRANS = 0"
+                                                                )
+                                            .setParameter("financesModule", financesModule.getId().getModule())
+                                            .getResultList();
+        for(Object[] data:datas)
+        {
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[4]));
+        }
+
+        return entries;
+
+    }
+
+    @Override
+    public List<ObsApprovedEntries> getInfoTrasaction(String numberTransction) {
+        List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
+        List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS\n" +
+                        "WHERE  TRUNC(FECHA) = TRUNC(SYSDATE) \n" +
+                        "AND NO_TRANS = :numberTransction"
+        )
+                .setParameter("numberTransction", numberTransction)
+                .getResultList();
+        for(Object[] data:datas)
+        {
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[4]));
+        }
+
+       return entries;
+
+    }
+
+    public class ObsApprovedEntries{
+        private Date date;
+        private String numberTransaction;
+        private String state;
+        private String module;
+        private String observations;
+
+        public ObsApprovedEntries(Date date, String numberTransaction, String state, String module, String observations) {
+            this.date = date;
+            this.numberTransaction = numberTransaction;
+            this.state = state;
+            this.module = module;
+            this.observations = observations;
+        }
+
+        public ObsApprovedEntries(String state, String observations) {
+            this.state = state;
+            this.observations = observations;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
+        public String getNumberTransaction() {
+            return numberTransaction;
+        }
+
+        public void setNumberTransaction(String numberTransaction) {
+            this.numberTransaction = numberTransaction;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public void setState(String state) {
+            this.state = state;
+        }
+
+        public String getModule() {
+            return module;
+        }
+
+        public void setModule(String module) {
+            this.module = module;
+        }
+
+        public String getObservations() {
+            return observations;
+        }
+
+        public void setObservations(String observations) {
+            this.observations = observations;
+        }
     }
 }
