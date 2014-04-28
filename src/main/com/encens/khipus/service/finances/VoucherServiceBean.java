@@ -157,7 +157,7 @@ public class VoucherServiceBean implements VoucherService {
                                             .getResultList();
         for(Object[] data:datas)
         {
-            entries.add(new ObsApprovedEntries((String)data[2],(String)data[4]));
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[5]));
         }
 
         return entries;
@@ -175,7 +175,7 @@ public class VoucherServiceBean implements VoucherService {
                 .getResultList();
         for(Object[] data:datas)
         {
-            entries.add(new ObsApprovedEntries((String)data[2],(String)data[4]));
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[5]));
         }
 
        return entries;
@@ -197,8 +197,8 @@ public class VoucherServiceBean implements VoucherService {
             this.observations = observations;
         }
 
-        public ObsApprovedEntries(String state, String observations) {
-            this.state = state;
+        public ObsApprovedEntries(String numberTransaction, String observations) {
+            this.numberTransaction = numberTransaction;
             this.observations = observations;
         }
 
