@@ -263,10 +263,20 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         <rich:column>
                             <h:inputText value="#{productionIngredientItem.amount}"
                                          styleClass="input"
-                                         disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem.productItem)}">
+                                         disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem) and productionIngredientItem.type !='ADD'}">
                                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
                                              actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
+
+                            <a4j:commandLink immediate="true"
+                                             title="#{messages['ProductionOrder.productionInput.Remove']}"
+                                             action="#{productionPlanningAction.removeInputForFormulation(productionIngredientItem)}"
+                                             ajaxSingle="true"
+                                             rendered="#{productionIngredientItem.type == 'ADD'}"
+                                             reRender="productionIngredientList,formulaSet">
+                                <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+                            </a4j:commandLink>
+
                         </rich:column>
                         <rich:column
                                 styleClass="#{productionPlanningAction.verifAmountInput(productionIngredientItem)?'labelInfo':'labelAlarm'}">
@@ -282,7 +292,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
                                            value="#{messages['ProductionPlanning.create.orderproduction']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
 
                        <!-- <a4j:commandButton id="generateValeInputButton" action="#{productionPlanningAction.generateValeInput}"
                                            value="#{messages['ProductionPlanning.generateVoucher']}"
@@ -292,7 +302,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder != 'EXECUTED' and productionPlanningAction.dispobleBalance and s:hasPermission('UPDATEORDERPRODUCCTION','CREATE')}"/>
+                                           rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('UPDATEORDERPRODUCCTION','CREATE')}"/>
                         <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}"
                                            ajaxSingle="true"
                                            value="#{messages['ProductionPlanning.innerButtonCancel']}"
@@ -1076,6 +1086,22 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            reRender="detailBaseProductInput"
                            styleClass="button"
                            oncomplete="Richfaces.hideModalPanel('baseProductInputsListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="addProductInputsListModalPanelContainer"
+            template="/warehouse/productItemsInputListModalPanel.xhtml">
+    <ui:param name="containerId" value="addProductInputsListModalPanelContainer"/>
+    <ui:param name="dialogId" value="addProductInputsListModalPanel"/>
+    <ui:define name="addButton">
+        <a4j:commandButton id="addButton"
+                           immediate="true"
+                           ajaxSingle="true"
+                           action="#{productionPlanningAction.addProductItemsToFormulation(productItemInputSearchDataModel.selectedProductItems)}"
+                           value="#{messages['Common.add']}"
+                           reRender="productionIngredientList"
+                           styleClass="button"
+                           oncomplete="Richfaces.hideModalPanel('addProductInputsListModalPanel');"/>
     </ui:define>
 </s:decorate>
 

@@ -3,6 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.exception.production.ProductCompositionException;
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.util.RoundUtil;
 import com.encens.khipus.util.TopologicalSorting;
 import de.congrace.exp4j.Calculable;
@@ -164,6 +165,19 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
             result = (BigDecimal) getEntityManager()
                     .createQuery("SELECT  sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
                     .setParameter("productItem", metaProduct.getProductItem())
+                    .getSingleResult();
+            return result;
+        } catch (NoResultException nre) {
+            return (result == null) ? new BigDecimal(0) : result;
+        }
+    }
+
+    public BigDecimal getMountInWarehouse(ProductItem item) {
+        BigDecimal result = null;
+        try {
+            result = (BigDecimal) getEntityManager()
+                    .createQuery("SELECT  sum(inventory.unitaryBalance) from Inventory inventory where inventory.productItem = :productItem")
+                    .setParameter("productItem", item)
                     .getSingleResult();
             return result;
         } catch (NoResultException nre) {

@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -298,6 +299,31 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                 .setParameter("state", instance.getState().toString())
                 .setParameter("id",instance.getId())
                 .executeUpdate();
+    }
+
+    @Override
+    public List<OrderInput> getInputsAdd(ProductionOrder productionOrder) {
+        List<OrderInput> orderInputs = new ArrayList<OrderInput>();
+        if(productionOrder.getId() != null) {
+            try {
+                orderInputs = (List<OrderInput>) getEntityManager().createQuery("select orderInput from OrderInput orderInput " +
+                        " where orderInput.productionOrder = :productionOrder " +
+                        " and orderInput.type = 'ADD'")
+                        .setParameter("productionOrder", productionOrder)
+                        .getResultList();
+            } catch (NoResultException e) {
+                return orderInputs;
+            }
+        }
+        return orderInputs;
+    }
+
+    @Override
+    public void deleteOrderInput(OrderInput orderInput) {
+        if(orderInput.getId() != null)
+        getEntityManager().createQuery("delete from OrderInput orderInput where orderInput = :orderInput ")
+                          .setParameter("orderInput", orderInput)
+                          .executeUpdate();
     }
 
     public void updateOrdenProduction(ProductionOrder order)

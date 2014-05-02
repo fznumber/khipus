@@ -39,6 +39,9 @@ public class OrderInput implements BaseModel {
     @Column(name = "FORMULAMATEMATICA", nullable = true, length = 500)
     private String mathematicalFormula;
 
+    @Column(name = "TIPO",nullable = true)
+    private String type = "FORMULATED";
+
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
     private String productItemCode;
 
@@ -147,5 +150,13 @@ public class OrderInput implements BaseModel {
 
     public void setBaseProductInput(BaseProduct baseProductInput) {
         this.baseProductInput = baseProductInput;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

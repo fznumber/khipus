@@ -16,6 +16,7 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -33,25 +34,28 @@ public class AccountEntriesDataModel extends QueryDataModel<String,Voucher> {
     private Date startDate;
     private Date endDate;
     private Provider provider;
+    private List<String> transactionsNumbers;
 
     private static final String[] RESTRICTIONS = {
-            "voucher.transactionNumber = #{accountEntriesDataModel.transactionNumber}",
-            "voucher.state = #{accountEntriesDataModel.state}",
-            "voucher.provider = #{accountEntriesDataModel.provider}",
+            "voucher.transactionNumber in (#{accountEntriesDataModel.transactionsNumbers})",
+            //"voucher.state = #{accountEntriesDataModel.state}",
+            //"voucher.provider = #{accountEntriesDataModel.provider}",
             "voucher.date >= #{accountEntriesDataModel.startDate}",
             "voucher.date <= #{accountEntriesDataModel.endDate}"
     };
 
     @Create
     public void init() {
+        transactionsNumbers = new ArrayList<String>();
+        transactionsNumbers.add("0");
         sortProperty = "voucher.transactionNumber";
     }
 
     @Override
     public String getEjbql() {
         return "select voucher" +
-                " from Voucher voucher" +
-                " left join fetch voucher.provider provider";
+                " from Voucher voucher";
+                //+ " left join fetch voucher.provider provider";
     }
 
     @Override
@@ -106,6 +110,16 @@ public class AccountEntriesDataModel extends QueryDataModel<String,Voucher> {
         setProvider(null);
         setStartDate(null);
         setEndDate(null);
+        transactionsNumbers.clear();
+        transactionsNumbers.add("0");
         super.clear();
+    }
+
+    public List<String> getTransactionsNumbers() {
+        return transactionsNumbers;
+    }
+
+    public void setTransactionsNumbers(List<String> transactionsNumbers) {
+        this.transactionsNumbers = transactionsNumbers;
     }
 }
