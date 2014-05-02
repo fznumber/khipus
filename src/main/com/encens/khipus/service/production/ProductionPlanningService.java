@@ -9,6 +9,7 @@ import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -55,4 +56,8 @@ public interface ProductionPlanningService extends GenericService {
     public List<ProductionPlanning> getAllProductionPlanningByDates(Date startDate,Date endDate);
 
     public void updateProductionPlanningDirect(ProductionPlanning instance);
+
+    List<OrderInput> getInputsAdd(ProductionOrder productionOrder);
+
+    void deleteOrderInput(OrderInput orderInput);
 }

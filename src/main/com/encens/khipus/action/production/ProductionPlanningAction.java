@@ -142,6 +142,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
     private Double totalVolumProductionPlaning;
+    private boolean showButtonAddInput = false;
 
     @Override
     protected GenericService getService() {
@@ -752,8 +753,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
             productionOrder.setProductComposition(productComposition);
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder, productComposition.getContainerWeight(), productionOrder.getExpendAmount());
-            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            setInputs();
             dispobleBalance = true;
+            showButtonAddInput = true;
 
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -787,10 +789,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public Boolean verifAmountInput(OrderInput orderInput) {
         Boolean band = true;
+
         if (!articleEstateService.existArticleEstate(orderInput.getProductItem()))
             if (orderInput.getAmountStock().doubleValue() < orderInput.getAmount()) {
                 band = false;
                 dispobleBalance = false;
+            }else{
+                dispobleBalance = true;
             }
 
         return band;
@@ -811,8 +816,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return band;
     }
 
-    public Boolean isParameterized(ProductItem productItem) {
-        return articleEstateService.verifyEstate(productItem, "PARAMETRIZABLE");
+    public Boolean isParameterized(OrderInput productItem) {
+        return articleEstateService.verifyEstate(productItem.getProductItem(), "PARAMETRIZABLE");
     }
 
     public Boolean isNotCountAs(ProductItem productItem) {
@@ -826,6 +831,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void addFormulation() {
 
+        for(OrderInput input: productionOrder.getOrderInputs())
+        {
+            if(input.getAmount() == 0.0)
+            {
+                addMessageAmountInputIsCero(input.getProductItem().getFullName());
+                return;
+            }
+        }
+
         ProductionPlanning productionPlanning = getInstance();
 
 
@@ -833,7 +847,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setProductionPlanning(productionPlanning);
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
         if (productionOrder.getOrderInputs().size() == 0)
-            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            setInputs();
 
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
@@ -841,14 +855,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if (update() != Outcome.SUCCESS) {
                 return;
             }
-
+        addMessageOrderCreateSuccess(productionOrder.getCode(),productionOrder.getProductComposition().getProcessedProduct().getFullName());
         clearFormulation();
         disableEditingFormula();
         showProductionOrders = true;
+        showButtonAddInput = false;
         showInit();
     }
 
     public void updateFormulation() {
+        for(OrderInput input: productionOrder.getOrderInputs())
+        {
+            if(input.getAmount() == 0.0)
+            {
+                addMessageAmountInputIsCero(input.getProductItem().getFullName());
+                return;
+            }
+        }
+
         if (evaluateMathematicalExpression() == false) {
             return;
         }
@@ -858,7 +882,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //setProducedAmountWithExpendAmount(planning);
 
         //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
-        setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+        setInputs();
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (planning.getId() != null && !verifySotck(productionOrder))
@@ -869,7 +893,21 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         existingFormulation = null;
         disableEditingFormula();
         showProductionOrders = true;
+        showButtonAddInput = false;
         showInit();
+        addMessageOrderUpdateSuccess(productionOrder.getCode(),productionOrder.getProductComposition().getProcessedProduct().getFullName());
+    }
+
+    private void addMessageOrderUpdateSuccess(String code, String fullName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"ProductionOrder.messageOrderUpdateSuccess",code,fullName);
+    }
+
+    private void addMessageOrderCreateSuccess(String code, String fullName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"ProductionOrder.messageOrderCreateSuccess",code,fullName);
+    }
+
+    private void addMessageAmountInputIsCero(String fullName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"ProductionOrder.productionInput.messageAmountInputIsCero",fullName);
     }
 
     private Boolean verifySotck(ProductionOrder order) {
@@ -999,25 +1037,31 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     //public void evaluateParameterizedExpressionActionListener(ActionEvent e,OrderInput input) {
     public void evaluateParameterizedExpressionActionListener(OrderInput input) {
-        try {
+        if(input.getType().compareTo("ADD") != 0) {
+            try {
 
-            if (expendOld == null)
-                expendOld = productionOrder.getExpendAmount();
-            if (containerOld == null)
-                containerOld = productionOrder.getContainerWeight();
+                if (expendOld == null)
+                    expendOld = productionOrder.getExpendAmount();
+                if (containerOld == null)
+                    containerOld = productionOrder.getContainerWeight();
 
-            Double container = evaluatorMathematicalExpressionsService.excuteParemeterized(input, productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
-            //productionOrder.getProductComposition().setContainerWeight(container);
-            productionOrder.setContainerWeight(container);
-            //productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
-            productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(productionOrder.getProductComposition().getSupposedAmount(), productionOrder.getProductComposition().getContainerWeight(), container));
+                Double container = evaluatorMathematicalExpressionsService.excuteParemeterized(input, productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
+                //productionOrder.getProductComposition().setContainerWeight(container);
+                productionOrder.setContainerWeight(container);
+                //productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(expendOld,containerOld,container));
+                productionOrder.setExpendAmount(evaluatorMathematicalExpressionsService.getAmountExpected(productionOrder.getProductComposition().getSupposedAmount(), productionOrder.getProductComposition().getContainerWeight(), container));
 
-        } catch (ProductCompositionException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+            } catch (ProductCompositionException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            evaluateParameterizedExpression(input);
+            productionOrder.getOrderInputs().addAll(productionPlanningService.getInputsAdd(productionOrder));
+        }{
+           input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue(input.getAmount() * input.getCostUnit().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC)));
         }
-        evaluateParameterizedExpression(input);
+
     }
 
     private boolean evaluateParameterizedExpression(OrderInput input) {
@@ -1040,7 +1084,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
 
             evaluatorMathematicalExpressionsService.excuteFormulate(productionOrder, productionOrder.getProductComposition().getContainerWeight(), productionOrder.getProductComposition().getSupposedAmount());
-            setInputs(productionOrder.getProductComposition().getProductionIngredientList());
+            setInputs();
             return true;
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -1049,7 +1093,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    private void setInputs(List<ProductionIngredient> productionIngredientList) {
+    private void setInputs() {
 
         productionOrder.getOrderInputs().clear();
         for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
@@ -1072,6 +1116,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue( (ingredient.getAmount() * costUnit.doubleValue()),2, RoundUtil.RoundMode.SYMMETRIC)));
             productionOrder.getOrderInputs().add(input);
         }
+
+        productionOrder.getOrderInputs().addAll(productionPlanningService.getInputsAdd(productionOrder));
     }
 
     private void setInputsParametrized(List<ProductionIngredient> productionIngredientList, OrderInput inputParameterize) {
@@ -1763,6 +1809,44 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         return detail;
     }
 
+    public void addProductItemsToFormulation(List<ProductItem> productItems) {
+        Boolean aux = false;
+        for (ProductItem item : productItems) {
+            for(OrderInput orderInput :productionOrder.getOrderInputs())
+            {
+                if(orderInput.getProductItem().getProductItemCode().compareTo(item.getProductItemCode()) == 0)
+                {
+                    aux = true;
+                    continue;
+                }
+            }
+            if(aux){
+                  addMessageDuplicateInput(item.getFullName());
+            }
+            else {
+                OrderInput input = new OrderInput();
+                input.setProductItem(item);
+                input.setProductionOrder(productionOrder);
+                input.setAmount(0.0);
+                input.setType("ADD");
+                input.setAmountStock(evaluatorMathematicalExpressionsService.getMountInWarehouse(item));
+                input.setProductItemCode(item.getProductItemCode());
+                input.setCompanyNumber(item.getCompanyNumber());
+                input.setCostUnit(item.getUnitCost());
+                productionOrder.getOrderInputs().add(input);
+            }
+        }
+    }
+
+    private void addMessageDuplicateInput(String fullName) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,"ProductionOrder.productionInput.messageDuplicateInput",fullName);
+    }
+
+    public void removeInputForFormulation(OrderInput orderInput) {
+        productionOrder.getOrderInputs().remove(orderInput);
+        productionPlanningService.deleteOrderInput(orderInput);
+    }
+
     public class AccountOrderProduction{
 
         private BusinessUnit executorUnit;
@@ -2039,6 +2123,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
         showProductionOrders = false;
+        showButtonAddInput = true;
         hideButtonGeneral();
         hideTablesIni();
 
@@ -2606,6 +2691,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showGenerateAllVoucher = false;
         showGenerateAllAccountEntries = false;
         showButtonAddProduct = false;
+        showButtonAddInput = false;
         showInit();
     }
 
@@ -3497,5 +3583,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowGenerateAllAccountEntries(Boolean showGenerateAllAccountEntries) {
         this.showGenerateAllAccountEntries = showGenerateAllAccountEntries;
+    }
+
+    public boolean isShowButtonAddInput() {
+        return showButtonAddInput;
+    }
+
+    public void setShowButtonAddInput(boolean showButtonAddInput) {
+        this.showButtonAddInput = showButtonAddInput;
     }
 }
