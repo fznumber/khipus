@@ -156,7 +156,7 @@
                                                oncomplete="Richfaces.showModalPanel('baseProductInputsListModalPanel');"
                                                actionListener="#{selectPopUpAction.select}"
                                                rendered="#{baseProduct.state != 'FINALIZED' and baseProduct.state != 'TABULATED' and baseProduct.state != 'INSTOCK' and s:hasPermission('ADDPRODUCTTOBASEPRODUCT','CREATE')}"
-                                               reRender="productItemsListModalPanel">
+                                               reRender="productItemsListModalPanel,baseProductInputsListModalPanelContainer">
                                 <f:attribute name="entityManagerName" value=""/>
                                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
                             </a4j:commandButton>
