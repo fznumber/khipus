@@ -9,18 +9,23 @@ import com.encens.khipus.model.employees.RHMark;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.production.RawMaterialCollectionSessionService;
 import com.encens.khipus.service.production.RawMaterialProducerService;
+import com.encens.khipus.util.DateUtils;
 import org.apache.poi.hssf.record.formula.functions.T;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
 
 import javax.persistence.EntityManager;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Name("rawMaterialCollectionSessionAction")
 @Scope(ScopeType.CONVERSATION)
 public class RawMaterialCollectionSessionAction extends GenericAction<RawMaterialCollectionSession> {
 
+    private Calendar startPeriod = Calendar.getInstance();
+    private Calendar endPeriod = Calendar.getInstance();
     @In
     private RawMaterialProducerService rawMaterialProducerService;
 
@@ -67,6 +72,8 @@ public class RawMaterialCollectionSessionAction extends GenericAction<RawMateria
                 return Outcome.REDISPLAY;
             }
             getService().create(session);
+            startPeriod.setTime(DateUtils.getFirsDayFromPeriod(session.getDate()));
+            endPeriod.setTime(DateUtils.getLastDayFromPeriod(session.getDate()));
             addCreatedMessage();
             return Outcome.SUCCESS;
         } catch (EntryDuplicatedException e) {
@@ -86,7 +93,59 @@ public class RawMaterialCollectionSessionAction extends GenericAction<RawMateria
             this.setInstance(instance);
             //Ensure the instance exists in the database, find it
             setInstance(getService().findById(getEntityClass(), getId(instance)));
+            startPeriod.setTime(DateUtils.getFirsDayFromPeriod(instance.getDate()));
+            endPeriod.setTime(DateUtils.getLastDayFromPeriod(instance.getDate()));
             return Outcome.SUCCESS;
+
+        } catch (EntryNotFoundException e) {
+            addNotFoundMessage();
+            return Outcome.FAIL;
+        }
+    }
+
+
+    public String nextDate(ProductiveZone productiveZone, Date dateConcurrent) {
+
+        try {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateConcurrent);
+            calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)+1);
+
+
+            RawMaterialCollectionSession instance = rawMaterialCollectionSessionService.getRawMaterialCollectionSessionByDateAndProductiveZone(productiveZone,calendar.getTime());
+            rawMaterialCollectionSessionService.updateRawMaterialProducer(getService().findById(getEntityClass(), getId(instance)),instance.getProductiveZone());
+            setOp(OP_UPDATE);
+            //define the unmanaged instance as current instance
+            this.setInstance(instance);
+            //Ensure the instance exists in the database, find it
+            setInstance(getService().findById(getEntityClass(), getId(instance)));
+            return Outcome.REDISPLAY;
+
+
+        } catch (EntryNotFoundException e) {
+            addNotFoundMessage();
+            return Outcome.FAIL;
+        }
+    }
+
+    public String postDate(ProductiveZone productiveZone, Date dateConcurrent) {
+
+        try {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateConcurrent);
+            calendar.set(Calendar.DAY_OF_MONTH,calendar.get(Calendar.DAY_OF_MONTH)-1);
+
+
+            RawMaterialCollectionSession instance = rawMaterialCollectionSessionService.getRawMaterialCollectionSessionByDateAndProductiveZone(productiveZone,calendar.getTime());
+            rawMaterialCollectionSessionService.updateRawMaterialProducer(getService().findById(getEntityClass(), getId(instance)),instance.getProductiveZone());
+            setOp(OP_UPDATE);
+            //define the unmanaged instance as current instance
+            this.setInstance(instance);
+            //Ensure the instance exists in the database, find it
+            setInstance(getService().findById(getEntityClass(), getId(instance)));
+            return Outcome.REDISPLAY;
 
         } catch (EntryNotFoundException e) {
             addNotFoundMessage();

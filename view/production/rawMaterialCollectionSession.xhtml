@@ -105,6 +105,14 @@
                         <ui:define name="label">#{messages['RawMaterialCollectionSession.totalAmount']}</ui:define>
                         <h:outputText value="#{rawMaterialCollectionSessionAction.totalAmount}"/>
                     </s:decorate>
+                   <!-- <div class="buttons">
+                        <h:commandButton action="#{rawMaterialCollectionSessionAction.nextDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
+                                         value="#{messages['RawMaterialCollectionSession.nextDate']}"
+                                         styleClass="button"/>
+                        <h:commandButton action="#{rawMaterialCollectionSessionAction.postDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
+                                         value="#{messages['RawMaterialCollectionSession.postDate']}"
+                                         styleClass="button"/>
+                    </div>-->
                 </h:panelGrid>
 
                 <rich:dataTable id="collectedRawMaterialList"

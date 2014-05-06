@@ -6,8 +6,11 @@ import com.encens.khipus.model.production.ProductiveZone;
 import com.encens.khipus.model.production.RawMaterialCollectionSession;
 
 import javax.ejb.Local;
+import java.util.Date;
 
 @Local
 public interface RawMaterialCollectionSessionService extends GenericService {
     void updateRawMaterialProducer(RawMaterialCollectionSession rawMaterialCollectionSession,ProductiveZone productiveZone);
+
+    RawMaterialCollectionSession getRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date dateConcurrent);
 }
