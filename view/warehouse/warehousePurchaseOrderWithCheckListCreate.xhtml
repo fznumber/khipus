@@ -22,6 +22,7 @@
                                    immediate="true"
                                    oncomplete="Richfaces.showModalPanel('purchaseOrderWithCheckListModalPanel');"
                                    actionListener="#{selectPopUpAction.select}"
+                                   disabled="#{liquidationPaymentAction.hasAccountCorrency}"
                                    reRender="purchaseOrderWithCheckListModalPanel">
                     <f:attribute name="entityManagerName" value=""/>
                     <f:attribute name="dataModelObject" value="#{purchaseOrderWithCheckSearchDataModel}"/>

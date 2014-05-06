@@ -587,7 +587,7 @@
                            ajaxSingle="true"
                            action="#{warehousePurchaseOrderAction.addPurchaseOrder(purchaseOrderWithCheckSearchDataModel.selectedPurchaseOrders)}"
                            value="#{messages['Common.add']}"
-                           reRender="globalDiv"
+                           reRender="globalDiv,observation,paymentDescriptionField"
                            styleClass="button"
                            oncomplete="Richfaces.hideModalPanel('purchaseOrderWithCheckListModalPanel');"/>
     </ui:define>

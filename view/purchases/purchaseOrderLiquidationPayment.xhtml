@@ -112,7 +112,7 @@
                                noSelectionLabel=""
                                hideNoSelectionLabel="false"/>
                 <a4j:support event="onchange"
-                             reRender="sourceCurrencyDiv, exchangeRatePanel, payCurrencyField, payAmountField"
+                             reRender="sourceCurrencyDiv, exchangeRatePanel, payCurrencyField, payAmountField,purchaseOrderWithCheckPanel"
                              action="#{liquidationPaymentAction.accountChanged}"
                              ajaxSingle="true"
                              oncomplete="document.getElementById('#{rich:clientId(payAmountId)}').focus();"/>

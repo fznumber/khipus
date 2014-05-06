@@ -57,6 +57,7 @@ public class LiquidationPaymentAction {
     private PurchaseOrder purchaseOrder;
     // this list stores the PurchaseOrderDetails that when choise payment in check
     private List<PurchaseOrder> purchaseOrdersWithCheck = new ArrayList<PurchaseOrder>();
+    private boolean hasAccountCorrency = true;
 
     public PurchaseOrder getPurchaseOrder() {
         return purchaseOrder;
@@ -180,6 +181,12 @@ public class LiquidationPaymentAction {
         } else {
             getLiquidationPayment().setExchangeRate(BigDecimal.ONE);
         }
+
+
+        if(selectedCurrency != null)
+            hasAccountCorrency = false;
+        else
+            hasAccountCorrency = true;
     }
 
     public void setDefaultDescription(PurchaseOrder purchaseOrder, String module, String acronym) {
@@ -301,5 +308,13 @@ public class LiquidationPaymentAction {
 
     public void setSelectedPurchaseOrdersWithCheck(List<PurchaseOrder> selectedPurchaseOrdersWithCheck) {
         this.selectedPurchaseOrdersWithCheck = selectedPurchaseOrdersWithCheck;
+    }
+
+    public boolean isHasAccountCorrency() {
+        return hasAccountCorrency;
+    }
+
+    public void setHasAccountCorrency(boolean hasAccountCorrency) {
+        this.hasAccountCorrency = hasAccountCorrency;
     }
 }

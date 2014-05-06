@@ -509,7 +509,6 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
         if (purchasePayment != null &&!BigDecimalUtil.isZeroOrNull(new BigDecimal(totalPayAmount)) && !BigDecimalUtil.isZeroOrNull(new BigDecimal(totalSourceAmount))){
 
         String transactionNumber = warehouseAccountEntryService.createEntryAccountPurchaseOrderForPaymentCheck(entity,purchasePayment,new BigDecimal(totalSourceAmount),new BigDecimal(totalPayAmount));
-            //todo:verificar con Claudia
             if (PurchaseOrderPaymentType.PAYMENT_ROTATORY_FUND.equals(purchasePayment.getPaymentType())) {
                 try {
                     rotatoryFundCollectionService.generateCollectionForPurchaseOrderPayment(purchasePayment);
@@ -526,12 +525,21 @@ public class WarehousePurchaseOrderServiceBean extends PurchaseOrderServiceBean 
                 }
             }
 
+            String ordersNumbers = MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym")+" ";
+
+            for(PurchaseOrder purchaseOrder: purchaseOrders)
+            {
+                ordersNumbers += purchaseOrder.getOrderNumber();
+                ordersNumbers += "; ";
+            }
+
             for(PurchaseOrder purchaseOrder: purchaseOrders){
 
                 BigDecimal defaultExchangeRate = null;
                 liquidationPaymentAction.setDefaultDescription(entity,
                         MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
-                        MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+                        ordersNumbers);
+                        //MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
                 liquidationPaymentAction.setPurchaseOrder(entity);
                 PurchaseOrderPayment purchaseOrderPayment = (currentBalanceAmount(purchaseOrder).compareTo(BigDecimal.ZERO) > 0) ? liquidationPaymentAction.getLiquidationPayment() : null;
                 purchaseOrderPayment.setCheckDestination(purchasePayment.getCheckDestination());

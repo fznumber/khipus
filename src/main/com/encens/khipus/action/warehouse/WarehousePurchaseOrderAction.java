@@ -158,10 +158,17 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     @Restrict("#{s:hasPermission('WAREHOUSEPURCHASEORDER','VIEW')}")
     public String select(PurchaseOrder instance) {
         String outcome = super.select(instance);
+        String ordersNumbers = MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym")+" ";
+
+        for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += "; ";
+        }
         if (instance.isPurchaseOrderFinalized()) {
             liquidationPaymentAction.setDefaultDescription(instance,
                     MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
-                    MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+                    ordersNumbers);
             liquidationPaymentAction.setPurchaseOrder(getInstance());
         }
         return outcome;
@@ -555,6 +562,7 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     }
 
     public void addPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
+        String gloss = " - CON ORDENES DE COMPRA: ";
         for (PurchaseOrder purchaseOrder : purchaseOrders) {
             if (liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().contains(purchaseOrder)) {
                 continue;
@@ -562,7 +570,22 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
 
             liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().add(purchaseOrder);
             liquidationPaymentAction.getPurchaseOrdersWithCheck().add(purchaseOrder);
+            gloss += purchaseOrder.getOrderNumber()+"; ";
         }
+
+        String ordersNumbers = MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym")+"; ";
+
+        for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += "; ";
+        }
+
+            liquidationPaymentAction.setDefaultDescription(getInstance(),
+                    MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
+                    ordersNumbers);
+
+        getInstance().setGloss(getInstance().getGloss()+gloss);
         liquidationPaymentAction.computePayment(getCurrentBalanceAmount());
     }
 
