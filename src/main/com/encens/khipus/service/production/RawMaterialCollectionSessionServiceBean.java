@@ -8,6 +8,8 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
+import java.util.Date;
 import java.util.List;
 
 @Name("rawMaterialCollectionSessionService")
@@ -102,5 +104,22 @@ public class RawMaterialCollectionSessionServiceBean extends ExtendedGenericServ
             getEntityManager().flush();
             getEntityManager().refresh(rawMaterialCollectionSession);
         }
+    }
+
+    @Override
+    public RawMaterialCollectionSession getRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date dateConcurrent) {
+        RawMaterialCollectionSession rawMaterialCollectionSession = null;
+        try{
+            rawMaterialCollectionSession = (RawMaterialCollectionSession)getEntityManager().createQuery("select rawMaterialCollectionSession from RawMaterialCollectionSession rawMaterialCollectionSession" +
+                                                       " where rawMaterialCollectionSession.date = :date" +
+                                                       " and rawMaterialCollectionSession.productiveZone = :productiveZone")
+                                           .setParameter("date",dateConcurrent, TemporalType.DATE)
+                                           .setParameter("productiveZone",productiveZone)
+                                           .getSingleResult();
+        }catch(NoResultException e){
+
+        }
+
+        return rawMaterialCollectionSession;
     }
 }
