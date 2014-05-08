@@ -70,6 +70,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             addSoldProductDeliveredInfoMessage();
             select(productDelivery);
             return Outcome.SUCCESS;
+        } catch (SoldProductNotFoundException e) {
+            addSoldProductNotFoundMessages();
+            return Outcome.FAIL;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
             return Outcome.FAIL;
@@ -114,6 +117,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             return Outcome.FAIL;
         }
     }
+
 
     public void myCreate() {
 
@@ -165,7 +169,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             addSoldProductDeliveredInfoMessage();
             select(productDelivery);
             //update();
-
+        } catch (SoldProductNotFoundException e) {
+            addSoldProductNotFoundMessages();
+            continue;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
             continue;
@@ -398,6 +404,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void addProductItemNotFoundMessage(String productItemName) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
+    }
+
+    private void addSoldProductNotFoundMessages() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "ProductDelivery.info.soldProductNotFoundMessages", getInstance().getInvoiceNumber());
     }
 
     public String getOrderNumber() {

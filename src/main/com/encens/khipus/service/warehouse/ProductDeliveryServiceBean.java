@@ -90,13 +90,18 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException {
+            ProductItemNotFoundException, SoldProductNotFoundException {
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
-        //List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
-        List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+        List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
+        //List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
         WarehouseDocumentType documentType = getFirstConsumptionType();
+
+        if(soldProducts.size() == 0)
+        {
+            throw new SoldProductNotFoundException();
+        }
 
         if (null == documentType) {
             throw new WarehouseDocumentTypeNotFoundException("Warehouse document consumption type not found");
@@ -115,8 +120,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
-        //productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
-        productItemStockChecker(invoiceNumber, warehouse, costCenter);
+        productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
+        //productItemStockChecker(invoiceNumber, warehouse, costCenter);
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
         WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
@@ -185,12 +190,18 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException {
+            ProductItemNotFoundException, SoldProductNotFoundException {
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
-        List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+        //List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+        List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
         WarehouseDocumentType documentType = getFirstConsumptionType();
+
+        if(soldProducts.size() == 0)
+        {
+            throw new SoldProductNotFoundException();
+        }
 
         if (null == documentType) {
             throw new WarehouseDocumentTypeNotFoundException("Warehouse document consumption type not found");
@@ -209,10 +220,12 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
-        productItemStockChecker(invoiceNumber, warehouse, costCenter);
+        productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
+        //productItemStockChecker(invoiceNumber, warehouse, costCenter);
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
-        WarehouseVoucher warehouseVoucher = createWarehouseVoucher(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
+        //WarehouseVoucher warehouseVoucher = createWarehouseVoucher(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
+        WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
 
         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
         Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();

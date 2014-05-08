@@ -34,7 +34,7 @@ public interface ProductDeliveryService extends GenericService {
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException;
+            ProductItemNotFoundException, SoldProductNotFoundException;
     ProductDelivery createAll(String invoiceNumber,
                            String warehouseDescription)
             throws InventoryException,
@@ -50,7 +50,7 @@ public interface ProductDeliveryService extends GenericService {
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException;
+            ProductItemNotFoundException, SoldProductNotFoundException;
 
     ProductDelivery select(ProductDelivery entity);
 
