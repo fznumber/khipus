@@ -146,18 +146,20 @@ public class VoucherServiceBean implements VoucherService {
     }
 
     @Override
-    public List<ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction) {
+    public List<ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction, Date startDate, Date endDate) {
         List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
                 List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS\n" +
-                                                                "WHERE  TRUNC(FECHA) = TRUNC(SYSDATE) \n" +
+                                                                "WHERE  TRUNC(FECHA) between :startDate and :endDate \n" +
                                                                 "AND MODULO  =  :financesModule \n"
                                                                 //"AND NO_TRANS = 0"
                                                                 )
                                             .setParameter("financesModule", financesModule.getId().getModule())
+                                            .setParameter("startDate",startDate,TemporalType.DATE)
+                                            .setParameter("endDate",endDate,TemporalType.DATE)
                                             .getResultList();
         for(Object[] data:datas)
         {
-            entries.add(new ObsApprovedEntries((String)data[2],(String)data[5]));
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[6]));
         }
 
         return entries;
@@ -168,14 +170,14 @@ public class VoucherServiceBean implements VoucherService {
     public List<ObsApprovedEntries> getInfoTrasaction(String numberTransction) {
         List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
         List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS\n" +
-                        "WHERE  TRUNC(FECHA) = TRUNC(SYSDATE) \n" +
+                        "WHERE  TRUNC(FECHA_SYS) = TRUNC(SYSDATE) \n" +
                         "AND NO_TRANS = :numberTransction"
         )
                 .setParameter("numberTransction", numberTransction)
                 .getResultList();
         for(Object[] data:datas)
         {
-            entries.add(new ObsApprovedEntries((String)data[2],(String)data[5]));
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[6]));
         }
 
        return entries;

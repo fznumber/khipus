@@ -47,7 +47,7 @@ public class VoucherEntriesApproveAction extends GenericAction<Voucher> {
            try {
                List<String> transactionNumbers = new ArrayList<String>();
                voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber,businessUnit,startDate,endDate,numberTransaction,financeUser,financesModule);
-               obsApprovedEntrieses = voucherService.getInfoTrasaction(financesModule, numberTransaction);
+               obsApprovedEntrieses = voucherService.getInfoTrasaction(financesModule, numberTransaction,startDate,endDate);
 
                if(obsApprovedEntrieses.size() == 0)
                {
