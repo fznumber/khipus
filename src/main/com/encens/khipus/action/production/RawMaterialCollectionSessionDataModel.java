@@ -41,6 +41,7 @@ public class RawMaterialCollectionSessionDataModel extends QueryDataModel<Long, 
 
     @Override
     public String getSortProperty() {
+        this.setSortAsc(false);
         return "session.date";
     }
 

@@ -9,6 +9,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -107,19 +108,57 @@ public class RawMaterialCollectionSessionServiceBean extends ExtendedGenericServ
     }
 
     @Override
-    public RawMaterialCollectionSession getRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date dateConcurrent) {
-        RawMaterialCollectionSession rawMaterialCollectionSession = null;
+    public List<RawMaterialCollectionSession> getRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date startDate, Date endDate) {
+        List<RawMaterialCollectionSession> rawMaterialCollectionSessions = new ArrayList<RawMaterialCollectionSession>();
+
         try{
-            rawMaterialCollectionSession = (RawMaterialCollectionSession)getEntityManager().createQuery("select rawMaterialCollectionSession from RawMaterialCollectionSession rawMaterialCollectionSession" +
-                                                       " where rawMaterialCollectionSession.date = :date" +
-                                                       " and rawMaterialCollectionSession.productiveZone = :productiveZone")
-                                           .setParameter("date",dateConcurrent, TemporalType.DATE)
-                                           .setParameter("productiveZone",productiveZone)
-                                           .getSingleResult();
+            rawMaterialCollectionSessions = (List<RawMaterialCollectionSession>)getEntityManager().createQuery("select rawMaterialCollectionSession from RawMaterialCollectionSession rawMaterialCollectionSession" +
+                    " where rawMaterialCollectionSession.date between :startDate and :endDate" +
+                    " and rawMaterialCollectionSession.productiveZone = :productiveZone order by rawMaterialCollectionSession.date desc")
+                                           .setParameter("startDate", startDate, TemporalType.DATE)
+                                           .setParameter("endDate", endDate, TemporalType.DATE)
+                                           .setParameter("productiveZone", productiveZone)
+                                           .getResultList();
         }catch(NoResultException e){
 
         }
 
-        return rawMaterialCollectionSession;
+        return rawMaterialCollectionSessions;
+    }
+
+    @Override
+    public List<RawMaterialCollectionSession> getNextRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date date) {
+        List<RawMaterialCollectionSession> rawMaterialCollectionSessions = new ArrayList<RawMaterialCollectionSession>();
+
+        try{
+            rawMaterialCollectionSessions = (List<RawMaterialCollectionSession>)getEntityManager().createQuery("select rawMaterialCollectionSession from RawMaterialCollectionSession rawMaterialCollectionSession" +
+                    " where rawMaterialCollectionSession.date = :date" +
+                    " and rawMaterialCollectionSession.productiveZone = :productiveZone order by rawMaterialCollectionSession.date desc")
+                    .setParameter("date", date, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .getResultList();
+        }catch(NoResultException e){
+
+        }
+
+        return rawMaterialCollectionSessions;
+    }
+
+    @Override
+    public List<RawMaterialCollectionSession> getRawMaterialCollectionSessionByDateAndProductiveZone(ProductiveZone productiveZone, Date date) {
+        List<RawMaterialCollectionSession> rawMaterialCollectionSessions = new ArrayList<RawMaterialCollectionSession>();
+
+        try{
+            rawMaterialCollectionSessions = (List<RawMaterialCollectionSession>)getEntityManager().createQuery("select rawMaterialCollectionSession from RawMaterialCollectionSession rawMaterialCollectionSession" +
+                    " where rawMaterialCollectionSession.date < :date " +
+                    " and rawMaterialCollectionSession.productiveZone = :productiveZone order by rawMaterialCollectionSession.date desc")
+                    .setParameter("date", date, TemporalType.DATE)
+                    .setParameter("productiveZone", productiveZone)
+                    .getResultList();
+        }catch(NoResultException e){
+
+        }
+
+        return rawMaterialCollectionSessions;
     }
 }

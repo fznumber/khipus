@@ -71,9 +71,14 @@
                             <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
                         </a4j:commandLink>
                     </s:decorate>
-                    <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                    <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
                         <ui:define name="label">#{messages['RawMaterialCollectionSession.date']}</ui:define>
-                        <rich:calendar value="#{rawMaterialCollectionSession.date}" required="true"/>
+                        <rich:calendar value="#{rawMaterialCollectionSession.date}"
+                                       required="true">
+                            <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                               timeZone="#{sessionUser.timeZone}"
+                                               type="date"/>
+                         </rich:calendar>
                     </s:decorate>
                     <c:choose>
                         <c:when test="#{!rawMaterialCollectionSessionAction.managed}">
@@ -105,14 +110,37 @@
                         <ui:define name="label">#{messages['RawMaterialCollectionSession.totalAmount']}</ui:define>
                         <h:outputText value="#{rawMaterialCollectionSessionAction.totalAmount}"/>
                     </s:decorate>
-                   <!-- <div class="buttons">
-                        <h:commandButton action="#{rawMaterialCollectionSessionAction.nextDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
+                    <s:decorate id="optionsNavegation" template="/include/viewField.xhtml" styleClass="formRow">
+                        <a4j:commandButton action="#{rawMaterialCollectionSessionAction.postDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
+                                           id = "buttonPos"
+                                           value="#{messages['RawMaterialCollectionSession.postDate']}"
+                                           styleClass="button"
+                                           reRender="formPanel"
+                                           disabled="#{rawMaterialCollectionSessionAction.isStartPeriod(rawMaterialCollectionSession.date)}">
+                        </a4j:commandButton>
+
+                        <a4j:commandButton action="#{rawMaterialCollectionSessionAction.nextDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date,rawMaterialCollectionSession.metaProduct,rawMaterialCollectionSession.collectedRawMaterialList)}"
+                                         id = "buttonNext"
                                          value="#{messages['RawMaterialCollectionSession.nextDate']}"
-                                         styleClass="button"/>
-                        <h:commandButton action="#{rawMaterialCollectionSessionAction.postDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
-                                         value="#{messages['RawMaterialCollectionSession.postDate']}"
-                                         styleClass="button"/>
-                    </div>-->
+                                         disabled="#{rawMaterialCollectionSessionAction.isEndPeriod(rawMaterialCollectionSession.date)}"
+                                         reRender="formPanel"
+                                         styleClass="button">
+                        </a4j:commandButton>
+                    </s:decorate>
+                    <s:decorate id="optionsNavegationJump" template="/include/viewField.xhtml" styleClass="formRow">
+                        <a4j:commandButton action="#{rawMaterialCollectionSessionAction.jumpPostDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date)}"
+                                         id = "buttonPosJump"
+                                         value="#{messages['RawMaterialCollectionSession.postDateJump']}"
+                                         reRender="formPanel"
+                                         styleClass="button">
+                        </a4j:commandButton>
+                        <a4j:commandButton action="#{rawMaterialCollectionSessionAction.jumpNextDate(rawMaterialCollectionSession.productiveZone,rawMaterialCollectionSession.date,rawMaterialCollectionSession.metaProduct,rawMaterialCollectionSession.collectedRawMaterialList)}"
+                                         id = "buttonNextJump"
+                                         value="#{messages['RawMaterialCollectionSession.nextDateJump']}"
+                                         reRender="formPanel"
+                                         styleClass="button">
+                        </a4j:commandButton>
+                    </s:decorate>
                 </h:panelGrid>
 
                 <rich:dataTable id="collectedRawMaterialList"

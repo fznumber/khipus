@@ -23,6 +23,17 @@ public final class DateUtils {
     private DateUtils() {
     }
 
+    public static Boolean dateEquals(Calendar calendarFirst, Calendar calendarSecond){
+
+        if(calendarFirst.get(Calendar.YEAR) == calendarSecond.get(Calendar.YEAR))
+            if(calendarFirst.get(Calendar.MONTH) == calendarSecond.get(Calendar.MONTH))
+                if(calendarFirst.get(Calendar.DAY_OF_MONTH) == calendarSecond.get(Calendar.DAY_OF_MONTH))
+                    return true;
+
+        return false;
+
+    }
+
     public static Calendar toCalendar(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -415,4 +426,19 @@ public final class DateUtils {
 
     }
 
+    public static boolean isMajor(Calendar date, Calendar dateCompare) {
+        if(date.get(Calendar.YEAR) <= dateCompare.get(Calendar.YEAR))
+            if(date.get(Calendar.MONTH) <= dateCompare.get(Calendar.MONTH))
+                if(date.get(Calendar.DAY_OF_MONTH) <= dateCompare.get(Calendar.DAY_OF_MONTH))
+                    return false;
+        return true;
+    }
+
+    public static boolean isLess(Calendar date, Calendar dateCompare) {
+        if(date.get(Calendar.YEAR) >= dateCompare.get(Calendar.YEAR))
+            if(date.get(Calendar.MONTH) >= dateCompare.get(Calendar.MONTH))
+                if(date.get(Calendar.DAY_OF_MONTH) >= dateCompare.get(Calendar.DAY_OF_MONTH))
+                    return false;
+        return true;
+    }
 }
