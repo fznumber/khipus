@@ -91,7 +91,14 @@
                  maxlength="100"
                  tabindex="1"/>
 </s:decorate>
-
+<s:decorate id="nameShortField" template="/include/inputField.xhtml" styleClass="formRow">
+    <ui:define name="label">#{messages['ProductItem.nameShort']}</ui:define>
+    <h:inputText id="nameShort"
+                 value="#{productItem.nameShort}"
+                 styleClass="input"
+                 maxlength="14"
+                 tabindex="2"/>
+</s:decorate>
 <s:div id="equivalentQuantityPanel">
     <s:decorate id="equivalentQuantityField" template="/include/inputField.xhtml" styleClass="formRow"
                 rendered="#{productItemAction.usedGroupMeasureUnit}">

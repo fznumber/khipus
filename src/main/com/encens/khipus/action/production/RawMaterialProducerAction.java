@@ -43,8 +43,8 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
 
     public List<Extension> extensionList;
     private boolean showExtension = false;
-    private boolean moveDiscoints = false;
-    private boolean moveSessions = false;
+    private boolean moveDiscoints = true;
+    private boolean moveSessions = true;
     private boolean showOptionsProductiveZone = false;
 
     private List<ProductiveZone> productiveZones;
@@ -114,39 +114,39 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
         if (checkLicenseBoundaries() == false) {
             return Outcome.REDISPLAY;
         }
-        if(getInstance().getProductiveZone() != productiveZoneConcurrent)
+        if(getInstance().getProductiveZone() != productiveZoneConcurrent && showOptionsProductiveZone)
         {
-           if(!moveSessions)
+           //if(!moveSessions)
            if(verifySessionsToRawMaterialProducer())
            {
               return Outcome.REDISPLAY;
            }
 
-           if(!moveDiscoints)
+           //if(!moveDiscoints)
            if(verifyDiscointToRawMaterialProducer())
            {
                return Outcome.REDISPLAY;
            }
 
-           if(moveDiscoints)
-           {
+          // if(moveDiscoints)
+          // {
                try {
                     salaryMovementProducerService.moveDiscountsProductor(getInstance(),new Date(), productiveZoneConcurrent);
                } catch (SalaryMovementProducerException e) {
                    addErrorHasRawMaterialPayRoll();
                    return Outcome.REDISPLAY;
                }
-           }
+          // }
 
-           if(moveSessions)
-           {
+         //  if(moveSessions)
+          // {
                try {
                    salaryMovementProducerService.moveSessionsProductor(getInstance(), new Date(), productiveZoneConcurrent);
                } catch (SalaryMovementProducerException e) {
                    addErrorHasRawMaterialPayRoll();
                    return Outcome.REDISPLAY;
                }
-           }
+         //  }
 
            LogProductiveZone logProductiveZone = new LogProductiveZone();
            logProductiveZone.setDate(new Date());

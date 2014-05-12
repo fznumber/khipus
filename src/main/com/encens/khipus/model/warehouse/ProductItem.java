@@ -54,6 +54,10 @@ public class ProductItem implements BaseModel {
     @Length(max = 100)
     private String name;
 
+    @Column(name = "NOMBRECORTO", nullable = true, length = 14)
+    @Length(max = 14)
+    private String nameShort;
+
     @Column(name = "ESTADO", nullable = true, length = 3)
     @Enumerated(EnumType.STRING)
     private ProductItemState state;
@@ -240,6 +244,13 @@ public class ProductItem implements BaseModel {
         this.version = version;
     }
 
+    public String getNameShort() {
+        return nameShort;
+    }
+
+    public void setNameShort(String nameShort) {
+        this.nameShort = nameShort;
+    }
 
     public SubGroup getSubGroup() {
         return subGroup;
