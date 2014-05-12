@@ -1,4 +1,4 @@
-package com.encens.khipus.action.warehouse;
+package com.encens.khipus.action.customers;
 
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author
  * @version 3.0
  */
-@Name("productDeliveryAction")
+@Name("orderDeliveryAction")
 @Scope(ScopeType.CONVERSATION)
 public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
 
@@ -46,15 +46,9 @@ public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
 
     private ProductDeliveryType productDeliveryType = ProductDeliveryType.CASH_ORDER;
 
-    @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
-    @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
-    public ProductDelivery initProductDelivery() {
-        return getInstance();
-    }
-
     @Override
     @End
-    @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
+    //@Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
         System.out.println("...Entregar pedido.... " + getInstance().getInvoiceNumber());
         System.out.println("......ValidatorUtil.isBlankOrNull.... " + ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber()));
@@ -272,10 +266,10 @@ public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
 
-    @Factory(value = "productDeliveryTypes", scope = ScopeType.STATELESS)
+    /*@Factory(value = "productDeliveryTypes", scope = ScopeType.STATELESS)
     public ProductDeliveryType[] initProductDeliveryTypes() {
         return ProductDeliveryType.values();
-    }
+    }*/
 
     public List<SoldProduct> getSoldProducts() {
         return soldProducts;

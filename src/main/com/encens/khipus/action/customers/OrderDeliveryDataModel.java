@@ -15,10 +15,10 @@ import java.util.List;
  * @author
  * @version 2.4
  */
-@Name("productDeliveryDataModel")
+@Name("orderDeliveryDataModel")
 @Scope(ScopeType.PAGE)
 @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
-public class ProductDeliveryDataModel extends QueryDataModel<Long, ProductDelivery> {
+public class OrderDeliveryDataModel extends QueryDataModel<Long, ProductDelivery> {
     private static final String[] RESTRICTIONS = {
             "lower(productDelivery.invoiceNumber) like concat(lower(#{productDeliveryDataModel.criteria.invoiceNumber}), '%')"
     };

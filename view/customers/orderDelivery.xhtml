@@ -11,7 +11,7 @@
 
 <ui:define name="pageTitle">
     <c:choose>
-        <c:when test="#{productDeliveryAction.managed}">
+        <c:when test="#{orderDeliveryAction.managed}">
             #{messages['ProductDelivery.edit']}
         </c:when>
         <c:otherwise>
@@ -22,23 +22,23 @@
 <ui:param name="bodyAlign" value="center"/>
 <ui:param name="bodyWidth" value="80%"/>
 
-<ui:param name="selectedTab" value="finances"/>
+<ui:param name="selectedTab" value="customers"/>
 <ui:define name="body">
 <h:form id="productDeliveryForm">
     <div class="buttons">
         <h:commandButton id="createButtonId"
-                         action="#{productDeliveryAction.create}"
+                         action="#{orderDeliveryAction.create}"
                          value="#{messages['ProductDelivery.button.deliver']}"
                          styleClass="button"
-                         rendered="#{!productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE')}">
+                         rendered="#{!orderDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE')}">
             <s:defaultAction/>
         </h:commandButton>
         <h:commandButton action="#{productDeliveryReceiptReportAction.generateReport(productDelivery)}"
                          value="#{messages['ProductDelivery.button.generateDocument']}"
-                         rendered="#{productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
+                         rendered="#{orderDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
                          styleClass="button"
                          immediate="true"/>
-        <h:commandButton action="#{productDeliveryAction.cancel}"
+        <h:commandButton action="#{orderDeliveryAction.cancel}"
                          value="#{messages['Common.cancel']}"
                          styleClass="button"
                          immediate="true"/>
@@ -47,7 +47,7 @@
     <rich:panel id="formPanel">
         <f:facet name="header">
             <c:choose>
-                <c:when test="#{productDeliveryAction.managed}">
+                <c:when test="#{orderDeliveryAction.managed}">
                     #{messages['ProductDelivery.edit']}
                 </c:when>
                 <c:otherwise>
@@ -60,7 +60,7 @@
                     template="/include/inputField.xhtml"
                     styleClass="formRow">
             <!--<ui:define name="label">#{messages['ProductDelivery.deliveryType']}</ui:define>-->
-            <h:selectOneRadio value="#{productDeliveryAction.productDeliveryType}"
+            <h:selectOneRadio value="#{orderDeliveryAction.productDeliveryType}"
                               layout="lineDirection">
                 <s:selectItems value="#{productDeliveryTypes}"
                                var="element"
@@ -68,7 +68,7 @@
                 <s:convertEnum/>
                 <a4j:support event="onclick"
                              ajaxSingle="true"
-                             actionListener="#{productDeliveryAction.cleanInvoiceNumber}"
+                             actionListener="#{orderDeliveryAction.cleanInvoiceNumber}"
                              reRender="invoiceNumber, soldProductPanel, messageSearchOrder "/>
             </h:selectOneRadio>
         </s:decorate>
@@ -79,22 +79,22 @@
             <ui:define name="label">#{messages['ProductDelivery.documentNumber']}</ui:define>
 
             <h:inputText id="invoiceNumber"
-                         value="#{productDeliveryAction.orderNumber}"
+                         value="#{orderDeliveryAction.orderNumber}"
                          maxlength="20"
                          styleClass="inputMedium"
                          tabindex="1"
                          required="true"
                          autocomplete="off"
-                         rendered="#{!productDeliveryAction.managed}">
+                         rendered="#{!orderDeliveryAction.managed}">
                 <!--<a4j:support event="onblur"
                              ajaxSingle="true"
-                             actionListener="#{productDeliveryAction.searchOrderNumber}"
+                             actionListener="#{orderDeliveryAction.searchOrderNumber}"
                              reRender="invoiceNumber, soldProductPanel, messageSearchOrder "/>-->
             </h:inputText>
             <a4j:commandButton id="searchButtonId"
-                               action="#{productDeliveryAction.search}"
+                               action="#{orderDeliveryAction.search}"
                                reRender="invoiceNumber, soldProductPanel, messageSearchOrder"
-                               rendered="#{!productDeliveryAction.managed}"
+                               rendered="#{!orderDeliveryAction.managed}"
                                styleClass="button"
                                value="#{messages['Common.search']}"
                                tabindex="2">
@@ -104,7 +104,7 @@
                          styleClass="input"
                          readonly="true"
                          value="#{productDelivery.invoiceNumber}"
-                         rendered="#{!productDeliveryAction.managed}"
+                         rendered="#{!orderDeliveryAction.managed}"
                          required="true"
                          tabindex="1"/>
             <a4j:commandLink id="selectInvoiceNumber"
@@ -112,7 +112,7 @@
                              immediate="true"
                              title="#{messages['Common.choose']}"
                              oncomplete="Richfaces.showModalPanel('soldProductListModalPanel');"
-                             rendered="#{!productDeliveryAction.managed}"
+                             rendered="#{!orderDeliveryAction.managed}"
                              tabindex="2">
                 <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
             </a4j:commandLink>-->
@@ -120,56 +120,56 @@
                              ajaxSingle="true"
                              immediate="true"
                              title="#{messages['Common.clear']}"
-                             action="#{productDeliveryAction.cleanInvoiceNumber}"
+                             action="#{orderDeliveryAction.cleanInvoiceNumber}"
                              reRender="invoiceNumber, soldProductPanel, messageSearchOrder"
-                             rendered="#{!productDeliveryAction.managed}"
+                             rendered="#{!orderDeliveryAction.managed}"
                              tabindex="3">
                 <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
             </a4j:commandLink>
             <h:outputText styleClass="input"
                           value="#{productDelivery.invoiceNumber}"
-                          rendered="#{productDeliveryAction.managed}"/>
+                          rendered="#{orderDeliveryAction.managed}"/>
         </s:decorate>
 
         <s:decorate id="messageSearchOrder" style="color: red;">
-            <h:outputText value="#{productDeliveryAction.messageSearchOrder}"/>
+            <h:outputText value="#{orderDeliveryAction.messageSearchOrder}"/>
         </s:decorate>
 
-        <s:fragment id="productDeliveryPanel" rendered="#{productDeliveryAction.managed}">
+        <s:fragment id="productDeliveryPanel" rendered="#{orderDeliveryAction.managed}">
             <s:decorate id="warehouseVoucherField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductDelivery.warehouseVoucher']}</ui:define>
                 <h:outputText value="#{productDelivery.warehouseVoucher.number}"/>
             </s:decorate>
         </s:fragment>
         <s:div id="soldProductPanel">
-            <s:fragment id="soldProductInformationPanel" rendered="#{productDeliveryAction.existsSoldProducts}">
+            <s:fragment id="soldProductInformationPanel" rendered="#{orderDeliveryAction.existsSoldProducts}">
                 <s:decorate id="namesField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.names']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.names}"/>
+                    <h:outputText value="#{orderDeliveryAction.soldProduct.names}"/>
                 </s:decorate>
                 <s:decorate id="firstNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.firstName']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.firstName}"/>
+                    <h:outputText value="#{orderDeliveryAction.soldProduct.firstName}"/>
                 </s:decorate>
                 <s:decorate id="secondNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.secondName']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.secondName}"/>
+                    <h:outputText value="#{orderDeliveryAction.soldProduct.secondName}"/>
                 </s:decorate>
                 <s:decorate id="personalIdentificationField" template="/include/inputField.xhtml"
                             styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.personalIdentification']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.personalIdentification}"/>
+                    <h:outputText value="#{orderDeliveryAction.soldProduct.personalIdentification}"/>
                 </s:decorate>
                 <s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.state']}</ui:define>
-                    <h:outputText value="#{messages[productDeliveryAction.soldProduct.state.resourceKey]}"/>
+                    <h:outputText value="#{messages[orderDeliveryAction.soldProduct.state.resourceKey]}"/>
                 </s:decorate>
                 <s:decorate id="soldProductField"
                             template="/include/inputField.xhtml"
                             styleClass="formRow">
                     <ui:define name="label">#{messages['ProductDelivery.soldProduct']}</ui:define>
                     <ui:param name="vertical" value="true"/>
-                    <rich:dataTable value="#{productDeliveryAction.soldProducts}"
+                    <rich:dataTable value="#{orderDeliveryAction.soldProducts}"
                                     var="soldProduct"
                                     columnsWidth="70%, 30%"
                                     width="98%">
@@ -197,18 +197,18 @@
     </rich:panel>
 
     <div class="buttons">
-        <h:commandButton action="#{productDeliveryAction.create}"
+        <h:commandButton action="#{orderDeliveryAction.create}"
                          value="#{messages['ProductDelivery.button.deliver']}"
                          styleClass="button"
-                         rendered="#{!productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                         rendered="#{!orderDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE')}"
                          tabindex="4"/>
         <h:commandButton action="#{productDeliveryReceiptReportAction.generateReport(productDelivery)}"
                          value="#{messages['ProductDelivery.button.generateDocument']}"
-                         rendered="#{productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
+                         rendered="#{orderDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
                          styleClass="button"
                          immediate="true"
                          tabindex="5"/>
-        <h:commandButton action="#{productDeliveryAction.cancel}"
+        <h:commandButton action="#{orderDeliveryAction.cancel}"
                          value="#{messages['Common.cancel']}"
                          styleClass="button"
                          immediate="true"
@@ -222,7 +222,7 @@
     <ui:define name="assignButton">
         <a4j:commandButton id="assignButton"
                            title="#{messages['Common.choose']}"
-                           action="#{productDeliveryAction.assignInvoiceNumber(soldProductItem)}"
+                           action="#{orderDeliveryAction.assignInvoiceNumber(soldProductItem)}"
                            image="/img/active.gif"
                            styleClass="select-image"
                            reRender="invoiceNumber, soldProductPanel"
