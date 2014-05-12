@@ -2,6 +2,7 @@ package com.encens.khipus.action.customers;
 
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.warehouse.ProductDelivery;
+import com.encens.khipus.model.warehouse.SoldProduct;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -17,24 +18,28 @@ import java.util.List;
  */
 @Name("orderDeliveryDataModel")
 @Scope(ScopeType.PAGE)
-@Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
-public class OrderDeliveryDataModel extends QueryDataModel<Long, ProductDelivery> {
+@Restrict("#{s:hasPermission('ORDERDELIVERYWAREHOUSE','VIEW')}")
+public class OrderDeliveryDataModel extends QueryDataModel<Long, SoldProduct> {
     private static final String[] RESTRICTIONS = {
-            "lower(productDelivery.invoiceNumber) like concat(lower(#{productDeliveryDataModel.criteria.invoiceNumber}), '%')"
+            "customerOrder = #{orderDeliveryDataModel.criteria.customerOrder.dateDelicery}"
     };
 
     @Create
     public void init() {
-        sortProperty = "productDelivery.invoiceNumber";
+        this.setSortAsc(false);
+        sortProperty = "soldProduct.customerOrder.dateDelicery";
     }
 
     @Override
     public String getEjbql() {
-        return "select productDelivery from ProductDelivery productDelivery";
+        return " select soldProduct from SoldProduct soldProduct" +
+               " inner join soldProduct.customerOrder customerOrder ";
     }
 
     @Override
     public List<String> getRestrictions() {
         return Arrays.asList(RESTRICTIONS);
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.encens.khipus.model.warehouse;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.cashbox.Branch;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.util.Constants;
 import org.hibernate.validator.Length;
 
@@ -86,6 +87,10 @@ public class SoldProduct implements BaseModel {
     @Length(max = 10)
     private String orderNumber;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "PEDIDO")
+    private CustomerOrder customerOrder;
+
     @Column(name = "COD_ALM", nullable = false, length = 6)
     @Length(max = 6)
     private String warehouseCode;
@@ -167,6 +172,14 @@ public class SoldProduct implements BaseModel {
 
     public void setPersonalCode(String personalCode) {
         this.personalCode = personalCode;
+    }
+
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
+    }
+
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
     }
 
     public String getPersonalIdentification() {
