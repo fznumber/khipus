@@ -115,4 +115,10 @@ public interface WarehouseService extends GenericService {
     boolean isWarehouseVoucherPendant(WarehouseVoucherPK id);
 
     public Warehouse findWarehouseByCode(String warehouseCode);
+
+    BigDecimal findAmountOrderByCodArt(String codArt);
+
+    BigDecimal findExpectedAmountOrderProduction(String codArt);
+
+    BigDecimal findProducedAmountOrderProduction(String codArt);
 }
