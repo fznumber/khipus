@@ -864,4 +864,59 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                 .getSingleResult();
         return warehouse;
     }
+
+    @Override
+    public BigDecimal findAmountOrderByCodArt(String codArt) {
+        BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
+        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select sum(art.cantidad) from USER01_DAF.pedidos ped\n" +
+                "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
+                "on art.pedido = ped.pedido\n" +
+                "where ped.estado_pedido = 'PEN'\n" +
+                "and art.cod_art = :codArt\n")
+                .setParameter("codArt",codArt)
+                .getSingleResult();
+        if(amountOrderByCodArt == null)
+             return BigDecimal.ZERO;
+
+        return amountOrderByCodArt;
+    }
+
+    @Override
+    public BigDecimal findExpectedAmountOrderProduction(String codArt) {
+        BigDecimal expectedAmountOrderProduction = BigDecimal.ZERO;
+        expectedAmountOrderProduction = (BigDecimal) em.createNativeQuery("SELECT sum(op.cantidadesperada) FROM ordenproduccion op\n" +
+                "inner join composicionproducto cp\n" +
+                "on op.idcomposicionproducto = cp.idcomposicionproducto\n" +
+                "inner join metaproductoproduccion mp\n" +
+                "on mp.idmetaproductoproduccion = cp.idproductoprocesado\n" +
+                "where mp.cod_art = :codArt\n" +
+                "and op.estadoorden = 'PENDING'")
+                .setParameter("codArt",codArt)
+                .getSingleResult();
+
+        if(expectedAmountOrderProduction == null)
+            return BigDecimal.ZERO;
+
+        return expectedAmountOrderProduction;
+    }
+
+    @Override
+    public BigDecimal findProducedAmountOrderProduction(String codArt) {
+        BigDecimal producedAmountOrderProduction = BigDecimal.ZERO;
+        producedAmountOrderProduction = (BigDecimal) em.createNativeQuery("SELECT sum(op.cantidadproducida) FROM ordenproduccion op\n" +
+                "inner join composicionproducto cp\n" +
+                "on op.idcomposicionproducto = cp.idcomposicionproducto\n" +
+                "inner join metaproductoproduccion mp\n" +
+                "on mp.idmetaproductoproduccion = cp.idproductoprocesado\n" +
+                "where mp.cod_art = :codArt\n" +
+                "and op.estadoorden <> 'PENDING'\n" +
+                "and op.cantidadproducida <> 0.0")
+                .setParameter("codArt",codArt)
+                .getSingleResult();
+
+        if(producedAmountOrderProduction == null)
+            return BigDecimal.ZERO;
+
+        return producedAmountOrderProduction;
+    }
 }

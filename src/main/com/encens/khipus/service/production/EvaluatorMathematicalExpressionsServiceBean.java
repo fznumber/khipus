@@ -248,8 +248,9 @@ public class EvaluatorMathematicalExpressionsServiceBean extends ExtendedGeneric
                 formula = equation.getFormula();
                 List<String> variables = extractVariables(formula);
                 double result = executeFormula(formula, variables, map);
-                result = RoundUtil.getRoundValue(result, 2, RoundUtil.RoundMode.SYMMETRIC);
-                result = equation.getMeasureUnit().equals("GR") ? result * 1000 : result;
+                result = RoundUtil.getRoundValue(result, 5, RoundUtil.RoundMode.SYMMETRIC);
+                //todo: controlar que se multiplique dependiendo de la unidad correcta
+                result = equation.getMeasureUnit().equals("GR") || equation.getMeasureUnit().equals("ML") ? result * 1000 : result;
                 equation.setResult(result);
             }
         } catch (NotFoundException ex) {

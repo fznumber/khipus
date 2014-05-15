@@ -3,6 +3,7 @@ package com.encens.khipus.model.warehouse;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.cashbox.Branch;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.util.Constants;
 import org.hibernate.validator.Length;
 
