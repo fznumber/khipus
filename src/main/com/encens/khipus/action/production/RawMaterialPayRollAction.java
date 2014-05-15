@@ -10,10 +10,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
-import com.encens.khipus.model.production.Periodo;
-import com.encens.khipus.model.production.ProductionCollectionState;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.employees.GestionService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
@@ -305,7 +302,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             return Outcome.SUCCESS;
         }
         for (RawMaterialPayRoll payRoll : rawMaterialPayRolls) {
-            if(payRoll.getState().equals(ProductionCollectionState.APPROVED))
+            if(payRoll.getState().equals(StatePayRoll.APPROVED))
             {
                 addErrorGeneratePayRollMessage(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
                 return Outcome.SUCCESS;
@@ -451,7 +448,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     }
 
     public boolean isPending() {
-        return ProductionCollectionState.PENDING.equals(getInstance().getState());
+        return StatePayRoll.PENDING.equals(getInstance().getState());
     }
 
     public ProductiveZone getProductiveZone() {

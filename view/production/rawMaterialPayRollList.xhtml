@@ -63,9 +63,9 @@
                                          value="#{rawMaterialPayRollDataModel.privateCriteria.state}"
                                          styleClass="inputMedium"
                                          tabindex="4">
-                            <s:selectItems value="#{productionCollentionStateEnum}"
+                            <s:selectItems value="#{statePayRollCollectionEnum}"
                                            var="element"
-                                           label="#{messages[element.resourceKey]}"
+                                           label="#{messages[element.value]}"
                                            noSelectionLabel=""
                                            hideNoSelectionLabel="false"/>
                         </h:selectOneMenu>

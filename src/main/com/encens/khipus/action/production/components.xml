@@ -72,8 +72,12 @@
 
     <!--Enumerations-->
 
+    <factory name="statePayRollCollectionEnum"
+             value="#{enumerationUtil.getEnumValues('com.encens.khipus.model.production.StatePayRoll')}"/>
+
     <factory name="productionCollentionStateEnum"
              value="#{enumerationUtil.getEnumValues('com.encens.khipus.model.production.ProductionCollectionState')}"/>
+
     <factory name="collectionFormStateEnum"
              value="#{enumerationUtil.getEnumValues('com.encens.khipus.model.production.CollectionFormState')}"/>
 

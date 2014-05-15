@@ -3,10 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
-import com.encens.khipus.model.production.Periodo;
-import com.encens.khipus.model.production.ProductionCollectionState;
-import com.encens.khipus.model.production.ProductiveZone;
-import com.encens.khipus.model.production.RawMaterialPayRoll;
+import com.encens.khipus.model.production.*;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
@@ -56,7 +53,7 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     public PrivateCriteria getPrivateCriteria() {
         if (privateCriteria == null) {
             privateCriteria = new PrivateCriteria();
-            privateCriteria.setState(ProductionCollectionState.PENDING);
+            privateCriteria.setState(StatePayRoll.PENDING);
         }
         return privateCriteria;
     }
@@ -114,14 +111,14 @@ public class RawMaterialPayRollDataModel extends QueryDataModel<Long, RawMateria
     public static class PrivateCriteria {
         private Date startDate;
         private Date endDate;
-        private ProductionCollectionState state;
+        private StatePayRoll state;
         private ProductiveZone productiveZone = new ProductiveZone();
 
-        public ProductionCollectionState getState() {
+        public StatePayRoll getState() {
             return state;
         }
 
-        public void setState(ProductionCollectionState state) {
+        public void setState(StatePayRoll state) {
             this.state = state;
         }
 
