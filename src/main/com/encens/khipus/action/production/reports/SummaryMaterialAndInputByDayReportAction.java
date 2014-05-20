@@ -1,13 +1,24 @@
 package com.encens.khipus.action.production.reports;
 
+import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
-import com.encens.khipus.model.production.ProcessedProduct;
+import com.encens.khipus.action.reports.ReportFormat;
+import com.encens.khipus.model.admin.User;
+import com.encens.khipus.model.production.*;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.Warehouse;
+import com.encens.khipus.reports.GenerationReportData;
+import com.encens.khipus.service.production.ProductionPlanningService;
 import com.encens.khipus.service.warehouse.ProductItemService;
 import com.encens.khipus.service.warehouse.WarehouseService;
+import com.encens.khipus.util.MessageUtils;
+import com.encens.khipus.util.RoundUtil;
+import com.jatun.titus.reportgenerator.util.TypedReportData;
+import net.sf.jasperreports.engine.JRPrintPage;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.fill.JRTemplatePrintText;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.In;
@@ -15,7 +26,10 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Encens S.R.L.
@@ -25,85 +39,109 @@ import java.util.HashMap;
  * @version 2.3
  */
 
-@Name("estimationStockReportAction")
+@Name("summaryMaterialAndInputByDayReportAction")
 @Scope(ScopeType.PAGE)
-@Restrict("#{s:hasPermission('ESTIMATIONSTOCKREPORT','VIEW')}")
+@Restrict("#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}")
 public class SummaryMaterialAndInputByDayReportAction extends GenericReportAction {
+    private ProductionPlanning planning;
 
-    private ProductItem productItem;
-    private Warehouse warehouse;
+    public void generateReport(ProductionPlanning productionPlanning) {
+        log.debug("Generating IncomeByInvoiceReportAction............................");
+        planning =  productionPlanning;
+        TypedReportData reportInPuts;
+        TypedReportData reportMaterial;
+        //add sub reports
+        setReportFormat(ReportFormat.PDF);
 
-    @In
-    private WarehouseService warehouseService;
+        reportMaterial = getSummaryMaterialSubReport();
+        reportInPuts = getSummaryInputSubReport();
+        for (Object jrPrintPage : reportInPuts.getJasperPrint().getPages()) {
+            reportMaterial.getJasperPrint().addPage((JRPrintPage) jrPrintPage);
+        }
 
-    @In
-    private ProductItemService productItemService;
-
-    @Create
-    public void init() {
-        restrictions = new String[]{
-                "warehouse = #{estimationStockReportAction.warehouse}",
-                "productItem = #{estimationStockReportAction.productItem}"
-        };
-        this.warehouse = warehouseService.findWarehouseByCode("2");
-        sortProperty = "warehouse.id.warehouseCode, warehouse.id.companyNumber,inventory.articleCode,productItem.name";
+        try {
+            GenerationReportData generationReportData = new GenerationReportData(reportMaterial);
+            generationReportData.exportReport();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    protected String getEjbql() {
-        return "SELECT inventory.articleCode, " +
-                "      productItem.name , " +
-                "      warehouse.name, " +
-                "      inventory.unitaryBalance, " +
-                "      warehouse.id " +
-                "FROM  Inventory inventory " +
-                " join inventory.warehouse warehouse " +
-                " join inventory.productItem productItem" ;
+    private TypedReportData getSummaryInputSubReport() {
+        log.debug("Generating addSummaryMaterialSubReport.............................!!!!!!!");
+        Map<String, Object> params = new HashMap<String, Object>();
 
-    }
+        String subReportKey = "ORDERINPUTSUBREPORT";
 
-    public void generateReport() {
-        log.debug("Generating valued Estimation Stock report...................");
-        HashMap<String, Object> reportParameters = new HashMap<String, Object>();
-        super.generateReport(
-                "estimationStockReport",
-                "/warehouse/reports/estimationStockReport.jrxml",
+        String ejbql = " SELECT orderInput.productItemCode " +
+                " ,orderInput.productItem.name " +
+                " ,orderInput.productItem.usageMeasureCode " +
+                " ,sum(orderInput.amount)  " +
+                " from ProductionOrder productionOrder" +
+                " inner join productionOrder.orderInputs orderInput" ;
+
+
+        String[] restrictions = new String[]{
+                "productionOrder.productionPlanning = #{summaryMaterialAndInputByDayReportAction.planning}"};
+
+        String materialsSubReportOrderBy = "orderInput.productItem.name";
+
+        String materialsSubReportGroupBy = "orderInput.productItemCode, orderInput.productItem.name ,orderInput.productItem.usageMeasureCode";
+
+        //generate the sub report
+        TypedReportData materialReport = super.getReport(
+                subReportKey,
+                "/production/reports/requestInputByPlannig.jrxml",
                 PageFormat.LETTER,
                 PageOrientation.LANDSCAPE,
-                messages.get("Reports.warehouse.EstimationStockReport"),
-                reportParameters);
+                createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), materialsSubReportOrderBy,materialsSubReportGroupBy),
+                messages.get("ProductionPlanning.report.summaryInputByPlannig"),
+                params);
+
+        return materialReport;
+
     }
 
-    public ProductItem getProductItem() {
-        return productItem;
+    private TypedReportData getSummaryMaterialSubReport() {
+        log.debug("Generating addSummaryMaterialSubReport.............................!!!!!!!");
+        Map<String, Object> params = new HashMap<String, Object>();
+
+        String subReportKey = "ORDERMATERIALSUBREPORT";
+
+        String ejbql = " SELECT orderMaterial.productItemCode " +
+                       " ,orderMaterial.productItem.name " +
+                       " ,orderMaterial.productItem.usageMeasureCode " +
+                       " ,sum(orderMaterial.amountRequired)  " +
+                       " from ProductionOrder productionOrder " +
+                       " inner join productionOrder.orderMaterials orderMaterial";
+
+
+        String[] restrictions = new String[]{
+                "productionOrder.productionPlanning = #{summaryMaterialAndInputByDayReportAction.planning}"};
+
+        String materialsSubReportOrderBy = "orderMaterial.productItem.name";
+
+        String materialsSubReportGroupBy = "orderMaterial.productItemCode, orderMaterial.productItem.name ,orderMaterial.productItem.usageMeasureCode";
+
+        //generate the sub report
+        TypedReportData materialReport = super.getReport(
+                subReportKey,
+                "/production/reports/requestMaterialByPlannig.jrxml",
+                PageFormat.LETTER,
+                PageOrientation.LANDSCAPE,
+                createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), materialsSubReportOrderBy,materialsSubReportGroupBy),
+                messages.get("ProductionPlanning.report.summaryMaterialByPlannig"),
+                params);
+
+        return materialReport;
+
     }
 
-    public void setProductItem(ProductItem productItem) {
-        this.productItem = productItem;
+    public ProductionPlanning getPlanning() {
+        return planning;
     }
 
-    public void assignProductItem(ProcessedProduct productItem) {
-        this.productItem = productItemService.findProductItemByCode(productItem.getProductItemCode());
+    public void setPlanning(ProductionPlanning planning) {
+        this.planning = planning;
     }
-
-    public void cleanProductItem() {
-        this.productItem = null;
-    }
-
-    public Warehouse getWarehouse() {
-        return warehouse;
-    }
-
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
-    }
-
-    public void clearWarehouse() {
-        setWarehouse(null);
-    }
-
-    public void assignWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
-    }
-
 }

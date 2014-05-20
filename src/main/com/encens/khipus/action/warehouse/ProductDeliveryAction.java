@@ -65,7 +65,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             return Outcome.REDISPLAY;
         }
         try {
-            ProductDelivery productDelivery = productDeliveryService.create(getInstance().getInvoiceNumber(),
+            ProductDelivery productDelivery = productDeliveryService.createAll(getInstance().getInvoiceNumber(),
                     MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", getInstance().getInvoiceNumber()));
             addSoldProductDeliveredInfoMessage();
             select(productDelivery);

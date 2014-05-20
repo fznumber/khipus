@@ -287,7 +287,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher.setDocumentType(warehouseDocumentType);
         warehouseVoucher.setWarehouse(warehouse);
-        warehouseVoucher.setDate(monthProcessService.getMothProcessDate(new Date()));
+        warehouseVoucher.setDate(soldProductService.getDateFromSoldProductOrder(soldProducts.get(0)));
         //todo: cambiar el estado del vale
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
 

@@ -97,6 +97,8 @@ public class IncomeByInvoiceReportAction extends GenericReportAction {
         mainReportParams.put(subReportKey, subReportData.getJasperReport());
     }
 
+
+
     /**
      * income invoice by category sub report
      *

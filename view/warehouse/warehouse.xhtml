@@ -168,6 +168,35 @@
                 <s:convertEntity/>
             </h:selectOneMenu>
         </s:decorate>
+
+        <s:decorate id="inventoryAccountField" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">#{messages['Warehouse.inventoryAccount']}</ui:define>
+            <h:inputText id="inventoryAccount"
+                         required="true"
+                         styleClass="input"
+                         readonly="true"
+                         value="#{warehouse.cashAccount}"
+                         maxlength="100"
+                         tabindex="3"/>
+            <a4j:commandLink id="selectInventoryAccount"
+                             ajaxSingle="true"
+                             immediate="true"
+                             tabindex="4"
+                             title="#{messages['Warehouse.inventoryAccount.select']}"
+                             onclick="Richfaces.showModalPanel('cashAccountListModalPanel');">
+                <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+            </a4j:commandLink>
+            <a4j:commandLink id="selectButton"
+                             ajaxSingle="true"
+                             immediate="true"
+                             tabindex="5"
+                             title="#{messages['Common.clear']}"
+                             action="#{warehouseAction.clearCashAccount}"
+                             reRender="inventoryAccount">
+                <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+            </a4j:commandLink>
+        </s:decorate>
+
     </rich:panel>
 
     <div class="buttons">
@@ -240,6 +269,20 @@
                            ajaxSingle="true"
                            reRender="responsibleField"
                            oncomplete="Richfaces.hideModalPanel('generalEmployeeListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="cashAccountListModalPanelContainer" template="/finances/cashAccountListModalPanel.xhtml">
+    <ui:param name="hasWarehousePermission" value="true"/>
+    <ui:param name="containerId" value="cashAccountListModalPanelContainer"/>
+    <ui:param name="dialogId" value="cashAccountListModalPanel"/>
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           action="#{warehouseAction.assignCashAccount(cashAccountItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image-middle"
+                           reRender="inventoryAccount"
+                           oncomplete="Richfaces.hideModalPanel('cashAccountListModalPanel');"/>
     </ui:define>
 </s:decorate>
 

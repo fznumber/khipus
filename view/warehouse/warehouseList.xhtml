@@ -72,7 +72,7 @@
                             id="warehouseList"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%"
-                            columnsWidth="10%, 45%, 15%, 20%, 10%">
+                            columnsWidth="10%, 45%, 15%, 10%, 10%, 10%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
@@ -104,6 +104,9 @@
                                 #{messages['WarehouseVoucher.executorUnitCode']}
                             </app:commandSortHeader>
                         </rich:column>
+                        <rich:column>
+                                #{messages['WarehouseVoucher.cashAccount']}
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -120,6 +123,9 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{warehouseItem.executorUnit.organization.name}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{warehouseItem.cashAccount}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
