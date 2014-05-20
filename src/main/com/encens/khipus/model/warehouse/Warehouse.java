@@ -6,6 +6,7 @@ import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.cashbox.Branch;
 import com.encens.khipus.model.employees.Employee;
+import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
@@ -35,6 +36,9 @@ public class Warehouse implements BaseModel {
     @Column(name = "ID_RESPONSABLE", updatable = false, insertable = false)
     private Long responsibleId;
 
+    @Column(name = "CUENTA",nullable = false)
+    @Length(max = 20)
+    private String cashAccount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_RESPONSABLE", updatable = true, insertable = true)
@@ -134,5 +138,13 @@ public class Warehouse implements BaseModel {
 
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+
+    public String getCashAccount() {
+        return cashAccount;
+    }
+
+    public void setCashAccount(String cashAccount) {
+        this.cashAccount = cashAccount;
     }
 }

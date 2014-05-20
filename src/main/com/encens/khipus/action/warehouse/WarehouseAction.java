@@ -5,6 +5,7 @@ import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.interceptor.BusinessUnitRestrict;
 import com.encens.khipus.interceptor.BusinessUnitRestriction;
 import com.encens.khipus.model.employees.Employee;
+import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehouseState;
 import com.encens.khipus.service.warehouse.WarehouseCatalogService;
@@ -117,5 +118,12 @@ public class WarehouseAction extends GenericAction<Warehouse> {
                         "select inv from Inventory inv where  inv.id.companyNumber='" + getInstance().getId().getCompanyNumber() + "' and inv.id.warehouseCode='" + getInstance().getId().getWarehouseCode() + "'",
                         "select det from InventoryDetail det where  det.companyNumber='" + getInstance().getId().getCompanyNumber() + "' and det.warehouseCode='" + getInstance().getId().getWarehouseCode() + "'"
                 ));
+    }
+    public void clearCashAccount() {
+        getInstance().setCashAccount(null);
+    }
+
+    public void assignCashAccount(CashAccount cashAccount) {
+        getInstance().setCashAccount(cashAccount.getAccountCode());
     }
 }

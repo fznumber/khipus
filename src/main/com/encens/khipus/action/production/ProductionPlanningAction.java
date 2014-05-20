@@ -65,7 +65,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private List<OrderInput> orderBaseInputs = new ArrayList<OrderInput>();
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
     private List<OrderMaterial> orderSingleMaterial = new ArrayList<OrderMaterial>();
-    private List<ProductItem> productItems = new ArrayList<ProductItem>();
+    private List<OrderInput> productIputToFormulation = new ArrayList<OrderInput>();
 
     // this map stores the MovementDetails that are under the minimal stock and the unitaryBalance of the Inventory
     protected Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
@@ -90,6 +90,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private Boolean showProductionList = true;
     private Boolean showDetailSingleProduct = false;
     private Boolean showGenerateAllVoucher = true;
+    private Boolean showGenerateRequestByPlanning = true;
     private Boolean showGenerateAllAccountEntries = true;
 
     private Double expendOld;
@@ -388,10 +389,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             }
         }
 
-        if(isCostIndirectValid(getInstance().getProductionOrderList(),getInstance().getBaseProducts(), getInstance().getDate()))
+        /*if(isCostIndirectValid(getInstance().getProductionOrderList(),getInstance().getBaseProducts(), getInstance().getDate()))
         {
             return;
-        }
+        }*/
 
         List<ProductionOrder> orderList = new ArrayList<ProductionOrder>();
         orderList.addAll(getInstance().getProductionOrderList());
@@ -417,6 +418,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
     }
 
+    //todo: revisar la validacion de de costos inidirectos por dia
     private boolean isCostIndirectValid(List<ProductionOrder> productionOrderList,List<BaseProduct> baseProducts, Date dateConcurrent) {
 
         Double totalCostIndirectPlanificacion = 0.0;
@@ -848,7 +850,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
         if (productionOrder.getOrderInputs().size() == 0)
             setInputs();
-
+        productionOrder.getOrderInputs().addAll(productIputToFormulation);
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (productionPlanning.getId() != null && !verifySotck(productionOrder))
@@ -877,12 +879,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             return;
         }
         ProductionPlanning planning = getInstance();
+        productionOrder.getOrderInputs().addAll(productIputToFormulation);
         //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
         //para que no afecte en el calculo de las formulas
         //setProducedAmountWithExpendAmount(planning);
 
         //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
-        setInputs();
+        //setInputs();
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (planning.getId() != null && !verifySotck(productionOrder))
@@ -1096,6 +1099,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private void setInputs() {
 
         productionOrder.getOrderInputs().clear();
+
         for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
             OrderInput input = new OrderInput();
             input.setProductItem(ingredient.getMetaProduct().getProductItem());
@@ -1118,6 +1122,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
         productionOrder.getOrderInputs().addAll(productionPlanningService.getInputsAdd(productionOrder));
+    }
+
+    private void clearOnlyAllInputs(List<OrderInput> orderInputs){
+        List<OrderInput> aux = new ArrayList<OrderInput>();
+        aux.addAll(orderInputs);
+
+        for(OrderInput orderInput: aux)
+        {
+            if(orderInput.getId() != null)
+            {
+                orderInputs.remove(orderInput);
+            }
+        }
+
     }
 
     private void setInputsParametrized(List<ProductionIngredient> productionIngredientList, OrderInput inputParameterize) {
@@ -1811,6 +1829,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void addProductItemsToFormulation(List<ProductItem> productItems) {
         Boolean aux = false;
+        List<OrderInput> itemList = new ArrayList<OrderInput>();
         for (ProductItem item : productItems) {
             for(OrderInput orderInput :productionOrder.getOrderInputs())
             {
@@ -1833,9 +1852,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 input.setProductItemCode(item.getProductItemCode());
                 input.setCompanyNumber(item.getCompanyNumber());
                 input.setCostUnit(item.getUnitCost());
+                itemList.add(input);
                 productionOrder.getOrderInputs().add(input);
             }
         }
+        productIputToFormulation.clear();
+        productIputToFormulation.addAll(itemList);
     }
 
     private void addMessageDuplicateInput(String fullName) {
@@ -1844,6 +1866,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void removeInputForFormulation(OrderInput orderInput) {
         productionOrder.getOrderInputs().remove(orderInput);
+        productIputToFormulation.remove(orderInput);
         productionPlanningService.deleteOrderInput(orderInput);
     }
 
@@ -2470,6 +2493,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showGenerateAllAccountEntries = true;
         showButtonAddProduct = true;
         showSingleProduct = false;
+        showGenerateRequestByPlanning = true;
         disableEditingFormula();
     }
 
@@ -2966,7 +2990,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int monthConcurrent = calendar.get(Calendar.MONTH);
         //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
-        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        calendar.set(Calendar.MONTH,monthConcurrent );
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
 
@@ -2998,7 +3022,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int monthConcurrent = calendar.get(Calendar.MONTH);
         //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
-        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        calendar.set(Calendar.MONTH,monthConcurrent );
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirectSingle(
@@ -3439,6 +3463,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showButtonReprocessed = false;
         showGenerateAllVoucher = false;
         showGenerateAllAccountEntries = false;
+        showGenerateRequestByPlanning = false;
         showProductionOrders = true;
     }
 
@@ -3575,6 +3600,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowGenerateAllVoucher(Boolean showGenerateAllVoucher) {
         this.showGenerateAllVoucher = showGenerateAllVoucher;
+    }
+
+    public Boolean getShowGenerateRequestByPlanning() {
+        return showGenerateRequestByPlanning;
+    }
+
+    public void setShowGenerateRequestByPlanning(Boolean showGenerateRequestByPlanning) {
+        this.showGenerateRequestByPlanning = showGenerateRequestByPlanning;
     }
 
     public Boolean getShowGenerateAllAccountEntries() {

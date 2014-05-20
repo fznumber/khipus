@@ -116,20 +116,18 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
                    ajaxSingle="true"/>
 
-<!--
 
-<a4j:commandButton value="Regularizar Materiales e Insumos"
+<!--<a4j:commandButton value="Regularizar Materiales e Insumos"
                    action="#{productionPlanningAction.regularizarOrdenes}"
                    rendered="true"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   ajaxSingle="true"/>
+                   ajaxSingle="true"/>-->
 
-<a4j:commandButton value="Regularizar Costos indirectos"
+<!--<a4j:commandButton value="Regularizar Costos indirectos"
                    action="#{productionPlanningAction.regularizarCostosIndirectos}"
                    rendered="true"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   ajaxSingle="true"/>
--->
+                   ajaxSingle="true"/>-->
 
 
 <a4j:commandButton id="generateAll" value="#{messages['ProductionPlanning.generateAllVoucher']}"
@@ -139,6 +137,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     <rich:componentControl for="confirmationGenerateAllVouchers" event="onclick" disableDefault="true"
                            operation="show"/>
 </a4j:commandButton>
+
+<h:commandButton
+        action="#{summaryMaterialAndInputByDayReportAction.generateReport(productionPlanning)}"
+        value="#{messages['ProductionPlanning.generateReportRequestInputAndMaterialByPlanning']}"
+        styleClass="button"
+        rendered="#{productionPlanningAction.managed and s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and productionPlanningAction.showGenerateRequestByPlanning}"/>
 
 <a4j:commandButton id="generateAllAccounts" value="#{messages['ProductionPlanning.generateAccountingByProductionDay']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
@@ -343,11 +347,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                        styleClass="button"
                        rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and productionPlanningAction.formulaState eq 'NONE' and productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONEXECUTED','CREATE')}"
                        reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
-    <!--<h:commandButton
+    <h:commandButton
             action="#{productionPlanningReportAction.generateReportByOrder(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning)}"
             value="#{messages['ProductionPlanning.generateOrderDocumnt']}"
             styleClass="button"
-            rendered="#{productionPlanningAction.managed}"/>-->
+            rendered="#{productionPlanningAction.managed and productionOrderForPlanning.estateOrder != 'PENDING' and s:hasPermission('GENERATEREQUESTBYORDER','VIEW')}"/>
 
     <!--            <h:commandButton
                        action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.productComposition.processedProduct.productItem.unitCost)}"

@@ -221,6 +221,47 @@ public class GenericReportAction implements Serializable {
     }
 
     /**
+     * This method generates a subreport
+     *
+     * @param reportId           ReportId
+     * @param reportTemplatePath Report template path
+     * @param pageFormat         The page size
+     * @param pageOrientation    The page orientation
+     * @param queryResult        The generated Query Result
+     * @param params             A map with reportParams
+     * @return A TypedReportData with a JasperReport (a compiled report)
+     */
+    public TypedReportData getReport(String reportId, String reportTemplatePath, PageFormat pageFormat, PageOrientation pageOrientation,
+                                             QueryResult queryResult,String defaultReportTitle, Map params) {
+
+        TypedReportData typedReportData = new TypedReportData();
+        log.debug("Generating report........................");
+        String reportTitleString = getReportTitle();
+        if (reportTitleString == null || reportTitleString.isEmpty()) {
+            reportTitleString = defaultReportTitle;
+        }
+
+        params.putAll(queryResult.getQueryParameters());
+        try {
+            typedReportData = genericReportService.generateReport(
+                    GenerationReportData.getInstance("messages_app",
+                            (SessionUser) Component.getInstance("sessionUser"),
+                            params),
+                    reportId,
+                    JSFUtil.getResourceAsStream(reportTemplatePath),
+                    getReportFormat().getFormat(),
+                    pageOrientation.getType(),
+                    pageFormat.getType(),
+                    defaultReportTitle,
+                    queryResult.getEjbql(),
+                    reportTitleString).getTypedReportData();
+        } catch (IOException e) {
+            log.error("ERROR IN GENERATING REPORT......................" + e.getMessage());
+        }
+        return typedReportData;
+    }
+
+    /**
      * Generate's a report using template page sizes and orientation
      *
      * @param reportId           ReportId
