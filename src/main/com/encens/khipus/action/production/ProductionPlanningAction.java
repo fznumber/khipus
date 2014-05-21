@@ -2990,7 +2990,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int monthConcurrent = calendar.get(Calendar.MONTH);
         //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
-        calendar.set(Calendar.MONTH,monthConcurrent );
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
 
@@ -3022,7 +3022,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int monthConcurrent = calendar.get(Calendar.MONTH);
         //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
-        calendar.set(Calendar.MONTH,monthConcurrent );
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
         List<IndirectCosts> list = indirectCostsService.getCostTotalIndirectSingle(
