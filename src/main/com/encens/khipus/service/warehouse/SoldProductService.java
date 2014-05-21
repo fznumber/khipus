@@ -21,5 +21,7 @@ public interface SoldProductService extends GenericService {
 
     List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber);
 
+    public List<SoldProduct> getFindDelivery(String invoiceNumber, String companyNumber);
+
     Date getDateFromSoldProductOrder(SoldProduct soldProduct);
 }

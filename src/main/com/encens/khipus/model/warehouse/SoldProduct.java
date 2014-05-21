@@ -20,6 +20,8 @@ import java.math.BigDecimal;
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
         @NamedQuery(name = "SoldProduct.findByInvoiceNumberWithoutCutCheese",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codCutCheese"),
+        @NamedQuery(name = "SoldProduct.findDelivery",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
         @NamedQuery(name = "SoldProduct.findByCashSale",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.orderNumber is null"),
         @NamedQuery(name = "SoldProduct.findByCashOrder",

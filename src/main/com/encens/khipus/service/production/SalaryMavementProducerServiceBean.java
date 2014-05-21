@@ -136,13 +136,21 @@ public class SalaryMavementProducerServiceBean extends ExtendedGenericServiceBea
         List<RawMaterialPayRoll> rawMaterialPayRolls = (List<RawMaterialPayRoll>) getEntityManager().createQuery("select rawMaterialPayRoll from RawMaterialPayRoll rawMaterialPayRoll" +
                 " where rawMaterialPayRoll.startDate = :startDate " +
                 " and rawMaterialPayRoll.endDate = :endDate " +
-                " and rawMaterialPayRoll.productiveZone = :productiveZoneConcurrent" +
-                " or rawMaterialPayRoll.productiveZone = :productiveZoneMove")
+                " and rawMaterialPayRoll.productiveZone = :productiveZoneConcurrent")
                 .setParameter("startDate",initDate,TemporalType.DATE)
                 .setParameter("endDate",endDate,TemporalType.DATE)
                 .setParameter("productiveZoneConcurrent",productiveZone)
-                .setParameter("productiveZoneMove",productiveZoneMove)
                 .getResultList();
+
+        rawMaterialPayRolls.addAll((List<RawMaterialPayRoll>) getEntityManager().createQuery("select rawMaterialPayRoll from RawMaterialPayRoll rawMaterialPayRoll" +
+                " where rawMaterialPayRoll.startDate = :startDate " +
+                " and rawMaterialPayRoll.endDate = :endDate " +
+                " and rawMaterialPayRoll.productiveZone = :productiveZoneMove")
+                .setParameter("startDate",initDate,TemporalType.DATE)
+                .setParameter("endDate",endDate,TemporalType.DATE)
+                .setParameter("productiveZoneMove",productiveZoneMove)
+                .getResultList());
+
         return  rawMaterialPayRolls;
     }
 

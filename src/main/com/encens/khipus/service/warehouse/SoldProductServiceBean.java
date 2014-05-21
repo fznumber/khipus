@@ -65,6 +65,18 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         return result;
     }
 
+    public List<SoldProduct> getFindDelivery(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findDelivery")
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+        return result;
+    }
+
     @SuppressWarnings(value = "unchecked")
     public List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber) {
         List<SoldProduct> result = getEntityManager()
