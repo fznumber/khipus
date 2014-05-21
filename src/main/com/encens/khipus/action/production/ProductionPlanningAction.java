@@ -21,6 +21,8 @@ import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.admin.BusinessUnitService;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.service.finances.CostCenterService;
+import com.encens.khipus.service.finances.VoucherService;
+import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.production.*;
 import com.encens.khipus.service.warehouse.ApprovalWarehouseVoucherService;
 import com.encens.khipus.service.warehouse.InventoryService;
@@ -139,6 +141,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private MovementDetailService movementDetailService;
     @In
     private MetaProductService metaProductService;
+    @In
+    private VoucherService voucherService;
+    @In
+    private CompanyConfigurationService companyConfigurationService;
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
@@ -416,6 +422,35 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
+        approvedAllVoucherEntries();
+    }
+
+    public void approvedAllVoucherEntries(){
+        try {
+
+            for(ProductionOrder order :getInstance().getProductionOrderList()) {
+                voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber
+                        , Constants.
+                        , getInstance().getDate()
+                        , getInstance().getDate()
+                        , order.getNumberTransaction()
+                        , financeUser
+                        , Constants.INPUT_PROD_WAREHOUSE);
+            }
+            for(BaseProduct base :getInstance().getBaseProducts())
+            {
+                voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber
+                        , businessUnit
+                        , getInstance().getDate()
+                        , getInstance().getDate()
+                        , base.getNumberTransaction()
+                        , financeUser
+                        , Constants.INPUT_PROD_WAREHOUSE);
+            }
+
+        } catch (CompanyConfigurationNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     //todo: revisar la validacion de de costos inidirectos por dia

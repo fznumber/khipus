@@ -37,4 +37,12 @@ public interface VoucherService {
     public List<VoucherServiceBean.ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction, Date startDate, Date endDate);
 
     List<VoucherServiceBean.ObsApprovedEntries> getInfoTrasaction( String numberTransction);
+
+    public void approvedAllVoucherEntries(String defaultCompanyNumber,
+                                          BusinessUnit businessUnit,
+                                          Date startDate,
+                                          Date endDate,
+                                          String numberTransction,
+                                          FinanceUser financeUser,
+                                          String financesModule) throws CompanyConfigurationNotFoundException;
 }

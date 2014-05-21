@@ -111,6 +111,37 @@ public class VoucherServiceBean implements VoucherService {
                                           Date endDate,
                                           String numberTransction,
                                           FinanceUser financeUser,
+                                          String financesModule) throws CompanyConfigurationNotFoundException {
+        if(numberTransction.isEmpty())
+            numberTransction = "%";
+
+        CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+        em.createNativeQuery("call wise.aprobar_asientos.gen_compro( " +
+                ":financesModule, \n" + //MODULO
+                ":cia,\n" + //CIA
+                ":businessUnit,\n" + //UNIDAD EJECUTORA
+                "to_char(:startDate,'dd-mm-yyyy'), \n" + //FECHA DESDE
+                "to_char(:endDate,'dd-mm-yyyy'), \n" + //FECHA HASTA
+                ":financeUser, \n" + //USUARIO Q REALIZA LA APROBACION
+                ":numberTransction \n" + //TODAS LAS TRANSACCIONES
+                ")")
+                .setParameter("financesModule", financesModule)
+                .setParameter("cia", companyConfiguration.getCompanyNumber())
+                .setParameter("businessUnit", businessUnit.getExecutorUnitCode())
+                .setParameter("startDate", startDate,TemporalType.DATE)
+                .setParameter("endDate", endDate,TemporalType.DATE)
+                .setParameter("financeUser",financeUser.getId())
+                .setParameter("numberTransction",numberTransction)
+                .executeUpdate();
+
+    }
+
+    public void approvedAllVoucherEntries(String defaultCompanyNumber,
+                                          BusinessUnit businessUnit,
+                                          Date startDate,
+                                          Date endDate,
+                                          String numberTransction,
+                                          FinanceUser financeUser,
                                           FinancesModule financesModule) throws CompanyConfigurationNotFoundException {
         if(numberTransction.isEmpty())
             numberTransction = "%";
