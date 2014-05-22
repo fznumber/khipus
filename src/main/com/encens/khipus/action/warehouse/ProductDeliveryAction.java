@@ -56,12 +56,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @End
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
-        System.out.println("...Entregar pedido.... " + getInstance().getInvoiceNumber());
-        System.out.println("......ValidatorUtil.isBlankOrNull.... " + ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber()));
+
 
         if (ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber())) {
             addInvoiceNumberRequiredMessage();
-            System.out.println("....Outcome.REDISPLAY: " + Outcome.REDISPLAY);
             return Outcome.REDISPLAY;
         }
         try {

@@ -169,6 +169,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         for (SoldProduct soldProduct : soldProducts) {
             soldProduct.setProductDelivery(productDelivery);
             soldProduct.setState(SoldProductState.DELIVERED);
+            soldProduct.setNumberVoucher(warehouseVoucher.getNumber());
             update(soldProduct);
         }
 

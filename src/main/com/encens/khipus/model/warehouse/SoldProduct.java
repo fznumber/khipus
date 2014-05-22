@@ -89,6 +89,10 @@ public class SoldProduct implements BaseModel {
     @Length(max = 10)
     private String orderNumber;
 
+    @Column(name = "NO_VALE", nullable = true, length = 20)
+    @Length(max = 20)
+    private String numberVoucher;
+
     @Column(name = "COD_ALM", nullable = false, length = 6)
     @Length(max = 6)
     private String warehouseCode;
@@ -284,5 +288,13 @@ public class SoldProduct implements BaseModel {
 
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    public String getNumberVoucher() {
+        return numberVoucher;
+    }
+
+    public void setNumberVoucher(String numberVoucher) {
+        this.numberVoucher = numberVoucher;
     }
 }
