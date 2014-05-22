@@ -175,8 +175,11 @@ public final class Constants {
     public static final String ESTATE_ORDER_DELIVERED_INCASH = "DELIVERED";
     public static final String ESTATE_ORDER_DELIVERED = "ECH";
     public static final String COD_CUT_CHEESE = "147";
+    public static final String BUSINESS_UNIT_COD_DEFAULT = "01";
+
     //PRODUCTION
     public static final Double PRICE_UNIT_MILK = 3.0;
+    public static final String FINACESS_USER_UNIT_DEFAULT = "ADM";
 
 
     private Constants() {

@@ -269,6 +269,11 @@ public class CompanyConfiguration {
     private FinanceUser defaultAccountancyUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "NO_USR_PRODUCCION", referencedColumnName = "NO_USR", nullable = false)
+    @NotNull
+    private FinanceUser defaultAccountancyUserProduction;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "NO_USR_PAGAR", referencedColumnName = "NO_USR", nullable = false)
     @NotNull
     private FinanceUser defaultPayableFinanceUser;
@@ -997,5 +1002,13 @@ public class CompanyConfiguration {
 
     public void setWarehouseNationalCurrencyTransientAccount2(CashAccount warehouseNationalCurrencyTransientAccount2) {
         this.warehouseNationalCurrencyTransientAccount2 = warehouseNationalCurrencyTransientAccount2;
+    }
+
+    public FinanceUser getDefaultAccountancyUserProduction() {
+        return defaultAccountancyUserProduction;
+    }
+
+    public void setDefaultAccountancyUserProduction(FinanceUser defaultAccountancyUserProduction) {
+        this.defaultAccountancyUserProduction = defaultAccountancyUserProduction;
     }
 }

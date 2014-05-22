@@ -603,7 +603,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         BigDecimal voucherAmount = movementDetailService.sumWarehouseVoucherMovementDetailAmount(warehouseVoucher.getId().getCompanyNumber(), warehouseVoucher.getState(), warehouseVoucher.getId().getTransactionNumber());
 
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
-        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,

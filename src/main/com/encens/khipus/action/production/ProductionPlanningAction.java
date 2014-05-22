@@ -21,6 +21,9 @@ import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.admin.BusinessUnitService;
 import com.encens.khipus.service.employees.JobContractService;
 import com.encens.khipus.service.finances.CostCenterService;
+import com.encens.khipus.service.finances.VoucherService;
+import com.encens.khipus.service.finances.VoucherServiceBean;
+import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.production.*;
 import com.encens.khipus.service.warehouse.ApprovalWarehouseVoucherService;
 import com.encens.khipus.service.warehouse.InventoryService;
@@ -139,6 +142,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private MovementDetailService movementDetailService;
     @In
     private MetaProductService metaProductService;
+    @In
+    private VoucherService voucherService;
+    @In
+    private CompanyConfigurationService companyConfigurationService;
 
     private ProductionOrder totalsMaterials;
     private ProductionPlanning producedAmountWithExpendAmoutn;
@@ -416,6 +423,62 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
+        approvedAllVoucherEntries();
+    }
+
+    public void approvedAllVoucherEntries(){
+        try {
+
+            for(ProductionOrder order :getInstance().getProductionOrderList()) {
+                voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber
+                        , Constants.BUSINESS_UNIT_COD_DEFAULT
+                        , getInstance().getDate()
+                        , getInstance().getDate()
+                        , order.getNumberTransaction()
+                        , Constants.FINACESS_USER_UNIT_DEFAULT
+                        , Constants.INPUT_PROD_WAREHOUSE);
+                List<VoucherServiceBean.ObsApprovedEntries> obsApprovedEntrieses = voucherService.getInfoTrasaction(
+                        Constants.INPUT_PROD_WAREHOUSE,
+                        order.getNumberTransaction(),
+                        getInstance().getDate(),
+                        getInstance().getDate()
+                );
+
+                if(obsApprovedEntrieses.size()>0)
+                {
+                    addErrorFailApprovedMessage();
+                }
+            }
+
+            for(BaseProduct base :getInstance().getBaseProducts())
+            {
+                voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber
+                        , Constants.BUSINESS_UNIT_COD_DEFAULT
+                        , getInstance().getDate()
+                        , getInstance().getDate()
+                        , base.getNumberTransaction()
+                        , Constants.FINACESS_USER_UNIT_DEFAULT
+                        , Constants.INPUT_PROD_WAREHOUSE);
+                List<VoucherServiceBean.ObsApprovedEntries> obsApprovedEntrieses = voucherService.getInfoTrasaction(
+                        Constants.INPUT_PROD_WAREHOUSE,
+                        base.getNumberTransaction(),
+                        getInstance().getDate(),
+                        getInstance().getDate()
+                );
+
+                if(obsApprovedEntrieses.size()>0)
+                {
+                    addErrorFailApprovedMessage();
+                }
+            }
+
+        } catch (CompanyConfigurationNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addErrorFailApprovedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"AccountEntries.error.failApproved");
     }
 
     //todo: revisar la validacion de de costos inidirectos por dia
