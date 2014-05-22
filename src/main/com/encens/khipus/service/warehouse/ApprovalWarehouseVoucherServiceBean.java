@@ -567,7 +567,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             gloss[1] = gloss[1].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
         }
 
-        warehouseAccountEntryService.createAccountEntryFromProductDelivery(warehouseVoucher, gloss); //Change by createAccountEntryFromProductDelivery
+        //warehouseAccountEntryService.createAccountEntryFromProductDelivery(warehouseVoucher, gloss); //Change by createAccountEntryFromProductDelivery
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
     }
