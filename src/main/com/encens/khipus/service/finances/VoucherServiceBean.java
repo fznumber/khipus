@@ -106,11 +106,11 @@ public class VoucherServiceBean implements VoucherService {
     }
 
     public void approvedAllVoucherEntries(String defaultCompanyNumber,
-                                          BusinessUnit businessUnit,
+                                          String businessUnit,
                                           Date startDate,
                                           Date endDate,
                                           String numberTransction,
-                                          FinanceUser financeUser,
+                                          String financeUser,
                                           String financesModule) throws CompanyConfigurationNotFoundException {
         if(numberTransction.isEmpty())
             numberTransction = "%";
@@ -127,10 +127,10 @@ public class VoucherServiceBean implements VoucherService {
                 ")")
                 .setParameter("financesModule", financesModule)
                 .setParameter("cia", companyConfiguration.getCompanyNumber())
-                .setParameter("businessUnit", businessUnit.getExecutorUnitCode())
+                .setParameter("businessUnit", businessUnit)
                 .setParameter("startDate", startDate,TemporalType.DATE)
                 .setParameter("endDate", endDate,TemporalType.DATE)
-                .setParameter("financeUser",financeUser.getId())
+                .setParameter("financeUser",financeUser)
                 .setParameter("numberTransction",numberTransction)
                 .executeUpdate();
 
@@ -177,17 +177,40 @@ public class VoucherServiceBean implements VoucherService {
     }
 
     @Override
-    public List<ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, String numberTransction, Date startDate, Date endDate) {
+    public List<ObsApprovedEntries> getInfoTrasaction(FinancesModule financesModule, Date startDate, Date endDate) {
         List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
                 List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS\n" +
                                                                 "WHERE  TRUNC(FECHA) between :startDate and :endDate \n" +
-                                                                "AND MODULO  =  :financesModule \n"
+                                                                "AND MODULO  =  :financesModule \n" +
+                                                                "AND ESTADO <> 'APROBADO'"
                                                                 //"AND NO_TRANS = 0"
                                                                 )
                                             .setParameter("financesModule", financesModule.getId().getModule())
                                             .setParameter("startDate",startDate,TemporalType.DATE)
                                             .setParameter("endDate",endDate,TemporalType.DATE)
                                             .getResultList();
+        for(Object[] data:datas)
+        {
+            entries.add(new ObsApprovedEntries((String)data[2],(String)data[6]));
+        }
+
+        return entries;
+
+    }
+
+    public List<ObsApprovedEntries> getInfoTrasaction(String financesModule, String numberTransaction, Date startDate, Date endDate) {
+        List<ObsApprovedEntries> entries = new ArrayList<ObsApprovedEntries>();
+        List<Object[]> datas = em.createNativeQuery("SELECT * FROM WISE.OBS_APROBACION_ASIENTOS \n" +
+                        "WHERE  TRUNC(FECHA) between :startDate and :endDate \n" +
+                        "AND MODULO  =  :financesModule \n" +
+                        "AND NO_TRANS = :numberTransaction \n" +
+                        "AND ESTADO <> 'APROBADO'"
+        )
+                .setParameter("financesModule", financesModule)
+                .setParameter("startDate",startDate,TemporalType.DATE)
+                .setParameter("endDate",endDate,TemporalType.DATE)
+                .setParameter("numberTransaction",numberTransaction)
+                .getResultList();
         for(Object[] data:datas)
         {
             entries.add(new ObsApprovedEntries((String)data[2],(String)data[6]));
