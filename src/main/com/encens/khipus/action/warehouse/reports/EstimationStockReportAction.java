@@ -19,6 +19,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -36,6 +37,7 @@ public class EstimationStockReportAction extends GenericReportAction {
 
     private ProductItem productItem;
     private Warehouse warehouse;
+    private Date date;
 
     @In
     private WarehouseService warehouseService;
@@ -69,6 +71,7 @@ public class EstimationStockReportAction extends GenericReportAction {
     public void generateReport() {
         log.debug("Generating valued Estimation Stock report...................");
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
+        reportParameters.put("dateDelivery",date);
         super.generateReport(
                 "estimationStockReport",
                 "/warehouse/reports/estimationStockReport.jrxml",
@@ -110,4 +113,11 @@ public class EstimationStockReportAction extends GenericReportAction {
         this.warehouse = warehouse;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

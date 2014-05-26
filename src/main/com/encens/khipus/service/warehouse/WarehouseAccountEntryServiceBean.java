@@ -15,8 +15,10 @@ import com.encens.khipus.model.purchases.PurchaseOrderPaymentState;
 import com.encens.khipus.model.purchases.PurchaseOrderPaymentType;
 import com.encens.khipus.model.warehouse.MovementDetail;
 import com.encens.khipus.model.warehouse.MovementDetailType;
+import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
 import com.encens.khipus.service.common.SequenceGeneratorService;
+import com.encens.khipus.service.finances.CashAccountService;
 import com.encens.khipus.service.finances.FinancesExchangeRateService;
 import com.encens.khipus.service.finances.RotatoryFundService;
 import com.encens.khipus.service.finances.VoucherService;
@@ -69,6 +71,12 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
     @In
     private MovementDetailService movementDetailService;
+
+    @In
+    private WarehouseService warehouseService;
+
+    @In
+    private CashAccountService cashAccountService;
 
     /* For advance payments of warehouse and fixedAssets */
 
@@ -604,10 +612,12 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
+        Warehouse warehouse = warehouseService.findWarehouseByCode(warehouseVoucher.getWarehouseCode());
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
-                companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
+                //companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
+                cashAccountService.findByAccountCode(warehouse.getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));

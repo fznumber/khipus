@@ -11,6 +11,7 @@ import net.sf.jasperreports.engine.JRScriptletException;
 import org.jboss.seam.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Encens S.R.L.
@@ -22,15 +23,22 @@ import java.math.BigDecimal;
 public class EstimationStockReportScriptlet extends JRDefaultScriptlet {
 
     private WarehouseService warehouseService = (WarehouseService) Component.getInstance("warehouseService");
+    private EstimationStockReportAction estimationStockReportAction = (EstimationStockReportAction) Component.getInstance("estimationStockReportAction");
 
     public void beforeDetailEval() throws JRScriptletException {
         super.beforeDetailEval();
 
         String codArt = (String) this.getFieldValue("inventory.articleCode");
         BigDecimal unitaryBalance = (BigDecimal) this.getFieldValue("inventory.unitaryBalance");
+        Date date = estimationStockReportAction.getDate();
+        BigDecimal totalOrders;
+        if(date == null)
+        {
+            totalOrders = warehouseService.findAmountOrderByCodArt(codArt);
+        }
+        else
+        totalOrders = warehouseService.findAmountOrderByCodArt(codArt,date);
 
-
-        BigDecimal totalOrders = warehouseService.findAmountOrderByCodArt(codArt);
         BigDecimal totalExpectedAmount = warehouseService.findExpectedAmountOrderProduction(codArt);
         BigDecimal totalProducedAmount = warehouseService.findProducedAmountOrderProduction(codArt);
         BigDecimal totalBalanceLessTotalOrder = unitaryBalance.subtract(totalOrders);

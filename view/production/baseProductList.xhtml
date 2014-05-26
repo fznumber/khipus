@@ -51,6 +51,10 @@
                             </rich:column>
 
                             <rich:column>
+                                #{messages['BaseProduct.choice']}
+                            </rich:column>
+
+                            <rich:column>
                                 #{messages['BaseProduct.state']}
                             </rich:column>
 
@@ -70,6 +74,14 @@
                     </rich:column>
                     <rich:column>
                         <h:outputText value="#{singleProduct.amount}"/>
+                    </rich:column>
+                    <rich:column styleClass="center">
+                        <h:selectBooleanCheckbox id="selectCheckboxItem"
+                                                 immediate="true"
+                                                 value="#{baseProduct.selected}">
+                            <a4j:support event="onchange"
+                                         reRender="selectCheckboxItem"/>
+                        </h:selectBooleanCheckbox>
                     </rich:column>
                     <rich:column>
                         <h:outputText

@@ -25,6 +25,7 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
+import org.springframework.core.CollectionFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -44,10 +45,46 @@ import java.util.*;
 @Restrict("#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}")
 public class SummaryMaterialAndInputByDayReportAction extends GenericReportAction {
     private ProductionPlanning planning;
+    private List<ProductionOrder> productionOrders = new ArrayList<ProductionOrder>();
+    private List<BaseProduct> baseProducts = new ArrayList<BaseProduct>();
+    private List<SingleProduct> singleProducts = new ArrayList<SingleProduct>();
 
     public void generateReport(ProductionPlanning productionPlanning) {
         log.debug("Generating IncomeByInvoiceReportAction............................");
         planning =  productionPlanning;
+        for(ProductionOrder order: productionPlanning.getProductionOrderList())
+        {
+            if(order.getSelected())
+            productionOrders.add(order);
+        }
+        for(BaseProduct base: productionPlanning.getBaseProducts())
+        {
+            if(base.getSelected())
+            {
+                baseProducts.add(base);
+                for(SingleProduct single:base.getSingleProducts())
+                {
+                    singleProducts.add(single);
+                }
+            }
+        }
+
+        if(productionOrders.size() == 0){
+            ProductionOrder aux = new ProductionOrder();
+            aux.setId(new Long(0));
+            productionOrders.add(aux);
+        }
+        if(baseProducts.size() == 0){
+            BaseProduct aux = new BaseProduct();
+            aux.setId(new Long(0));
+            baseProducts.add(aux);
+        }
+        if(singleProducts.size() == 0){
+            SingleProduct aux = new SingleProduct();
+            aux.setId(new Long(0));
+            singleProducts.add(aux);
+        }
+
         TypedReportData reportInPuts;
         TypedReportData reportMaterial;
         //add sub reports
@@ -77,12 +114,18 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
                 " ,orderInput.productItem.name " +
                 " ,orderInput.productItem.usageMeasureCode " +
                 " ,sum(orderInput.amount)  " +
-                " from ProductionOrder productionOrder" +
-                " inner join productionOrder.orderInputs orderInput" ;
+                " from OrderInput orderInput " +
+                " where orderInput.productionOrder in (#{summaryMaterialAndInputByDayReportAction.productionOrders}) " +
+                " OR orderInput.baseProductInput in (#{summaryMaterialAndInputByDayReportAction.baseProducts})";
+                /*" left join orderInput.productionOrder productionOrder" +
+                " left join orderInput.baseProductInput baseProductInput" ;*/
 
 
-        String[] restrictions = new String[]{
-                "productionOrder.productionPlanning = #{summaryMaterialAndInputByDayReportAction.planning}"};
+        /*String[] restrictions = new String[]{
+                "orderInput.productionOrder in (#{summaryMaterialAndInputByDayReportAction.productionOrders})",
+                "orderInput.baseProductInput in (#{summaryMaterialAndInputByDayReportAction.baseProducts})"
+        };*/
+        String[] restrictions = new String[]{};
 
         String materialsSubReportOrderBy = "orderInput.productItem.name";
 
@@ -93,7 +136,7 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
                 subReportKey,
                 "/production/reports/requestInputByPlannig.jrxml",
                 PageFormat.LETTER,
-                PageOrientation.LANDSCAPE,
+                PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), materialsSubReportOrderBy,materialsSubReportGroupBy),
                 messages.get("ProductionPlanning.report.summaryInputByPlannig"),
                 params);
@@ -112,13 +155,19 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
                        " ,orderMaterial.productItem.name " +
                        " ,orderMaterial.productItem.usageMeasureCode " +
                        " ,sum(orderMaterial.amountRequired)  " +
-                       " from ProductionOrder productionOrder " +
-                       " inner join productionOrder.orderMaterials orderMaterial";
+                       " from OrderMaterial orderMaterial " +
+                       " where orderMaterial.productionOrder in (#{summaryMaterialAndInputByDayReportAction.productionOrders})" +
+                       " OR orderMaterial.singleProduct in (#{summaryMaterialAndInputByDayReportAction.singleProducts})";/*+
+                       " left join orderMaterial.productionOrder productionOrder" +
+                       " left join orderMaterial.singleProduct singleProduct" ;*/
 
 
-        String[] restrictions = new String[]{
-                "productionOrder.productionPlanning = #{summaryMaterialAndInputByDayReportAction.planning}"};
-
+        /*String[] restrictions = new String[]{
+                 "orderMaterial.productionOrder in (#{summaryMaterialAndInputByDayReportAction.productionOrders})"
+                ,"orderMaterial.singleProduct in (#{summaryMaterialAndInputByDayReportAction.singleProducts})"
+        };
+*/
+        String[] restrictions = new String[]{};
         String materialsSubReportOrderBy = "orderMaterial.productItem.name";
 
         String materialsSubReportGroupBy = "orderMaterial.productItemCode, orderMaterial.productItem.name ,orderMaterial.productItem.usageMeasureCode";
@@ -128,7 +177,7 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
                 subReportKey,
                 "/production/reports/requestMaterialByPlannig.jrxml",
                 PageFormat.LETTER,
-                PageOrientation.LANDSCAPE,
+                PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), materialsSubReportOrderBy,materialsSubReportGroupBy),
                 messages.get("ProductionPlanning.report.summaryMaterialByPlannig"),
                 params);
@@ -143,5 +192,29 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
 
     public void setPlanning(ProductionPlanning planning) {
         this.planning = planning;
+    }
+
+    public List<ProductionOrder> getProductionOrders() {
+        return productionOrders;
+    }
+
+    public void setProductionOrders(List<ProductionOrder> productionOrders) {
+        this.productionOrders = productionOrders;
+    }
+
+    public List<BaseProduct> getBaseProducts() {
+        return baseProducts;
+    }
+
+    public void setBaseProducts(List<BaseProduct> baseProducts) {
+        this.baseProducts = baseProducts;
+    }
+
+    public List<SingleProduct> getSingleProducts() {
+        return singleProducts;
+    }
+
+    public void setSingleProducts(List<SingleProduct> singleProducts) {
+        this.singleProducts = singleProducts;
     }
 }

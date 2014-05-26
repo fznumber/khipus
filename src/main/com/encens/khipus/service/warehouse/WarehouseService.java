@@ -12,6 +12,7 @@ import com.encens.khipus.model.warehouse.*;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -116,9 +117,11 @@ public interface WarehouseService extends GenericService {
 
     public Warehouse findWarehouseByCode(String warehouseCode);
 
-    BigDecimal findAmountOrderByCodArt(String codArt);
+    BigDecimal findAmountOrderByCodArt(String codArt,Date date);
 
     BigDecimal findExpectedAmountOrderProduction(String codArt);
 
     BigDecimal findProducedAmountOrderProduction(String codArt);
+
+    BigDecimal findAmountOrderByCodArt(String codArt);
 }

@@ -373,6 +373,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     }
 
+    public void executerAllOrdersPending()
+    {
+
+        for(ProductionOrder order:getInstance().getProductionOrderList())
+        {
+                if(order.getSelected())
+                order.setEstateOrder(EXECUTED);
+        }
+
+        for(BaseProduct base:getInstance().getBaseProducts())
+        {
+                if(base.getSelected())
+                base.setState(EXECUTED);
+        }
+
+        update();
+    }
+
     public void generateAllAccountingEntries()
     {
 
@@ -2740,8 +2758,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             totalProducer += outputProductionVoucher.getProducedAmount();
         }
         productionOrder.setExpendAmount(totalProducer);*/
-        setTotalsMaterials(productionOrder);
-        setTotalsInputs(productionOrder);
+        //setTotalsMaterials(productionOrder);
+        //setTotalsInputs(productionOrder);
         //setTotalIndiRectCost(productionOrder);
         //setTotalHour(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
@@ -2755,8 +2773,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             return;
         }
         existingFormulation = null;
-        disableEditingFormula();
-        showProductionOrders = true;
+        showInit();
+    }
+
+    private void setTotalIndiRectCost(BaseProduct base, Date date) {
+        for(SingleProduct single:base.getSingleProducts()){
+            setTotalIndiRectCost(single,date);
+        }
     }
 
     public void cancelFormulation() {

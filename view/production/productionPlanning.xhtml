@@ -138,6 +138,14 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            operation="show"/>
 </a4j:commandButton>
 
+<!--<a4j:commandButton id="deliveriInputAndMaterial" value="#{messages['ProductionPlanning.deliveryInputAndMaterial']}"
+                   reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
+                   rendered="#{productionPlanningAction.managed and productionPlanningAction.showGenerateAllVoucher and s:hasPermission('GENERATEALLVOUCHER','CREATE') and productionPlanning.state eq 'PENDING' }"
+                   ajaxSingle="true">
+    <rich:componentControl for="confirmationDeliveriInputAndMaterial" event="onclick" disableDefault="true"
+                           operation="show"/>
+</a4j:commandButton>-->
+
 <h:commandButton
         action="#{summaryMaterialAndInputByDayReportAction.generateReport(productionPlanning)}"
         value="#{messages['ProductionPlanning.generateReportRequestInputAndMaterialByPlanning']}"
@@ -364,7 +372,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             action="#{productionPlanningReportAction.generateReportSummary(productionOrderForPlanning.productComposition.productionIngredientList,productionOrderForPlanning.orderInputs,productionOrderForPlanning.orderMaterials,productionPlanning,productionOrderForPlanning,productionOrderForPlanning.unitCost)}"
             value="#{messages['ProductionPlanning.generateSummaryDocumnt']}"
             styleClass="button"
-            rendered="#{productionPlanningAction.managed and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
+            rendered="#{productionPlanningAction.managed and productionOrderForPlanning.estateOrder != 'PENDING' and s:hasPermission('ORDERPRODUCTIONGENERATEDREPORTDETAIL','CREATE')}"/>
 
     <!--<a4j:commandButton
             value="#{messages['ProductionPlanning.generateValeOrder']}"
@@ -377,7 +385,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
     <a4j:commandButton
             value="#{messages['ProductionPlanning.deleteOrderProducction']}"
             reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-            rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' or productionOrderForPlanning.estateOrder eq 'EXECUTED' and s:hasPermission('ORDERPRODUCTIONDELETE','CREATE')}">
+            rendered="#{productionOrderForPlanning.estateOrder eq 'PENDING' and s:hasPermission('ORDERPRODUCTIONDELETE','CREATE')}">
         <rich:componentControl for="deleteOrderConfirmation" event="onclick" disableDefault="true"
                                operation="show"/>
     </a4j:commandButton>
@@ -796,7 +804,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (productionOrderItem.estateOrder == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"/>
         </s:decorate>
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-            <ui:define name="label">Cantidad Producida:</ui:define>
+            <ui:define name="label">#{messages['ProductionOrder.expectedAmount']}</ui:define>
             <h:inputText value="#{productionOrderForPlanning.producedAmount}"
                          required="false" readonly="false" maxlength="500" styleClass="input">
             </h:inputText>
@@ -834,14 +842,17 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.order']}
                 </rich:column>
-                <rich:column>
+                <!--<rich:column>
                     #{messages['ProductionOrder.formula']}
-                </rich:column>
+                </rich:column>-->
                 <rich:column>
                     #{messages['ProductionOrder.expectedAmount']}
                 </rich:column>
                 <rich:column>
                     #{messages['ProductionOrder.producingAmount']}
+                </rich:column>
+                <rich:column>
+                    #{messages['ProductionOrder.choice']}
                 </rich:column>
                 <rich:column>
                     #{messages['ProductionOrder.estateOrderProduction']}
@@ -864,14 +875,22 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <rich:column>
             <h:outputText value="#{productionOrderItem.code}"/>
         </rich:column>
-        <rich:column>
+        <!--<rich:column>
             <h:outputText value="#{productionOrderItem.productComposition.name}"/>
-        </rich:column>
+        </rich:column>-->
         <rich:column>
             <h:outputText value="#{productionOrderItem.expendAmount}"/>
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.producedAmount}"/>
+        </rich:column>
+        <rich:column styleClass="center">
+            <h:selectBooleanCheckbox id="selectCheckboxItem"
+                                     immediate="true"
+                                     value="#{productionOrderItem.selected}">
+                <a4j:support event="onchange"
+                             reRender="selectCheckboxItem"/>
+            </h:selectBooleanCheckbox>
         </rich:column>
         <rich:column>
             <h:outputText
@@ -882,6 +901,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <h:inputText value="#{productionOrderItem.greasePercentage}"
                          maxlength="4" styleClass="input"
                          disabled="#{productionOrderItem.estateOrder eq 'FINALIZED' or  productionOrderItem.estateOrder eq 'TABULATED' ? true : false}"
+                         size="10"
                          required="false">
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
                                  styleClass="button"
@@ -1013,6 +1033,28 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                    operation="hide"/>
         </a4j:commandButton>
 
+    </ui:define>
+</s:decorate>
+
+<s:decorate template="/include/modalDialog.xhtml"
+            rendered="#{productionPlanningAction.managed}">
+    <ui:param name="dialogId" value="confirmationDeliveriInputAndMaterial"/>
+    <ui:define name="dialogTitle">#{messages['ProductionPlanning.generateVoucher.confirmationTitle']}</ui:define>
+    <ui:define name="dialogContent">
+        <p>
+            <h:outputFormat value="#{messages['ProductionPlanning.deliveryInputAndMaterial.confirmation']}">
+            </h:outputFormat>
+        </p>
+    </ui:define>
+    <ui:define name="dialogOption">
+        <a4j:commandButton action="#{productionPlanningAction.executerAllOrdersPending}"
+                           value="#{messages['Common.confirm']}"
+                           immediate="true"
+                           reRender="baseProductionList,productionList,formulaSet"
+                           styleClass="button">
+            <rich:componentControl for="confirmationDeliveriInputAndMaterial" event="onclick" disableDefault="true"
+                                   operation="hide"/>
+        </a4j:commandButton>
     </ui:define>
 </s:decorate>
 
