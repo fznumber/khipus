@@ -167,6 +167,9 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
             return Outcome.FAIL;
+        } catch (WarehouseAccountCashNotFoundException e) {
+            addWarehouseAccountCashNotFoundMessage();
+            return Outcome.REDISPLAY;
         }
 
         return Outcome.SUCCESS;
@@ -226,6 +229,9 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
             return Outcome.FAIL;
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return Outcome.FAIL;
+        } catch (WarehouseAccountCashNotFoundException e) {
+            addWarehouseAccountCashNotFoundMessage();
             return Outcome.FAIL;
         }
 

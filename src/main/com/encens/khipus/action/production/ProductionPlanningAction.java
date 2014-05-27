@@ -441,7 +441,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
-        approvedAllVoucherEntries();
+        //approvedAllVoucherEntries();
     }
 
     public void approvedAllVoucherEntries(){

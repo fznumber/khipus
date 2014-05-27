@@ -157,6 +157,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             log.debug("This exception never happen because I create a new WarehouseVoucher.");
         } catch (WarehouseVoucherEmptyException e) {
             log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
+        } catch (WarehouseAccountCashNotFoundException e) {
+            e.printStackTrace();
         }
         ProductDelivery productDelivery = new ProductDelivery();
         productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
@@ -259,6 +261,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             log.debug("This exception never happen because I create a new WarehouseVoucher.");
         } catch (WarehouseVoucherEmptyException e) {
             log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
+        } catch (WarehouseAccountCashNotFoundException e) {
+            e.printStackTrace();
         }
         ProductDelivery productDelivery = new ProductDelivery();
         productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());

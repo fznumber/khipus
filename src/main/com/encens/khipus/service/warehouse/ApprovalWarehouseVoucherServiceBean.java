@@ -86,7 +86,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException,
             ConcurrencyException,
-            ReferentialIntegrityException, ProductItemNotFoundException {
+            ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException {
 
         String financeUserCode = financesUserService.getFinancesUserCode();
 
@@ -106,6 +106,9 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
 
         WarehouseVoucher warehouseVoucher = getEntityManager().find(WarehouseVoucher.class, id);
         getEntityManager().refresh(warehouseVoucher);
+
+        if(warehouseVoucher.getWarehouse().getCashAccount() == null)
+            throw new WarehouseAccountCashNotFoundException();
 
         InventoryMovement pendantInventoryMovement = getPendantMovement(warehouseVoucher);
         getEntityManager().refresh(pendantInventoryMovement);
@@ -466,7 +469,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException,
             ConcurrencyException,
-            ReferentialIntegrityException, ProductItemNotFoundException {
+            ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException {
 
         String financeUserCode = financesUserService.getFinancesUserCode();
 
@@ -566,7 +569,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         if (gloss[1] != null) {
             gloss[1] = gloss[1].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
         }
-
+        //todo: este metodo  crea el asiento contable
         //warehouseAccountEntryService.createAccountEntryFromProductDelivery(warehouseVoucher, gloss); //Change by createAccountEntryFromProductDelivery
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
@@ -587,7 +590,7 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException,
             ConcurrencyException,
-            ReferentialIntegrityException, ProductItemNotFoundException {
+            ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException {
 
         String financeUserCode = financesUserService.getFinancesUserCode();
 

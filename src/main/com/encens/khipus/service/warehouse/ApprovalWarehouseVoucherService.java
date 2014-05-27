@@ -34,7 +34,7 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ProductItemAmountException, InventoryUnitaryBalanceException,
             InventoryProductItemNotFoundException, CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
-            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
+            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException;
 
     public void approveWarehouseVoucherOrderProduction(WarehouseVoucherPK id, String[] gloss,
                                                        Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
@@ -86,7 +86,7 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ProductItemAmountException, InventoryUnitaryBalanceException,
             InventoryProductItemNotFoundException, CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
-            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
+            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException;
 
     void approveWarehouseVoucherFromCollection(WarehouseVoucherPK id, String[] gloss,
                                                Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
@@ -98,7 +98,7 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
             ProductItemAmountException, InventoryUnitaryBalanceException,
             InventoryProductItemNotFoundException, CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException,
-            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException;
+            ConcurrencyException, ReferentialIntegrityException, ProductItemNotFoundException, WarehouseAccountCashNotFoundException;
 
     void validateOutputMovementDetail(WarehouseVoucher warehouseVoucher,
                                       Warehouse warehouse,

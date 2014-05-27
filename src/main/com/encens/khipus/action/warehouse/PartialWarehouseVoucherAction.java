@@ -153,6 +153,9 @@ public class PartialWarehouseVoucherAction extends GenericAction<WarehouseVouche
         } catch (MovementDetailTypeException e) {
             addMovementDetailTypeErrorMessage(e);
             return Outcome.FAIL;
+        } catch (WarehouseAccountCashNotFoundException e) {
+            addWarehouseAccountCashNotFoundMessage();
+            return Outcome.FAIL;
         }
     }
 
@@ -227,7 +230,15 @@ public class PartialWarehouseVoucherAction extends GenericAction<WarehouseVouche
             warehouseVoucherUpdateAction.addFinancesExchangeRateNotFoundExceptionMessage();
         } catch (MovementDetailTypeException e) {
             addMovementDetailTypeErrorMessage(e);
+        } catch (WarehouseAccountCashNotFoundException e) {
+            addWarehouseAccountCashNotFoundMessage();
+            e.printStackTrace();
         }
+    }
+
+    public void addWarehouseAccountCashNotFoundMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "WarehouseVoucher.error.WarehouseAccountCashNotFoundMessage");
     }
 
     /**

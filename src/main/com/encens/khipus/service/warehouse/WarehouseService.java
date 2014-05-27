@@ -111,7 +111,7 @@ public interface WarehouseService extends GenericService {
             ReferentialIntegrityException, ProductItemAmountException, InventoryUnitaryBalanceException,
             WarehouseVoucherEmptyException, InventoryProductItemNotFoundException,
             CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException,
-            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException;
+            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException, WarehouseAccountCashNotFoundException;
 
     boolean isWarehouseVoucherPendant(WarehouseVoucherPK id);
 

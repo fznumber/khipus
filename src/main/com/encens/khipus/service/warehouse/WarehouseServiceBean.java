@@ -117,7 +117,7 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
             ReferentialIntegrityException, ProductItemAmountException, InventoryUnitaryBalanceException,
             WarehouseVoucherEmptyException, InventoryProductItemNotFoundException,
             CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException,
-            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException {
+            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException, WarehouseAccountCashNotFoundException {
         WarehouseVoucher parentWarehouseVoucher = warehouseVoucher.getParentWarehouseVoucher();
         getEntityManager().refresh(parentWarehouseVoucher);
         if (parentWarehouseVoucher.getState().equals(WarehouseVoucherState.PEN)) {
