@@ -680,8 +680,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         BigDecimal voucherAmount = movementDetailService.sumWarehouseVoucherMovementDetailAmount(warehouseVoucher.getId().getCompanyNumber(), warehouseVoucher.getState(), warehouseVoucher.getId().getTransactionNumber());
 
-        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
-        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM, gloss);
+        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
 
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
@@ -701,7 +701,13 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 BigDecimal.ONE));
 
         voucherService.create(voucherForGeneration);
-
+        voucherService.approvedAllVoucherEntries( voucherForGeneration.getCompanyNumber()
+                                                 ,executorUnit.getExecutorUnitCode()
+                                                 ,voucherForGeneration.getDate()
+                                                 ,voucherForGeneration.getDate()
+                                                 ,voucherForGeneration.getTransactionNumber()
+                                                 ,companyConfiguration.getDefaultAccountancyUserProduction().getId()
+                                                 ,Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM);
     }
 
     private void createAccountEntryForExecutorUnitTransfer(WarehouseVoucher warehouseVoucher,

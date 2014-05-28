@@ -120,6 +120,9 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
             WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException, WarehouseAccountCashNotFoundException {
         WarehouseVoucher parentWarehouseVoucher = warehouseVoucher.getParentWarehouseVoucher();
         getEntityManager().refresh(parentWarehouseVoucher);
+        if(warehouseVoucher.getWarehouse().getCashAccount() == null)
+            throw new WarehouseAccountCashNotFoundException();
+
         if (parentWarehouseVoucher.getState().equals(WarehouseVoucherState.PEN)) {
             // changes the state to WarehouseVoucherState.PAR
             approvalWarehouseVoucherService.approvePartialInputParentWarehouseVoucher(parentWarehouseVoucher.getId());

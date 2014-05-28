@@ -3,10 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.action.warehouse.WarehouseVoucherCreateAction;
 import com.encens.khipus.action.warehouse.WarehouseVoucherUpdateAction;
 import com.encens.khipus.exception.EntryNotFoundException;
-import com.encens.khipus.exception.warehouse.InventoryException;
-import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
-import com.encens.khipus.exception.warehouse.WarehouseVoucherApprovedException;
-import com.encens.khipus.exception.warehouse.WarehouseVoucherNotFoundException;
+import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.framework.service.GenericService;
@@ -23,10 +20,13 @@ import com.encens.khipus.service.warehouse.MonthProcessService;
 import com.encens.khipus.service.warehouse.ProductItemService;
 import com.encens.khipus.service.warehouse.WarehousePurchaseOrderService;
 import com.encens.khipus.service.warehouse.WarehouseService;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+import org.jboss.seam.international.StatusMessage;
 import org.jboss.seam.log.Log;
 
 import javax.faces.event.ActionEvent;
@@ -167,12 +167,28 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
 
     public String createVoucherApproved() throws InventoryException, ProductItemNotFoundException {
 
+        if(this.getTotalWeightedAmount() == 0.0)
+        {
+            addTotalWeightedAmountIsZeroMessage();
+            return Outcome.REDISPLAY;
+        }
+        Calendar dateColleted = Calendar.getInstance();
+        dateColleted.setTime(getInstance().getDate());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+
+        if(dateColleted.get(Calendar.MONTH) != now.get(Calendar.MONTH))
+        {
+            addOutsideGestionMessage();
+            return Outcome.REDISPLAY;
+        }
+
         WarehouseDocumentType warehouseDocumentType = collectionFormService.getFirstReceptionType();
-        CostCenter publicCostCenter = costCenterService.findCostCenterByCode("0111");
-        Warehouse warehouse = warehouseService.findWarehouseByCode("5");
+        CostCenter publicCostCenter = costCenterService.findCostCenterByCode(Constants.DEFAULT_COST_CENTER_PRODUCTION);
+        Warehouse warehouse = warehouseService.findWarehouseByCode(Constants.DEFAULT_CODE_WAREHOUSE_COLLECTION_MILK);
+
         Employee responsible = warehouse.getResponsible();
         String warehouseVoucherDescription = MessageUtils.getMessage("CollectionForm.warehouseVoucher.description") + DateUtils.format(getInstance().getDate(), MessageUtils.getMessage("patterns.date"));
-        System.out.println("______________________: " + warehouseVoucherDescription);
         //Create the WarehouseVoucher
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
         warehouseVoucher.setDocumentType(warehouseDocumentType);
@@ -181,7 +197,8 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
         warehouseVoucher.setExecutorUnit(warehouse.getExecutorUnit());
         warehouseVoucher.setCostCenterCode(publicCostCenter.getId().getCode());
         warehouseVoucher.setResponsible(responsible);
-        warehouseVoucher.setDate(monthProcessService.getMothProcessDate(new Date()));
+        //warehouseVoucher.setDate(monthProcessService.getMothProcessDate(new Date()));
+        warehouseVoucher.setDate(getInstance().getDate());
 
         InventoryMovement inventoryMovement = new InventoryMovement();
         inventoryMovement.setDescription(warehouseVoucherDescription);
@@ -189,9 +206,9 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
         warehouseService.createWarehouseVoucher(warehouseVoucher, inventoryMovement, null, null, null, null);
 
         //Create the MovementDetails
-        ProductItem productItem = productItemService.findProductItemByCode("26");
+        ProductItem productItem = productItemService.findProductItemByCode(Constants.ID_ART_RAW_MILK);
         BigDecimal quantity = new BigDecimal(getTotalWeightedAmount());
-        BigDecimal unitCost = productItemService.findProductItemByCode("26").getUnitCost();
+        BigDecimal unitCost = productItemService.findProductItemByCode(Constants.ID_ART_RAW_MILK).getUnitCost();
 
         MovementDetail movementDetailTemp = new MovementDetail();
         movementDetailTemp.setWarehouse(warehouse);
@@ -235,6 +252,14 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
         getInstance().setState(CollectionFormState.APR);
         this.update();
         return Outcome.SUCCESS;
+    }
+
+    private void addOutsideGestionMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"CollectionForm.approve.OutsideGestion");
+    }
+
+    private void addTotalWeightedAmountIsZeroMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"CollectionForm.approve.TotalWeightedAmountIsZero");
     }
 
     public boolean isPending() {

@@ -851,7 +851,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.producingAmount']}
                 </rich:column>
-                <rich:column>
+                <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
                     #{messages['ProductionOrder.choice']}
                 </rich:column>
                 <rich:column>
@@ -884,7 +884,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <rich:column>
             <h:outputText value="#{productionOrderItem.producedAmount}"/>
         </rich:column>
-        <rich:column styleClass="center">
+        <rich:column styleClass="center" rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
             <h:selectBooleanCheckbox id="selectCheckboxItem"
                                      immediate="true"
                                      value="#{productionOrderItem.selected}">

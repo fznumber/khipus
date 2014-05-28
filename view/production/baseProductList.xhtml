@@ -50,7 +50,7 @@
                                 #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
 
-                            <rich:column>
+                            <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
                                 #{messages['BaseProduct.choice']}
                             </rich:column>
 

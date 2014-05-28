@@ -32,6 +32,7 @@ import com.encens.khipus.service.warehouse.WarehouseService;
 import com.encens.khipus.util.*;
 import com.encens.khipus.util.query.QueryUtils;
 import com.encens.khipus.util.warehouse.InventoryMessage;
+import oracle.jdbc.driver.Const;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -441,7 +442,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
-        //approvedAllVoucherEntries();
+        approvedAllVoucherEntries();
     }
 
     public void approvedAllVoucherEntries(){
@@ -1274,16 +1275,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
         warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
-        warehouseVoucher.setDocumentCode("2");
+        warehouseVoucher.setDocumentCode(Constants.CODE_WAREHOUSEDOCUMENTYPE_EGRESS);
         warehouseVoucher.setDate(new Date());
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
-        warehouseVoucher.setWarehouseCode("3");
-        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
-        warehouseVoucher.setCostCenterCode("0111");
-        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode("3"));
+        warehouseVoucher.setWarehouseCode(Constants.CODE_WAREHOUSE_PRODUCT_MATERIAL);
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode(Constants.DEFAULT_COST_CENTER_PRODUCTION));
+        warehouseVoucher.setCostCenterCode(Constants.DEFAULT_COST_CENTER_PRODUCTION);
+        warehouseVoucher.setWarehouse(warehouseService.findWarehouseByCode(Constants.CODE_WAREHOUSE_PRODUCT_MATERIAL));
         warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
         warehouseVoucher.setResponsible(currentUser.getEmployee());
-        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode(Constants.BUSINESS_UNIT_COD_DEFAULT));
 
         return warehouseVoucher;
     }
@@ -1292,18 +1293,18 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         /*Crear el vale*/
         WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
         warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
-        warehouseVoucher.setDocumentCode("2");
+        warehouseVoucher.setDocumentCode(Constants.CODE_WAREHOUSEDOCUMENTYPE_EGRESS);
         warehouseVoucher.setDate(new Date());
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
-        warehouseVoucher.setWarehouseCode("1");
-        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
-        warehouseVoucher.setCostCenterCode("0111");
-        Warehouse warehouse = warehouseService.findWarehouseByCode("1");
+        warehouseVoucher.setWarehouseCode(Constants.CODE_WAREHOUSE_PRODUCT_INPUT);
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode(Constants.DEFAULT_COST_CENTER_PRODUCTION));
+        warehouseVoucher.setCostCenterCode(Constants.DEFAULT_COST_CENTER_PRODUCTION);
+        Warehouse warehouse = warehouseService.findWarehouseByCode(Constants.CODE_WAREHOUSE_PRODUCT_INPUT);
         warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDocumentType(productionPlanningService.getDefaultDocumentType());
         warehouseVoucher.setPetitionerJobContract(jobContractService.lastJobContractByEmployee(currentUser.getEmployee()));
         warehouseVoucher.setResponsible(warehouse.getResponsible());
-        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode(Constants.BUSINESS_UNIT_COD_DEFAULT));
 
         return warehouseVoucher;
     }
@@ -1312,17 +1313,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         WarehouseVoucher warehouseVoucher =  new WarehouseVoucher();
         warehouseVoucher.setCompanyNumber(Constants.defaultCompanyNumber);
-        warehouseVoucher.setDocumentCode("1");
+        warehouseVoucher.setDocumentCode(Constants.CODE_WAREHOUSEDOCUMENTYPE_RECEPTION);
         warehouseVoucher.setDate(dateConcurrent);
         warehouseVoucher.setState(WarehouseVoucherState.PEN);
-        warehouseVoucher.setWarehouseCode("2");
-        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode("0111"));
-        warehouseVoucher.setCostCenterCode("0111");
-        Warehouse warehouse = warehouseService.findWarehouseByCode("2");
+        warehouseVoucher.setWarehouseCode(Constants.CODE_WAREHOUSE_PRODUCT_END);
+        warehouseVoucher.setCostCenter(costCenterService.findCostCenterByCode(Constants.DEFAULT_COST_CENTER_PRODUCTION));
+        warehouseVoucher.setCostCenterCode(Constants.DEFAULT_COST_CENTER_PRODUCTION);
+        Warehouse warehouse = warehouseService.findWarehouseByCode(Constants.CODE_WAREHOUSE_PRODUCT_END);
         warehouseVoucher.setWarehouse(warehouse);
         warehouseVoucher.setDocumentType(productionPlanningService.getRecepcionDocumentType());
         warehouseVoucher.setResponsible(warehouse.getResponsible());
-        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode("01"));
+        warehouseVoucher.setExecutorUnit(businessUnitService.findBusinessUnitByExecutorUnitCode(Constants.BUSINESS_UNIT_COD_DEFAULT));
 
         return warehouseVoucher;
     }
