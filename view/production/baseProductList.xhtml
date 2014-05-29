@@ -50,7 +50,7 @@
                                 #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
 
-                            <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
+                            <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
                                 #{messages['BaseProduct.choice']}
                             </rich:column>
 
@@ -87,7 +87,7 @@
                             </h:commandButton>
                         </h:inputText>
                     </rich:column>
-                    <rich:column styleClass="center">
+                    <rich:column styleClass="center" rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
                         <h:selectBooleanCheckbox id="selectCheckboxItem"
                                                  immediate="true"
                                                  value="#{baseProduct.selected}">

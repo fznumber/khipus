@@ -150,7 +150,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         action="#{summaryMaterialAndInputByDayReportAction.generateReport(productionPlanning)}"
         value="#{messages['ProductionPlanning.generateReportRequestInputAndMaterialByPlanning']}"
         styleClass="button"
-        rendered="#{productionPlanningAction.managed and s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and productionPlanningAction.showGenerateRequestByPlanning}"/>
+        rendered="#{productionPlanningAction.managed and s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and productionPlanningAction.showGenerateRequestByPlanning and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}"/>
 
 <a4j:commandButton id="generateAllAccounts" value="#{messages['ProductionPlanning.generateAccountingByProductionDay']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
@@ -845,7 +845,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.producingAmount']}
                 </rich:column>
-                <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
+                <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
                     #{messages['ProductionOrder.choice']}
                 </rich:column>
                 <rich:column>
@@ -883,7 +883,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </h:commandButton>
             </h:inputText>
         </rich:column>
-        <rich:column styleClass="center" rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
+        <rich:column styleClass="center" rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
             <h:selectBooleanCheckbox id="selectCheckboxItem"
                                      immediate="true"
                                      value="#{productionOrderItem.selected}">
