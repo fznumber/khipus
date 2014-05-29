@@ -7,6 +7,7 @@ import com.encens.khipus.exception.warehouse.WarehouseVoucherPendantException;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.finances.MeasureUnit;
 import com.encens.khipus.model.finances.MeasureUnitPk;
+import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.warehouse.ApprovalWarehouseVoucherService;
 import com.encens.khipus.service.warehouse.MonthProcessService;
@@ -79,6 +80,31 @@ public class WarehouseVoucherCreateAction extends WarehouseVoucherGeneralAction 
             return Outcome.FAIL;
         }
     }
+
+    /*public void createWarehouseForInputOfInputsAndMateriales(List<ProductionOrder> productionOrders) {
+        String validationsOutcome = validations();
+        if (!Outcome.SUCCESS.equals(validationsOutcome)) {
+            return validationsOutcome;
+        }
+        // reset movement detail quantity mappings to manage warnings and warning column content
+        resetValidateQuantityMappings();
+        try {
+            warehouseService.saveWarehouseVoucher(warehouseVoucher, inventoryMovement, movementDetails,
+                    movementDetailUnderMinimalStockMap,
+                    movementDetailOverMaximumStockMap,
+                    movementDetailWithoutWarnings);
+
+            warehouseVoucherUpdateAction.putWarehouseVoucher(warehouseVoucher.getId());
+            showMovementDetailWarningMessages();
+            return Outcome.SUCCESS;
+        } catch (InventoryException e) {
+            addInventoryMessages(e.getInventoryMessages());
+            return Outcome.REDISPLAY;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return Outcome.FAIL;
+        }
+    }*/
 
     public String closeCurrentMonthProcess() {
         try {

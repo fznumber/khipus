@@ -250,8 +250,8 @@ public class GenericReportAction implements Serializable {
                     reportId,
                     JSFUtil.getResourceAsStream(reportTemplatePath),
                     getReportFormat().getFormat(),
-                    pageOrientation.getType(),
                     pageFormat.getType(),
+                    pageOrientation.getType(),
                     defaultReportTitle,
                     queryResult.getEjbql(),
                     reportTitleString).getTypedReportData();

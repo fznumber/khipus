@@ -4,6 +4,7 @@ import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
+import com.encens.khipus.exception.warehouse.WarehouseAccountCashNotFoundException;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.purchases.PurchaseOrder;
@@ -20,11 +21,11 @@ import java.util.List;
  */
 @Local
 public interface WarehouseAccountEntryService extends GenericService {
-    void createAccountEntry(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
+    void createAccountEntry(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException;
 
-    void createAccountEntryFromProductDelivery(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
+    void createAccountEntryFromProductDelivery(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException;
 
-    void createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException;
+    void createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss) throws CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException, FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException;
 
     void createAdvancePaymentAccountEntry(PurchaseOrderPayment purchaseOrderPayment) throws CompanyConfigurationNotFoundException;
 

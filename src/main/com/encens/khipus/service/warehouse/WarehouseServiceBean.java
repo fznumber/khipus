@@ -34,6 +34,7 @@ import javax.ejb.TransactionAttribute;
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -116,9 +117,12 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
             ReferentialIntegrityException, ProductItemAmountException, InventoryUnitaryBalanceException,
             WarehouseVoucherEmptyException, InventoryProductItemNotFoundException,
             CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException,
-            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException {
+            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException, WarehouseAccountCashNotFoundException {
         WarehouseVoucher parentWarehouseVoucher = warehouseVoucher.getParentWarehouseVoucher();
         getEntityManager().refresh(parentWarehouseVoucher);
+        if(warehouseVoucher.getWarehouse().getCashAccount() == null)
+            throw new WarehouseAccountCashNotFoundException();
+
         if (parentWarehouseVoucher.getState().equals(WarehouseVoucherState.PEN)) {
             // changes the state to WarehouseVoucherState.PAR
             approvalWarehouseVoucherService.approvePartialInputParentWarehouseVoucher(parentWarehouseVoucher.getId());
@@ -866,6 +870,24 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
     }
 
     @Override
+    public BigDecimal findAmountOrderByCodArt(String codArt,Date date) {
+        BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
+        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select sum(art.cantidad) from USER01_DAF.pedidos ped\n" +
+                "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
+                "on art.pedido = ped.pedido\n" +
+                "where ped.estado_pedido = 'PEN'\n" +
+                "and ped.FECHA_ENTREGA <= :dateDelivery\n" +
+                "and art.cod_art = :codArt\n")
+                .setParameter("codArt",codArt)
+                .setParameter("dateDelivery",date, TemporalType.DATE)
+                .getSingleResult();
+        if(amountOrderByCodArt == null)
+             return BigDecimal.ZERO;
+
+        return amountOrderByCodArt;
+    }
+
+    @Override
     public BigDecimal findAmountOrderByCodArt(String codArt) {
         BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
         amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select sum(art.cantidad) from USER01_DAF.pedidos ped\n" +
@@ -876,7 +898,7 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                 .setParameter("codArt",codArt)
                 .getSingleResult();
         if(amountOrderByCodArt == null)
-             return BigDecimal.ZERO;
+            return BigDecimal.ZERO;
 
         return amountOrderByCodArt;
     }

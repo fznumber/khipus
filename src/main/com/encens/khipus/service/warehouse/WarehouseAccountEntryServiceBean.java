@@ -4,6 +4,7 @@ import com.encens.khipus.action.production.ProductionPlanningAction;
 import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
+import com.encens.khipus.exception.warehouse.WarehouseAccountCashNotFoundException;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.interceptor.FinancesUser;
 import com.encens.khipus.model.admin.BusinessUnit;
@@ -15,8 +16,10 @@ import com.encens.khipus.model.purchases.PurchaseOrderPaymentState;
 import com.encens.khipus.model.purchases.PurchaseOrderPaymentType;
 import com.encens.khipus.model.warehouse.MovementDetail;
 import com.encens.khipus.model.warehouse.MovementDetailType;
+import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
 import com.encens.khipus.service.common.SequenceGeneratorService;
+import com.encens.khipus.service.finances.CashAccountService;
 import com.encens.khipus.service.finances.FinancesExchangeRateService;
 import com.encens.khipus.service.finances.RotatoryFundService;
 import com.encens.khipus.service.finances.VoucherService;
@@ -69,6 +72,12 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
     @In
     private MovementDetailService movementDetailService;
+
+    @In
+    private WarehouseService warehouseService;
+
+    @In
+    private CashAccountService cashAccountService;
 
     /* For advance payments of warehouse and fixedAssets */
 
@@ -406,7 +415,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
     public void createAccountEntry(WarehouseVoucher warehouseVoucher, String[] gloss)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
-            FinancesExchangeRateNotFoundException {
+            FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException {
         if (warehouseVoucher.isTransfer()) {
             log.debug("The account entry should not be generated for transference vouchers.");
             return;
@@ -469,7 +478,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
     public void createAccountEntryFromProductDelivery(WarehouseVoucher warehouseVoucher, String[] gloss)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
-            FinancesExchangeRateNotFoundException {
+            FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException {
         if (warehouseVoucher.isTransfer()) {
             log.debug("The account entry should not be generated for transference vouchers.");
             return;
@@ -532,7 +541,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
     public void createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
-            FinancesExchangeRateNotFoundException {
+            FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException {
         if (warehouseVoucher.isTransfer()) {
             log.debug("The account entry should not be generated for transference vouchers.");
             return;
@@ -604,10 +613,12 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
+        Warehouse warehouse = warehouseService.findWarehouseByCode(warehouseVoucher.getWarehouseCode());
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
                 companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
+                //cashAccountService.findByAccountCode(warehouse.getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -643,6 +654,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -668,13 +680,14 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         BigDecimal voucherAmount = movementDetailService.sumWarehouseVoucherMovementDetailAmount(warehouseVoucher.getId().getCompanyNumber(), warehouseVoucher.getState(), warehouseVoucher.getId().getTransactionNumber());
 
-        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
-        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+        Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM, gloss);
+        voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
 
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -688,7 +701,13 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 BigDecimal.ONE));
 
         voucherService.create(voucherForGeneration);
-
+        voucherService.approvedAllVoucherEntries( voucherForGeneration.getCompanyNumber()
+                                                 ,executorUnit.getExecutorUnitCode()
+                                                 ,voucherForGeneration.getDate()
+                                                 ,voucherForGeneration.getDate()
+                                                 ,voucherForGeneration.getTransactionNumber()
+                                                 ,companyConfiguration.getDefaultAccountancyUserProduction().getId()
+                                                 ,Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM);
     }
 
     private void createAccountEntryForExecutorUnitTransfer(WarehouseVoucher warehouseVoucher,
@@ -712,6 +731,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 warehouseVoucher.getExecutorUnit().getExecutorUnitCode(),
                 warehouseVoucher.getCostCenterCode(),
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -731,6 +751,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 warehouseVoucher.getTargetExecutorUnit().getExecutorUnitCode(),
                 warehouseVoucher.getTargetCostCenterCode(),
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -745,7 +766,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                                              String gloss)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
-            FinancesExchangeRateNotFoundException {
+            FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException {
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         List<MovementDetail> movementDetails = movementDetailService.findDetailByVoucherAndType(warehouseVoucher, MovementDetailType.E);
@@ -783,6 +804,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     executorUnit.getExecutorUnitCode(),
                     costCenterCode,
                     companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                    //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                     total,
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
@@ -835,6 +857,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     executorUnit.getExecutorUnitCode(),
                     costCenterCode,
                     companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                    //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                     total,
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
@@ -890,6 +913,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
             voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
                     executorUnit.getExecutorUnitCode(),
                     costCenterCode,
+                    //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                     companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
                     total,
                     FinancesCurrencyType.P,
@@ -918,6 +942,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));
@@ -960,6 +985,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 executorUnit.getExecutorUnitCode(),
                 costCenterCode,
                 companyConfiguration.getWarehouseNationalCurrencyAccount(),
+                //cashAccountService.findByAccountCode(warehouseVoucher.getWarehouse().getCashAccount()),
                 voucherAmount,
                 FinancesCurrencyType.P,
                 BigDecimal.ONE));

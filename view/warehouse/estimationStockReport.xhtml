@@ -26,6 +26,7 @@
                     <ui:define name="label">#{messages['ValuedWarehouseResidueReport.report.warehouse']}</ui:define>
                     <app:quickSearch id="quickSearchWarehouseField"
                                      textValue="estimationStockReportAction.warehouse.warehouseCode"
+                                     disable = "true"
                                      value="#{estimationStockReportAction.warehouse}"
                                      searchField="warehouseCode"
                                      alias="warehouse"
@@ -66,11 +67,23 @@
                                      searchModalPanel="singleProductListModalPanel"
                                      reRender="productItemField"
                                      hotKeySelect="alt+2"/>
-                </s:decorate>                
+                </s:decorate>
+                <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ValuedWarehouseResidueReport.report.date']}</ui:define>
+                    <rich:calendar id="deliveryDateField"
+                                   value="#{estimationStockReportAction.date}"
+                                   datePattern="#{messages['patterns.date']}"
+                                   enableManualInput="true"
+                                   required="false"
+                                   tabindex="3">
+                        <f:convertDateTime pattern="#{messages['patterns.date']}" timeZone="#{sessionUser.timeZone}"
+                                           type="date"/>
+                    </rich:calendar>
+                </s:decorate>
             </rich:panel>
 
             <app:reportDefaultOptions reportAction="#{estimationStockReportAction}" showPageFormat="false"
-                                      tabIndex="3"
+                                      tabIndex="4"
                                       showReportTitle="false"/>
 
             <div class="buttons">

@@ -56,6 +56,9 @@ public class BaseProduct implements BaseModel {
     @Column(name = "NO_VALE",nullable = true)
     private String numberVoucher;
 
+    @Transient
+    private Boolean selected = true;
+
     @OneToMany(mappedBy = "baseProduct", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
@@ -185,5 +188,13 @@ public class BaseProduct implements BaseModel {
 
     public void setNumberTransaction(String numberTransaction) {
         this.numberTransaction = numberTransaction;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }

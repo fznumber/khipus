@@ -12,6 +12,7 @@ import com.encens.khipus.model.warehouse.*;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -110,15 +111,17 @@ public interface WarehouseService extends GenericService {
             ReferentialIntegrityException, ProductItemAmountException, InventoryUnitaryBalanceException,
             WarehouseVoucherEmptyException, InventoryProductItemNotFoundException,
             CompanyConfigurationNotFoundException, FinancesCurrencyNotFoundException,
-            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException;
+            WarehouseVoucherApprovedException, FinancesExchangeRateNotFoundException, MovementDetailTypeException, WarehouseAccountCashNotFoundException;
 
     boolean isWarehouseVoucherPendant(WarehouseVoucherPK id);
 
     public Warehouse findWarehouseByCode(String warehouseCode);
 
-    BigDecimal findAmountOrderByCodArt(String codArt);
+    BigDecimal findAmountOrderByCodArt(String codArt,Date date);
 
     BigDecimal findExpectedAmountOrderProduction(String codArt);
 
     BigDecimal findProducedAmountOrderProduction(String codArt);
+
+    BigDecimal findAmountOrderByCodArt(String codArt);
 }

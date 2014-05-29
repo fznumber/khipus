@@ -119,6 +119,7 @@ public final class Constants {
     public static final String RECEIVABLES_VOUCHER_FORM = "CXC";
     public static final String HUMANRESOURCE_VOUCHER_FORM = "RRHH";
     public static final String WAREHOUSE_VOUCHER_FORM = "INV";
+    public static final String IN_WAREHOUSE_MILK_COLLECTED_FORM = "INLECH";
     public static final String INPUT_PROD_WAREHOUSE = "ENTPRO";
     public static final String ORDER_VOUCHER_FORM = "PED";
     public static final String DEFAULT_VOUCHER_FORM = "INTERFAZ";
@@ -168,6 +169,7 @@ public final class Constants {
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
     //id Milk
     public static final String ID_ART_RAW_MILK = "26";
+    public static final String COD_ART_WATER = "93";
     public static final String ID_ART_GROUP_CHEESE = "9";
     public static final String ID_ART_GROUP_UHT = "7";
     public static final String ID_ART_GROUP_YOGURT = "8";
@@ -180,7 +182,13 @@ public final class Constants {
     //PRODUCTION
     public static final Double PRICE_UNIT_MILK = 3.0;
     public static final String FINACESS_USER_UNIT_DEFAULT = "ADM";
-
+    public static final String DEFAULT_COST_CENTER_PRODUCTION = "0111";
+    public static final String CODE_WAREHOUSE_PRODUCT_END = "2";
+    public static final String CODE_WAREHOUSEDOCUMENTYPE_EGRESS = "2";
+    public static final String CODE_WAREHOUSEDOCUMENTYPE_RECEPTION = "1";
+    public static final String CODE_WAREHOUSE_PRODUCT_MATERIAL = "3";
+    public static final String CODE_WAREHOUSE_PRODUCT_INPUT = "1";
+    public static final String DEFAULT_CODE_WAREHOUSE_COLLECTION_MILK = "5";
 
     private Constants() {
     }

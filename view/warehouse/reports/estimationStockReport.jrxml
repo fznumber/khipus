@@ -4,6 +4,9 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/reportStyles.jrtx")]]></template>
+	<parameter name="dateDelivery" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
 	<field name="inventory.articleCode" class="java.lang.String">
 		<fieldDescription><![CDATA[COLUMN_1]]></fieldDescription>
 	</field>
@@ -38,7 +41,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{ValuedWarehouseResidueReport.report.warehouse}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="detailStyle" mode="Opaque" x="60" y="1" width="682" height="12"/>
+					<reportElement style="detailStyle" mode="Opaque" x="60" y="1" width="309" height="12"/>
 					<box padding="1">
 						<pen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="1.0"/>
@@ -109,6 +112,24 @@
 					</box>
 					<textElement textAlignment="Center"/>
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{Reports.warehouse.EstimationStockReport.totalBalanceLessTotalOrder}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="detailStyle" mode="Opaque" x="369" y="1" width="166" height="12"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["Hasta la fecha de entrega:"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="false">
+					<reportElement style="detailStyle" mode="Opaque" x="535" y="1" width="111" height="12"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.util.Date"><![CDATA[$P{dateDelivery}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>

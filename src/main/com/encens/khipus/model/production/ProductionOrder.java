@@ -85,6 +85,9 @@ public class ProductionOrder implements BaseModel {
     @Transient
     private Double milk;
 
+    @Transient
+    private Boolean selected = true;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private Company company;
@@ -337,5 +340,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setNumberTransaction(String numberTransaction) {
         this.numberTransaction = numberTransaction;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 }
