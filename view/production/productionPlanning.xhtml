@@ -154,7 +154,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
 <a4j:commandButton id="generateAllAccounts" value="#{messages['ProductionPlanning.generateAccountingByProductionDay']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   rendered="#{productionPlanningAction.showGenerateAllAccountEntries and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
+                   rendered="#{productionPlanningAction.showGenerateAllAccountEntries or productionPlanning.state eq 'PENDING' or productionPlanning.state eq 'EXECUTED' and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
                    ajaxSingle="true">
     <rich:componentControl for="confirmationGenerationAccounting" event="onclick" disableDefault="true"
                            operation="show"/>

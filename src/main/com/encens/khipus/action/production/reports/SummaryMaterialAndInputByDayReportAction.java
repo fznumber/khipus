@@ -13,6 +13,7 @@ import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.production.ProductionPlanningService;
 import com.encens.khipus.service.warehouse.ProductItemService;
 import com.encens.khipus.service.warehouse.WarehouseService;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.RoundUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
@@ -48,7 +49,9 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
     private List<ProductionOrder> productionOrders = new ArrayList<ProductionOrder>();
     private List<BaseProduct> baseProducts = new ArrayList<BaseProduct>();
     private List<SingleProduct> singleProducts = new ArrayList<SingleProduct>();
-
+    private String ordersCodes = "";
+    private String codMilk = Constants.ID_ART_RAW_MILK;
+    private String codWater = Constants.COD_ART_WATER;
     public void generateReport(ProductionPlanning productionPlanning) {
         log.debug("Generating IncomeByInvoiceReportAction............................");
         planning =  productionPlanning;
@@ -56,12 +59,14 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
         {
             if(order.getSelected())
             productionOrders.add(order);
+            ordersCodes += order.getCode()+";";
         }
         for(BaseProduct base: productionPlanning.getBaseProducts())
         {
             if(base.getSelected())
             {
                 baseProducts.add(base);
+                ordersCodes += base.getCode()+";";
                 for(SingleProduct single:base.getSingleProducts())
                 {
                     singleProducts.add(single);
@@ -89,6 +94,7 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
         TypedReportData reportMaterial;
         //add sub reports
         setReportFormat(ReportFormat.PDF);
+        setPageFormat(PageFormat.LETTER);
 
         reportMaterial = getSummaryMaterialSubReport();
         reportInPuts = getSummaryInputSubReport();
@@ -97,6 +103,7 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
         }
 
         try {
+            reportMaterial.getReportConfigParams().setReportPageOrientation("Vertical");
             GenerationReportData generationReportData = new GenerationReportData(reportMaterial);
             generationReportData.exportReport();
         } catch (IOException e) {
@@ -107,7 +114,8 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
     private TypedReportData getSummaryInputSubReport() {
         log.debug("Generating addSummaryMaterialSubReport.............................!!!!!!!");
         Map<String, Object> params = new HashMap<String, Object>();
-
+        params.put("FECHA",planning.getDate());
+        params.put("CODIGOS",ordersCodes);
         String subReportKey = "ORDERINPUTSUBREPORT";
 
         String ejbql = " SELECT orderInput.productItemCode " +
@@ -116,6 +124,8 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
                 " ,sum(orderInput.amount)  " +
                 " from OrderInput orderInput " +
                 " where orderInput.productionOrder in (#{summaryMaterialAndInputByDayReportAction.productionOrders}) " +
+                " and orderInput.productItemCode <> #{summaryMaterialAndInputByDayReportAction.codMilk}" +
+                " and orderInput.productItemCode <> #{summaryMaterialAndInputByDayReportAction.codWater}" +
                 " OR orderInput.baseProductInput in (#{summaryMaterialAndInputByDayReportAction.baseProducts})";
                 /*" left join orderInput.productionOrder productionOrder" +
                 " left join orderInput.baseProductInput baseProductInput" ;*/
@@ -148,7 +158,8 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
     private TypedReportData getSummaryMaterialSubReport() {
         log.debug("Generating addSummaryMaterialSubReport.............................!!!!!!!");
         Map<String, Object> params = new HashMap<String, Object>();
-
+        params.put("FECHA",planning.getDate());
+        params.put("CODIGOS",ordersCodes);
         String subReportKey = "ORDERMATERIALSUBREPORT";
 
         String ejbql = " SELECT orderMaterial.productItemCode " +
@@ -216,5 +227,29 @@ public class SummaryMaterialAndInputByDayReportAction extends GenericReportActio
 
     public void setSingleProducts(List<SingleProduct> singleProducts) {
         this.singleProducts = singleProducts;
+    }
+
+    public String getOrdersCodes() {
+        return ordersCodes;
+    }
+
+    public void setOrdersCodes(String ordersCodes) {
+        this.ordersCodes = ordersCodes;
+    }
+
+    public String getCodMilk() {
+        return codMilk;
+    }
+
+    public void setCodMilk(String codMilk) {
+        this.codMilk = codMilk;
+    }
+
+    public String getCodWater() {
+        return codWater;
+    }
+
+    public void setCodWater(String codWater) {
+        this.codWater = codWater;
     }
 }
