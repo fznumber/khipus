@@ -17,12 +17,22 @@
         <h:form id="ProductDeliverySearch">
 
             <rich:simpleTogglePanel label="#{messages['ProductDelivery.search']}" switchType="client">
+
+                <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['ProductDelivery.nameClient']}</ui:define>
+                    <h:inputText id="fullNameClient"
+                                 value="#{productDeliveryDataModel.criteria.fullNameClient}"
+                                 maxlength="150"
+                                 tabindex="1"
+                                 styleClass="input">
+                    </h:inputText>
+                </s:decorate>-->
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['ProductDelivery.documentNumber']}</ui:define>
                     <h:inputText id="invoiceNumber"
                                  value="#{productDeliveryDataModel.criteria.invoiceNumber}"
-                                 maxlength="150"
-                                 tabindex="1"
+                                 maxlength="20"
+                                 tabindex="2"
                                  styleClass="input">
                     </h:inputText>
                     <a4j:commandButton action="#{productDeliveryDataModel.search}"
@@ -30,7 +40,7 @@
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
                                        id="searchButtonId"
-                                       tabindex="2">
+                                       tabindex="3">
                         <s:defaultAction/>
                     </a4j:commandButton>
                 </s:decorate>
@@ -63,10 +73,13 @@
                             var="productDeliveryItem"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%"
-                            columnsWidth="60%, 30%, 10%">
+                            columnsWidth="60%, 15%, 15%, 10%">
 
                 <f:facet name="header">
                     <rich:columnGroup>
+                        <rich:column>
+                            #{messages['ProductDelivery.nameClient']}
+                        </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="productDelivery.invoiceNumber"
                                                    dataModel="#{productDeliveryDataModel}"
@@ -86,6 +99,9 @@
                         </rich:column>
                     </rich:columnGroup>
                 </f:facet>
+                <rich:column>
+                    <h:outputText value="#{productDeliveryItem.fullNameClient}"/>
+                </rich:column>
                 <rich:column>
                     <h:outputText value="#{productDeliveryItem.invoiceNumber}"/>
                 </rich:column>

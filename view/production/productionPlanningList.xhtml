@@ -140,12 +140,12 @@
                         <rich:column>
                             <h:outputText value="#{productionOrderItem.code}"/>
                         </rich:column>
-                        <!--<rich:column>
-                            <h:outputText value="#{productionOrderItem.producingAmount}"/>
-                        </rich:column>-->
                         <rich:column>
-                            <h:outputText value="#{productionOrderItem.expendAmount}"/>
+                            <h:outputText value="#{productionOrderItem.producedAmount}"/>
                         </rich:column>
+                        <!--<rich:column>
+                            <h:outputText value="#{productionOrderItem.expendAmount}"/>
+                        </rich:column>-->
                         <rich:column>
                             <h:outputText
                                     style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : (productionOrderItem.estateOrder == 'INSTOCK' ? 'fuchsia' : 'green')))}"

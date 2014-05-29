@@ -854,6 +854,26 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         refreshInstance();
     }
 
+    public void saveProduccingAmount()
+    {
+        update();
+        refreshInstance();
+    }
+
+    public void changeState(ProductionOrder order)
+    {
+        order.setEstateOrder(PENDING);
+        update();
+        refreshInstance();
+    }
+
+    public void changeState(SingleProduct single)
+    {
+        single.setState(PENDING);
+        update();
+        refreshInstance();
+    }
+
     public Boolean verifAmount(ProductionIngredient ingredient) {
         Boolean band = true;
         if (!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))

@@ -128,6 +128,9 @@ public class SoldProduct implements BaseModel {
     @Column(name = "version")
     private long version;
 
+    @Transient
+    private String fullName;
+
     public Long getId() {
         return id;
     }
@@ -296,5 +299,14 @@ public class SoldProduct implements BaseModel {
 
     public void setNumberVoucher(String numberVoucher) {
         this.numberVoucher = numberVoucher;
+    }
+
+    public String getFullName() {
+
+        return this.names + " " + this.firstName + " " + this.secondName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

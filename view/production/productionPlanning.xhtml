@@ -154,7 +154,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
 <a4j:commandButton id="generateAllAccounts" value="#{messages['ProductionPlanning.generateAccountingByProductionDay']}"
                    reRender="formulaSet,containerCreateButton,ruleBotton2,ruleBotton1,baseProductionList,productionOrderList,productionList"
-                   rendered="#{productionPlanningAction.showGenerateAllAccountEntries or productionPlanning.state eq 'PENDING' or productionPlanning.state eq 'EXECUTED' and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
+                   rendered="#{productionPlanningAction.showGenerateAllAccountEntries  and s:hasPermission('GENERATEALLACCOUNTINGENTRIES','CREATE') and productionPlanning.state eq 'INSTOCK'}"
                    ajaxSingle="true">
     <rich:componentControl for="confirmationGenerationAccounting" event="onclick" disableDefault="true"
                            operation="show"/>
@@ -836,15 +836,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.processedProduct.name']}
                 </rich:column>
-                <!--<rich:column>
-                    #{messages['ProductionOrder.processedProduct.code']}
-                </rich:column>-->
                 <rich:column>
                     #{messages['ProductionOrder.order']}
                 </rich:column>
-                <!--<rich:column>
-                    #{messages['ProductionOrder.formula']}
-                </rich:column>-->
                 <rich:column>
                     #{messages['ProductionOrder.expectedAmount']}
                 </rich:column>
@@ -865,24 +859,29 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </rich:column>
             </rich:columnGroup>
         </f:facet>
-        <!--<rich:column>
-            <h:outputText value="#{productionOrderItem.productComposition.processedProduct.code.concat('-').concat(productionOrderItem.productComposition.processedProduct.name)}"/>
-        </rich:column>
-        -->
         <rich:column>
             <h:outputText value="#{productionOrderItem.productComposition.processedProduct.nameCode}"/>
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.code}"/>
         </rich:column>
-        <!--<rich:column>
-            <h:outputText value="#{productionOrderItem.productComposition.name}"/>
-        </rich:column>-->
         <rich:column>
             <h:outputText value="#{productionOrderItem.expendAmount}"/>
         </rich:column>
         <rich:column>
-            <h:outputText value="#{productionOrderItem.producedAmount}"/>
+            <h:inputText id = "producedAmountField"
+                         value="#{productionOrderItem.producedAmount}"
+                         maxlength="7" styleClass="input"
+                         disabled="#{productionOrderItem.estateOrder != 'EXECUTED'}"
+                         size="10"
+                         required="false">
+                <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
+                                 styleClass="button"
+                                 rendered="#{productionOrderItem.estateOrder eq 'EXECUTED' and s:hasPermission('SETAMOUNTPRODECER','VIEW')}">
+
+                    <s:defaultAction/>
+                </h:commandButton>
+            </h:inputText>
         </rich:column>
         <rich:column styleClass="center" rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW')}">
             <h:selectBooleanCheckbox id="selectCheckboxItem"
@@ -895,17 +894,27 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <rich:column>
             <h:outputText
                     style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : (productionOrderItem.estateOrder == 'INSTOCK' ? 'fuchsia' : 'green')))}"
-                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (productionOrderItem.estateOrder == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"/>
+                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (productionOrderItem.estateOrder == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"
+                    rendered="#{productionOrderItem.estateOrder != 'EXECUTED'}"
+                    />
+            <a4j:commandLink
+                    style="font-weight: bold; color: #{productionOrderItem.estateOrder == 'PENDING' ? 'red' :(productionOrderItem.estateOrder == 'EXECUTED' ? 'blue' : (productionOrderItem.estateOrder == 'TABULATED' ? 'fuchsia' : (productionOrderItem.estateOrder == 'INSTOCK' ? 'fuchsia' : 'green')))}"
+                    ajaxSingle="true" immediate="true"
+                    value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (productionOrderItem.estateOrder == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (productionOrderItem.estateOrder == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (productionOrderItem.estateOrder == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"
+                    action="#{productionPlanningAction.changeState(productionOrderItem)}"
+                    rendered="#{productionOrderItem.estateOrder eq 'EXECUTED' and s:hasPermission('CHANGESTATEORDER','VIEW')}"
+                    reRender="productionList"/>
         </rich:column>
         <rich:column>
-            <h:inputText value="#{productionOrderItem.greasePercentage}"
-                         maxlength="4" styleClass="input"
+            <h:inputText id = "greasePercentageField"
+                         value="#{productionOrderItem.greasePercentage}"
+                         maxlength="5" styleClass="input"
                          disabled="#{productionOrderItem.estateOrder eq 'FINALIZED' or  productionOrderItem.estateOrder eq 'TABULATED' ? true : false}"
                          size="10"
                          required="false">
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{(productionOrderItem.estateOrder eq 'PENDING' or  productionOrderItem.estateOrder eq 'EXECUTED' ? true : false) and s:hasPermission('SAVEGRAASEPERCENTAGE','CREATE')}">
+                                 rendered="#{(productionOrderItem.estateOrder eq 'PENDING' or  productionOrderItem.estateOrder eq 'EXECUTED' ? true : false) and s:hasPermission('SAVEGRAASEPERCENTAGE','VIEW')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
@@ -915,12 +924,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
         <rich:column styleClass="center">
 
-            <a4j:commandLink ajaxSingle="true" immediate="true"
+            <!--<a4j:commandLink ajaxSingle="true" immediate="true"
                              value="#{ productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
                              action="#{productionPlanningAction.selectModifiIput(productionOrderItem) }"
                              rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>
-            <rich:spacer width="5"/>
+            <rich:spacer width="5"/>-->
 
             <a4j:commandLink ajaxSingle="true" immediate="true"
                              value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"

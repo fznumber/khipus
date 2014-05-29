@@ -57,6 +57,9 @@ public class ProductDelivery implements BaseModel {
     @OneToMany(mappedBy = "productDelivery", fetch = FetchType.LAZY)
     private List<SoldProduct> soldProductList = new ArrayList<SoldProduct>(0);
 
+    @Transient
+    private String fullNameClient = "";
+
     public Long getId() {
         return id;
     }
@@ -116,5 +119,17 @@ public class ProductDelivery implements BaseModel {
 
     public void setSoldProductList(List<SoldProduct> soldProductList) {
         this.soldProductList = soldProductList;
+    }
+
+    public String getFullNameClient() {
+        if(this.getSoldProductList().size() > 0)
+        {
+            fullNameClient = this.getSoldProductList().get(0).getNames() + " " + this.getSoldProductList().get(0).getFirstName() + " " + this.getSoldProductList().get(0).getSecondName();
+        }
+        return fullNameClient;
+    }
+
+    public void setFullNameClient(String fullNameClient) {
+        this.fullNameClient = fullNameClient;
     }
 }

@@ -73,7 +73,19 @@
                         <h:outputText value="#{singleProduct.productProcessingSingle.metaProduct.fullName}"/>
                     </rich:column>
                     <rich:column>
-                        <h:outputText value="#{singleProduct.amount}"/>
+                        <h:inputText id = "producedAmountField"
+                                     value="#{singleProduct.amount}"
+                                     maxlength="7" styleClass="input"
+                                     disabled="#{singleProduct.state != 'EXECUTED'}"
+                                     size="10"
+                                     required="false">
+                            <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
+                                             styleClass="button"
+                                             rendered="#{singleProduct.state eq 'EXECUTED' and s:hasPermission('SETAMOUNTPRODECER','VIEW')}">
+
+                                <s:defaultAction/>
+                            </h:commandButton>
+                        </h:inputText>
                     </rich:column>
                     <rich:column styleClass="center">
                         <h:selectBooleanCheckbox id="selectCheckboxItem"
@@ -86,7 +98,16 @@
                     <rich:column>
                         <h:outputText
                                 style="font-weight: bold; color: #{singleProduct.state == 'PENDING' ? 'red' :(singleProduct.state == 'EXECUTED' ? 'blue' : (singleProduct.state == 'TABULATED' ? 'fuchsia' : (singleProduct.state == 'INSTOCK' ? 'fuchsia' : 'green')))}"
-                                value="#{singleProduct.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (singleProduct.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (singleProduct.state == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (singleProduct.state == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"/>
+                                value="#{singleProduct.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (singleProduct.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (singleProduct.state == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (singleProduct.state == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"
+                                rendered="#{singleProduct.state != 'EXECUTED'}"
+                                />
+                        <a4j:commandLink
+                                style="font-weight: bold; color: #{singleProduct.state == 'PENDING' ? 'red' :(singleProduct.state == 'EXECUTED' ? 'blue' : (singleProduct.state == 'TABULATED' ? 'fuchsia' : (singleProduct.state == 'INSTOCK' ? 'fuchsia' : 'green')))}"
+                                ajaxSingle="true" immediate="true"
+                                value="#{singleProduct.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (singleProduct.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (singleProduct.state == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (singleProduct.state == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"
+                                action="#{productionPlanningAction.changeState(singleProduct)}"
+                                rendered="#{singleProduct.state eq 'EXECUTED' and s:hasPermission('CHANGESTATEORDER','VIEW')}"
+                                reRender="baseProductionList"/>
                     </rich:column>
 
                     <rich:column>
