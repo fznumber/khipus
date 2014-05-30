@@ -924,12 +924,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
         <rich:column styleClass="center">
 
-            <!--<a4j:commandLink ajaxSingle="true" immediate="true"
-                             value="#{ productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addInput']:messages['ProductionOrder.materialProduccion.modifyInputMount']}"
+            <a4j:commandLink ajaxSingle="true" immediate="true"
+                             value="#{ messages['ProductionOrder.materialProduccion.addInput']}"
                              action="#{productionPlanningAction.selectModifiIput(productionOrderItem) }"
-                             rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
+                             rendered="#{productionOrderItem.estateOrder == 'PENDING'}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>
-            <rich:spacer width="5"/>-->
+            <rich:spacer width="5"/>
 
             <a4j:commandLink ajaxSingle="true" immediate="true"
                              value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"

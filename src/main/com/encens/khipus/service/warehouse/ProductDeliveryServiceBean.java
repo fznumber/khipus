@@ -11,6 +11,7 @@ import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.CostCenterPk;
+import com.encens.khipus.model.products.Product;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
@@ -47,6 +48,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     @In
     private MovementDetailService movementDetailService;
+
+    @In
+    private ProductItemService productItemService;
 
     @In(value = "monthProcessService")
     private MonthProcessService monthProcessService;
@@ -96,6 +100,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
         List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
         //List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+        int pos = changeEdamToPressed(soldProducts);
         WarehouseDocumentType documentType = getFirstConsumptionType();
 
         if(soldProducts.size() == 0)
@@ -160,6 +165,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         } catch (WarehouseAccountCashNotFoundException e) {
             e.printStackTrace();
         }
+
         ProductDelivery productDelivery = new ProductDelivery();
         productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
         productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
@@ -167,6 +173,11 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         create(productDelivery);
 
+        if(pos>-1)
+        {
+            resetChange(soldProducts.get(pos));
+            approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(),pos);
+        }
 
         for (SoldProduct soldProduct : soldProducts) {
             soldProduct.setProductDelivery(productDelivery);
@@ -176,6 +187,29 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
 
         return productDelivery;
+    }
+
+    private void resetChange(SoldProduct soldProduct) {
+          ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
+          soldProduct.setProductItemCode(item.getProductItemCode());
+          soldProduct.setProductItem(item);
+    }
+
+    private int changeEdamToPressed(List<SoldProduct> soldProducts) {
+        int pos = -1;
+        int cont = 0;
+        for(SoldProduct soldProduct:soldProducts)
+        {
+            if(soldProduct.getProductItemCode().compareTo(Constants.COD_CHEESE_EDAM) == 0)
+            {
+                ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
+                soldProduct.setProductItemCode(item.getProductItemCode());
+                soldProduct.setProductItem(item);
+                pos = cont;
+            }
+            cont ++;
+        }
+        return pos;
     }
 
     @SuppressWarnings(value = "unchecked")

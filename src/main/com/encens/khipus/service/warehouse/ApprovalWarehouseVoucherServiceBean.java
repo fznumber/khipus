@@ -1336,6 +1336,30 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
                 getSingleResult();
     }
 
+    @Override
+    public void resetChangeCheeseEdam(WarehouseVoucherPK id,int pos) {
+        WarehouseVoucher warehouseVoucher = getEntityManager().find(WarehouseVoucher.class, id);
+        getEntityManager().refresh(warehouseVoucher);
+        List<MovementDetail> inputMovementDetailList = movementDetailService.findDetailByVoucherAndType(warehouseVoucher, MovementDetailType.E);
+        List<MovementDetail> outputMovementDetailList = movementDetailService.findDetailByVoucherAndType(warehouseVoucher, MovementDetailType.S);
+        List<MovementDetail> approvedMovementDetailList = new ArrayList<MovementDetail>();
+        approvedMovementDetailList.addAll(inputMovementDetailList);
+        approvedMovementDetailList.addAll(outputMovementDetailList);
+        ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
+        approvedMovementDetailList.get(pos).setProductItemCode(item.getProductItemCode());
+        approvedMovementDetailList.get(pos).setProductItem(item);
+
+            try {
+                update(approvedMovementDetailList.get(pos));
+            } catch (EntryDuplicatedException e) {
+                log.debug(e, "this won't happen because the attribute to update haven't a constraint");
+            } catch (ConcurrencyException e) {
+                e.printStackTrace();
+            }
+
+
+    }
+
     private void updateWarehouseVoucher(WarehouseVoucher warehouseVoucher) {
         warehouseVoucher.setState(WarehouseVoucherState.APR);
         warehouseVoucher.setNumber(generateWarehouseVoucherNumber(warehouseVoucher));

@@ -128,4 +128,6 @@ public interface ApprovalWarehouseVoucherService extends GenericService {
     public WarehouseVoucher findWarehouseVoucherByNumber(String number);
 
     public InventoryMovement getMovement(WarehouseVoucher warehouseVoucher);
+
+    void resetChangeCheeseEdam(WarehouseVoucherPK id,int pos);
 }
