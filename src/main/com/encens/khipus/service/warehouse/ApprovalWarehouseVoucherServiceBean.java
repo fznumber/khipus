@@ -107,8 +107,8 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
         WarehouseVoucher warehouseVoucher = getEntityManager().find(WarehouseVoucher.class, id);
         getEntityManager().refresh(warehouseVoucher);
 
-        if(warehouseVoucher.getWarehouse().getCashAccount() == null)
-            throw new WarehouseAccountCashNotFoundException();
+        /*if(warehouseVoucher.getWarehouse().getCashAccount() == null)
+            throw new WarehouseAccountCashNotFoundException();*/
 
         InventoryMovement pendantInventoryMovement = getPendantMovement(warehouseVoucher);
         getEntityManager().refresh(pendantInventoryMovement);
