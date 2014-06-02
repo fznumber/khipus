@@ -934,7 +934,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <a4j:commandLink ajaxSingle="true" immediate="true"
                              value="#{productionOrderItem.estateOrder == 'PENDING' ? messages['ProductionOrder.materialProduccion.addMaterial']: messages['ProductionOrder.materialProduccion.setMountUsed']}"
                              action="#{productionPlanningAction.selectMaterial(productionOrderItem) }"
-                             rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING'}"
+                             rendered="#{productionOrderItem.estateOrder == 'EXECUTED' or productionOrderItem.estateOrder == 'PENDING' and s:hasPermission('UPDATEMATERIAL','VIEW')}"
                              reRender="formulaSet,ruleBotton2,ruleBotton1,productionList,baseProductionList"/>
             <rich:spacer width="5"/>
 

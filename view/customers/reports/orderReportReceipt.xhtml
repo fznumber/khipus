@@ -67,8 +67,8 @@
         </div>
 
     </h:form>
-
-    <s:decorate id="warehouseListModalPanelContainer" template="/warehouse/warehouseListModalPanel.xhtml">
+    <!--todo: revisar hay un permiso de mas-->
+    <!--<s:decorate id="warehouseListModalPanelContainer" template="/warehouse/warehouseListModalPanel.xhtml">
         <ui:param name="containerId" value="warehouseListModalPanelContainer"/>
         <ui:param name="dialogId" value="warehouseModalPanel"/>
         <ui:define name="assignButton">
@@ -80,7 +80,7 @@
                                reRender="warehouseField"
                                oncomplete="Richfaces.hideModalPanel('warehouseModalPanel');"/>
         </ui:define>
-    </s:decorate>
+    </s:decorate>-->
 
     <s:decorate id="productItemListModalPanelContainer" template="/warehouse/productItemListModalPanel.xhtml">
         <ui:define name="assignButton">
