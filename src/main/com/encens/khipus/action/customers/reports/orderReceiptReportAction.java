@@ -3,6 +3,7 @@ package com.encens.khipus.action.customers.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.customers.ClientOrderEstate;
+import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.ProductItemState;
 import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.customers.AccountItemService;
@@ -43,6 +44,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private ClientOrderEstate stateOrder = ClientOrderEstate.ALL;
     private int postXIniAmount,widthIniAmount;
     private Date dateOrder;
+    private Employee distributor;
 
     @In
     private AccountItemService accountItemService;
@@ -74,8 +76,8 @@ public class OrderReceiptReportAction extends GenericReportAction {
 
         Map params = new HashMap();
         distributors = accountItemService.findDistributor(dateOrder);
-        orderItems = accountItemService.findOrderItem(dateOrder,ClientOrderEstate.getVal(stateOrder));
-
+        orderItems = accountItemService.findOrderItem(dateOrder, ClientOrderEstate.getVal(stateOrder));
+        orderItems.addAll(accountItemService.findOrderItemPack(dateOrder, ClientOrderEstate.getVal(stateOrder)));
         params.putAll(getCommonDocumentParamsInfo());
 
         String query = "select * from USER01_DAF.per_insts\n" +
@@ -121,6 +123,16 @@ public class OrderReceiptReportAction extends GenericReportAction {
         JRPrintPage tempPage = ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0)));
         totals.clear();
         if(orderItems.size() > 0)
+        if(distributor != null)
+        {
+            orderClients =  accountItemService.findClientsOrder(dateOrder,new BigDecimal(distributor.getId()),ClientOrderEstate.getVal(stateOrder));
+            String nameDistributor = accountItemService.getNameEmployeed(new BigDecimal(distributor.getId()));
+
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor,temp_total));
+            //((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateClients(temp_client,nameDistributor));
+            ((JRPrintPage) (typedReportData.getJasperPrint().getPages().get(0))).getElements().addAll(generateAmounts(temp_amount));
+        }
+        else
         for(BigDecimal distributor: distributors)
         {
             orderClients =  accountItemService.findClientsOrder(dateOrder,distributor,ClientOrderEstate.getVal(stateOrder));
@@ -172,7 +184,11 @@ public class OrderReceiptReportAction extends GenericReportAction {
             {
                 client.setPosX(amountY);
                 client.setPosY(temp.getY());
-                val =  accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+                if(item.getType() == "COMBO" )
+                    val = accountItemService.getAmountCombo(item.getCodArt(),client.getIdOrder());
+                else
+                    val = accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+
                 JRTemplatePrintText printText = createCellY(temp,val.toString(), amountY);
                 printText.setX(amountX);
                 printTextList.add(printText);
@@ -363,5 +379,17 @@ public class OrderReceiptReportAction extends GenericReportAction {
 
     public void setStateOrder(ClientOrderEstate stateOrder) {
         this.stateOrder = stateOrder;
+    }
+
+    public Employee getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Employee distributor) {
+        this.distributor = distributor;
+    }
+
+    public void cleanDistributor(){
+        setDistributor(null);
     }
 }

@@ -6,6 +6,7 @@ import com.encens.khipus.model.customers.ClientOrder;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -28,4 +29,8 @@ public interface AccountItemService extends GenericService {
     public List<BigDecimal> findDistributor(Date date);
 
     public String getNameEmployeed(BigDecimal codEmployeed);
+
+    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPack(Date dateOrder, String stateOrder);
+
+    public Integer getAmountCombo(String codArt, String idOrder);
 }

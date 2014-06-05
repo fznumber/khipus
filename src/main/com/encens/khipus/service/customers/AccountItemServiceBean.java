@@ -15,6 +15,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -147,6 +148,71 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     }
 
     @Override
+    public Collection<OrderItem> findOrderItemPack(Date dateOrder, String stateOrder) {
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        try{
+            List<Object[]> datas = new ArrayList<Object[]>();
+            if(stateOrder == "TODOS")
+            {
+                datas = em.createNativeQuery("select distinct nvl(pq.nombrecorto,'sin-nombre'),pq.paquete from USER01_DAF.paquetes pq\n" +
+                        "inner join USER01_DAF.paquete_pedidos pp\n" +
+                        "on pq.paquete = pp.paquete\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on pp.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "and pe.estado_pedido <> 'ANL'")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .getResultList();
+            }
+            else
+            {
+                datas = em.createNativeQuery("select distinct nvl(pq.nombrecorto,'sin-nombre'),pq.paquete from USER01_DAF.paquetes pq\n" +
+                        "inner join USER01_DAF.paquete_pedidos pp\n" +
+                        "on pq.paquete = pp.paquete\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on pp.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "and pe.estado_pedido = :stateOrder")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .setParameter("stateOrder",stateOrder)
+                        .getResultList();
+            }
+
+            for(Object[] obj: datas)
+            {
+                OrderItem item = new OrderItem();
+                item.setNameItem((String)obj[0]);
+                item.setCodArt((String)obj[1]);
+                item.setType("COMBO");
+                orderItems.add(item);
+            }
+
+        }catch (NoResultException e)
+        {
+            return new ArrayList<OrderItem>();
+        }
+        return orderItems;
+    }
+
+    @Override
+    public Integer getAmountCombo(String codPaquete, String codPedido) {
+        BigDecimal result = BigDecimal.ZERO;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select nvl(cantidad,0) from USER01_DAF.paquete_pedidos \n" +
+                    "where pedido = :codPedido\n" +
+                    "and paquete = :codPaquete")
+                    .setParameter("codPedido",codPedido)
+                    .setParameter("codPaquete",codPaquete)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
+    @Override
     public List<BigDecimal> findDistributor(Date dateOrder)
     {
         List<BigDecimal> distributors = new ArrayList<BigDecimal>();
@@ -170,7 +236,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             List<Object[]> datas = new ArrayList<Object[]>();
             if(stateOrder == "TODOS")
             {
-                datas = em.createNativeQuery("select distinct ia.nombrecorto,ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
+                datas = em.createNativeQuery("select distinct nvl(ia.nombrecorto,'sin-nombre'),ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
                         "inner join WISE.inv_articulos ia\n" +
                         "on ia.cod_art = ap.cod_art\n" +
                         "inner join USER01_DAF.pedidos pe\n" +
@@ -182,7 +248,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             }
             else
             {
-                datas = em.createNativeQuery("select distinct ia.nombrecorto,ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
+                datas = em.createNativeQuery("select distinct nvl(ia.nombrecorto,'sin-nombre'),ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
                         "inner join WISE.inv_articulos ia\n" +
                         "on ia.cod_art = ap.cod_art\n" +
                         "inner join USER01_DAF.pedidos pe\n" +
@@ -219,6 +285,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         private String NoCia;
         private int posX;
         private int posY;
+        private String type;
 
         public String getNoCia() {
             return NoCia;
@@ -266,6 +333,14 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
 
         public void setPosY(int posY) {
             this.posY = posY;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
         }
     }
 

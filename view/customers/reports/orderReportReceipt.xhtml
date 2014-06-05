@@ -45,23 +45,35 @@
                                    datePattern="#{messages['patterns.date']}"
                                    enableManualInput="true"
                                    required="true"
-                                   tabindex="4">
+                                   tabindex="2">
                         <f:convertDateTime pattern="#{messages['patterns.date']}"
                                            timeZone="#{sessionUser.timeZone}"
                                            type="date"/>
                     </rich:calendar>
                 </s:decorate>
+                <s:decorate id="employeeField"
+                            template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['Order.report.distributor']}</ui:define>
+                    <app:selectPopUp id="employee"
+                                     textValue="#{orderReceiptReportAction.distributor.fullName}"
+                                     value="#{orderReceiptReportAction.distributor}"
+                                     clearAction="orderReceiptReportAction.cleanDistributor()"
+                                     searchModalPanel="generalEmployeeListModalPanel"
+                                     dataModel="#{generalEmployeeDataModel}"
+                                     reRender="employeeField"
+                                     tabindex="3"/>
+                </s:decorate>
             </h:panelGrid>
         </rich:panel>
 
         <app:reportDefaultOptions reportAction="#{orderReceiptReportAction}" showPageFormat="false"
-                                  tabIndex="11"
+                                  tabIndex="4"
                                   showReportTitle="false"/>
 
         <div class="buttons">
             <h:commandButton action="#{orderReceiptReportAction.generateReport}"
                              styleClass="button"
-                             value="#{messages['Common.generate']}" id="searchButtonId" tabindex="12">
+                             value="#{messages['Common.generate']}" id="searchButtonId" tabindex="5">
                 <s:defaultAction/>
             </h:commandButton>
         </div>
@@ -82,7 +94,7 @@
         </ui:define>
     </s:decorate>-->
 
-    <s:decorate id="productItemListModalPanelContainer" template="/warehouse/productItemListModalPanel.xhtml">
+   <!-- <s:decorate id="productItemListModalPanelContainer" template="/warehouse/productItemListModalPanel.xhtml">
         <ui:define name="assignButton">
             <a4j:commandButton id="assignButton"
                                action="#{productItemCostUnitReportAction.assignProductItem(productItemItem)}"
@@ -111,6 +123,19 @@
                                styleClass="select-image-middle"
                                reRender="subGroupField, groupField"
                                oncomplete="Richfaces.hideModalPanel('subGroupListModalPanel');"/>
+        </ui:define>
+    </s:decorate>-->
+    <s:decorate id="generalEmployeeListModalPanelContainer"
+                template="/employees/generalEmployeeListModalPanel.xhtml">
+        <ui:param name="dialogId" value="generalEmployeeListModalPanel"/>
+        <ui:param name="dataModel" value="#{generalEmployeeDataModel}"/>
+        <ui:define name="assignButton">
+            <a4j:commandButton id="assignButton" title="#{messages['Common.choose']}"
+                               action="#{orderReceiptReportAction.setDistributor(employeeItem)}"
+                               image="/img/active.gif"
+                               styleClass="select-image"
+                               reRender="employeeField"
+                               oncomplete="Richfaces.hideModalPanel('generalEmployeeListModalPanel');"/>
         </ui:define>
     </s:decorate>
 </ui:define>
