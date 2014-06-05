@@ -177,6 +177,14 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         {
             resetChange(soldProducts.get(pos));
             approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(),pos);
+            ProductItem cheesePressed = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
+            ProductItem cheeseEDAM = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
+            cheeseEDAM.setUnitCost(cheesePressed.getUnitCost());
+            try {
+                productItemService.updateProductItem(cheeseEDAM);
+            } catch (ProductItemMinimalStockIsGreaterThanMaximumStockException e) {
+                e.printStackTrace();
+            }
         }
 
         for (SoldProduct soldProduct : soldProducts) {

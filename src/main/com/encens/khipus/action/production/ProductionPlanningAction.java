@@ -2396,6 +2396,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             return;
         }
+        if(hasIndirectCost())
+        {
+            notHasIndirectCostMessage();
+            return;
+        }
         singleProduct.setState(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
@@ -2469,6 +2474,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             return;
         }
+        if(hasIndirectCost())
+        {
+            notHasIndirectCostMessage();
+            return;
+        }
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
@@ -2505,6 +2515,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void makeFinalizedOrder(ProductionPlanning planning) {
 
+        if(hasIndirectCost())
+        {
+            notHasIndirectCostMessage();
+            return;
+        }
+
         for (ProductionOrder order : planning.getProductionOrderList()) {
             if(order.getEstateOrder().equals(EXECUTED)){
             setTotalsMaterials(order);
@@ -2540,6 +2556,24 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
+    }
+
+    private void notHasIndirectCostMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"ProductionPlanning.error.notHasIndirectCostMessage");
+    }
+
+    public boolean hasIndirectCost()
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(getInstance().getDate());
+        int monthConcurrent = calendar.get(Calendar.MONTH);
+        //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
+        //todo: el mes comienza en 0 hasta el 11 que es diciembre
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        calendar.set(Calendar.MONTH,monthConcurrent -1);
+        PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
+
+        return periodIndirectCost != null;
     }
 
     @End
@@ -3097,6 +3131,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         int monthConcurrent = calendar.get(Calendar.MONTH);
         //todo: muy importate solo para regularizar enero,febrero, marzo se tomara el mes actual en adelante se tomara el mes anterios (-1 para que tome el mes anterior)
         //todo: el mes comienza en 0 hasta el 11 que es diciembre
+        calendar.set(Calendar.DAY_OF_MONTH,1);
         calendar.set(Calendar.MONTH,monthConcurrent -1);
         PeriodIndirectCost periodIndirectCost = indirectCostsService.getConcurrentPeroidIndirectCost(calendar.getTime());
         int totalDaysNotProducer = indirectCostsService.calculateCantDaysProducer(dateConcurrent);
