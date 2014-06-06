@@ -43,8 +43,6 @@ public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction 
     public static final String FINALIZED_OUTCOME = "Finalized";
     public static final String LIQUIDATED_OUTCOME = "Liquidated";
     public static String APPROVED_OUTCOME = "Approved";
-
-
     @In
     private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
 
