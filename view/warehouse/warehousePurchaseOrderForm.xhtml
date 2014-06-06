@@ -44,6 +44,12 @@
                                    label="#{messages[element.resourceKey]}"
                                    noSelectionLabel=""
                                    hideNoSelectionLabel="false"/>
+
+                    <a4j:support event="onchange"
+                                 action="#{warehousePurchaseOrderAction.verifyCondicionWill}"
+                                 reRender="rightSidePanel"
+                                 imnediate = "true"
+                                 ajaxSingle="true"/>
                 </h:selectOneMenu>
             </c:when>
             <c:otherwise>
@@ -528,6 +534,15 @@
             <h:outputText value="#{warehousePurchaseOrder.payConditions.fullName}"/>
         </c:otherwise>
     </c:choose>
+</s:decorate>
+
+<s:decorate id="billConditionsField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{warehousePurchaseOrderAction.showBillConditions}">
+    <ui:define name="label">
+        <h:outputText value="#{messages['WarehousePurchaseOrder.billConditions']}"/>
+    </ui:define>
+    <h:selectBooleanCheckbox value="#{warehousePurchaseOrderAction.billConditions}" disabled="#{!isPurchaseOrderPending}">
+        <a4j:support event="onchange" action="#{warehousePurchaseOrderAction.setWithWill}" ajaxSingle="true"/>
+    </h:selectBooleanCheckbox>
 </s:decorate>
 
 </s:div>

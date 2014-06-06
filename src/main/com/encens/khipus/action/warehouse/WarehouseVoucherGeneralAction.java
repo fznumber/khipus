@@ -544,6 +544,11 @@ public class WarehouseVoucherGeneralAction extends GenericAction<WarehouseVouche
                 "ProductItem.error.notFound", productItemName);
     }
 
+    public void addWarehouseDocumentTypeErrorMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "PurchaseOrder.error.warehouseDocumentTypeNotFound");
+    }
+
     public void addWarehouseAccountCashNotFoundMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
                 "WarehouseVoucher.error.WarehouseAccountCashNotFoundMessage");

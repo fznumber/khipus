@@ -45,7 +45,6 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private int postXIniAmount,widthIniAmount;
     private Date dateOrder;
     private Employee distributor;
-
     @In
     private AccountItemService accountItemService;
 

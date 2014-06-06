@@ -7,6 +7,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.WarehouseAccountCashNotFoundException;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.finances.Voucher;
 import com.encens.khipus.model.purchases.PurchaseOrder;
 import com.encens.khipus.model.purchases.PurchaseOrderPayment;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
@@ -34,10 +35,27 @@ public interface WarehouseAccountEntryService extends GenericService {
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException;
 
+    public Voucher createEntryAccountForValidatePurchaseOrder(PurchaseOrder purchaseOrder, BigDecimal defaultExchangeRate)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
     void createEntryAccountForPurchaseOrderPayment(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException;
+
+    void setPurchaseOrderForPaymentCheck(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment, String transactionNumber)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
+    public String createEntryAccountPurchaseOrderForPaymentCheck(PurchaseOrder purchaseOrder, PurchaseOrderPayment purchaseOrderPayment
+            ,BigDecimal totalSourceAmount,BigDecimal totalPayAmount)
+            throws CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException;
+
     public String createAccountEntryForReceptionProductionOrder(WarehouseVoucher warehouseVoucher,
                                                   BusinessUnit executorUnit,
                                                   String costCenterCode,

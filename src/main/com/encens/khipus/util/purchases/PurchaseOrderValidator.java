@@ -1,8 +1,11 @@
 package com.encens.khipus.util.purchases;
 
 import com.encens.khipus.action.SessionUser;
+import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.model.purchases.PurchaseOrder;
+import com.encens.khipus.service.finances.FinanceAccountingDocumentService;
 import com.encens.khipus.service.purchases.PurchaseDocumentService;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.FormatUtils;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.ValidatorUtil;
@@ -36,7 +39,25 @@ public class PurchaseOrderValidator {
     @In
     private Map<String, String> messages;
 
+    @In
+    private FinanceAccountingDocumentService financeAccountingDocumentService;
+
     public boolean isValidThePurchaseDocuments(PurchaseOrder purchaseOrder, boolean validateAmounts) {
+        if(purchaseOrder.getWithBill() != null)
+        {
+            if(purchaseOrder.getWithBill().compareTo(Constants.WITH_BILL) ==0 )
+                try {
+                    if(financeAccountingDocumentService.findByOrderVoucher(purchaseOrder).size() == 0)
+                    {
+                        addNotPruchaseDocumentErrorMessage(purchaseOrder);
+                        return false;
+                    }
+                } catch (CompanyConfigurationNotFoundException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    return false;
+                }
+
+        }
         if (purchaseOrder.getDocumentType() != null && hasDistinctPurchaseDocumentType(purchaseOrder)) {
             addDistinctPurchaseDocumentTypeErrorMessage(purchaseOrder);
             return false;
@@ -83,6 +104,12 @@ public class PurchaseOrderValidator {
     public void addPurchaseDocumentsPendingErrorMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
                 "PurchaseOrder.error.purchaseDocumentPending");
+    }
+
+    public void addNotPruchaseDocumentErrorMessage(PurchaseOrder purchaseOrder) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "PurchaseOrder.error.NotPruchaseDocument",
+                purchaseOrder.getOrderNumber());
     }
 
     public void addDistinctPurchaseDocumentTypeErrorMessage(PurchaseOrder purchaseOrder) {
