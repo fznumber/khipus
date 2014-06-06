@@ -10,6 +10,7 @@ import com.encens.khipus.exception.warehouse.AdvancePaymentPendingException;
 import com.encens.khipus.exception.warehouse.DiscountAmountException;
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.exception.warehouse.WarehouseDocumentTypeNotFoundException;
+import com.encens.khipus.model.finances.Voucher;
 import com.encens.khipus.model.purchases.PurchaseOrder;
 import com.encens.khipus.model.purchases.PurchaseOrderDetail;
 import com.encens.khipus.model.purchases.PurchaseOrderPayment;
@@ -49,7 +50,7 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
             PurchaseOrderDetailEmptyException,
             ConcurrencyException,
             PurchaseOrderNullifiedException,
-            DiscountAmountException, PurchaseOrderLiquidatedException;
+            DiscountAmountException, PurchaseOrderLiquidatedException, CompanyConfigurationNotFoundException;
 
     void updateWarehousePurchaseOrder(PurchaseOrder entity,
                                       Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap,
@@ -82,6 +83,45 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
             CollectionSumExceedsRotatoryFundAmountException,
             RotatoryFundConcurrencyException;
 
+    void onlyLiquidatePurchaseOrder(PurchaseOrder entity, PurchaseOrderPayment purchaseOrderPayment)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException;
+
+    void onlyLiquidatePurchaseOrder(List<PurchaseOrder> purchaseOrders, PurchaseOrder entity)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException;
+
+    Voucher liquidatePurchaseOrder(PurchaseOrder entity)
+            throws WarehouseDocumentTypeNotFoundException,
+            PurchaseOrderDetailEmptyException,
+            PurchaseOrderLiquidatedException,
+            AdvancePaymentPendingException,
+            CompanyConfigurationNotFoundException,
+            FinancesCurrencyNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            RotatoryFundNullifiedException,
+            RotatoryFundLiquidatedException,
+            CollectionSumExceedsRotatoryFundAmountException,
+            RotatoryFundConcurrencyException;
+
     /**
      * Fills the warning attribute according to the Maps and List mappings
      *
@@ -97,4 +137,7 @@ public interface WarehousePurchaseOrderService extends PurchaseOrderService {
                                  Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap,
                                  Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailOverMaximumStockMap,
                                  List<PurchaseOrderDetail> purchaseOrderDetailWithoutWarnings);
+
+    public void updateliquidatePurchaseOrder(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException;
 }
+

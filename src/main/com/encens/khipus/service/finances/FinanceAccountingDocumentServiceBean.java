@@ -15,7 +15,9 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,7 +83,12 @@ public class FinanceAccountingDocumentServiceBean extends GenericServiceBean imp
             throws CompanyConfigurationNotFoundException {
         PurchaseOrder purchaseOrder = eventEm.find(PurchaseOrder.class, document.getPurchaseOrder().getId());
         if (PurchaseOrderState.LIQ.equals(purchaseOrder.getState())) {
-            createAccountingVoucher(purchaseOrder, document);
+            if(purchaseOrder.getWithBill() != null)
+            {if(purchaseOrder.getWithBill().compareTo(Constants.WITH_BILL) != 0)
+                createAccountingVoucher(purchaseOrder, document);
+            }else{
+                createAccountingVoucher(purchaseOrder, document);
+            }
         }
     }
 
@@ -151,6 +158,20 @@ public class FinanceAccountingDocumentServiceBean extends GenericServiceBean imp
                 }
             }
         }
+    }
+
+    public List<PurchaseDocument> findByOrderVoucher(PurchaseOrder purchaseOrder) throws CompanyConfigurationNotFoundException {
+
+        List<PurchaseDocument> purchaseDocumentList = new ArrayList<PurchaseDocument>();
+        try {
+            purchaseDocumentList = getEntityManager().createNamedQuery("PurchaseDocument.findByOrderVoucher")
+                    .setParameter("purchaseOrderId", purchaseOrder.getId())
+                    .getResultList();
+        }catch(NoResultException e)
+        {
+            purchaseDocumentList = new ArrayList<PurchaseDocument>();
+        }
+       return purchaseDocumentList;
     }
 
     public void createFinanceAccountingDocument(DischargeDocument document) {

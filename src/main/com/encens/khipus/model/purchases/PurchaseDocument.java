@@ -29,7 +29,12 @@ import java.math.BigDecimal;
                 query = "select purchaseDocument from PurchaseDocument purchaseDocument" +
                         " where purchaseDocument.state =:state" +
                         " and purchaseDocument.purchaseOrderId =:purchaseOrderId" +
-                        " and purchaseDocument.hasVoucher =:hasVoucher")
+                        " and purchaseDocument.hasVoucher =:hasVoucher"),
+        @NamedQuery(name = "PurchaseDocument.findByOrderVoucher",
+                query = "select purchaseDocument from PurchaseDocument purchaseDocument" +
+                        " where purchaseDocument.purchaseOrderId =:purchaseOrderId"
+                        )
+
 }
 )
 

@@ -34,8 +34,6 @@ import java.math.BigDecimal;
 public class WarehouseVoucherUpdateAction extends WarehouseVoucherGeneralAction {
 
     public static String APPROVED_OUTCOME = "Approved";
-
-
     @In
     private ApprovalWarehouseVoucherService approvalWarehouseVoucherService;
 

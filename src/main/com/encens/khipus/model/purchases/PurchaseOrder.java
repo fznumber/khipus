@@ -134,6 +134,10 @@ public class PurchaseOrder implements BaseModel {
     @Length(max = 150)
     private String invoiceNumber;
 
+    @Column(name = "CONFACTURA",nullable = true,length = 50)
+    @Length(max = 50)
+    private String withBill;
+
     @Column(name = "TIPO", nullable = false, length = 25)
     @Enumerated(EnumType.STRING)
     private PurchaseOrderType orderType;
@@ -522,5 +526,13 @@ public class PurchaseOrder implements BaseModel {
         return ValidatorUtil.isBlankOrNull(getInvoiceNumber()) && null != state &&
                 !PurchaseOrderState.ANL.equals(state) &&
                 !PurchaseOrderState.PEN.equals(state);
+    }
+
+    public String getWithBill() {
+        return withBill;
+    }
+
+    public void setWithBill(String withBill) {
+        this.withBill = withBill;
     }
 }

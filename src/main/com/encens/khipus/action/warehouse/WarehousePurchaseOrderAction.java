@@ -19,6 +19,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.interceptor.BusinessUnitRestrict;
 import com.encens.khipus.interceptor.BusinessUnitRestriction;
 import com.encens.khipus.model.admin.User;
+import com.encens.khipus.model.finances.CollectionDocumentType;
 import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.JobContract;
 import com.encens.khipus.model.finances.Provider;
@@ -30,6 +31,7 @@ import com.encens.khipus.service.purchases.PurchaseOrderService;
 import com.encens.khipus.service.warehouse.InventoryService;
 import com.encens.khipus.service.warehouse.WarehousePurchaseOrderService;
 import com.encens.khipus.util.BigDecimalUtil;
+import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.FormatUtils;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.purchases.PurchaseOrderValidator;
@@ -88,6 +90,10 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     public static final String APPROVED_OUTCOME = "Approved";
     public static final String FINALIZED_OUTCOME = "Finalized";
     public static final String LIQUIDATED_OUTCOME = "Liquidated";
+
+    private Boolean showBillConditions =false;
+
+    private Boolean billConditions = true;
 
     // this map stores the PurchaseOrderDetails that are under the minimal stock and the unitaryBalance of the Inventory
     private Map<PurchaseOrderDetail, BigDecimal> purchaseOrderDetailUnderMinimalStockMap = new HashMap<PurchaseOrderDetail, BigDecimal>();
@@ -152,10 +158,17 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     @Restrict("#{s:hasPermission('WAREHOUSEPURCHASEORDER','VIEW')}")
     public String select(PurchaseOrder instance) {
         String outcome = super.select(instance);
+        String ordersNumbers = MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym")+" ";
+
+        for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += "; ";
+        }
         if (instance.isPurchaseOrderFinalized()) {
             liquidationPaymentAction.setDefaultDescription(instance,
                     MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
-                    MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym"));
+                    ordersNumbers);
             liquidationPaymentAction.setPurchaseOrder(getInstance());
         }
         return outcome;
@@ -333,13 +346,18 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
             buildValidateQuantityMappings(purchaseOrderDetail);
         }
         try {
-            service.approveWarehousePurchaseOrder(getInstance(),
-                    purchaseOrderDetailUnderMinimalStockMap,
-                    purchaseOrderDetailOverMaximumStockMap,
-                    purchaseOrderDetailWithoutWarnings);
+
+                service.approveWarehousePurchaseOrder(getInstance(),
+                        purchaseOrderDetailUnderMinimalStockMap,
+                        purchaseOrderDetailOverMaximumStockMap,
+                        purchaseOrderDetailWithoutWarnings);
+
             addPurchaseOrderApprovedMessage();
             showPurchaseOrderDetailWarningMessages();
             return Outcome.SUCCESS;
+        } catch (CompanyConfigurationNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return Outcome.REDISPLAY;
         } catch (PurchaseOrderApprovedException e) {
             addPurchaseOrderApprovedErrorMessage();
             return APPROVED_OUTCOME;
@@ -408,8 +426,15 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
         }
 
         try {
-            service.liquidatePurchaseOrder(getInstance(), getLiquidationPayment());
-            addPurchaseOrderLiquidatedMessage();
+
+            if(liquidationPaymentAction.isCheckPayment()){
+                service.onlyLiquidatePurchaseOrder(liquidationPaymentAction.getPurchaseOrdersWithCheck(),getInstance());
+                addPurchaseOrderWithCheckLiquidatedMessage(liquidationPaymentAction.getPurchaseOrdersWithCheck());//personalizar este mensaje con todas la ordenes de produccion
+            }else{
+                service.onlyLiquidatePurchaseOrder(getInstance(), getLiquidationPayment());
+                addPurchaseOrderLiquidatedMessage();
+            }
+            //service.liquidatePurchaseOrder(getInstance());
             return Outcome.SUCCESS;
         } catch (WarehouseDocumentTypeNotFoundException e) {
             addWarehouseDocumentTypeErrorMessage();
@@ -524,7 +549,53 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     }
 
     public BigDecimal getCurrentBalanceAmount() {
+        if(liquidationPaymentAction.getPurchaseOrdersWithCheck().isEmpty())
         return purchaseOrderService.currentBalanceAmount(getInstance());
+        else{
+            Double total = purchaseOrderService.currentBalanceAmount(getInstance()).doubleValue();
+            for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+            {
+                total += purchaseOrderService.currentBalanceAmount(purchaseOrder).doubleValue();
+            }
+
+            return new BigDecimal(total);
+        }
+    }
+
+    public void addPurchaseOrder(List<PurchaseOrder> purchaseOrders) {
+        String gloss = " - CON ORDENES DE COMPRA: ";
+        for (PurchaseOrder purchaseOrder : purchaseOrders) {
+            if (liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().contains(purchaseOrder)) {
+                continue;
+            }
+
+            liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().add(purchaseOrder);
+            liquidationPaymentAction.getPurchaseOrdersWithCheck().add(purchaseOrder);
+            gloss += purchaseOrder.getOrderNumber()+"; ";
+        }
+
+        String ordersNumbers = MessageUtils.getMessage("WarehousePurchaseOrder.orderNumberAcronym")+"; ";
+
+        for(PurchaseOrder purchaseOrder: liquidationPaymentAction.getPurchaseOrdersWithCheck())
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += "; ";
+        }
+
+            liquidationPaymentAction.setDefaultDescription(getInstance(),
+                    MessageUtils.getMessage("WarehousePurchaseOrder.warehouses"),
+                    ordersNumbers);
+
+        getInstance().setGloss(getInstance().getGloss()+gloss);
+        liquidationPaymentAction.computePayment(getCurrentBalanceAmount());
+    }
+
+    public BigDecimal removePurchaseOrderAndGetCurrentBalanceAmount(PurchaseOrder instance){
+        if(!liquidationPaymentAction.getPurchaseOrdersWithCheck().isEmpty()){
+            liquidationPaymentAction.getPurchaseOrdersWithCheck().remove(instance);
+            liquidationPaymentAction.getSelectedPurchaseOrdersWithCheck().remove(instance);
+        }
+        return getCurrentBalanceAmount();
     }
 
     public boolean checkPayment() {
@@ -594,6 +665,20 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     private void addPurchaseOrderLiquidatedMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
                 "PurchaseOrder.liquidateMessage", getInstance().getOrderNumber());
+    }
+
+    private void addPurchaseOrderWithCheckLiquidatedMessage(List<PurchaseOrder> purchaseOrdersWithCheck) {
+
+        String ordersNumbers = getInstance().getOrderNumber()+", ";
+
+        for(PurchaseOrder purchaseOrder: purchaseOrdersWithCheck)
+        {
+            ordersNumbers += purchaseOrder.getOrderNumber();
+            ordersNumbers += ", ";
+        }
+
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "PurchaseOrder.liquidateMessageWithCheck", ordersNumbers);
     }
 
     private void addWarehouseDocumentTypeErrorMessage() {
@@ -817,5 +902,44 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
     public void addProductItemNotFoundMessage(String productItemName) {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductItem.error.notFound", productItemName);
+    }
+
+    public void verifyCondicionWill()
+    {
+        if(getInstance().getDocumentType() == CollectionDocumentType.INVOICE)
+        {
+            showBillConditions = true;
+            getInstance().setWithBill("CONFACTURA");
+        }else{
+            showBillConditions = false;
+            getInstance().setWithBill("SINFACTURA");
+        }
+
+    }
+
+    public Boolean getShowBillConditions() {
+        return showBillConditions;
+    }
+
+    public void setShowBillConditions(Boolean showBillConditions) {
+        this.showBillConditions = showBillConditions;
+    }
+
+    public void setWithWill()
+    {
+        if(this.billConditions)
+        {
+            getInstance().setWithBill(Constants.WITH_BILL);
+        }else{
+            getInstance().setWithBill(Constants.WITHOUT_BILL);
+        }
+    }
+
+    public Boolean getBillConditions() {
+        return billConditions;
+    }
+
+    public void setBillConditions(Boolean billConditions) {
+        this.billConditions = billConditions;
     }
 }
