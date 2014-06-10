@@ -198,7 +198,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     public Integer getAmountCombo(String codPaquete, String codPedido) {
         BigDecimal result = BigDecimal.ZERO;
         try{
-            result = (BigDecimal)em.createNativeQuery("select nvl(cantidad,0) from USER01_DAF.paquete_pedidos \n" +
+            result = (BigDecimal)em.createNativeQuery("select nvl(cantidad,0)+nvl(REPOSICION,0) from USER01_DAF.paquete_pedidos \n" +
                     "where pedido = :codPedido\n" +
                     "and paquete = :codPaquete")
                     .setParameter("codPedido",codPedido)
