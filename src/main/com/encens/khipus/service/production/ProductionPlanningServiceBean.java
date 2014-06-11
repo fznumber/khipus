@@ -326,6 +326,57 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                           .executeUpdate();
     }
 
+    @Override
+    public BigDecimal getTotalMilkBySunGroup(String codGroup, String codSubGroup, Date startDate, Date endDate) {
+        Double total = 0.0;
+        List<ProductionPlanning> productionPlannings;
+        try {
+            productionPlannings = (List<ProductionPlanning>)getEntityManager()
+                                                    .createQuery("select productionPlanning from ProductionPlanning productionPlanning " +
+                                                                 " where productionPlanning.date between :startDate and :endDate ")
+                                                    .setParameter("startDate",startDate,TemporalType.DATE)
+                                                    .setParameter("endDate",endDate,TemporalType.DATE)
+                                                    .getResultList();
+        }catch(NoResultException e){
+            return BigDecimal.ZERO;
+        }
+        for(ProductionPlanning productionPlanning:productionPlannings) {
+
+            for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+                if (order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(codGroup) == 0)
+                    if (order.getProductComposition().getProcessedProduct().getProductItem().getSubGroupCode().compareTo(codSubGroup) == 0)
+                        for (OrderInput input : order.getOrderInputs()) {
+                            if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                                total += input.getAmount();
+                        }
+
+            }
+
+            for (BaseProduct base : productionPlanning.getBaseProducts()) {
+                Boolean band = false;
+                double totalMilkBase = 0.0;
+
+                for (OrderInput input : base.getOrderInputs()) {
+                    if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0) {
+                        totalMilkBase += input.getAmount();
+
+                    }
+                }
+
+                for (SingleProduct single : base.getSingleProducts()) {
+                    if (single.getProductProcessingSingle().getMetaProduct().getProductItem().getGroupCode().compareTo(codGroup) == 0)
+                        if (single.getProductProcessingSingle().getMetaProduct().getProductItem().getSubGroupCode().compareTo(codSubGroup) == 0)
+                            band = true;
+                }
+
+                if (band)
+                    total+=totalMilkBase;
+
+            }
+        }
+        return new BigDecimal(total);
+    }
+
     public void updateOrdenProduction(ProductionOrder order)
     {
         getEntityManager().createNativeQuery("update ordenproduccion set estadoorden = :state, no_trans = :numTranst\n" +

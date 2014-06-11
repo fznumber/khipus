@@ -1098,6 +1098,9 @@
                    rendered="#{
         s:hasPermission('PRODUCTCOMPOSITION','VIEW') or
         s:hasPermission('PRODUCTDISTRIBUTION','VIEW') or
+        s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW') or
+        s:hasPermission('REPORTMILKRAW','VIEW') or
+        s:hasPermission('REPORTPRODUCTPRODUCED','VIEW') or
         s:hasPermission('DELIVERPRODUCTIONTRANSFERLOG','VIEW')}">
 
     <rich:menuItem submitMode="none"
@@ -1121,6 +1124,29 @@
                 value="#{messages['menu.production.planification.productionTransferLog']}"
                 propagation="none"/>
     </rich:menuItem>
+    <rich:menuGroup value="#{messages['menu.production.planification.Reportes']}"
+                    rendered="#{
+            s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
+
+        <rich:menuItem submitMode="none"
+                       styleClass="main-menu-item"
+                       rendered="#{s:hasPermission('REPORTMILKRAW','VIEW')}">
+
+            <s:link view="/production/reports/rawMilkReport.xhtml"
+                    value="#{messages['menu.production.planification.ReportMilkRaw']}"
+                    propagation="begin"/>
+        </rich:menuItem>
+
+        <!--<rich:menuItem submitMode="none"
+                       styleClass="main-menu-item"
+                       rendered="#{s:hasPermission('REPORTPRODUCTPRODUCED','VIEW')}">
+
+            <s:link view="/production/reports/rawMaterialPayRollReport.xhtml"
+                    value="#{messages['menu.production.planification.produced']}"
+                    propagation="begin"/>
+        </rich:menuItem>-->
+
+    </rich:menuGroup>
 </rich:dropDownMenu>
 
 

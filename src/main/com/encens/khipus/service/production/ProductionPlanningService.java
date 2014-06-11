@@ -60,4 +60,6 @@ public interface ProductionPlanningService extends GenericService {
     List<OrderInput> getInputsAdd(ProductionOrder productionOrder);
 
     void deleteOrderInput(OrderInput orderInput);
+
+    BigDecimal getTotalMilkBySunGroup(String codGroup, String codSubGroup, Date startDate, Date endDate);
 }

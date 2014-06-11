@@ -40,7 +40,9 @@
         <descriptors>
           <deploymentDescriptor name="ejb-jar.xml" url="file://$MODULE_DIR$/META-INF/ejb-jar.xml" />
         </descriptors>
-        <ejbRoots />
+        <ejbRoots>
+          <root url="file://$MODULE_DIR$/main" />
+        </ejbRoots>
       </configuration>
     </facet>
   </component>
