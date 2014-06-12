@@ -931,8 +931,7 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                 "inner join metaproductoproduccion mp\n" +
                 "on mp.idmetaproductoproduccion = cp.idproductoprocesado\n" +
                 "where mp.cod_art = :codArt\n" +
-                "and op.estadoorden <> 'PENDING'\n" +
-                "and op.cantidadproducida <> 0.0")
+                "and op.estadoorden = 'EXECUTED'\n")
                 .setParameter("codArt",codArt)
                 .getSingleResult();
 

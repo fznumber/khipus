@@ -41,16 +41,18 @@ public class EstimationStockReportScriptlet extends JRDefaultScriptlet {
 
         BigDecimal totalExpectedAmount = warehouseService.findExpectedAmountOrderProduction(codArt);
         BigDecimal totalProducedAmount = warehouseService.findProducedAmountOrderProduction(codArt);
+        BigDecimal totalProducedAmountPlusBalance = unitaryBalance.add(totalProducedAmount);
         BigDecimal totalBalanceLessTotalOrder = unitaryBalance.subtract(totalOrders);
-        BigDecimal totalProducedAmountPlusBalance = unitaryBalance.subtract(totalOrders).add(totalProducedAmount);
-        BigDecimal totalExpectedAmountPlusBalance = totalExpectedAmount.add(totalProducedAmountPlusBalance);
+        BigDecimal totalProducedAmountPlusBalanceLessOrders = unitaryBalance.subtract(totalOrders).add(totalProducedAmount);
+        BigDecimal totalExpectedAmountPlusBalanceLessOrders = totalExpectedAmount.add(totalProducedAmountPlusBalanceLessOrders);
 
         this.setVariableValue("totalOrders", totalOrders);
         this.setVariableValue("totalPlanned",totalExpectedAmount);
         this.setVariableValue("totalProduced",totalProducedAmount);
         this.setVariableValue("totalBalanceLessTotalOrder",totalBalanceLessTotalOrder);
-        this.setVariableValue("totalPlannedPlusBalanceLessTotalOrder", totalExpectedAmountPlusBalance);
-        this.setVariableValue("totalPoducedPlusBalanceLessTotalOrder", totalProducedAmountPlusBalance);
+        this.setVariableValue("totalProducedAmountPlusBalance",totalProducedAmountPlusBalance);
+        this.setVariableValue("totalPlannedPlusBalanceLessTotalOrder", totalExpectedAmountPlusBalanceLessOrders);
+        this.setVariableValue("totalPoducedPlusBalanceLessTotalOrder", totalProducedAmountPlusBalanceLessOrders);
 
     }
 
