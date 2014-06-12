@@ -74,11 +74,11 @@ public class RawMilkReportAction extends GenericReportAction {
     }
 
     public void generateReport() {
-        log.debug("Generating valued Estimation Stock report...................");
+        log.debug("Generating raw milk used Stock report...................");
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
         reportParameters.put("startDate",startDate);
         reportParameters.put("endDate",endDate);
-        reportParameters.put("total",new BigDecimal(123));
+        reportParameters.put("total",productionPlanningService.getTotalMilkByDate(startDate,endDate));
         super.generateReport(
                 "rawMilkReport",
                 "/production/reports/rawMilkReport.jrxml",

@@ -14,6 +14,8 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,57 +31,53 @@ import java.util.List;
 
 @Name("productsProducedReportAction")
 @Scope(ScopeType.PAGE)
-@Restrict("#{s:hasPermission('REPORTMILKRAW','VIEW')}")
+@Restrict("#{s:hasPermission('REPORTPRODUCTPRODUCED','VIEW')}")
 public class ProductsProducedReportAction extends GenericReportAction {
 
     private Date startDate;
     private Date endDate;
-    private List<SubGroupPK> subGroups = new ArrayList<SubGroupPK>();
-    private SubGroupState state;
-
-    @In
-    private ProductionPlanningService productionPlanningService;
-
 
     @Create
     public void init() {
 
-        this.subGroups.add(new SubGroupPK("01","7","4"));
-        this.subGroups.add(new SubGroupPK("01","7","1"));
-        this.subGroups.add(new SubGroupPK("01","7","2"));
-        this.subGroups.add(new SubGroupPK("01","8","1"));
-        this.subGroups.add(new SubGroupPK("01","8","2"));
-        this.subGroups.add(new SubGroupPK("01","8","3"));
-        this.subGroups.add(new SubGroupPK("01","8","4"));
-        this.subGroups.add(new SubGroupPK("01","9","1"));
-
         restrictions = new String[]{
-                 "subGroup.id in (#{rawMilkReportAction.subGroups})"
+               //  "productionPlanning.date between #{productsProducedReportAction.startDate} and #{productsProducedReportAction.endDate}"
         };
-        sortProperty = "subGroup.name";
+        //sortProperty = "name";
     }
 
     @Override
     protected String getEjbql() {
-        return  " SELECT subGroup.name " +
-                " ,subGroup.groupCode " +
-                " ,subGroup.subGroupCode " +
-                "FROM  SubGroup subGroup ";
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        String start = df.format(startDate);
+        String end = df.format(endDate);
+
+        return  " SELECT productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
+                      " ,productionOrder.productComposition.processedProduct.productItem.name as name" +
+                " FROM  ProductionPlanning productionPlanning " +
+                " inner join productionPlanning.productionOrderList productionOrder " +
+                " where productionPlanning.date between to_date('"+start+"','dd/mm/yyyy') and to_date('"+end+"','dd/mm/yyyy')" +
+                " union " +
+                " SELECT singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode as productItemCode " +
+                " ,singleProduct.productProcessingSingle.metaProduct.productItem.name as name " +
+                " FROM ProductionPlanning productionPlanning " +
+                " inner join productionPlanning.baseProducts baseProduct " +
+                " inner join baseProduct.singleProducts singleProduct " +
+                " where productionPlanning.date between to_date('"+start+"','dd/mm/yyyy') and to_date('"+end+"','dd/mm/yyyy')";
 
     }
 
     public void generateReport() {
-        log.debug("Generating valued Estimation Stock report...................");
+        log.debug("Generating products produced report...................");
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
         reportParameters.put("startDate",startDate);
         reportParameters.put("endDate",endDate);
-        reportParameters.put("total",new BigDecimal(123));
         super.generateReport(
-                "rawMilkReport",
-                "/production/reports/rawMilkReport.jrxml",
+                "productsProdecedReport",
+                "/production/reports/productsProducedReport.jrxml",
                 PageFormat.LETTER,
                 PageOrientation.PORTRAIT,
-                messages.get("production.rawMilkReports.TitleReport"),
+                messages.get("production.productsProduced.TitleReport"),
                 reportParameters);
     }
 
@@ -99,19 +97,4 @@ public class ProductsProducedReportAction extends GenericReportAction {
         this.endDate = endDate;
     }
 
-    public List<SubGroupPK> getSubGroups() {
-        return subGroups;
-    }
-
-    public void setSubGroups(List<SubGroupPK> subGroups) {
-        this.subGroups = subGroups;
-    }
-
-    public SubGroupState getState() {
-        return state;
-    }
-
-    public void setState(SubGroupState state) {
-        this.state = state;
-    }
 }

@@ -377,6 +377,82 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         return new BigDecimal(total);
     }
 
+    @Override
+    public BigDecimal getTotalMilkByDate(Date startDate, Date endDate) {
+        Double total = 0.0;
+        List<ProductionPlanning> productionPlannings;
+        try {
+            productionPlannings = (List<ProductionPlanning>)getEntityManager()
+                    .createQuery("select productionPlanning from ProductionPlanning productionPlanning " +
+                            " where productionPlanning.date between :startDate and :endDate ")
+                    .setParameter("startDate",startDate,TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .getResultList();
+        }catch(NoResultException e){
+            return BigDecimal.ZERO;
+        }
+        for(ProductionPlanning productionPlanning:productionPlannings) {
+
+            for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+                        for (OrderInput input : order.getOrderInputs()) {
+                            if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                                total += input.getAmount();
+                        }
+
+            }
+
+            for (BaseProduct base : productionPlanning.getBaseProducts()) {
+                for (OrderInput input : base.getOrderInputs()) {
+                    if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0) {
+                        total += input.getAmount();
+
+                    }
+                }
+
+            }
+        }
+        return new BigDecimal(total);
+    }
+
+    @Override
+    public Double getTotalProducedOrderByArticleAndDate(String codArt, Date startDate, Date endDate) {
+        Double total = 0.0;
+        try {
+            total = (Double)getEntityManager()
+                    .createQuery("select nvl(sum(productionOrder.producedAmount),0.0) from ProductionPlanning productionPlanning " +
+                            " inner join productionPlanning.productionOrderList productionOrder " +
+                            " where productionPlanning.date between :startDate and :endDate " +
+                            " and productionOrder.productComposition.processedProduct.productItem.productItemCode =:codArt")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("codArt",codArt)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return 0.0;
+        }
+        return total;
+    }
+
+    @Override
+    public Double getTotalProducedReproByArticleAndDate(String codArt, Date startDate, Date endDate) {
+        Long total;
+        try {
+            total = (Long)getEntityManager()
+                    .createQuery("select nvl(sum(singleProduct.amount),0) from ProductionPlanning productionPlanning " +
+                            " inner join productionPlanning.baseProducts baseProduct " +
+                            " inner join baseProduct.singleProducts singleProduct " +
+                            " where productionPlanning.date between :startDate and :endDate " +
+                            " and singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode =:codArt")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("codArt",codArt)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return 0.0;
+        }
+        return total.doubleValue();
+    }
+
     public void updateOrdenProduction(ProductionOrder order)
     {
         getEntityManager().createNativeQuery("update ordenproduccion set estadoorden = :state, no_trans = :numTranst\n" +
