@@ -61,11 +61,17 @@ public interface ProductionPlanningService extends GenericService {
 
     void deleteOrderInput(OrderInput orderInput);
 
-    BigDecimal getTotalMilkBySunGroup(String codGroup, String codSubGroup, Date startDate, Date endDate);
+    BigDecimal getTotalMilkBySubGroup(String codGroup, String codSubGroup, Date startDate, Date endDate);
+
+    Double getTotalMilkByDateAndCodArt(Date date, String codArt);
 
     BigDecimal getTotalMilkByDate(Date startDate, Date endDate);
 
     Double getTotalProducedOrderByArticleAndDate(String codArt, Date startDate, Date endDate);
 
     Double getTotalProducedReproByArticleAndDate(String codArt, Date startDate, Date endDate);
+
+    Double getProductionOrderSNGbyDateAndCodArt(String codArt, Date date);
+
+    Double getReproSNGbyDateAndCodArt(String codArt, Date date);
 }

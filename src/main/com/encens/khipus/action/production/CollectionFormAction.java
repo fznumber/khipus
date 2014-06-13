@@ -146,6 +146,7 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
         for (CollectionRecord record : getInstance().getCollectionRecordList()) {
             total += record.getWeightedAmount();
         }
+        getInstance().setTotalWeighed(total);
         return total;
     }
 

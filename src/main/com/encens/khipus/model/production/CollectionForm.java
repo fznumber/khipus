@@ -78,6 +78,9 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
     @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "NUMBER(16,2)")
     private Double greasePercentage = 0.0;
 
+    @Column(name = "TOTALPESADO",nullable = true,columnDefinition = "NUMBER(16,2)")
+    private Double totalWeighed = 0.0;
+
     @OneToOne
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
@@ -148,5 +151,13 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
 
     public void setGreasePercentage(Double greasePercentage) {
         this.greasePercentage = greasePercentage;
+    }
+
+    public Double getTotalWeighed() {
+        return totalWeighed;
+    }
+
+    public void setTotalWeighed(Double totalWeighed) {
+        this.totalWeighed = totalWeighed;
     }
 }

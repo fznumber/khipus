@@ -327,7 +327,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     }
 
     @Override
-    public BigDecimal getTotalMilkBySunGroup(String codGroup, String codSubGroup, Date startDate, Date endDate) {
+    public BigDecimal getTotalMilkBySubGroup(String codGroup, String codSubGroup, Date startDate, Date endDate) {
         Double total = 0.0;
         List<ProductionPlanning> productionPlannings;
         try {
@@ -375,6 +375,52 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
             }
         }
         return new BigDecimal(total);
+    }
+
+    public Double getTotalMilkByDateAndCodArt(Date date, String codArt) {
+        Double total = 0.0;
+        List<ProductionPlanning> productionPlannings;
+        try {
+            productionPlannings = (List<ProductionPlanning>)getEntityManager()
+                    .createQuery("select productionPlanning from ProductionPlanning productionPlanning " +
+                            " where productionPlanning.date = :date ")
+                    .setParameter("date",date,TemporalType.DATE)
+                    .getResultList();
+        }catch(NoResultException e){
+            return 0.0;
+        }
+        for(ProductionPlanning productionPlanning:productionPlannings) {
+
+            for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
+                if(order.getProductComposition().getProcessedProduct().getProductItem().getProductItemCode().compareTo(codArt)==0)
+                for (OrderInput input : order.getOrderInputs()) {
+                    if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
+                        total += input.getAmount();
+                }
+
+            }
+
+            /*for (BaseProduct base : productionPlanning.getBaseProducts()) {
+                Double totalMilkBase = 0.0;
+                Boolean band = false;
+
+                for(SingleProduct single:base.getSingleProducts())
+                {
+                    if(single.getProductProcessingSingle().getMetaProduct().getProductItem().getProductItemCode().compareTo(codArt)==0)
+                        band = true;
+                }
+
+                if(band)
+                for (OrderInput input : base.getOrderInputs()) {
+                    if (input.getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0) {
+                        total += input.getAmount();
+
+                    }
+                }
+
+            }*/
+        }
+        return total;
     }
 
     @Override
@@ -445,6 +491,43 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                             " and singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode =:codArt")
                     .setParameter("startDate", startDate, TemporalType.DATE)
                     .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("codArt",codArt)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return 0.0;
+        }
+        return total.doubleValue();
+    }
+
+    @Override
+    public Double getProductionOrderSNGbyDateAndCodArt(String codArt, Date date) {
+        Double total = 0.0;
+        try {
+            total = (Double)getEntityManager()
+                    .createQuery("select productionOrder.greasePercentage from ProductionPlanning productionPlanning " +
+                            " inner join productionPlanning.productionOrderList productionOrder " +
+                            " where productionPlanning.date = :date " +
+                            " and productionOrder.productComposition.processedProduct.productItem.productItemCode =:codArt")
+                    .setParameter("date", date, TemporalType.DATE)
+                    .setParameter("codArt", codArt)
+                    .getSingleResult();
+        }catch(NoResultException e){
+            return 0.0;
+        }
+        return total;
+    }
+
+    @Override
+    public Double getReproSNGbyDateAndCodArt(String codArt, Date date) {
+        BigDecimal total;
+        try {
+            total = (BigDecimal)getEntityManager()
+                    .createQuery("select singleProduct.greasePorentage from ProductionPlanning productionPlanning " +
+                            " inner join productionPlanning.baseProducts baseProduct " +
+                            " inner join baseProduct.singleProducts singleProduct " +
+                            " where productionPlanning.date = :date " +
+                            " and singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode =:codArt")
+                    .setParameter("date", date, TemporalType.DATE)
                     .setParameter("codArt",codArt)
                     .getSingleResult();
         }catch(NoResultException e){

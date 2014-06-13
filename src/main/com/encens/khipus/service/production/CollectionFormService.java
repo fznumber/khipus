@@ -5,6 +5,7 @@ import com.encens.khipus.model.production.CollectionForm;
 import com.encens.khipus.model.warehouse.WarehouseDocumentType;
 
 import javax.ejb.Local;
+import java.util.Date;
 
 @Local
 public interface CollectionFormService extends GenericService {
@@ -19,5 +20,7 @@ public interface CollectionFormService extends GenericService {
     public void updateProductiveZone(CollectionForm collectionForm);
 
     public WarehouseDocumentType getFirstReceptionType();
+
+    public CollectionForm finCollectionFormByDate(Date date);
 
 }

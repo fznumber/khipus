@@ -1,8 +1,6 @@
 package com.encens.khipus.action.production.reports;
 
-import com.encens.khipus.action.warehouse.reports.EstimationStockReportAction;
 import com.encens.khipus.service.production.ProductionPlanningService;
-import com.encens.khipus.service.warehouse.WarehouseService;
 import net.sf.jasperreports.engine.JRDefaultScriptlet;
 import net.sf.jasperreports.engine.JRScriptletException;
 import org.jboss.seam.Component;
@@ -32,7 +30,7 @@ public class RawMilkReportScriptlet extends JRDefaultScriptlet {
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        totalAmount = productionPlanningService.getTotalMilkBySunGroup(codGroup,codSubGroup,startDate,endDate);
+        totalAmount = productionPlanningService.getTotalMilkBySubGroup(codGroup, codSubGroup, startDate, endDate);
 
         this.setVariableValue("amount", totalAmount);
 
