@@ -1,5 +1,7 @@
 package com.encens.khipus.util;
 
+import com.encens.khipus.model.warehouse.WarehousePK;
+
 import java.math.BigDecimal;
 
 /**
@@ -169,6 +171,7 @@ public final class Constants {
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
     //id Milk
     public static final String ID_ART_RAW_MILK = "26";
+    public static final WarehousePK COD_WAREHUOSE_MILK_COLLECTED = new WarehousePK("01","5");
 
     public static final String COD_ART_WATER = "93";
     public static final String ID_ART_GROUP_CHEESE = "9";
@@ -181,6 +184,7 @@ public final class Constants {
     public static final String COD_CHEESE_EDAM = "134";
     public static final String COD_CHEESE_PRESSED = "114";
     public static final String BUSINESS_UNIT_COD_DEFAULT = "01";
+    public static final String COD_COMPANY_DEFAULT = "01";
 
     //PRODUCTION
     public static final Double PRICE_UNIT_MILK = 3.0;

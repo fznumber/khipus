@@ -178,11 +178,11 @@ public class CollectionFormAction extends GenericAction<CollectionForm> {
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
 
-        if(dateColleted.get(Calendar.MONTH) != now.get(Calendar.MONTH))
+       /* if(dateColleted.get(Calendar.MONTH) != now.get(Calendar.MONTH))
         {
             addOutsideGestionMessage();
             return Outcome.REDISPLAY;
-        }
+        }*/
 
         WarehouseDocumentType warehouseDocumentType = collectionFormService.getFirstReceptionType();
         CostCenter publicCostCenter = costCenterService.findCostCenterByCode(Constants.DEFAULT_COST_CENTER_PRODUCTION);

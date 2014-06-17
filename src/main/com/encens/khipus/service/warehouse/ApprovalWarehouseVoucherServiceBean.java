@@ -18,6 +18,8 @@ import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.CostCenterPk;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.finances.FinancesUserService;
+import com.encens.khipus.service.finances.VoucherService;
+import com.encens.khipus.service.finances.VoucherServiceBean;
 import com.encens.khipus.util.BigDecimalUtil;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.MessageUtils;
@@ -28,6 +30,8 @@ import org.jboss.seam.Component;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -69,7 +73,13 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
     private ProductItemService productItemService;
 
     @In
+    private VoucherService voucherService;
+
+    @In
     protected Map<String, String> messages;
+
+    @In
+    protected FacesMessages facesMessages;
 
     public void approveWarehouseVoucher(WarehouseVoucherPK id, String[] gloss,
                                         Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap,
@@ -192,7 +202,10 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             gloss[1] = gloss[1].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
         }
 
-        warehouseAccountEntryService.createAccountEntry(warehouseVoucher, gloss);
+        if(warehouseVoucher.getWarehouse().getId().equals(Constants.COD_WAREHUOSE_MILK_COLLECTED) && warehouseVoucher.getDocumentType().getName().equals("RECEPCION"))
+            warehouseAccountEntryService.createAccountEntryFromCollection(warehouseVoucher, gloss);
+        else
+            warehouseAccountEntryService.createAccountEntry(warehouseVoucher, gloss);
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
     }
@@ -696,9 +709,38 @@ public class ApprovalWarehouseVoucherServiceBean extends GenericServiceBean impl
             gloss[1] = gloss[1].replaceAll(Constants.WAREHOUSEVOUCHER_NUMBER_PARAM, warehouseVoucher.getNumber());
         }
 
-        warehouseAccountEntryService.createAccountEntryFromCollection(warehouseVoucher, gloss);
+        String numTransaction = warehouseAccountEntryService.createAccountEntryFromCollection(warehouseVoucher, gloss);
+        voucherService.approvedAllVoucherEntries(
+                Constants.COD_COMPANY_DEFAULT,
+                warehouseVoucher.getExecutorUnit().getExecutorUnitCode(),
+                warehouseVoucher.getDate(),
+                warehouseVoucher.getDate(),
+                numTransaction,
+                Constants.FINACESS_USER_UNIT_DEFAULT,
+                Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM);
+        List<VoucherServiceBean.ObsApprovedEntries> obsApprovedEntrieses = voucherService.getInfoTrasaction(
+                Constants.IN_WAREHOUSE_MILK_COLLECTED_FORM,
+                numTransaction,
+                warehouseVoucher.getDate(),
+                warehouseVoucher.getDate()
+        );
+
+        if(obsApprovedEntrieses.size()>0)
+        {
+            addErrorFailApprovedMessage();
+        }else{
+            addApprovedVoucherMessage();
+        }
 
         updatePendantVoucherWarningContent(productItemService.findByWarehouseVoucher(warehouseVoucher));
+    }
+
+    private void addApprovedVoucherMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"AccountEntries.info.approvedVoucherMilk");
+    }
+
+    private void addErrorFailApprovedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"AccountEntries.error.failApproved");
     }
 
     // change the state to partial to a parent WarehouseVoucher

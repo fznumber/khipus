@@ -807,25 +807,26 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
     }
 
     @SuppressWarnings(value = "unchecked")
-    public void createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss)
+    public String createAccountEntryFromCollection(WarehouseVoucher warehouseVoucher, String[] gloss)
             throws CompanyConfigurationNotFoundException,
             FinancesCurrencyNotFoundException,
             FinancesExchangeRateNotFoundException, WarehouseAccountCashNotFoundException {
+        String numTrasaction = "";
         if (warehouseVoucher.isTransfer()) {
             log.debug("The account entry should not be generated for transference vouchers.");
-            return;
+            return "";
         }
 
         if (!existsControlValuedProductsItems(warehouseVoucher)) {
             log.debug("Unable to generate the account entry because the all productItems " +
                     "related with movement details are not enabled controlValued property.");
-            return;
+            return "";
         }
 
         log.debug("Generating the account entry for warehouse voucher Nro: " + warehouseVoucher.getNumber());
 
         if (warehouseVoucher.isReception()) {
-            createAccountEntryForReceptionFromCollection(warehouseVoucher,
+            numTrasaction = createAccountEntryForReceptionFromCollection(warehouseVoucher,
                     warehouseVoucher.getExecutorUnit(),
                     warehouseVoucher.getCostCenterCode(),
                     gloss[0]);
@@ -867,6 +868,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                         gloss[0]);
             }
         }
+        return numTrasaction;
     }
 
     @Override
@@ -940,7 +942,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
     }
 
-    private void createAccountEntryForReceptionFromCollection(WarehouseVoucher warehouseVoucher,
+    private String createAccountEntryForReceptionFromCollection(WarehouseVoucher warehouseVoucher,
                                                               BusinessUnit executorUnit,
                                                               String costCenterCode,
                                                               String gloss)
@@ -970,7 +972,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                 BigDecimal.ONE));
 
         voucherService.create(voucherForGeneration);
-
+        return voucherForGeneration.getTransactionNumber();
     }
 
     private void createAccountEntryForExecutorUnitTransfer(WarehouseVoucher warehouseVoucher,
