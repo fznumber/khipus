@@ -16,8 +16,8 @@ import javax.ejb.Local;
 @Local
 public interface ProcessedProductService {
     public ProcessedProduct find(long id);
+    public ProcessedProduct findByCode(String code);
     public void createProductionProduct(ProductItem productItem);
     public void updateProductionProduct(ProductItem productItem);
-
     public ProductComposition getProductComposite(Long id);
 }
