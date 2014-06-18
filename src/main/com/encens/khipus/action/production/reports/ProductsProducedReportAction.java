@@ -52,13 +52,13 @@ public class ProductsProducedReportAction extends GenericReportAction {
         String start = df.format(startDate);
         String end = df.format(endDate);
 
-        return  " SELECT productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
+        return  " SELECT distinct productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
                       " ,productionOrder.productComposition.processedProduct.productItem.name as name" +
                 " FROM  ProductionPlanning productionPlanning " +
                 " inner join productionPlanning.productionOrderList productionOrder " +
                 " where productionPlanning.date between to_date('"+start+"','dd/mm/yyyy') and to_date('"+end+"','dd/mm/yyyy')" +
                 " union " +
-                " SELECT singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode as productItemCode " +
+                " SELECT distinct singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode as productItemCode " +
                 " ,singleProduct.productProcessingSingle.metaProduct.productItem.name as name " +
                 " FROM ProductionPlanning productionPlanning " +
                 " inner join productionPlanning.baseProducts baseProduct " +

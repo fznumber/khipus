@@ -31,7 +31,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["PRODUCTO"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Producto"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="221" y="16" width="101" height="26"/>
@@ -41,7 +41,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["CANTIDAD PRODUCIDA"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Unidades"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement key="date_text" style="titleStyle" positionType="Float" x="3" y="4" width="27" height="12"/>
@@ -91,7 +91,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["POR REPROCESO"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Reproceso"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="423" y="16" width="101" height="26"/>
@@ -101,22 +101,15 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["TOTAL"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA["Total"]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 	</group>
 	<title>
 		<band height="58" splitType="Stretch">
-			<image scaleImage="RetainShape" onErrorType="Icon">
-				<reportElement key="COMPANY_LOGO_ELEMENT" x="0" y="0" width="72" height="58" isRemoveLineWhenBlank="true"/>
-				<box padding="1">
-					<pen lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/img/logoIlva.png")]]></imageExpression>
-			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="72" y="0" width="490" height="31"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="34" y="0" width="490" height="31"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
