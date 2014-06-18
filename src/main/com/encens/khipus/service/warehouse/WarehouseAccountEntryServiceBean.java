@@ -885,15 +885,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
         Warehouse warehouse = warehouseService.findWarehouseByCode(warehouseVoucher.getWarehouseCode());
-        voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
-                executorUnit.getExecutorUnitCode(),
-                costCenterCode,
-                //companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
-                cashAccountService.findByAccountCode(warehouse.getCashAccount()),
-                voucherAmount,
-                FinancesCurrencyType.P,
-                BigDecimal.ONE));
-
+        BigDecimal total = BigDecimal.ZERO;
         for(ProductionPlanningAction.AccountOrderProduction accountOrderProduction :accountOrderProductions)
         {
             voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newCreditVoucherDetail(
@@ -903,7 +895,22 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     accountOrderProduction.getVoucherAmount(),
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
+            total = total.add(accountOrderProduction.getVoucherAmount());
         }
+        if(voucherAmount.doubleValue() != total.doubleValue())
+        {
+            voucherAmount = total;
+            movementDetailService.updateAmountTotal(warehouseVoucher.getId().getTransactionNumber(),total);
+        }
+        voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
+                executorUnit.getExecutorUnitCode(),
+                costCenterCode,
+                //companyConfiguration.getWarehouseNationalCurrencyTransientAccount2(),
+                cashAccountService.findByAccountCode(warehouse.getCashAccount()),
+                voucherAmount,
+                FinancesCurrencyType.P,
+                BigDecimal.ONE));
+
         voucherForGeneration.setDate(warehouseVoucher.getDate());
         voucherService.create(voucherForGeneration);
         return voucherForGeneration.getTransactionNumber();

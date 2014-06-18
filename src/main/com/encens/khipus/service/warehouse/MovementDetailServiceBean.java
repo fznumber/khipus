@@ -400,4 +400,13 @@ public class MovementDetailServiceBean implements MovementDetailService {
                 setParameter("companyNumber", warehouseVoucher.getId().getCompanyNumber()).
                 setParameter("transactionNumber", warehouseVoucher.getId().getTransactionNumber()).getResultList();
     }
+
+    @Override
+    public void updateAmountTotal(String numTransaction,BigDecimal amount )
+    {
+        em.createQuery("update MovementDetail movementDetail set movementDetail.amount =:amount where transactionNumber =:numTransaction")
+          .setParameter("numTransaction",numTransaction)
+          .setParameter("amount",amount)
+          .executeUpdate();
+    }
 }

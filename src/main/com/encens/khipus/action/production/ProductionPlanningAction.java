@@ -371,7 +371,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        addMessageEnterProducts();
+    }
 
+    private void addMessageEnterProducts() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"ProductionPlanning.message.enterProducts");
     }
 
     public void executerAllOrdersPending()
@@ -447,7 +451,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void approvedAllVoucherEntries(){
         try {
-
+            Boolean band = false;
             for(ProductionOrder order :getInstance().getProductionOrderList()) {
                 voucherService.approvedAllVoucherEntries(Constants.defaultCompanyNumber
                         , Constants.BUSINESS_UNIT_COD_DEFAULT
@@ -465,7 +469,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
                 if(obsApprovedEntrieses.size()>0)
                 {
-                    addErrorFailApprovedMessage();
+                    addErrorFailApprovedMessage(order.getCode());
+                    band = true;
                 }
             }
 
@@ -487,8 +492,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
                 if(obsApprovedEntrieses.size()>0)
                 {
-                    addErrorFailApprovedMessage();
+                    addErrorFailApprovedMessage(base.getCode());
+                    band = true;
                 }
+            }
+            if(band){
+                addMessageGenerateAccountingProduction();
             }
 
         } catch (CompanyConfigurationNotFoundException e) {
@@ -496,8 +505,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
     }
 
-    private void addErrorFailApprovedMessage() {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"AccountEntries.error.failApproved");
+    private void addMessageGenerateAccountingProduction(){
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"AccountEntries.message.messageGenerateAccountingProduction");
+    }
+
+    private void addErrorFailApprovedMessage(String code) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,"AccountEntries.error.failApprovedProducction",code);
     }
 
     //todo: revisar la validacion de de costos inidirectos por dia
@@ -1471,7 +1484,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     movementDetailUnderMinimalStockMap,
                     movementDetailOverMaximumStockMap,
                     movementDetailWithoutWarnings);
-            addWarehouseVoucherApproveMessage();
+            //addWarehouseVoucherApproveMessage();
             showMovementDetailWarningMessages();
         } catch (InventoryException e) {
             addInventoryMessages(e.getInventoryMessages());
@@ -1543,7 +1556,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     movementDetailOverMaximumStockMap,
                     movementDetailWithoutWarnings,
                     accountOrderProductions);
-            addWarehouseVoucherApproveMessage();
+            //addWarehouseVoucherApproveMessage();
             showMovementDetailWarningMessages();
         } catch (InventoryException e) {
             addInventoryMessages(e.getInventoryMessages());
@@ -1680,7 +1693,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         accountOrderProductions = generateMovementDetailOrderProduction(order);
         order.setNumberTransaction(generateAccountToWarehouseVoucher(inventoryMovement));
         order.setEstateOrder(TABULATED);
-        addMessageGenerateAccountingEntry(order.getCode());
+        //addMessageGenerateAccountingEntry(order.getCode());
     }
 
     public void createInventoryMovement(BaseProduct base){
@@ -1691,7 +1704,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         accountOrderProductions = generateMovementDetailOrderProduction(base);
         base.setNumberTransaction(generateAccountToWarehouseVoucher(inventoryMovement));
         base.setState(TABULATED);
-        addMessageGenerateAccountingEntry(base.getCode());
+        //addMessageGenerateAccountingEntry(base.getCode());
     }
 
     public InventoryMovement createVale(ProductionOrder order,Date dateConcurrent){
@@ -1711,7 +1724,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                     movementDetailUnderMinimalStockMap,
                     movementDetailOverMaximumStockMap,
                     movementDetailWithoutWarnings);
-            addMessageCreateWarehouseVoucherInput();
+            //addMessageCreateWarehouseVoucherInput();
         } catch (InventoryException e) {
             addInventoryMessages(e.getInventoryMessages());
             return null;

@@ -54,4 +54,6 @@ public interface MovementDetailService {
 
     @SuppressWarnings(value = "unchecked")
     List<MovementDetail> findDetailListByVoucher(WarehouseVoucher warehouseVoucher);
+
+    public void updateAmountTotal(String numTransaction,BigDecimal amount );
 }
