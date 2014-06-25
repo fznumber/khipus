@@ -114,7 +114,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         return clientOrders;
     }
 
-    public List<OrderClient> findClientsOrder(Date date,String stateOrder) {
+    public List<OrderClient> findClientsOrder(BigDecimal distribuidor,Date date,String stateOrder) {
         List<OrderClient> clientOrders = new ArrayList<OrderClient>();
         try{
             List<Object[]> datas = new ArrayList<Object[]>();
@@ -128,6 +128,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         "on pi.id = pe.pi_id\n" +
                         "where ped.fecha_entrega = :date\n" +
                         "and ped.estado_pedido <> :state\n" +
+                        "and ped.distribuidor = :distribuidor\n" +
                         "union all\n" +
                         "select \n" +
                         "nvl(it.razon_soc,' ') \n" +
@@ -138,9 +139,11 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         "inner join USER01_DAF.instituciones it\n" +
                         "on pi.id = it.pi_id\n" +
                         "where ped.fecha_entrega = :date\n" +
-                        "and ped.estado_pedido <> :state\n")
+                        "and ped.estado_pedido <> :state\n" +
+                        "and ped.distribuidor = :distribuidor\n")
                         .setParameter("date", date, TemporalType.DATE)
                         .setParameter("state",stateOrder)
+                        .setParameter("distribuidor",distribuidor)
                         .getResultList();
 
             for(Object[] obj: datas)
@@ -454,13 +457,14 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         }
     }
 
-    public class OrderClient
+    public static class OrderClient
     {
         private String name;
 
         private int posX;
         private int posY;
         private String idOrder;
+        private String type;
 
         public String getIdOrder() {
             return idOrder;
@@ -492,6 +496,14 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
 
         public void setPosY(int posY) {
             this.posY = posY;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
         }
     }
 }

@@ -36,7 +36,7 @@ public interface AccountItemService extends GenericService {
 
     public Integer getAmountCombo(String codArt, String idOrder);
 
-    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,String stateOrder);
+    public List<AccountItemServiceBean.OrderClient> findClientsOrder(BigDecimal distribuidor,Date date,String stateOrder);
 
     public List<AccountItemServiceBean.OrderItem> findOrderItemByState(Date dateOrder,String stateOrder);
 }
