@@ -54,7 +54,8 @@ public class EstimationStockReportAction extends GenericReportAction {
                 "productItem = #{estimationStockReportAction.productItem}"
         };
         this.warehouse = warehouseService.findWarehouseByCode("2");
-        sortProperty = "warehouse.id.warehouseCode, warehouse.id.companyNumber,inventory.articleCode,productItem.name";
+        sortProperty = "productItem.name";
+        sortAsc = true;
     }
 
     @Override
