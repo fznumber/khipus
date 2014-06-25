@@ -117,9 +117,6 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         Warehouse warehouse = firstSoldProduct.getWarehouse();
         CostCenter costCenter = findPublicCostCenter(warehouse);
-        //update state of order
-        if(firstSoldProduct.getOrderNumber() != null)
-            updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         if (null == costCenter) {
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
@@ -193,6 +190,10 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             soldProduct.setNumberVoucher(warehouseVoucher.getNumber());
             update(soldProduct);
         }
+
+        //update state of order
+        if(firstSoldProduct.getOrderNumber() != null)
+            updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         return productDelivery;
     }

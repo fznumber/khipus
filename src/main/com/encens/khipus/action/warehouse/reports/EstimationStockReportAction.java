@@ -4,6 +4,7 @@ import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.production.ProcessedProduct;
 import com.encens.khipus.model.production.ProductProcessing;
 import com.encens.khipus.model.warehouse.ProductItem;
@@ -38,6 +39,7 @@ public class EstimationStockReportAction extends GenericReportAction {
     private ProductItem productItem;
     private Warehouse warehouse;
     private Date date;
+    private Gestion gestion;
 
     @In
     private WarehouseService warehouseService;
@@ -119,5 +121,13 @@ public class EstimationStockReportAction extends GenericReportAction {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Gestion getGestion() {
+        return gestion;
+    }
+
+    public void setGestion(Gestion gestion) {
+        this.gestion = gestion;
     }
 }

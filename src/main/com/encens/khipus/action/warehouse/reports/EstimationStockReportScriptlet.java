@@ -1,5 +1,6 @@
 package com.encens.khipus.action.warehouse.reports;
 
+import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.warehouse.MovementDetailType;
 import com.encens.khipus.model.warehouse.ProductItemPK;
 import com.encens.khipus.model.warehouse.WarehousePK;
@@ -31,6 +32,8 @@ public class EstimationStockReportScriptlet extends JRDefaultScriptlet {
         String codArt = (String) this.getFieldValue("inventory.articleCode");
         BigDecimal unitaryBalance = (BigDecimal) this.getFieldValue("inventory.unitaryBalance");
         Date date = estimationStockReportAction.getDate();
+        Gestion gestion = estimationStockReportAction.getGestion();
+
         BigDecimal totalOrders;
         if(date == null)
         {
@@ -39,8 +42,9 @@ public class EstimationStockReportScriptlet extends JRDefaultScriptlet {
         else
         totalOrders = warehouseService.findAmountOrderByCodArt(codArt,date);
 
-        BigDecimal totalExpectedAmount = warehouseService.findExpectedAmountOrderProduction(codArt);
-        BigDecimal totalProducedAmount = warehouseService.findProducedAmountOrderProduction(codArt);
+        BigDecimal totalExpectedAmount = warehouseService.findExpectedAmountOrderProduction(codArt,gestion);
+        BigDecimal totalProducedAmount = warehouseService.findProducedAmountOrderProduction(codArt,gestion);
+        totalProducedAmount = totalProducedAmount.add(warehouseService.findProducedAmountRepro(codArt,gestion));
         BigDecimal totalProducedAmountPlusBalance = unitaryBalance.add(totalProducedAmount);
         BigDecimal totalBalanceLessTotalOrder = unitaryBalance.subtract(totalOrders);
         BigDecimal totalProducedAmountPlusBalanceLessOrders = unitaryBalance.subtract(totalOrders).add(totalProducedAmount);

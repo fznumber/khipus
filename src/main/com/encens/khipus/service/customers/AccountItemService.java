@@ -32,5 +32,11 @@ public interface AccountItemService extends GenericService {
 
     public Collection<AccountItemServiceBean.OrderItem> findOrderItemPack(Date dateOrder, String stateOrder);
 
+    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPackByState(Date dateOrder, String stateOrder);
+
     public Integer getAmountCombo(String codArt, String idOrder);
+
+    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,String stateOrder);
+
+    public List<AccountItemServiceBean.OrderItem> findOrderItemByState(Date dateOrder,String stateOrder);
 }

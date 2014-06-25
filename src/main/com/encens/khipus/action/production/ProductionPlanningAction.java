@@ -2317,7 +2317,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         addMaterial = false;
         //productionOrderMaterial = order;
         productionOrder = order;
-        if (productionOrder.getId() != null) {
+        if (productionOrder.getId() != null && order.getEstateOrder().equals(PENDING)) {
             setTotalsMaterials(productionOrder);
             setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
@@ -2409,7 +2409,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             return;
         }
-        if(hasIndirectCost())
+        if(!hasIndirectCost())
         {
             notHasIndirectCostMessage();
             return;
@@ -2487,7 +2487,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         {
             return;
         }
-        if(hasIndirectCost())
+        if(!hasIndirectCost())
         {
             notHasIndirectCostMessage();
             return;
@@ -2528,7 +2528,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void makeFinalizedOrder(ProductionPlanning planning) {
 
-        if(hasIndirectCost())
+        if(!hasIndirectCost())
         {
             notHasIndirectCostMessage();
             return;

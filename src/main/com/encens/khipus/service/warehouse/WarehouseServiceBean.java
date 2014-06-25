@@ -15,6 +15,7 @@ import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.interceptor.FinancesUser;
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.finances.FinancesPkGeneratorService;
 import com.encens.khipus.service.finances.FinancesUserService;
@@ -904,16 +905,24 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
     }
 
     @Override
-    public BigDecimal findExpectedAmountOrderProduction(String codArt) {
-        BigDecimal expectedAmountOrderProduction = BigDecimal.ZERO;
+    public BigDecimal findExpectedAmountOrderProduction(String codArt,Gestion gestion) {
+        BigDecimal expectedAmountOrderProduction;
+        Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
+        Date endDate = DateUtils.lastDayOfYear(gestion.getYear());
+
         expectedAmountOrderProduction = (BigDecimal) em.createNativeQuery("SELECT sum(op.cantidadesperada) FROM ordenproduccion op\n" +
                 "inner join composicionproducto cp\n" +
                 "on op.idcomposicionproducto = cp.idcomposicionproducto\n" +
                 "inner join metaproductoproduccion mp\n" +
                 "on mp.idmetaproductoproduccion = cp.idproductoprocesado\n" +
+                "inner join planificacionproduccion pp\n" +
+                "on pp.IDPLANIFICACIONPRODUCCION = op.IDPLANIFICACIONPRODUCCION " +
                 "where mp.cod_art = :codArt\n" +
-                "and op.estadoorden = 'PENDING'")
+                "and op.estadoorden = 'PENDING'" +
+                "and pp.fecha between :startDate and :endDate")
                 .setParameter("codArt",codArt)
+                .setParameter("startDate",startDate,TemporalType.DATE)
+                .setParameter("endDate",endDate,TemporalType.DATE)
                 .getSingleResult();
 
         if(expectedAmountOrderProduction == null)
@@ -922,17 +931,55 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
         return expectedAmountOrderProduction;
     }
 
+    public BigDecimal findProducedAmountRepro(String codArt,Gestion gestion) {
+        BigDecimal expectedAmountOrderProduction;
+        Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
+        Date endDate = DateUtils.lastDayOfYear(gestion.getYear());
+
+        expectedAmountOrderProduction = (BigDecimal) em.createNativeQuery("select nvl(sum(ps.cantidad),0) from productobase pb\n" +
+                "inner join productosimple ps\n" +
+                "on pb.idproductobase = ps.idproductobase\n" +
+                "inner join planificacionproduccion pp\n" +
+                "on pp.idplanificacionproduccion = pb.idplanificacionproduccion\n" +
+                "inner join productosimpleprocesado psp\n" +
+                "on ps.idproductosimple = psp.idproductosimple\n" +
+                "inner join metaproductoproduccion mp\n" +
+                "on mp.idmetaproductoproduccion = psp.idmetaproductoproduccion\n" +
+                "where mp.cod_art = :codArt\n" +
+                "and ps.estado = 'EXECUTED'\n" +
+                "and pp.fecha between :startDate and :endDate")
+                .setParameter("codArt",codArt)
+                .setParameter("startDate",startDate,TemporalType.DATE)
+                .setParameter("endDate",endDate,TemporalType.DATE)
+                .getSingleResult();
+
+        if(expectedAmountOrderProduction == null)
+            return BigDecimal.ZERO;
+
+        return expectedAmountOrderProduction;
+    }
+
+
+
     @Override
-    public BigDecimal findProducedAmountOrderProduction(String codArt) {
-        BigDecimal producedAmountOrderProduction = BigDecimal.ZERO;
+    public BigDecimal findProducedAmountOrderProduction(String codArt,Gestion gestion) {
+        BigDecimal producedAmountOrderProduction;
+        Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
+        Date endDate = DateUtils.lastDayOfYear(gestion.getYear());
+
         producedAmountOrderProduction = (BigDecimal) em.createNativeQuery("SELECT sum(op.cantidadproducida) FROM ordenproduccion op\n" +
                 "inner join composicionproducto cp\n" +
                 "on op.idcomposicionproducto = cp.idcomposicionproducto\n" +
                 "inner join metaproductoproduccion mp\n" +
                 "on mp.idmetaproductoproduccion = cp.idproductoprocesado\n" +
+                "inner join planificacionproduccion pp\n" +
+                "on pp.IDPLANIFICACIONPRODUCCION = op.IDPLANIFICACIONPRODUCCION " +
                 "where mp.cod_art = :codArt\n" +
-                "and op.estadoorden = 'EXECUTED'\n")
+                "and op.estadoorden = 'EXECUTED'\n"+
+                "and pp.fecha between :startDate and :endDate")
                 .setParameter("codArt",codArt)
+                .setParameter("startDate",startDate,TemporalType.DATE)
+                .setParameter("endDate",endDate,TemporalType.DATE)
                 .getSingleResult();
 
         if(producedAmountOrderProduction == null)

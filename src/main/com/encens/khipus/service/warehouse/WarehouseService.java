@@ -8,6 +8,7 @@ import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.warehouse.*;
 
 import javax.ejb.Local;
@@ -119,9 +120,11 @@ public interface WarehouseService extends GenericService {
 
     BigDecimal findAmountOrderByCodArt(String codArt,Date date);
 
-    BigDecimal findExpectedAmountOrderProduction(String codArt);
+    BigDecimal findExpectedAmountOrderProduction(String codArt,Gestion gestion);
 
-    BigDecimal findProducedAmountOrderProduction(String codArt);
+    BigDecimal findProducedAmountOrderProduction(String codArt,Gestion gestion);
+
+    public BigDecimal findProducedAmountRepro(String codArt,Gestion gestion);
 
     BigDecimal findAmountOrderByCodArt(String codArt);
 }

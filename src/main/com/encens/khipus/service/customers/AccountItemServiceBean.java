@@ -114,6 +114,50 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         return clientOrders;
     }
 
+    public List<OrderClient> findClientsOrder(Date date,String stateOrder) {
+        List<OrderClient> clientOrders = new ArrayList<OrderClient>();
+        try{
+            List<Object[]> datas = new ArrayList<Object[]>();
+                datas = em.createNativeQuery("select \n" +
+                        "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.personas pe\n" +
+                        "on pi.id = pe.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido <> :state\n" +
+                        "union all\n" +
+                        "select \n" +
+                        "nvl(it.razon_soc,' ') \n" +
+                        ",ped.pedido\n" +
+                        "from USER01_DAF.per_insts pi\n" +
+                        "inner join USER01_DAF.pedidos ped\n" +
+                        "on pi.id = ped.id\n" +
+                        "inner join USER01_DAF.instituciones it\n" +
+                        "on pi.id = it.pi_id\n" +
+                        "where ped.fecha_entrega = :date\n" +
+                        "and ped.estado_pedido <> :state\n")
+                        .setParameter("date", date, TemporalType.DATE)
+                        .setParameter("state",stateOrder)
+                        .getResultList();
+
+            for(Object[] obj: datas)
+            {
+                OrderClient client = new OrderClient();
+                client.setName((String)obj[1]+"-"+(String)obj[0]);
+                client.setIdOrder((String)obj[1]);
+                clientOrders.add(client);
+            }
+
+        }catch (NoResultException e)
+        {
+            return new ArrayList<OrderClient>();
+        }
+        return clientOrders;
+    }
+
     @Override
     public Integer getAmount(String codArt,String codPedido){
         BigDecimal result = BigDecimal.ZERO;
@@ -177,6 +221,38 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         .setParameter("stateOrder",stateOrder)
                         .getResultList();
             }
+
+            for(Object[] obj: datas)
+            {
+                OrderItem item = new OrderItem();
+                item.setNameItem((String)obj[0]);
+                item.setCodArt((String)obj[1]);
+                item.setType("COMBO");
+                orderItems.add(item);
+            }
+
+        }catch (NoResultException e)
+        {
+            return new ArrayList<OrderItem>();
+        }
+        return orderItems;
+    }
+
+    public Collection<OrderItem> findOrderItemPackByState(Date dateOrder, String stateOrder) {
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        try{
+            List<Object[]> datas = new ArrayList<Object[]>();
+
+                datas = em.createNativeQuery("select distinct nvl(pq.nombrecorto,'sin-nombre'),pq.paquete from USER01_DAF.paquetes pq\n" +
+                        "inner join USER01_DAF.paquete_pedidos pp\n" +
+                        "on pq.paquete = pp.paquete\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on pp.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "and pe.estado_pedido <> :state ")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .setParameter("state",stateOrder)
+                        .getResultList();
 
             for(Object[] obj: datas)
             {
@@ -259,6 +335,40 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         .setParameter("stateOrder",stateOrder)
                         .getResultList();
             }
+
+            for(Object[] obj: datas)
+            {
+                OrderItem item = new OrderItem();
+                item.setNameItem((String)obj[0]);
+                item.setIdAccount((BigDecimal)obj[1]);
+                item.setCodArt((String)obj[2]);
+                item.setNoCia((String)obj[3]);
+                orderItems.add(item);
+            }
+
+        }catch (NoResultException e)
+        {
+            return new ArrayList<OrderItem>();
+        }
+        return orderItems;
+    }
+
+    public List<OrderItem> findOrderItemByState(Date dateOrder,String stateOrder){
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        try{
+            List<Object[]> datas = new ArrayList<Object[]>();
+
+                datas = em.createNativeQuery("select distinct nvl(ia.nombrecorto,'sin-nombre'),ap.id_cuenta,ap.cod_art,ap.no_cia from USER01_DAF.articulos_pedido ap\n" +
+                        "inner join WISE.inv_articulos ia\n" +
+                        "on ia.cod_art = ap.cod_art\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on ap.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :dateOrder\n" +
+                        "and pe.estado_pedido <> :state \n")
+                        .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                        .setParameter("state",stateOrder)
+                        .getResultList();
+
 
             for(Object[] obj: datas)
             {
