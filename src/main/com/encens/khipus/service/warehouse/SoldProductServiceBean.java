@@ -1,6 +1,7 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.SoldProduct;
 import com.encens.khipus.util.Constants;
 import org.jboss.seam.annotations.AutoCreate;
@@ -9,6 +10,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +93,25 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         return result;
     }
 
+    public List<String> getSoldProductsCashOrder(Date date,BigDecimal distribuidor) {
+        List<String> result = getEntityManager()
+                .createNativeQuery("select distinct iv.no_fact \n" +
+                        "from WISE.inv_ventart iv\n" +
+                        "inner join USER01_DAF.pedidos pe\n" +
+                        "on iv.pedido = pe.pedido\n" +
+                        "where pe.fecha_entrega = :date\n" +
+                        "and iv.estado = 'PENDING'\n" +
+                        "and pe.estado_pedido <> 'ANL'\n" +
+                        "and pe.distribuidor = :distribuidor\n")
+                .setParameter("date", date, TemporalType.DATE)
+                .setParameter("distribuidor",distribuidor)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<String>();
+        }
+        return result;
+    }
+
     public List<String> getSoldProductsCashOrder(Date date) {
         List<String> result = getEntityManager()
                 .createNativeQuery("select distinct iv.no_fact \n" +
@@ -99,7 +120,7 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
                         "on iv.pedido = pe.pedido\n" +
                         "where pe.fecha_entrega = :date\n" +
                         "and iv.estado = 'PENDING'\n" +
-                        "and pe.estado_pedido <> 'ANL'")
+                        "and pe.estado_pedido <> 'ANL'\n" )
                 .setParameter("date", date, TemporalType.DATE)
                 .getResultList();
         if (null == result) {

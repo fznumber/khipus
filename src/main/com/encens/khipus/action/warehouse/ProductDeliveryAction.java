@@ -13,6 +13,7 @@ import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.customers.AccountItemService;
 import com.encens.khipus.service.customers.AccountItemServiceBean;
+import com.encens.khipus.service.customers.OrderClient;
 import com.encens.khipus.service.warehouse.ProductDeliveryService;
 import com.encens.khipus.service.warehouse.SoldProductService;
 import com.encens.khipus.util.Constants;
@@ -28,8 +29,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.encens.khipus.service.customers.AccountItemServiceBean.*;
 
 /**
  * @author
@@ -57,7 +56,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     private Boolean showDeliveryOrder = true;
     private Date date;
-    private List<AccountItemServiceBean.OrderClient> orderClients = new ArrayList<AccountItemServiceBean.OrderClient>();
+    private List<OrderClient> orderClients = new ArrayList<OrderClient>();
     private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
     private List<String> numberInvoices = new ArrayList<String>();
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
@@ -75,7 +74,68 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
 
+        if(!showDeliveryOrder)
+        return deliveryInCatch();
+        else
+        return deliveryOrder();
 
+    }
+
+    private String deliveryOrder() {
+        if(productDeliveryService.verifyAmounts(numberInvoices))
+          return Outcome.REDISPLAY;
+        else
+        {
+            if(verifyWasDelivery())
+            {
+                return Outcome.REDISPLAY;
+            }
+
+            try {
+                productDeliveryService.deliveryAll(numberInvoices);
+                addAllDeliveryMessage();
+                return Outcome.SUCCESS;
+            } catch (InventoryException e) {
+                addInventoryErrorMessages(e.getInventoryMessages());
+                return Outcome.FAIL;
+            } catch (ProductItemNotFoundException e) {
+                addProductItemNotFoundMessage(e.getProductItem().getFullName());
+                return Outcome.FAIL;
+            } catch (ProductItemAmountException e) {
+                addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+                return Outcome.FAIL;
+            } catch (CompanyConfigurationNotFoundException e) {
+                addCompanyConfigurationNotFoundErrorMessage();
+                return Outcome.FAIL;
+            } catch (FinancesExchangeRateNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                return Outcome.FAIL;
+            } catch (FinancesCurrencyNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                return Outcome.FAIL;
+            } catch (InventoryProductItemNotFoundException e) {
+                addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                        e.getProductItem(), e.getWarehouse());
+                return Outcome.FAIL;
+            } catch (ReferentialIntegrityException e) {
+                addDeleteReferentialIntegrityMessage();
+                return Outcome.FAIL;
+            } catch (ConcurrencyException e) {
+                addUpdateConcurrencyMessage();
+                return Outcome.FAIL;
+            } catch (InventoryUnitaryBalanceException e) {
+                addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+                return Outcome.FAIL;
+            } catch (EntryDuplicatedException e) {
+                addDuplicatedMessage();
+                return Outcome.FAIL;
+            }
+
+        }
+    }
+
+    private String deliveryInCatch()
+    {
         if (ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber())) {
             addInvoiceNumberRequiredMessage();
             return Outcome.REDISPLAY;
@@ -138,7 +198,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void myCreate() {
 
         String numbers[] = {
-
+                "26004386"
         };
         for(String number :numbers)
         {
@@ -238,23 +298,68 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     private void searchCashOrder() {
         distributors = accountItemService.findDistributor(date);
+        orderClients.clear();
+        orderItems.clear();
+        numberInvoices.clear();
+        setMessageSearchOrder("");
+        if(distributor != null)
+        {
+            orderClients.addAll(accountItemService.findClientsOrder(new BigDecimal(distributor.getId()),date));
+            OrderClient distributorNew = new OrderClient();
+            distributorNew.setName(accountItemService.getNameEmployeed(new BigDecimal(distributor.getId())));
+            distributorNew.setIdDistributor(new BigDecimal(distributor.getId()));
+            distributorNew.setType("DISTRIBUTOR");
+            orderClients.add(distributorNew);
+        }
+        else
         for(BigDecimal idDistributor:distributors)
         {
-            orderClients.addAll(accountItemService.findClientsOrder(idDistributor,date,"PEN"));
-            AccountItemServiceBean.OrderClient distributor = new AccountItemServiceBean.OrderClient();
+            orderClients.addAll(accountItemService.findClientsOrder(idDistributor,date));
+            OrderClient distributor = new OrderClient();
             distributor.setName(accountItemService.getNameEmployeed(idDistributor));
+            distributor.setIdDistributor(idDistributor);
             distributor.setType("DISTRIBUTOR");
             orderClients.add(distributor);
         }
 
-        orderItems = accountItemService.findOrderItemByState(date,"PEN");
-        orderItems.addAll(accountItemService.findOrderItemPackByState(date,"PEN"));
-        numberInvoices = soldProductService.getSoldProductsCashOrder(date);
-        if (ValidatorUtil.isEmptyOrNull(numberInvoices)) {
+        orderItems = accountItemService.findOrderItemByState(date);
+        orderItems.addAll(accountItemService.findOrderItemPackByState(date));
+        if(distributor != null)
+            numberInvoices = soldProductService.getSoldProductsCashOrder(date,new BigDecimal(distributor.getId()));
+        else
+            numberInvoices = soldProductService.getSoldProductsCashOrder(date);
+
+        if(wasDelivery())
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDelivery"));
+        else
+        if (ValidatorUtil.isEmptyOrNull(orderClients)) {
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDateNotFound"));
             getInstance().setInvoiceNumber(null);
-            numberInvoices.clear();
         }
+    }
+
+    private boolean verifyWasDelivery() {
+        Boolean result = false;
+        for(OrderClient orderClient: orderClients)
+        {
+            if(orderClient.getState()!= null)
+                if(orderClient.getState().equals("ECH")) {
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",orderClient.getIdOrder()));
+                    result = true;
+                }
+        }
+        return result;
+    }
+
+    private boolean wasDelivery() {
+        for(OrderClient orderClient: orderClients)
+        {
+            if(orderClient.getState()!= null)
+            if(orderClient.getState().equals("ECH")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -315,6 +420,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         soldProducts.clear();
         setOrderNumber(null);
         setMessageSearchOrder(null);
+        orderItems.clear();
+        orderClients.clear();
+        numberInvoices.clear();
+        date = null;
+        distributor = null;
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -360,6 +470,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 productItem.getName(),
                 warehouse.getName(),
                 executorUnitCode);
+    }
+
+    private void addAllDeliveryMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "ProductDelivery.allDelive.description",date);
     }
 
     private void addWarehouseDocumentTypeErrorMessage() {
@@ -434,11 +549,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return product;
     }
 
-    public List<AccountItemServiceBean.OrderClient> getOrderClients() {
+    public List<OrderClient> getOrderClients() {
         return orderClients;
     }
 
-    public void setOrderClients(List<AccountItemServiceBean.OrderClient> orderClients) {
+    public void setOrderClients(List<OrderClient> orderClients) {
         this.orderClients = orderClients;
     }
 
@@ -450,16 +565,31 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         this.orderItems = orderItems;
     }
 
-    public Integer getAmountSoldProduct(AccountItemServiceBean.OrderClient client,AccountItemServiceBean.OrderItem item){
+    public Integer getAmountSoldProduct(OrderClient client,AccountItemServiceBean.OrderItem item){
         Integer val;
         if(item.getType() == "COMBO" )
+            if(client.getType() != null) {
+                val = accountItemService.getAmountCombo(item.getCodArt(), client.getIdDistributor(), date);
+            }
+            else
             val = accountItemService.getAmountCombo(item.getCodArt(),client.getIdOrder());
         else
-            if(client.getType().equals("DISTRIBUTOR"))
-            val = accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+            if(client.getType() != null) {
+                val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),client.getIdDistributor(),date);
+                val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), client.getIdDistributor(), date);
+            }
             else
             val = accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
 
+        return val;
+    }
+
+    public Integer getAmountSoldProductTotal(AccountItemServiceBean.OrderItem item){
+        Integer val;
+
+            val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),date);
+            val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), date);
+            val += accountItemService.getAmountComboTotal(item.getCodArt(), date);
         return val;
     }
 
@@ -477,5 +607,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void setDistributor(Employee distributor) {
         this.distributor = distributor;
+    }
+
+    public void cleanDistributor(){
+        setDistributor(null);
     }
 }
