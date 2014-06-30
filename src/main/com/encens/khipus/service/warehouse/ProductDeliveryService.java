@@ -11,6 +11,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.warehouse.ProductDelivery;
 
 import javax.ejb.Local;
+import java.util.List;
 
 /**
  * @author
@@ -55,4 +56,9 @@ public interface ProductDeliveryService extends GenericService {
     ProductDelivery select(ProductDelivery entity);
 
     public void updateOrderEstate(String invoiceNumber);
+
+    public Boolean verifyAmounts(List<String> numberInvoices);
+
+    void deliveryAll(List<String> numberInvoices) throws InventoryException, ProductItemNotFoundException, ProductItemAmountException, CompanyConfigurationNotFoundException, FinancesExchangeRateNotFoundException, FinancesCurrencyNotFoundException, InventoryProductItemNotFoundException, ReferentialIntegrityException, ConcurrencyException, InventoryUnitaryBalanceException, EntryDuplicatedException;
+
 }

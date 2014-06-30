@@ -4,6 +4,7 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.warehouse.SoldProduct;
 
 import javax.ejb.Local;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,8 @@ public interface SoldProductService extends GenericService {
 
     List<SoldProduct> getSoldProductsCashOrder(String invoiceNumber, String companyNumber);
 
-    List<String> getSoldProductsCashOrder(Date date);
+    List<String> getSoldProductsCashOrder(Date date,BigDecimal distribuidor);
+    public List<String> getSoldProductsCashOrder(Date date);
 
     public List<SoldProduct> getFindDelivery(String invoiceNumber, String companyNumber);
 

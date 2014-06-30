@@ -49,8 +49,14 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}"
+                <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
                           view="/warehouse/productDelivery.xhtml"
+                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          styleClass="button"
+                          propagation="begin"/>
+
+                <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"
+                          view="/warehouse/productDeliveryByDate.xhtml"
                           rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
                           styleClass="button"
                           propagation="begin"/>
@@ -126,14 +132,20 @@
                 </rich:column>
             </rich:dataTable>
             <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{productDeliveryDataModel}"/>
-
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}"
+                <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
                           view="/warehouse/productDelivery.xhtml"
-                          styleClass="button"
                           rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          styleClass="button"
+                          propagation="begin"/>
+
+                <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"
+                          view="/warehouse/productDeliveryByDate.xhtml"
+                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          styleClass="button"
                           propagation="begin"/>
             </div>
+
         </h:form>
     </ui:define>
 

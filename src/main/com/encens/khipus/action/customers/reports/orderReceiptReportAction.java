@@ -1,14 +1,13 @@
 package com.encens.khipus.action.customers.reports;
 
 import com.encens.khipus.action.reports.GenericReportAction;
-import com.encens.khipus.action.reports.ReportFormat;
 import com.encens.khipus.model.customers.ClientOrderEstate;
 import com.encens.khipus.model.employees.Employee;
-import com.encens.khipus.model.warehouse.ProductItemState;
 import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.customers.AccountItemService;
 import com.encens.khipus.service.customers.AccountItemServiceBean;
 import com.encens.khipus.service.customers.ClientOrderService;
+import com.encens.khipus.service.customers.OrderClient;
 import com.encens.khipus.util.MessageUtils;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
@@ -52,7 +51,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     @In
     private ClientOrderService clientOrderService;
 
-    private List<AccountItemServiceBean.OrderClient> orderClients = new ArrayList<AccountItemServiceBean.OrderClient>();
+    private List<OrderClient> orderClients = new ArrayList<OrderClient>();
     private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
     private List<Integer> totals = new ArrayList<Integer>();
@@ -180,7 +179,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         for(AccountItemServiceBean.OrderItem item : orderItems)
         {
 
-            for(AccountItemServiceBean.OrderClient client:orderClients)
+            for(OrderClient client:orderClients)
             {
                 client.setPosX(amountY);
                 client.setPosY(temp.getY());
@@ -222,7 +221,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
 
 
-        for(AccountItemServiceBean.OrderClient client:orderClients)
+        for(OrderClient client:orderClients)
         {
             client.setPosX(clientX);
             client.setPosY(temp.getY());

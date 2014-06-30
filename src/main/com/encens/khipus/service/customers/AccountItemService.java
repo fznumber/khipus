@@ -1,8 +1,6 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.GenericService;
-import com.encens.khipus.model.customers.AccountItem;
-import com.encens.khipus.model.customers.ClientOrder;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
@@ -20,7 +18,7 @@ import java.util.List;
 @Local
 public interface AccountItemService extends GenericService {
 
-    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,BigDecimal distribuidor,String stateOrder);
+    public List<OrderClient> findClientsOrder(Date date,BigDecimal distribuidor,String stateOrder);
 
     public List<AccountItemServiceBean.OrderItem> findOrderItem(Date dateOrder,String stateOrder);
 
@@ -32,11 +30,23 @@ public interface AccountItemService extends GenericService {
 
     public Collection<AccountItemServiceBean.OrderItem> findOrderItemPack(Date dateOrder, String stateOrder);
 
-    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPackByState(Date dateOrder, String stateOrder);
+    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPackByState(Date dateOrder);
 
     public Integer getAmountCombo(String codArt, String idOrder);
 
-    public List<AccountItemServiceBean.OrderClient> findClientsOrder(Date date,String stateOrder);
+    public List<OrderClient> findClientsOrder(BigDecimal distribuidor,Date date);
 
-    public List<AccountItemServiceBean.OrderItem> findOrderItemByState(Date dateOrder,String stateOrder);
+    public List<AccountItemServiceBean.OrderItem> findOrderItemByState(Date dateOrder);
+
+    public Integer getAmountByDateAndDistributorInstitution(String codArt,BigDecimal idDistribution,Date dateOrder);
+
+    public Integer getAmountByDateAndDistributorOrder(String codArt,BigDecimal idDistribution,Date dateOrder);
+
+    public Integer getAmountByDateAndDistributorInstitution(String codArt,Date dateOrder);
+
+    public Integer getAmountByDateAndDistributorOrder(String codArt ,Date dateOrder);
+
+    public Integer getAmountCombo(String codPaquete,BigDecimal idDistributor, Date date);
+
+    public Integer getAmountComboTotal(String codPaquete, Date date);
 }

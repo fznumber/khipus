@@ -9,7 +9,11 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.*;
+import com.encens.khipus.service.customers.AccountItemService;
+import com.encens.khipus.service.customers.AccountItemServiceBean;
+import com.encens.khipus.service.customers.OrderClient;
 import com.encens.khipus.service.warehouse.ProductDeliveryService;
 import com.encens.khipus.service.warehouse.SoldProductService;
 import com.encens.khipus.util.Constants;
@@ -23,6 +27,7 @@ import org.jboss.seam.international.StatusMessage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,10 +46,22 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @In
     private ProductDeliveryService productDeliveryService;
 
+    @In
+    private AccountItemService accountItemService;
+
     private String orderNumber;
     private String messageSearchOrder;
 
     private ProductDeliveryType productDeliveryType = ProductDeliveryType.CASH_ORDER;
+
+    private Boolean showDeliveryOrder = true;
+    private Date date;
+    private List<OrderClient> orderClients = new ArrayList<OrderClient>();
+    private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
+    private List<String> numberInvoices = new ArrayList<String>();
+    private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
+    private String product;
+    private Employee distributor;
 
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
@@ -57,7 +74,68 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
 
+        if(!showDeliveryOrder)
+        return deliveryInCatch();
+        else
+        return deliveryOrder();
 
+    }
+
+    private String deliveryOrder() {
+        if(productDeliveryService.verifyAmounts(numberInvoices))
+          return Outcome.REDISPLAY;
+        else
+        {
+            if(verifyWasDelivery())
+            {
+                return Outcome.REDISPLAY;
+            }
+
+            try {
+                productDeliveryService.deliveryAll(numberInvoices);
+                addAllDeliveryMessage();
+                return Outcome.SUCCESS;
+            } catch (InventoryException e) {
+                addInventoryErrorMessages(e.getInventoryMessages());
+                return Outcome.FAIL;
+            } catch (ProductItemNotFoundException e) {
+                addProductItemNotFoundMessage(e.getProductItem().getFullName());
+                return Outcome.FAIL;
+            } catch (ProductItemAmountException e) {
+                addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+                return Outcome.FAIL;
+            } catch (CompanyConfigurationNotFoundException e) {
+                addCompanyConfigurationNotFoundErrorMessage();
+                return Outcome.FAIL;
+            } catch (FinancesExchangeRateNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                return Outcome.FAIL;
+            } catch (FinancesCurrencyNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                return Outcome.FAIL;
+            } catch (InventoryProductItemNotFoundException e) {
+                addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                        e.getProductItem(), e.getWarehouse());
+                return Outcome.FAIL;
+            } catch (ReferentialIntegrityException e) {
+                addDeleteReferentialIntegrityMessage();
+                return Outcome.FAIL;
+            } catch (ConcurrencyException e) {
+                addUpdateConcurrencyMessage();
+                return Outcome.FAIL;
+            } catch (InventoryUnitaryBalanceException e) {
+                addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+                return Outcome.FAIL;
+            } catch (EntryDuplicatedException e) {
+                addDuplicatedMessage();
+                return Outcome.FAIL;
+            }
+
+        }
+    }
+
+    private String deliveryInCatch()
+    {
         if (ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber())) {
             addInvoiceNumberRequiredMessage();
             return Outcome.REDISPLAY;
@@ -120,159 +198,66 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     public void myCreate() {
 
         String numbers[] = {
-                /*"2387",
-                "2388",
-                "2389",
-                "2390",
-                "2391",
-                "2393",
-                "2394",
-                "2398",
-                "2399",
-                "2400",
-                "2453",
-                "2457",
-                "2458",
-                "2459",
-                "2460",
-                "2461",
-                "2462",
-                "2463",
-                "2464",
-                "2465",
-                "2466",
-                "2467",
-                "2468",
-                "2469",
-                "2494",
-                "2495",
-                "2505",
-                "2595",
-                "2638",
-                "2656",
-                "2662",
-                "2663",
-                "2673",
-                "2674",
-                "2675",
-                "2687",
-                "2690",
-                "2704",
-                "2706",
-                "2718",
-                "2727",
-                "2743",
-                "2751",
-                "2756",
-                "2760",
-                "2802",
-                "2808",
-                "2809",
-                "2818",
-                "2819",
-                "2820",
-                "2821",*/
-                "2837",
-                "2842",
-                "2865",
-                "2873",
-                "2894",
-                "2896",
-                "2918",
-                "2926",
-                "2931",
-                "2932",
-                "2963",
-                "2974",
-                "2988",
-                "2991",
-                "2996",
-                "2997",
-                "3002",
-                "3003",
-                "3004",
-                "3015",
-                "3019",
-                "3037",
-                "3046",
-                "3049",
-                "3057",
-                "3064",
-                "3065",
-                "3070",
-                "3079",
-                "3082",
-                "3088",
-                "3094",
-                "3106",
-                "3108",
-                "3130",
-                "3135",
-                "3136",
-                "3144",
-                "3146",
-                "3147",
-                "3161",
-                "3166"
+                "26004386"
         };
         for(String number :numbers)
         {
 
-        try {
-            //for()
-            System.out.println("NUMERO DE FACTURA -> "+number);
-            ProductDelivery productDelivery = productDeliveryService.createAll(number,
-                    MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", number));
-            addSoldProductDeliveredInfoMessage();
-            select(productDelivery);
-            //update();
-        } catch (SoldProductNotFoundException e) {
-            addSoldProductNotFoundMessages();
-            continue;
-        } catch (InventoryException e) {
-            addInventoryErrorMessages(e.getInventoryMessages());
-            continue;
-        } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
-            continue;
-        } catch (WarehouseDocumentTypeNotFoundException e) {
-            addWarehouseDocumentTypeErrorMessage();
-            continue;
-        } catch (ProductItemAmountException e) {
-            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-            continue;
-        } catch (InventoryUnitaryBalanceException e) {
-            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-            continue;
-        } catch (InventoryProductItemNotFoundException e) {
-            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
-                    e.getProductItem(), e.getWarehouse());
-            continue;
-        } catch (SoldProductDeliveredException e) {
-            addSoldProductDeliveredErrorMessage();
-            continue;
-        } catch (CompanyConfigurationNotFoundException e) {
-            addCompanyConfigurationNotFoundErrorMessage();
-            continue;
-        } catch (FinancesExchangeRateNotFoundException e) {
-            addFinancesExchangeRateNotFoundExceptionMessage();
-            continue;
-        } catch (FinancesCurrencyNotFoundException e) {
-            addFinancesExchangeRateNotFoundExceptionMessage();
-            continue;
-        } catch (ConcurrencyException e) {
-            addUpdateConcurrencyMessage();
-            continue;
-        } catch (EntryDuplicatedException e) {
-            addDuplicatedMessage();
-            continue;
-        } catch (ReferentialIntegrityException e) {
-            addDeleteReferentialIntegrityMessage();
-            continue;
-        } catch (ProductItemNotFoundException e) {
-            addProductItemNotFoundMessage(e.getProductItem().getFullName());
-            continue;
+            try {
+                //for()
+                System.out.println("NUMERO DE FACTURA -> "+number);
+                ProductDelivery productDelivery = productDeliveryService.createAll(number,
+                        MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", number));
+                addSoldProductDeliveredInfoMessage();
+                select(productDelivery);
+                //update();
+            } catch (SoldProductNotFoundException e) {
+                addSoldProductNotFoundMessages();
+                continue;
+            } catch (InventoryException e) {
+                addInventoryErrorMessages(e.getInventoryMessages());
+                continue;
+            } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
+                continue;
+            } catch (WarehouseDocumentTypeNotFoundException e) {
+                addWarehouseDocumentTypeErrorMessage();
+                continue;
+            } catch (ProductItemAmountException e) {
+                addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+                continue;
+            } catch (InventoryUnitaryBalanceException e) {
+                addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+                continue;
+            } catch (InventoryProductItemNotFoundException e) {
+                addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                        e.getProductItem(), e.getWarehouse());
+                continue;
+            } catch (SoldProductDeliveredException e) {
+                addSoldProductDeliveredErrorMessage();
+                continue;
+            } catch (CompanyConfigurationNotFoundException e) {
+                addCompanyConfigurationNotFoundErrorMessage();
+                continue;
+            } catch (FinancesExchangeRateNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                continue;
+            } catch (FinancesCurrencyNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+                continue;
+            } catch (ConcurrencyException e) {
+                addUpdateConcurrencyMessage();
+                continue;
+            } catch (EntryDuplicatedException e) {
+                addDuplicatedMessage();
+                continue;
+            } catch (ReferentialIntegrityException e) {
+                addDeleteReferentialIntegrityMessage();
+                continue;
+            } catch (ProductItemNotFoundException e) {
+                addProductItemNotFoundMessage(e.getProductItem().getFullName());
+                continue;
+            }
         }
-      }
     }
 
     @Override
@@ -312,20 +297,69 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private void searchCashOrder() {
-
-        List<SoldProduct> soldProductList = soldProductService.getSoldProductsCashOrder(orderNumber, Constants.defaultCompanyNumber);
-        if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
-            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
-            getInstance().setInvoiceNumber(null);
-            soldProducts.clear();
-        } else {
-            setMessageSearchOrder(null);
-            if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
-                setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
-                assignNumberCashOrder(soldProductList.get(0));
-            } else
-                assignNumberCashOrder(soldProductList.get(0));
+        distributors = accountItemService.findDistributor(date);
+        orderClients.clear();
+        orderItems.clear();
+        numberInvoices.clear();
+        setMessageSearchOrder("");
+        if(distributor != null)
+        {
+            orderClients.addAll(accountItemService.findClientsOrder(new BigDecimal(distributor.getId()),date));
+            OrderClient distributorNew = new OrderClient();
+            distributorNew.setName(accountItemService.getNameEmployeed(new BigDecimal(distributor.getId())));
+            distributorNew.setIdDistributor(new BigDecimal(distributor.getId()));
+            distributorNew.setType("DISTRIBUTOR");
+            orderClients.add(distributorNew);
         }
+        else
+        for(BigDecimal idDistributor:distributors)
+        {
+            orderClients.addAll(accountItemService.findClientsOrder(idDistributor,date));
+            OrderClient distributor = new OrderClient();
+            distributor.setName(accountItemService.getNameEmployeed(idDistributor));
+            distributor.setIdDistributor(idDistributor);
+            distributor.setType("DISTRIBUTOR");
+            orderClients.add(distributor);
+        }
+
+        orderItems = accountItemService.findOrderItemByState(date);
+        orderItems.addAll(accountItemService.findOrderItemPackByState(date));
+        if(distributor != null)
+            numberInvoices = soldProductService.getSoldProductsCashOrder(date,new BigDecimal(distributor.getId()));
+        else
+            numberInvoices = soldProductService.getSoldProductsCashOrder(date);
+
+        if(wasDelivery())
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDelivery"));
+        else
+        if (ValidatorUtil.isEmptyOrNull(orderClients)) {
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDateNotFound"));
+            getInstance().setInvoiceNumber(null);
+        }
+    }
+
+    private boolean verifyWasDelivery() {
+        Boolean result = false;
+        for(OrderClient orderClient: orderClients)
+        {
+            if(orderClient.getState()!= null)
+                if(orderClient.getState().equals("ECH")) {
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",orderClient.getIdOrder()));
+                    result = true;
+                }
+        }
+        return result;
+    }
+
+    private boolean wasDelivery() {
+        for(OrderClient orderClient: orderClients)
+        {
+            if(orderClient.getState()!= null)
+            if(orderClient.getState().equals("ECH")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -386,6 +420,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         soldProducts.clear();
         setOrderNumber(null);
         setMessageSearchOrder(null);
+        orderItems.clear();
+        orderClients.clear();
+        numberInvoices.clear();
+        date = null;
+        distributor = null;
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -431,6 +470,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 productItem.getName(),
                 warehouse.getName(),
                 executorUnitCode);
+    }
+
+    private void addAllDeliveryMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "ProductDelivery.allDelive.description",date);
     }
 
     private void addWarehouseDocumentTypeErrorMessage() {
@@ -490,6 +534,82 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void setProductDeliveryType(ProductDeliveryType productDeliveryType) {
         this.productDeliveryType = productDeliveryType;
-        System.out.println("___________SET ProductDeliveryType: " + this.productDeliveryType);
+        showDeliveryOrder = productDeliveryType.getResourceKey().compareTo("ProductDeliveryType.cashOrder") == 0 ;
+    }
+
+    public Boolean getShowDeliveryOrder() {
+        return showDeliveryOrder;
+    }
+
+    public void setShowDeliveryOrder(Boolean showDeliveryOrder) {
+        this.showDeliveryOrder = showDeliveryOrder;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public List<OrderClient> getOrderClients() {
+        return orderClients;
+    }
+
+    public void setOrderClients(List<OrderClient> orderClients) {
+        this.orderClients = orderClients;
+    }
+
+    public List<AccountItemServiceBean.OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<AccountItemServiceBean.OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public Integer getAmountSoldProduct(OrderClient client,AccountItemServiceBean.OrderItem item){
+        Integer val;
+        if(item.getType() == "COMBO" )
+            if(client.getType() != null) {
+                val = accountItemService.getAmountCombo(item.getCodArt(), client.getIdDistributor(), date);
+            }
+            else
+            val = accountItemService.getAmountCombo(item.getCodArt(),client.getIdOrder());
+        else
+            if(client.getType() != null) {
+                val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),client.getIdDistributor(),date);
+                val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), client.getIdDistributor(), date);
+            }
+            else
+            val = accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+
+        return val;
+    }
+
+    public Integer getAmountSoldProductTotal(AccountItemServiceBean.OrderItem item){
+        Integer val;
+
+            val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),date);
+            val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), date);
+            val += accountItemService.getAmountComboTotal(item.getCodArt(), date);
+        return val;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Employee getDistributor() {
+        return distributor;
+    }
+
+    public void setDistributor(Employee distributor) {
+        this.distributor = distributor;
+    }
+
+    public void cleanDistributor(){
+        setDistributor(null);
     }
 }
