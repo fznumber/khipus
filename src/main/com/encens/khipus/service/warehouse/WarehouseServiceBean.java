@@ -871,15 +871,19 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
     }
 
     @Override
-    public BigDecimal findAmountOrderByCodArt(String codArt,Date date) {
+    public BigDecimal findAmountOrderByCodArt(String codArt,Gestion gestion,Date date) {
         BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
-        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select sum(art.cantidad) from USER01_DAF.pedidos ped\n" +
+        Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
+
+        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
+                " from USER01_DAF.pedidos ped\n" +
                 "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
                 "on art.pedido = ped.pedido\n" +
                 "where ped.estado_pedido = 'PEN'\n" +
-                "and ped.FECHA_ENTREGA <= :dateDelivery\n" +
+                "and ped.FECHA_ENTREGA between :startDate and :dateDelivery\n" +
                 "and art.cod_art = :codArt\n")
                 .setParameter("codArt",codArt)
+                .setParameter("startDate",startDate, TemporalType.DATE)
                 .setParameter("dateDelivery",date, TemporalType.DATE)
                 .getSingleResult();
         if(amountOrderByCodArt == null)
@@ -889,14 +893,18 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
     }
 
     @Override
-    public BigDecimal findAmountOrderByCodArt(String codArt) {
+    public BigDecimal findAmountOrderByCodArt(String codArt,Gestion gestion) {
         BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
-        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select sum(art.cantidad) from USER01_DAF.pedidos ped\n" +
+        Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
+        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
+                "from USER01_DAF.pedidos ped\n" +
                 "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
                 "on art.pedido = ped.pedido\n" +
                 "where ped.estado_pedido = 'PEN'\n" +
+                "and ped.FECHA_ENTREGA >= :startDate \n" +
                 "and art.cod_art = :codArt\n")
                 .setParameter("codArt",codArt)
+                .setParameter("startDate",startDate, TemporalType.DATE)
                 .getSingleResult();
         if(amountOrderByCodArt == null)
             return BigDecimal.ZERO;

@@ -118,7 +118,7 @@ public interface WarehouseService extends GenericService {
 
     public Warehouse findWarehouseByCode(String warehouseCode);
 
-    BigDecimal findAmountOrderByCodArt(String codArt,Date date);
+    BigDecimal findAmountOrderByCodArt(String codArt,Gestion gestion,Date date);
 
     BigDecimal findExpectedAmountOrderProduction(String codArt,Gestion gestion);
 
@@ -126,5 +126,5 @@ public interface WarehouseService extends GenericService {
 
     public BigDecimal findProducedAmountRepro(String codArt,Gestion gestion);
 
-    BigDecimal findAmountOrderByCodArt(String codArt);
+    BigDecimal findAmountOrderByCodArt(String codArt,Gestion gestion);
 }
