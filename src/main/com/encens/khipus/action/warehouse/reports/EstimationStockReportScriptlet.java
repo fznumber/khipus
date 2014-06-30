@@ -37,10 +37,10 @@ public class EstimationStockReportScriptlet extends JRDefaultScriptlet {
         BigDecimal totalOrders;
         if(date == null)
         {
-            totalOrders = warehouseService.findAmountOrderByCodArt(codArt);
+            totalOrders = warehouseService.findAmountOrderByCodArt(codArt,gestion);
         }
         else
-        totalOrders = warehouseService.findAmountOrderByCodArt(codArt,date);
+        totalOrders = warehouseService.findAmountOrderByCodArt(codArt,gestion,date);
 
         BigDecimal totalExpectedAmount = warehouseService.findExpectedAmountOrderProduction(codArt,gestion);
         BigDecimal totalProducedAmount = warehouseService.findProducedAmountOrderProduction(codArt,gestion);
