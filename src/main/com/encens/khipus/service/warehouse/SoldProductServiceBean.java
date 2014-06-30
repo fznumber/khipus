@@ -43,6 +43,7 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         List<SoldProduct> result = getEntityManager()
                 .createNamedQuery("SoldProduct.findByInvoiceNumberWithoutCutCheese")
                 .setParameter("codCutCheese", Constants.COD_CUT_CHEESE)
+                .setParameter("codCheeseEDAM", Constants.COD_CHEESE_EDAM)
                 .setParameter("invoiceNumber", invoiceNumber)
                 .setParameter("companyNumber", companyNumber)
                 .getResultList();

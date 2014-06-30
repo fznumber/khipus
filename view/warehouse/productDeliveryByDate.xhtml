@@ -30,16 +30,10 @@
                      action="#{productDeliveryAction.create}"
                      value="#{messages['ProductDelivery.button.deliver']}"
                      styleClass="button"
-                     rendered="#{!productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE')}">
+                     rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}">
         <s:defaultAction/>
     </h:commandButton>
-    <h:commandButton action="#{productDeliveryReceiptReportAction.generateReport(productDelivery)}"
-                     value="#{messages['ProductDelivery.button.generateDocument']}"
-                     rendered="#{productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
-                     styleClass="button"
-                     immediate="true"/>
     <h:commandButton action="#{productDeliveryAction.cancel}"
-
                      value="#{messages['Common.cancel']}"
                      styleClass="button"
                      immediate="true"/>
@@ -56,25 +50,6 @@
             </c:otherwise>
         </c:choose>
     </f:facet>
-
-        <s:decorate id="productDeliveryTypeField"
-                    template="/include/inputField.xhtml"
-                    styleClass="formRow">
-            <!--<ui:define name="label">#{messages['ProductDelivery.deliveryType']}</ui:define>-->
-            <h:selectOneRadio value="#{productDeliveryAction.productDeliveryType}"
-                              layout="lineDirection">
-                <s:selectItems value="#{productDeliveryTypes}"
-                               var="element"
-                               label="#{messages[element.resourceKey]}"/>
-                <s:convertEnum/>
-                <a4j:support event="onclick"
-                             ajaxSingle="true"
-                             actionListener="#{productDeliveryAction.cleanInvoiceNumber}"
-                             reRender="soldProductPanel, messageSearchOrder,invoideNumberField,dateInvoiceField,employeeField "/>
-            </h:selectOneRadio>
-        </s:decorate>
-
-
 
                 <s:decorate id="invoideNumberField"
                             template="/include/inputField.xhtml"
@@ -253,12 +228,6 @@
                      rendered="#{!productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE') }"
                      tabindex="4"
                      id="buttonDelivery"/>
-    <h:commandButton action="#{productDeliveryReceiptReportAction.generateReport(productDelivery)}"
-                     value="#{messages['ProductDelivery.button.generateDocument']}"
-                     rendered="#{productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','VIEW')}"
-                     styleClass="button"
-                     immediate="true"
-                     tabindex="5"/>
     <h:commandButton action="#{productDeliveryAction.cancel}"
                      value="#{messages['Common.cancel']}"
                      styleClass="button"

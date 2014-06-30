@@ -661,6 +661,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 .setParameter("invoiceNumber", invoiceNumber)
                 .setParameter("companyNumber", warehouse.getId().getCompanyNumber())
                 .setParameter("codCutCheese",Constants.COD_CUT_CHEESE)
+                .setParameter("codCheeseEDAM",Constants.COD_CHEESE_EDAM)
                 .getResultList();
 
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
