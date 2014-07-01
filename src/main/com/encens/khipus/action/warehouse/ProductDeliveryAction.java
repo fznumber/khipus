@@ -77,9 +77,72 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         if(!showDeliveryOrder)
         return deliveryInCatch();
         else
+        if(date!=null)
         return deliveryOrder();
+        else
+        return deliveryOrderWhitoutDate();
 
     }
+
+    private String deliveryOrderWhitoutDate() {
+        if (ValidatorUtil.isBlankOrNull(getInstance().getInvoiceNumber())) {
+            addInvoiceNumberRequiredMessage();
+            return Outcome.REDISPLAY;
+        }
+        try {
+            ProductDelivery productDelivery = productDeliveryService.createAll(getInstance().getInvoiceNumber(),
+                    MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", getInstance().getInvoiceNumber()));
+            addSoldProductDeliveredInfoMessage();
+            select(productDelivery);
+            return Outcome.SUCCESS;
+        } catch (SoldProductNotFoundException e) {
+            addSoldProductNotFoundMessages();
+            return Outcome.FAIL;
+        } catch (InventoryException e) {
+            addInventoryErrorMessages(e.getInventoryMessages());
+            return Outcome.FAIL;
+        } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
+            return Outcome.FAIL;
+        } catch (WarehouseDocumentTypeNotFoundException e) {
+            addWarehouseDocumentTypeErrorMessage();
+            return Outcome.FAIL;
+        } catch (ProductItemAmountException e) {
+            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            return Outcome.FAIL;
+        } catch (InventoryUnitaryBalanceException e) {
+            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            return Outcome.FAIL;
+        } catch (InventoryProductItemNotFoundException e) {
+            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                    e.getProductItem(), e.getWarehouse());
+            return Outcome.FAIL;
+        } catch (SoldProductDeliveredException e) {
+            addSoldProductDeliveredErrorMessage();
+            return Outcome.FAIL;
+        } catch (CompanyConfigurationNotFoundException e) {
+            addCompanyConfigurationNotFoundErrorMessage();
+            return Outcome.FAIL;
+        } catch (FinancesExchangeRateNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.FAIL;
+        } catch (FinancesCurrencyNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.FAIL;
+        } catch (ConcurrencyException e) {
+            addUpdateConcurrencyMessage();
+            return Outcome.FAIL;
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.FAIL;
+        } catch (ReferentialIntegrityException e) {
+            addDeleteReferentialIntegrityMessage();
+            return Outcome.FAIL;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return Outcome.FAIL;
+        }
+    }
+
 
     private String deliveryOrder() {
         if(productDeliveryService.verifyAmounts(numberInvoices))
