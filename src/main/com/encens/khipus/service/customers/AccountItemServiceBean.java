@@ -40,6 +40,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                 datas = em.createNativeQuery("select \n" +
                         "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
                         ",ped.pedido\n" +
+                        ",ped.estado_pedido\n" +
                         "from USER01_DAF.per_insts pi\n" +
                         "inner join USER01_DAF.pedidos ped\n" +
                         "on pi.id = ped.id\n" +
@@ -52,6 +53,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         "select \n" +
                         "nvl(it.razon_soc,' ') \n" +
                         ",ped.pedido\n" +
+                        ",ped.estado_pedido\n" +
                         "from USER01_DAF.per_insts pi\n" +
                         "inner join USER01_DAF.pedidos ped\n" +
                         "on pi.id = ped.id\n" +
@@ -69,6 +71,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                 datas = em.createNativeQuery("select \n" +
                         "nvl(pe.ap,' ')||' '||nvl(pe.am,' ')||' '||nvl(pe.nom,' ')\n" +
                         ",ped.pedido\n" +
+                        ",ped.estado_pedido\n" +
                         "from USER01_DAF.per_insts pi\n" +
                         "inner join USER01_DAF.pedidos ped\n" +
                         "on pi.id = ped.id\n" +
@@ -81,6 +84,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                         "select \n" +
                         "nvl(it.razon_soc,' ') \n" +
                         ",ped.pedido\n" +
+                        ",ped.estado_pedido\n" +
                         "from USER01_DAF.per_insts pi\n" +
                         "inner join USER01_DAF.pedidos ped\n" +
                         "on pi.id = ped.id\n" +
@@ -100,6 +104,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                 OrderClient client = new OrderClient();
                 client.setName((String)obj[1]+"-"+(String)obj[0]);
                 client.setIdOrder((String)obj[1]);
+                client.setState((String)obj[2]);
                 clientOrders.add(client);
             }
 
@@ -449,7 +454,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         try{
             distributors = em.createNativeQuery("select distinct distribuidor from USER01_DAF.pedidos where distribuidor is not null \n" +
                                                 " and fecha_entrega = :dateOrder")
-                           .setParameter("dateOrder",dateOrder)
+                           .setParameter("dateOrder",dateOrder,TemporalType.DATE)
                            .getResultList();
 
         }catch(NoResultException e)
@@ -538,73 +543,6 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             return new ArrayList<OrderItem>();
         }
         return orderItems;
-    }
-
-    public class OrderItem
-    {
-        private String nameItem;
-        private String CodArt;
-        private BigDecimal IdAccount;
-        private String NoCia;
-        private int posX;
-        private int posY;
-        private String type;
-
-        public String getNoCia() {
-            return NoCia;
-        }
-
-        public void setNoCia(String noCia) {
-            NoCia = noCia;
-        }
-
-        public String getNameItem() {
-            return nameItem;
-        }
-
-        public void setNameItem(String nameItem) {
-            this.nameItem = nameItem;
-        }
-
-        public String getCodArt() {
-            return CodArt;
-        }
-
-        public void setCodArt(String codArt) {
-            CodArt = codArt;
-        }
-
-        public BigDecimal getIdAccount() {
-            return IdAccount;
-        }
-
-        public void setIdAccount(BigDecimal idAccount) {
-            IdAccount = idAccount;
-        }
-
-        public int getPosX() {
-            return posX;
-        }
-
-        public void setPosX(int posX) {
-            this.posX = posX;
-        }
-
-        public int getPosY() {
-            return posY;
-        }
-
-        public void setPosY(int posY) {
-            this.posY = posY;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
     }
 
 }

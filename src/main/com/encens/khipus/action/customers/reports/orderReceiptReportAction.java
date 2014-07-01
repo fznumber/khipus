@@ -4,10 +4,7 @@ import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.model.customers.ClientOrderEstate;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.reports.GenerationReportData;
-import com.encens.khipus.service.customers.AccountItemService;
-import com.encens.khipus.service.customers.AccountItemServiceBean;
-import com.encens.khipus.service.customers.ClientOrderService;
-import com.encens.khipus.service.customers.OrderClient;
+import com.encens.khipus.service.customers.*;
 import com.encens.khipus.util.MessageUtils;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
@@ -52,7 +49,7 @@ public class OrderReceiptReportAction extends GenericReportAction {
     private ClientOrderService clientOrderService;
 
     private List<OrderClient> orderClients = new ArrayList<OrderClient>();
-    private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
+    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
     private List<Integer> totals = new ArrayList<Integer>();
     private int amountY,amountX,amountH,amountW;
@@ -176,21 +173,34 @@ public class OrderReceiptReportAction extends GenericReportAction {
         Integer total = 0;
         int cont = 0;
 
-        for(AccountItemServiceBean.OrderItem item : orderItems)
+        for(OrderItem item : orderItems)
         {
 
             for(OrderClient client:orderClients)
             {
                 client.setPosX(amountY);
                 client.setPosY(temp.getY());
-                if(item.getType() == "COMBO" )
-                    val = accountItemService.getAmountCombo(item.getCodArt(),client.getIdOrder());
-                else
-                    val = accountItemService.getAmount(item.getCodArt(),client.getIdOrder());
+                if(item.getType() == "ESTADO")
+                {
+                    String aux;
+                    if(client.getState().equals("PEN"))
+                         aux = "NO";
+                    else
+                         aux = "SI";
 
-                JRTemplatePrintText printText = createCellY(temp,val.toString(), amountY);
-                printText.setX(amountX);
-                printTextList.add(printText);
+                    JRTemplatePrintText printText = createCellY(temp, aux, amountY);
+                    printText.setX(amountX);
+                    printTextList.add(printText);
+                }else {
+                    if (item.getType() == "COMBO")
+                        val = accountItemService.getAmountCombo(item.getCodArt(), client.getIdOrder());
+                    else
+                        val = accountItemService.getAmount(item.getCodArt(), client.getIdOrder());
+
+                    JRTemplatePrintText printText = createCellY(temp, val.toString(), amountY);
+                    printText.setX(amountX);
+                    printTextList.add(printText);
+                }
                 amountY = amountY+amountH;
                 total += val;
             }
@@ -240,7 +250,9 @@ public class OrderReceiptReportAction extends GenericReportAction {
         List<JRTemplatePrintText> printTextList = new ArrayList<JRTemplatePrintText>();
         int x = temp.getX();
         int w = temp.getWidth();
-        for(AccountItemServiceBean.OrderItem orderItem:orderItems)
+        printTextList.add(createCellX(temp,"ENTREGADO", x));
+        orderItems.add(0,new OrderItem("ESTADO"));
+        for(OrderItem orderItem:orderItems)
         {
             orderItem.setPosX(x);
             orderItem.setPosY(temp.getY());

@@ -139,16 +139,24 @@
                     <rich:column rendered="#{productDeliveryAction.orderClients.size() > 0}">
                         #{messages['ProductoDelivery.message.client']}
                     </rich:column>
+                    <rich:column rendered="#{productDeliveryAction.orderClients.size() > 0}">
+                        #{messages['ProductoDelivery.messagestateOrder']}
+                    </rich:column>
                     <c:forEach var="productSold" items="#{productDeliveryAction.orderItems}" varStatus="row">
                         <rich:column>
                             #{productSold.nameItem}
                         </rich:column>
                     </c:forEach>
-
                 </rich:columnGroup>
             </f:facet>
             <rich:column styleClass="#{client.type.equals('DISTRIBUTOR')?'labelInfo':''}">
                 <h:outputText value="#{client.name}"/>
+            </rich:column>
+            <rich:column rendered="#{!client.type.equals('DISTRIBUTOR')}">
+                <h:outputText value="#{client.state.equals('PEN')?'NO':'SI'}"/>
+            </rich:column>
+            <rich:column rendered="#{client.type.equals('DISTRIBUTOR')}">
+                <h:outputText value="-"/>
             </rich:column>
             <c:forEach var="orderItem" items="#{productDeliveryAction.orderItems}" varStatus="row">
                 <rich:column styleClass="#{client.type.equals('DISTRIBUTOR')?'labelInfo':''}">
@@ -159,6 +167,9 @@
                 <rich:columnGroup>
                     <rich:column rendered="#{productDeliveryAction.distributor == null and productDeliveryAction.orderClients.size() > 0}">
                         <h:outputText value="#{messages['ProductoDelivery.message.total']}"/>
+                    </rich:column>
+                    <rich:column rendered="#{productDeliveryAction.distributor == null and productDeliveryAction.orderClients.size() > 0}">
+                        <h:outputText value="-"/>
                     </rich:column>
                     <c:forEach var="productSold" items="#{productDeliveryAction.orderItems}" varStatus="row">
                         <rich:column rendered="#{productDeliveryAction.distributor == null}">

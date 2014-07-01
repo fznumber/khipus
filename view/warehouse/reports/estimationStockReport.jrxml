@@ -33,25 +33,7 @@
 		<groupHeader>
 			<band height="34" splitType="Stretch">
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="detailStyle" mode="Opaque" x="0" y="1" width="60" height="12"/>
-					<box padding="1">
-						<pen lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Left"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$R{ValuedWarehouseResidueReport.report.warehouse}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="detailStyle" mode="Opaque" x="60" y="1" width="309" height="12"/>
-					<box padding="1">
-						<pen lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0"/>
-					</box>
-					<textElement textAlignment="Left"/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{warehouse.name}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="16" width="190" height="18"/>
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="16" width="200" height="18"/>
 					<box padding="1">
 						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
@@ -61,7 +43,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{Reports.warehouse.EstimationStockReport.nameArticle}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="190" y="16" width="60" height="18"/>
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="16" width="50" height="18"/>
 					<box padding="1">
 						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
@@ -131,7 +113,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$R{Reports.warehouse.EstimationStockReport.totalBalanceLessTotalOrder}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-					<reportElement style="detailStyle" mode="Opaque" x="369" y="1" width="166" height="12"/>
+					<reportElement style="detailStyle" mode="Opaque" x="0" y="4" width="166" height="12"/>
 					<box padding="1">
 						<pen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="1.0"/>
@@ -140,7 +122,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA["Hasta la fecha de entrega:"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="false">
-					<reportElement style="detailStyle" mode="Opaque" x="535" y="1" width="111" height="12"/>
+					<reportElement style="detailStyle" mode="Opaque" x="166" y="4" width="111" height="12"/>
 					<box padding="1">
 						<pen lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="1.0"/>
@@ -162,16 +144,9 @@
 		</groupHeader>
 	</group>
 	<title>
-		<band height="70" splitType="Stretch">
-			<image scaleImage="RetainShape" onErrorType="Icon">
-				<reportElement key="COMPANY_LOGO_ELEMENT" x="0" y="0" width="72" height="58" isRemoveLineWhenBlank="true"/>
-				<box padding="1">
-					<pen lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/img/logoIlva.png")]]></imageExpression>
-			</image>
+		<band height="40" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="date_text" style="titleStyle" positionType="Float" x="72" y="0" width="672" height="58"/>
+				<reportElement key="date_text" style="titleStyle" positionType="Float" x="29" y="1" width="672" height="39"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</box>
@@ -189,75 +164,93 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="190" height="12"/>
+				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="200" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left"/>
+				<textElement textAlignment="Left">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{inventory.articleCode}+"-"+$F{productItem.name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="190" y="0" width="60" height="12"/>
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="0" width="50" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{inventory.unitaryBalance}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="250" y="0" width="70" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalOrders}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="320" y="0" width="59" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPlanned}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="379" y="0" width="65" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalProduced}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="587" y="0" width="77" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPoducedPlusBalanceLessTotalOrder}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="664" y="0" width="77" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalPlannedPlusBalanceLessTotalOrder}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="514" y="0" width="73" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalBalanceLessTotalOrder}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="444" y="0" width="70" height="12"/>
 				<box padding="1">
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totalProducedAmountPlusBalance}]]></textFieldExpression>
 			</textField>
 		</band>

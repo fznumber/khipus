@@ -12,8 +12,8 @@ import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.customers.AccountItemService;
-import com.encens.khipus.service.customers.AccountItemServiceBean;
 import com.encens.khipus.service.customers.OrderClient;
+import com.encens.khipus.service.customers.OrderItem;
 import com.encens.khipus.service.warehouse.ProductDeliveryService;
 import com.encens.khipus.service.warehouse.SoldProductService;
 import com.encens.khipus.util.Constants;
@@ -57,7 +57,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private Boolean showDeliveryOrder = true;
     private Date date;
     private List<OrderClient> orderClients = new ArrayList<OrderClient>();
-    private List<AccountItemServiceBean.OrderItem> orderItems = new ArrayList<AccountItemServiceBean.OrderItem>();
+    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
     private List<String> numberInvoices = new ArrayList<String>();
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
     private String product;
@@ -213,49 +213,34 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 //update();
             } catch (SoldProductNotFoundException e) {
                 addSoldProductNotFoundMessages();
-                continue;
             } catch (InventoryException e) {
                 addInventoryErrorMessages(e.getInventoryMessages());
-                continue;
             } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
-                continue;
             } catch (WarehouseDocumentTypeNotFoundException e) {
                 addWarehouseDocumentTypeErrorMessage();
-                continue;
             } catch (ProductItemAmountException e) {
                 addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-                continue;
             } catch (InventoryUnitaryBalanceException e) {
                 addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-                continue;
             } catch (InventoryProductItemNotFoundException e) {
                 addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
                         e.getProductItem(), e.getWarehouse());
-                continue;
             } catch (SoldProductDeliveredException e) {
                 addSoldProductDeliveredErrorMessage();
-                continue;
             } catch (CompanyConfigurationNotFoundException e) {
                 addCompanyConfigurationNotFoundErrorMessage();
-                continue;
             } catch (FinancesExchangeRateNotFoundException e) {
                 addFinancesExchangeRateNotFoundExceptionMessage();
-                continue;
             } catch (FinancesCurrencyNotFoundException e) {
                 addFinancesExchangeRateNotFoundExceptionMessage();
-                continue;
             } catch (ConcurrencyException e) {
                 addUpdateConcurrencyMessage();
-                continue;
             } catch (EntryDuplicatedException e) {
                 addDuplicatedMessage();
-                continue;
             } catch (ReferentialIntegrityException e) {
                 addDeleteReferentialIntegrityMessage();
-                continue;
             } catch (ProductItemNotFoundException e) {
                 addProductItemNotFoundMessage(e.getProductItem().getFullName());
-                continue;
             }
         }
     }
@@ -274,7 +259,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         if (productDeliveryType.equals(ProductDeliveryType.CASH_SALE))
             searchCashSale();
         if (productDeliveryType.equals(ProductDeliveryType.CASH_ORDER))
-            searchCashOrder();
+            if(date != null)
+                searchCashOrder();
+            else
+                searchCashOrderWithoutDate();
 
 
     }
@@ -293,6 +281,23 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 assignNumberCashSale(soldProductList.get(0));
             } else
                 assignNumberCashSale(soldProductList.get(0));
+        }
+    }
+
+    private void searchCashOrderWithoutDate() {
+
+        List<SoldProduct> soldProductList = soldProductService.getSoldProductsCashOrder(orderNumber, Constants.defaultCompanyNumber);
+        if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+            getInstance().setInvoiceNumber(null);
+            soldProducts.clear();
+        } else {
+            setMessageSearchOrder(null);
+            if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
+                setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
+                assignNumberCashOrder(soldProductList.get(0));
+            } else
+                assignNumberCashOrder(soldProductList.get(0));
         }
     }
 
@@ -324,6 +329,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
         orderItems = accountItemService.findOrderItemByState(date);
         orderItems.addAll(accountItemService.findOrderItemPackByState(date));
+        /*OrderItem item = new OrderItem("ESTADO");
+        orderItems.add(0,item);*/
         if(distributor != null)
             numberInvoices = soldProductService.getSoldProductsCashOrder(date,new BigDecimal(distributor.getId()));
         else
@@ -557,15 +564,15 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         this.orderClients = orderClients;
     }
 
-    public List<AccountItemServiceBean.OrderItem> getOrderItems() {
+    public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<AccountItemServiceBean.OrderItem> orderItems) {
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
-    public Integer getAmountSoldProduct(OrderClient client,AccountItemServiceBean.OrderItem item){
+    public Integer getAmountSoldProduct(OrderClient client,OrderItem item){
         Integer val;
         if(item.getType() == "COMBO" )
             if(client.getType() != null) {
@@ -584,7 +591,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return val;
     }
 
-    public Integer getAmountSoldProductTotal(AccountItemServiceBean.OrderItem item){
+    public Integer getAmountSoldProductTotal(OrderItem item){
+        if(item.getType()=="ESTADO")
+            return 0;
         Integer val;
 
             val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),date);

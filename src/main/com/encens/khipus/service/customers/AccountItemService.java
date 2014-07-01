@@ -20,7 +20,7 @@ public interface AccountItemService extends GenericService {
 
     public List<OrderClient> findClientsOrder(Date date,BigDecimal distribuidor,String stateOrder);
 
-    public List<AccountItemServiceBean.OrderItem> findOrderItem(Date dateOrder,String stateOrder);
+    public List<OrderItem> findOrderItem(Date dateOrder,String stateOrder);
 
     public Integer getAmount(String codArt,String codPedido);
 
@@ -28,15 +28,15 @@ public interface AccountItemService extends GenericService {
 
     public String getNameEmployeed(BigDecimal codEmployeed);
 
-    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPack(Date dateOrder, String stateOrder);
+    public Collection<OrderItem> findOrderItemPack(Date dateOrder, String stateOrder);
 
-    public Collection<AccountItemServiceBean.OrderItem> findOrderItemPackByState(Date dateOrder);
+    public Collection<OrderItem> findOrderItemPackByState(Date dateOrder);
 
     public Integer getAmountCombo(String codArt, String idOrder);
 
     public List<OrderClient> findClientsOrder(BigDecimal distribuidor,Date date);
 
-    public List<AccountItemServiceBean.OrderItem> findOrderItemByState(Date dateOrder);
+    public List<OrderItem> findOrderItemByState(Date dateOrder);
 
     public Integer getAmountByDateAndDistributorInstitution(String codArt,BigDecimal idDistribution,Date dateOrder);
 
