@@ -159,6 +159,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 }
             }
 
+            //para que cambio todos los estados iuncluido el queso recorte y edam
+            soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+
             for (SoldProduct soldProduct : soldProducts) {
                 soldProduct.setProductDelivery(productDelivery);
                 soldProduct.setState(SoldProductState.DELIVERED);
@@ -277,6 +280,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 e.printStackTrace();
             }
         }
+        //para que cambio todos los estados iuncluido el queso recorte y edam
+        soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
 
         for (SoldProduct soldProduct : soldProducts) {
             soldProduct.setProductDelivery(productDelivery);
@@ -546,6 +551,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         create(productDelivery);
 
+        //para que cambio todos los estados iuncluido el queso recorte y edam
+        soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
 
         for (SoldProduct soldProduct : soldProducts) {
             soldProduct.setProductDelivery(productDelivery);
