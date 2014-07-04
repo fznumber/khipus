@@ -97,49 +97,49 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             return Outcome.SUCCESS;
         } catch (SoldProductNotFoundException e) {
             addSoldProductNotFoundMessages();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (WarehouseDocumentTypeNotFoundException e) {
             addWarehouseDocumentTypeErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ProductItemAmountException e) {
             addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryUnitaryBalanceException e) {
             addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryProductItemNotFoundException e) {
             addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
                     e.getProductItem(), e.getWarehouse());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (SoldProductDeliveredException e) {
             addSoldProductDeliveredErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (CompanyConfigurationNotFoundException e) {
             addCompanyConfigurationNotFoundErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (FinancesExchangeRateNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (FinancesCurrencyNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ConcurrencyException e) {
             addUpdateConcurrencyMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ReferentialIntegrityException e) {
             addDeleteReferentialIntegrityMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         }
     }
 
@@ -211,49 +211,49 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             return Outcome.SUCCESS;
         } catch (SoldProductNotFoundException e) {
             addSoldProductNotFoundMessages();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryException e) {
             addInventoryErrorMessages(e.getInventoryMessages());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (WarehouseDocumentTypeNotFoundException e) {
             addWarehouseDocumentTypeErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ProductItemAmountException e) {
             addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryUnitaryBalanceException e) {
             addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (InventoryProductItemNotFoundException e) {
             addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
                     e.getProductItem(), e.getWarehouse());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (SoldProductDeliveredException e) {
             addSoldProductDeliveredErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (CompanyConfigurationNotFoundException e) {
             addCompanyConfigurationNotFoundErrorMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (FinancesExchangeRateNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (FinancesCurrencyNotFoundException e) {
             addFinancesExchangeRateNotFoundExceptionMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ConcurrencyException e) {
             addUpdateConcurrencyMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (EntryDuplicatedException e) {
             addDuplicatedMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ReferentialIntegrityException e) {
             addDeleteReferentialIntegrityMessage();
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
-            return Outcome.FAIL;
+            return Outcome.REDISPLAY;
         }
     }
 
