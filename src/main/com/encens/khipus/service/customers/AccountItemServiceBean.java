@@ -210,6 +210,34 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         return result.intValue();
     }
 
+    public Integer getAmountByDateAndDistributorOrderDelivery(String codArt,BigDecimal idDistribution,Date dateOrder){
+        BigDecimal result = BigDecimal.ZERO;;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(ap.cantidad),0)+nvl(sum(ap.reposicion),0)+nvl(sum(ap.promocion),0)\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.personas pe\n" +
+                    "on pi.id = pe.pi_id\n" +
+                    "inner join USER01_DAF.articulos_pedido ap\n" +
+                    "on ap.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega =:dateOrder\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
+                    "and ped.distribuidor =:idDistribution\n" +
+                    "AND ap.cod_art =:codArt")
+                    .setParameter("idDistribution", idDistribution)
+                    .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                    .setParameter("codArt", codArt)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
     public Integer getAmountByDateAndDistributorInstitution(String codArt,BigDecimal idDistribution,Date dateOrder){
         BigDecimal result = BigDecimal.ZERO;;
         try{
@@ -224,6 +252,34 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                     "on ap.pedido = ped.pedido\n" +
                     "where ped.fecha_entrega =:dateOrder\n" +
                     "and ped.estado_pedido <> 'ANL'\n" +
+                    "and ped.distribuidor =:idDistribution\n" +
+                    "AND ap.cod_art = :codArt")
+                    .setParameter("idDistribution", idDistribution)
+                    .setParameter("dateOrder",dateOrder,TemporalType.DATE)
+                    .setParameter("codArt", codArt)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
+    public Integer getAmountByDateAndDistributorInstitutionDelivery(String codArt,BigDecimal idDistribution,Date dateOrder){
+        BigDecimal result = BigDecimal.ZERO;;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(ap.cantidad),0)+nvl(sum(ap.reposicion),0)+nvl(sum(ap.promocion),0)\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.instituciones it\n" +
+                    "on pi.id = it.pi_id\n" +
+                    "inner join USER01_DAF.articulos_pedido ap\n" +
+                    "on ap.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega =:dateOrder\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
                     "and ped.distribuidor =:idDistribution\n" +
                     "AND ap.cod_art = :codArt")
                     .setParameter("idDistribution", idDistribution)
@@ -264,6 +320,32 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         return result.intValue();
     }
 
+    public Integer getAmountByDateAndDistributorOrderDelivery(String codArt ,Date dateOrder){
+        BigDecimal result = BigDecimal.ZERO;;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(ap.cantidad),0)+nvl(sum(ap.reposicion),0)+nvl(sum(ap.promocion),0)\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.personas pe\n" +
+                    "on pi.id = pe.pi_id\n" +
+                    "inner join USER01_DAF.articulos_pedido ap\n" +
+                    "on ap.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega =:dateOrder\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
+                    "AND ap.cod_art = :codArt")
+                    .setParameter("dateOrder", dateOrder, TemporalType.DATE)
+                    .setParameter("codArt", codArt)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
     public Integer getAmountByDateAndDistributorInstitution(String codArt,Date dateOrder){
         BigDecimal result = BigDecimal.ZERO;
         try{
@@ -278,6 +360,32 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                     "on ap.pedido = ped.pedido\n" +
                     "where ped.fecha_entrega =:dateOrder\n" +
                     "and ped.estado_pedido <> 'ANL'\n" +
+                    "AND ap.cod_art = :codArt")
+                    .setParameter("dateOrder", dateOrder, TemporalType.DATE)
+                    .setParameter("codArt", codArt)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
+    public Integer getAmountByDateAndDistributorInstitutionDelivery(String codArt,Date dateOrder){
+        BigDecimal result = BigDecimal.ZERO;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(ap.cantidad),0)+nvl(sum(ap.reposicion),0)+nvl(sum(ap.promocion),0)\n" +
+                    "from USER01_DAF.per_insts pi\n" +
+                    "inner join USER01_DAF.pedidos ped\n" +
+                    "on pi.id = ped.id\n" +
+                    "inner join USER01_DAF.instituciones it\n" +
+                    "on pi.id = it.pi_id\n" +
+                    "inner join USER01_DAF.articulos_pedido ap\n" +
+                    "on ap.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega =:dateOrder\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
                     "AND ap.cod_art = :codArt")
                     .setParameter("dateOrder", dateOrder, TemporalType.DATE)
                     .setParameter("codArt", codArt)
@@ -425,6 +533,30 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         return result.intValue();
     }
 
+    public Integer getAmountComboTotalAndDistributor(String codPaquete,BigDecimal distribuidor, Date date) {
+        BigDecimal result = BigDecimal.ZERO;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(paq.cantidad),0)+nvl(sum(paq.REPOSICION),0)\n" +
+                    "from USER01_DAF.pedidos ped\n" +
+                    "inner join USER01_DAF.paquete_pedidos paq\n" +
+                    "on paq.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega = :date\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
+                    "and ped.distribuidor = :distribuidor\n" +
+                    "and paq.paquete = :codPaquete\n")
+                    .setParameter("date",date,TemporalType.DATE)
+                    .setParameter("codPaquete",codPaquete)
+                    .setParameter("distribuidor",distribuidor)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
     public Integer getAmountComboTotal(String codPaquete, Date date) {
         BigDecimal result = BigDecimal.ZERO;
         try{
@@ -435,6 +567,28 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
                     "on paq.pedido = ped.pedido\n" +
                     "where ped.fecha_entrega = :date\n" +
                     "and ped.estado_pedido <> 'ANL'\n" +
+                    "and paq.paquete = :codPaquete\n")
+                    .setParameter("date",date,TemporalType.DATE)
+                    .setParameter("codPaquete",codPaquete)
+                    .getSingleResult();
+
+        }catch (NoResultException e)
+        {
+            return 0;
+        }
+        return result.intValue();
+    }
+
+    public Integer getAmountComboTotalDelivery(String codPaquete, Date date) {
+        BigDecimal result = BigDecimal.ZERO;
+        try{
+            result = (BigDecimal)em.createNativeQuery("select \n" +
+                    "nvl(sum(paq.cantidad),0)+nvl(sum(paq.REPOSICION),0)\n" +
+                    "from USER01_DAF.pedidos ped\n" +
+                    "inner join USER01_DAF.paquete_pedidos paq\n" +
+                    "on paq.pedido = ped.pedido\n" +
+                    "where ped.fecha_entrega = :date\n" +
+                    "and ped.estado_pedido = 'PEN'\n" +
                     "and paq.paquete = :codPaquete\n")
                     .setParameter("date",date,TemporalType.DATE)
                     .setParameter("codPaquete",codPaquete)

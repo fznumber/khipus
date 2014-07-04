@@ -13,6 +13,8 @@ import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.CostCenterPk;
 import com.encens.khipus.model.products.Product;
 import com.encens.khipus.model.warehouse.*;
+import com.encens.khipus.service.customers.AccountItemService;
+import com.encens.khipus.service.customers.OrderItem;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
@@ -57,6 +59,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     @In
     protected FacesMessages facesMessages;
 
+    @In
+    private AccountItemService accountItemService;
+
     @In(value = "monthProcessService")
     private MonthProcessService monthProcessService;
 
@@ -84,9 +89,21 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 .executeUpdate();
     }
     @SuppressWarnings(value = "unchecked")
-    public void deliveryAll(List<String> numberInvoices) throws InventoryException, ProductItemNotFoundException, ProductItemAmountException, CompanyConfigurationNotFoundException, FinancesExchangeRateNotFoundException, FinancesCurrencyNotFoundException, InventoryProductItemNotFoundException, ReferentialIntegrityException, ConcurrencyException, InventoryUnitaryBalanceException, EntryDuplicatedException {
+    public void deliveryAll(List<String> numberInvoices) throws
+            InventoryException,
+            ProductItemNotFoundException,
+            ProductItemAmountException,
+            CompanyConfigurationNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            FinancesCurrencyNotFoundException,
+            InventoryProductItemNotFoundException,
+            ReferentialIntegrityException,
+            ConcurrencyException,
+            InventoryUnitaryBalanceException,
+            EntryDuplicatedException {
         for(String invoiceNumber:numberInvoices)
         {
+
             String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", invoiceNumber);
             List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
             int pos = changeEdamToPressed(soldProducts);
@@ -275,26 +292,88 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         return productDelivery;
     }
 
-    public Boolean verifyAmounts(List<String> numberInvoices){
+    public Integer getAmountSoldProductTotal(OrderItem item,Date date,Employee distribuidor){
+        if(item.getType()=="ESTADO")
+            return 0;
+        Integer val;
+        if(distribuidor != null)
+        {
+            val = accountItemService.getAmountByDateAndDistributorOrderDelivery(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
+            val += accountItemService.getAmountByDateAndDistributorInstitutionDelivery(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
+            val += accountItemService.getAmountComboTotalAndDistributor(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
+        }
+        else {
+            val = accountItemService.getAmountByDateAndDistributorOrderDelivery(item.getCodArt(), date);
+            val += accountItemService.getAmountByDateAndDistributorInstitutionDelivery(item.getCodArt(), date);
+            val += accountItemService.getAmountComboTotalDelivery(item.getCodArt(), date);
+        }
+        return val;
+    }
+
+    public Boolean verifyAmounts(List<String> numberInvoices,List<OrderItem> orderItems,Date date,Employee distribuidor){
         Boolean result = false;
+        List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
+        BigDecimal totalCheeseEDAM = BigDecimal.ZERO;
+        Boolean band = false;
+        for(OrderItem item:orderItems) {
+            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheeseAndEDAM(numberInvoices.get(0), Constants.defaultCompanyNumber);
+            SoldProduct firstSoldProduct = soldProducts.get(0);
+            Warehouse warehouse = firstSoldProduct.getWarehouse();
+            CostCenter costCenter = findPublicCostCenter(warehouse);
+            if(item.getCodArt().equals(Constants.COD_CHEESE_EDAM))
+            {
+                item.setCodArt(Constants.COD_CHEESE_PRESSED);
+                band = true;
+            }
+
+                try {
+                    Integer aux = getAmountSoldProductTotal(item, date, distribuidor);
+                    if(item.getCodArt().equals(Constants.COD_CHEESE_PRESSED))
+                    {
+                        totalCheeseEDAM = totalCheeseEDAM.add(new BigDecimal(aux));
+                        aux = totalCheeseEDAM.intValue();
+                    }
+                    approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(aux),
+                            warehouse,
+                            productItemService.findProductItemByCode(item.getCodArt()),
+                            costCenter);
+                } catch (InventoryException e) {
+                    errorMessages.addAll(e.getInventoryMessages());
+                }
+
+            if(band)
+            {
+                item.setCodArt(Constants.COD_CHEESE_EDAM);
+                band = false;
+            }
+
+        }
+        if(errorMessages.size()>0) {
+            addInventoryErrorMessages(errorMessages);
+            return true;
+        }
+
         for(String invoiceNumber :numberInvoices) {
             try {
                 soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
             } catch (SoldProductDeliveredException e) {
                 addSoldProductDeliveredErrorMessage(invoiceNumber);
-                result = true;
+                return true;
             }
-            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
+            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheeseAndEDAM(invoiceNumber, Constants.defaultCompanyNumber);
+            changeEdamToPressed(soldProducts);
             WarehouseDocumentType documentType = getFirstConsumptionType();
             SoldProduct firstSoldProduct = soldProducts.get(0);
 
             Warehouse warehouse = firstSoldProduct.getWarehouse();
             CostCenter costCenter = findPublicCostCenter(warehouse);
-            try {
-                productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
+
+           /* try {
+                productItemStockCheckerWithoutCutCheeseAndEDAM(invoiceNumber, warehouse, costCenter);
             } catch (InventoryException e) {
                 addInventoryErrorMessages(e.getInventoryMessages());
-            }
+                return true;
+            }*/
 
             if (soldProducts.size() == 0) {
                 addSoldProductNotFoundMessages(invoiceNumber);
@@ -661,7 +740,41 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 .setParameter("invoiceNumber", invoiceNumber)
                 .setParameter("companyNumber", warehouse.getId().getCompanyNumber())
                 .setParameter("codCutCheese",Constants.COD_CUT_CHEESE)
-                .setParameter("codCheeseEDAM",Constants.COD_CHEESE_EDAM)
+                .getResultList();
+
+        List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
+        for (ProductItem productItem : productItems) {
+            BigDecimal total = (BigDecimal) getEntityManager()
+                    .createNamedQuery("SoldProduct.sunQuantitiesByProductItem")
+                    .setParameter("invoiceNumber", invoiceNumber)
+                    .setParameter("productItem", productItem)
+                    .setParameter("companyNumber", warehouse.getId().getCompanyNumber()).getSingleResult();
+
+            try {
+                approvalWarehouseVoucherService.validateOutputQuantity(total,
+                        warehouse,
+                        productItem,
+                        costCenter);
+            } catch (InventoryException e) {
+                errorMessages.addAll(e.getInventoryMessages());
+            }
+        }
+
+        if (!errorMessages.isEmpty()) {
+            throw new InventoryException(errorMessages);
+        }
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    private void productItemStockCheckerWithoutCutCheeseAndEDAM(String invoiceNumber,
+                                                         Warehouse warehouse,
+                                                         CostCenter costCenter) throws InventoryException {
+        List<ProductItem> productItems = getEntityManager()
+                .createNamedQuery("SoldProduct.findByProductItemWithouCutCheeseAndEDAM")
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", warehouse.getId().getCompanyNumber())
+                .setParameter("codCutCheese",Constants.COD_CUT_CHEESE)
+                .setParameter("codEDAMCheese",Constants.COD_CHEESE_EDAM)
                 .getResultList();
 
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();

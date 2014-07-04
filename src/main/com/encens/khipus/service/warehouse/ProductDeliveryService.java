@@ -8,9 +8,13 @@ import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.ProductDelivery;
+import com.encens.khipus.service.customers.OrderItem;
 
 import javax.ejb.Local;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -57,7 +61,7 @@ public interface ProductDeliveryService extends GenericService {
 
     public void updateOrderEstate(String invoiceNumber);
 
-    public Boolean verifyAmounts(List<String> numberInvoices);
+    public Boolean verifyAmounts(List<String> numberInvoices,List<OrderItem> orderItems,Date date,Employee distribuitor);
 
     void deliveryAll(List<String> numberInvoices) throws InventoryException, ProductItemNotFoundException, ProductItemAmountException, CompanyConfigurationNotFoundException, FinancesExchangeRateNotFoundException, FinancesCurrencyNotFoundException, InventoryProductItemNotFoundException, ReferentialIntegrityException, ConcurrencyException, InventoryUnitaryBalanceException, EntryDuplicatedException;
 

@@ -28,4 +28,6 @@ public interface SoldProductService extends GenericService {
     public List<SoldProduct> getFindDelivery(String invoiceNumber, String companyNumber);
 
     Date getDateFromSoldProductOrder(SoldProduct soldProduct);
+
+    List<SoldProduct> getSoldProductsWithoutCutCheeseAndEDAM(String invoiceNumber, String defaultCompanyNumber);
 }

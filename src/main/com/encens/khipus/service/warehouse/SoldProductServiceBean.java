@@ -43,7 +43,6 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         List<SoldProduct> result = getEntityManager()
                 .createNamedQuery("SoldProduct.findByInvoiceNumberWithoutCutCheese")
                 .setParameter("codCutCheese", Constants.COD_CUT_CHEESE)
-                .setParameter("codCheeseEDAM", Constants.COD_CHEESE_EDAM)
                 .setParameter("invoiceNumber", invoiceNumber)
                 .setParameter("companyNumber", companyNumber)
                 .getResultList();
@@ -148,6 +147,22 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
                     .setParameter("idSoldProduct",soldProduct.getId())
                     .getSingleResult();
         }
+        return result;
+    }
+
+    @Override
+    public List<SoldProduct> getSoldProductsWithoutCutCheeseAndEDAM(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findByInvoiceNumberWithoutCutCheeseAndEDAM")
+                .setParameter("codCutCheese", Constants.COD_CUT_CHEESE)
+                .setParameter("codEDAMCheese", Constants.COD_CHEESE_EDAM)
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+
         return result;
     }
 

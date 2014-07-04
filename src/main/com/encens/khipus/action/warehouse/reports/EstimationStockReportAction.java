@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 @Name("estimationStockReportAction")
 @Scope(ScopeType.PAGE)
-@Restrict("#{s:hasPermission('ESTIMATIONSTOCKREPORT','VIEW')}")
+/*@Restrict("#{s:hasPermission('ESTIMATIONSTOCKREPORT','VIEW')}")*/
 public class EstimationStockReportAction extends GenericReportAction {
 
     private ProductItem productItem;

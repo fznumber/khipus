@@ -145,7 +145,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
 
     private String deliveryOrder() {
-        if(productDeliveryService.verifyAmounts(numberInvoices))
+        if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
           return Outcome.REDISPLAY;
         else
         {
@@ -399,9 +399,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         else
             numberInvoices = soldProductService.getSoldProductsCashOrder(date);
 
-        if(wasDelivery())
+        /*if(wasDelivery())
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDelivery"));
-        else
+        else*/
         if (ValidatorUtil.isEmptyOrNull(orderClients)) {
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDateNotFound"));
             getInstance().setInvoiceNumber(null);
