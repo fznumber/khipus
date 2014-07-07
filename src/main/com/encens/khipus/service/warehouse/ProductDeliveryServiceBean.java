@@ -325,16 +325,16 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             SoldProduct firstSoldProduct = soldProducts.get(0);
             Warehouse warehouse = firstSoldProduct.getWarehouse();
             CostCenter costCenter = findPublicCostCenter(warehouse);
-            if(item.getCodArt().equals(Constants.COD_CHEESE_EDAM))
-            {
-                item.setCodArt(Constants.COD_CHEESE_PRESSED);
-                band = true;
-            }
+
+            if(item.getType() !="COMBO") {
+                if (item.getCodArt().equals(Constants.COD_CHEESE_EDAM)) {
+                    item.setCodArt(Constants.COD_CHEESE_PRESSED);
+                    band = true;
+                }
 
                 try {
                     Integer aux = getAmountSoldProductTotal(item, date, distribuidor);
-                    if(item.getCodArt().equals(Constants.COD_CHEESE_PRESSED))
-                    {
+                    if (item.getCodArt().equals(Constants.COD_CHEESE_PRESSED)) {
                         totalCheeseEDAM = totalCheeseEDAM.add(new BigDecimal(aux));
                         aux = totalCheeseEDAM.intValue();
                     }
@@ -346,10 +346,24 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                     errorMessages.addAll(e.getInventoryMessages());
                 }
 
-            if(band)
-            {
-                item.setCodArt(Constants.COD_CHEESE_EDAM);
-                band = false;
+                if (band) {
+                    item.setCodArt(Constants.COD_CHEESE_EDAM);
+                    band = false;
+                }
+            }else{
+                Map<String,Integer> productsPackage = soldProductService.getSoldProductsPackage(item.getCodArt(),getAmountSoldProductTotal(item, date, distribuidor));
+                for(Map.Entry<String,Integer> entry:productsPackage.entrySet()) {
+                    try {
+
+                        approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(entry.getValue()),
+                                warehouse,
+                                productItemService.findProductItemByCode(entry.getKey()),
+                                costCenter);
+                    } catch (InventoryException e) {
+                        errorMessages.addAll(e.getInventoryMessages());
+                    }
+                }
+
             }
 
         }

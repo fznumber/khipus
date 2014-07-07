@@ -7,6 +7,7 @@ import javax.ejb.Local;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author
@@ -30,4 +31,6 @@ public interface SoldProductService extends GenericService {
     Date getDateFromSoldProductOrder(SoldProduct soldProduct);
 
     List<SoldProduct> getSoldProductsWithoutCutCheeseAndEDAM(String invoiceNumber, String defaultCompanyNumber);
+
+    Map<String,Integer> getSoldProductsPackage(String codArt, Integer amountSoldProductTotal);
 }

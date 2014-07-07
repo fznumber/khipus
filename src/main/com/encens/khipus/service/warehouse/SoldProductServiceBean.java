@@ -11,9 +11,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author
@@ -164,6 +162,21 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         }
 
         return result;
+    }
+
+    @Override
+    public Map<String, Integer> getSoldProductsPackage(String codArt, Integer amountSoldProductTotal) {
+        Map<String, Integer> products = new HashMap<String, Integer>();
+            List<Object[]> datas = getEntityManager().createNativeQuery("select cod_art,cantidad \n" +
+                    "from USER01_DAF.articulos_paquete\n" +
+                    "where paquete = :codPack")
+                    .setParameter("codPack",codArt)
+                    .getResultList();
+        for(Object[] obj:datas)
+        {
+            products.put((String)obj[0],(((BigDecimal)obj[1]).intValue()*amountSoldProductTotal));
+        }
+        return products;
     }
 
 }
