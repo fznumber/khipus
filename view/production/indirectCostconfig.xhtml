@@ -35,12 +35,6 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <h:commandButton action="#{indirectCostsConfigurationAction.createAndNew}"
-                         value="#{messages['Common.saveAndNew']}"
-                         styleClass="button"
-                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','CREATE')}">
-        </h:commandButton>
-
         <h:commandButton id="updateButtonIdUp"
                          action="#{indirectCostsConfigurationAction.update}"
                          value="#{messages['Common.save']}"
@@ -91,7 +85,7 @@
                          required="true"
                          styleClass="input"
                          readonly="true"
-                         value="#{indirectCostsConfig.cashAccount}"
+                         value="#{indirectCostsConfig.account}"
                          maxlength="100"
                          tabindex="3"/>
             <a4j:commandLink id="selectindirectCostConfigurationAccount"
@@ -122,12 +116,6 @@
                          styleClass="button"
                          rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','CREATE')}">
             <s:defaultAction/>
-        </h:commandButton>
-
-        <h:commandButton action="#{indirectCostsConfigurationAction.createAndNew}"
-                         value="#{messages['Common.saveAndNew']}"
-                         styleClass="button"
-                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','CREATE')}">
         </h:commandButton>
 
         <h:commandButton id="updateButtonId"
