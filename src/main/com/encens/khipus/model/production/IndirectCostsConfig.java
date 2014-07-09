@@ -18,7 +18,7 @@ import java.math.BigDecimal;
  * @author Diego Loza
  * @version 1.2.1
  */
-@TableGenerator(name = "IndirectCostsConifg.tableGenerator",
+@TableGenerator(name = "IndirectCostsConfig.tableGenerator",
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
@@ -29,11 +29,11 @@ import java.math.BigDecimal;
 @Table(name = "COSTOSINDIRECTOSCONF")
 @Filter(name = Constants.COMPANY_FILTER_NAME)
 @EntityListeners(CompanyListener.class)
-public class IndirectCostsConifg implements BaseModel {
+public class IndirectCostsConfig implements BaseModel {
 
     @Id
     @Column(name = "IDCOSTOSINDIRECTOSCONF", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConfig.tableGenerator")
     private Long id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -49,6 +49,9 @@ public class IndirectCostsConifg implements BaseModel {
 
     @Column(name = "ESTADO")
     private String estate;
+
+    @Column(name = "DESCRIPCION")
+    private String description;
 
     @Column(name = "CUENTA", insertable = false, updatable = false, nullable = true)
     @Length(max = 20)
@@ -128,5 +131,13 @@ public class IndirectCostsConifg implements BaseModel {
 
     public void setEstate(String estate) {
         this.estate = estate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

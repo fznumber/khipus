@@ -202,7 +202,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
 
         try {
 
-            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConfig indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.cashAccount = :cashAccount")
                     .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
                     .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
@@ -224,7 +224,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
 
         try {
 
-            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConifg indirectCosts" +
+            total = (BigDecimal) em.createQuery("SELECT sum(indirectCosts.amountBs) from IndirectCostsConfig indirectCosts" +
                     " where indirectCosts.month = :month and indirectCosts.year = :year and indirectCosts.type = :type")
                     .setParameter("month", DateUtils.getCurrentMonth(calendar.getTime()))
                     .setParameter("year", DateUtils.getCurrentYear(calendar.getTime()))
