@@ -4,6 +4,7 @@ import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.production.IndirectCostsConfig;
 import com.encens.khipus.model.production.ProcessedProduct;
+import com.encens.khipus.util.Constants;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
@@ -33,6 +34,7 @@ public class IndirectCostsConfigurationAction extends GenericAction<IndirectCost
     public void assignCashAccount(CashAccount cashAccount) {
         getInstance().setAccount(cashAccount.getAccountCode());
         getInstance().setCashAccount(cashAccount);
+        getInstance().setCompanyNumber(Constants.COD_COMPANY_DEFAULT);
     }
 
     public void clearCashAccount()

@@ -25,7 +25,7 @@
                              columnClasses="width50percent,width50percent">
                     <s:div>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                            <ui:define name="label">#{messages['Warehouse.warehouseCode']}</ui:define>
+                            <ui:define name="label">#{messages['IndirectcostConfig.acount']}</ui:define>
                             <h:inputText id="account"
                                          value="#{indirectCostsConfigDataModel.criteria.account}"
                                          maxlength="150"
@@ -37,7 +37,7 @@
                     <s:div>
                         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['Warehouse.name']}</ui:define>
-                            <h:inputText id="discription"
+                            <h:inputText id="description"
                                          value="#{indirectCostsConfigDataModel.criteria.description}"
                                          maxlength="150"
                                          tabindex="2"
@@ -58,18 +58,12 @@
             </rich:simpleTogglePanel>
 
             <div class="buttons">
-                <s:button value="#{messages['Common.new']}" view="/production/indirectCostConfig.xhtml"
-                          styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','CREATE')}"/>
-            </div>
-
-            <!--<div class="buttons">
                 <s:button value="#{messages['Common.new']}"
                           view="/production/indirectCostConfig.xhtml"
                           styleClass="button"
                           rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','CREATE')}"
                           propagation="begin"/>
-            </div>-->
+            </div>
 
             <rich:dataTable value="#{indirectCostsConfigDataModel}"
                             var="item"

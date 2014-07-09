@@ -40,10 +40,10 @@ public class IndirectCostsConfig implements BaseModel {
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
-    @Column(name = "COD_GRU", insertable = false, updatable = false, nullable = true)
+    @Column(name = "COD_GRU", insertable = true, updatable = false, nullable = true)
     private String groupCode;
 
-    @Column(name = "NO_CIA", insertable = false, updatable = false, nullable = false)
+    @Column(name = "NO_CIA", insertable = true, updatable = false, nullable = false)
     @Length(max = 2)
     private String companyNumber;
 
@@ -53,9 +53,10 @@ public class IndirectCostsConfig implements BaseModel {
     @Column(name = "DESCRIPCION")
     private String description;
 
-    @Column(name = "CUENTA", insertable = false, updatable = false, nullable = true)
+    @Column(name = "CUENTA", insertable = true, updatable = false, nullable = true)
     @Length(max = 20)
     private String account;
+
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA",insertable = false, updatable = false),
