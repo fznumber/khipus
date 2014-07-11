@@ -106,7 +106,7 @@
                                 value="#{singleProduct.state == 'PENDING' ? messages['productionOrderForPlanning.estateOrder.pending'] : (singleProduct.state == 'EXECUTED' ? messages['productionOrderForPlanning.estateOrder.executed'] : (singleProduct.state == 'TABULATED' ? messages['productionOrderForPlanning.estateOrder.ab.tabulated'] : (singleProduct.state == 'INSTOCK' ? messages['productionOrderForPlanning.estateOrder.ab.instock'] : messages['productionOrderForPlanning.estateOrder.finalized'])))}"
                                 action="#{productionPlanningAction.changeState(singleProduct)}"
                                 rendered="#{singleProduct.state eq 'EXECUTED' and s:hasPermission('CHANGESTATEORDER','VIEW')}"
-                                reRender="baseProductionList"/>
+                                reRender="baseProductionList"></a4j:commandLink>
                     </rich:column>
 
                     <rich:column>
@@ -116,7 +116,7 @@
                                      required="false">
                             <h:commandButton action="#{productionPlanningAction.saveGreasePercentajeSingle}" value="#{messages['Common.save']}"
                                              styleClass="button"
-                                             rendered="#{(singleProduct.state eq 'PENDING' or  singleProduct.state eq 'EXECUTED' ? true : false) and s:hasPermission('SINGLESAVEGRAASEPERCENTAGE','CREATE')}">
+                                             rendered="#{s:hasPermission('SINGLESAVEGRAASEPERCENTAGE','CREATE')}">
 
                                 <s:defaultAction/>
                             </h:commandButton>

@@ -140,6 +140,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
             return Outcome.REDISPLAY;
+        } catch (SoldProductJustNoProducer soldProductJustNoProducer) {
+            addSoldProductJustNoProducerMessages();
+            return Outcome.REDISPLAY;
         }
     }
 
@@ -254,7 +257,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         } catch (ProductItemNotFoundException e) {
             addProductItemNotFoundMessage(e.getProductItem().getFullName());
             return Outcome.REDISPLAY;
+        } catch (SoldProductJustNoProducer soldProductJustNoProducer) {
+            addSoldProductJustNoProducerMessages();
+            return Outcome.REDISPLAY;
         }
+
     }
 
 
@@ -304,6 +311,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 addDeleteReferentialIntegrityMessage();
             } catch (ProductItemNotFoundException e) {
                 addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            }catch (SoldProductJustNoProducer soldProductJustNoProducer) {
+                addSoldProductJustNoProducerMessages();
             }
         }
     }
@@ -580,6 +589,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private void addSoldProductNotFoundMessages() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
                 "ProductDelivery.info.soldProductNotFoundMessages", getInstance().getInvoiceNumber());
+    }
+
+    private void addSoldProductJustNoProducerMessages() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "ProductDelivery.info.soldProductJustNoProducerMessages", getInstance().getInvoiceNumber());
     }
 
     public String getOrderNumber() {

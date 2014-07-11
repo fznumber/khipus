@@ -109,72 +109,73 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", invoiceNumber);
             List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
             soldProducts = removeNotProduced(soldProducts,noProducers);
-            int pos = changeEdamToPressed(soldProducts);
-            WarehouseDocumentType documentType = getFirstConsumptionType();
-            //always exist almost one sold product that will be delivery
-            SoldProduct firstSoldProduct = soldProducts.get(0);
-            Warehouse warehouse = firstSoldProduct.getWarehouse();
-            CostCenter costCenter = findPublicCostCenter(warehouse);
-            Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
+            if(soldProducts.size() != 0) {
+                int pos = changeEdamToPressed(soldProducts);
+                WarehouseDocumentType documentType = getFirstConsumptionType();
+                //always exist almost one sold product that will be delivery
+                SoldProduct firstSoldProduct = soldProducts.get(0);
+                Warehouse warehouse = firstSoldProduct.getWarehouse();
+                CostCenter costCenter = findPublicCostCenter(warehouse);
+                Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
-            WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
+                WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, soldProducts);
 
-            Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
-            Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
-            List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+                Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+                Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+                List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
 
-            try {
-
-                approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
-                        getGlossMessage(warehouseVoucher, warehouseDescription),
-                        movementDetailUnderMinimalStockMap,
-                        movementDetailOverMaximumStockMap,
-                        movementDetailWithoutWarnings);
-
-            } catch (WarehouseVoucherApprovedException e) {
-                log.debug("This exception never happen because I create a pending WarehouseVoucher.");
-            } catch (WarehouseVoucherNotFoundException e) {
-                log.debug("This exception never happen because I create a new WarehouseVoucher.");
-            } catch (WarehouseVoucherEmptyException e) {
-                log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
-            } catch (WarehouseAccountCashNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            ProductDelivery productDelivery = new ProductDelivery();
-            productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
-            productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
-            productDelivery.setWarehouseVoucher(warehouseVoucher);
-
-            create(productDelivery);
-
-            if (pos > -1) {
-                resetChange(soldProducts.get(pos));
-                approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(), pos);
-                ProductItem cheesePressed = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
-                ProductItem cheeseEDAM = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
-                cheeseEDAM.setUnitCost(cheesePressed.getUnitCost());
                 try {
-                    productItemService.updateProductItem(cheeseEDAM);
-                } catch (ProductItemMinimalStockIsGreaterThanMaximumStockException e) {
+
+                    approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
+                            getGlossMessage(warehouseVoucher, warehouseDescription),
+                            movementDetailUnderMinimalStockMap,
+                            movementDetailOverMaximumStockMap,
+                            movementDetailWithoutWarnings);
+
+                } catch (WarehouseVoucherApprovedException e) {
+                    log.debug("This exception never happen because I create a pending WarehouseVoucher.");
+                } catch (WarehouseVoucherNotFoundException e) {
+                    log.debug("This exception never happen because I create a new WarehouseVoucher.");
+                } catch (WarehouseVoucherEmptyException e) {
+                    log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
+                } catch (WarehouseAccountCashNotFoundException e) {
                     e.printStackTrace();
                 }
+
+                ProductDelivery productDelivery = new ProductDelivery();
+                productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
+                productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
+                productDelivery.setWarehouseVoucher(warehouseVoucher);
+
+                create(productDelivery);
+
+                if (pos > -1) {
+                    resetChange(soldProducts.get(pos));
+                    approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(), pos);
+                    ProductItem cheesePressed = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
+                    ProductItem cheeseEDAM = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
+                    cheeseEDAM.setUnitCost(cheesePressed.getUnitCost());
+                    try {
+                        productItemService.updateProductItem(cheeseEDAM);
+                    } catch (ProductItemMinimalStockIsGreaterThanMaximumStockException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //para que cambio todos los estados iuncluido el queso recorte y edam
+                soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+
+                for (SoldProduct soldProduct : soldProducts) {
+                    soldProduct.setProductDelivery(productDelivery);
+                    soldProduct.setState(SoldProductState.DELIVERED);
+                    soldProduct.setNumberVoucher(warehouseVoucher.getNumber());
+                    update(soldProduct);
+                }
+
+                //update state of order
+                if (firstSoldProduct.getOrderNumber() != null)
+                    updateOrderEstate(firstSoldProduct.getOrderNumber());
             }
-
-            //para que cambio todos los estados iuncluido el queso recorte y edam
-            soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
-
-            for (SoldProduct soldProduct : soldProducts) {
-                soldProduct.setProductDelivery(productDelivery);
-                soldProduct.setState(SoldProductState.DELIVERED);
-                soldProduct.setNumberVoucher(warehouseVoucher.getNumber());
-                update(soldProduct);
-            }
-
-            //update state of order
-            if (firstSoldProduct.getOrderNumber() != null)
-                updateOrderEstate(firstSoldProduct.getOrderNumber());
-
         }
     }
 
@@ -193,18 +194,23 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException, SoldProductNotFoundException {
+            ProductItemNotFoundException, SoldProductNotFoundException, SoldProductJustNoProducer {
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
         List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
         //List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
-        soldProducts = removeNotProduced(soldProducts,findNoProduceres());
         int pos = changeEdamToPressed(soldProducts);
         WarehouseDocumentType documentType = getFirstConsumptionType();
 
         if (soldProducts.size() == 0) {
             throw new SoldProductNotFoundException();
+        }
+        List<String> noProduced = findNoProduceres();
+        soldProducts = removeNotProduced(soldProducts,noProduced);
+        if(soldProducts.size() == 0)
+        {
+           throw  new SoldProductJustNoProducer();
         }
 
         if (null == documentType) {
@@ -221,7 +227,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
-        productItemStockChecker(invoiceNumber, warehouse, costCenter);
+        productItemStockChecker(invoiceNumber, warehouse, costCenter,noProduced);
         //productItemStockChecker(invoiceNumber, warehouse, costCenter);
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
@@ -384,7 +390,6 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                 return true;
             }
             List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutEDAM(invoiceNumber, Constants.defaultCompanyNumber);
-            soldProducts = removeNotProduced(soldProducts,noProduceres);
             changeEdamToPressed(soldProducts);
             WarehouseDocumentType documentType = getFirstConsumptionType();
             SoldProduct firstSoldProduct = soldProducts.get(0);
@@ -402,6 +407,12 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             if (soldProducts.size() == 0) {
                 addSoldProductNotFoundMessages(invoiceNumber);
                 result = true;
+            }
+
+            soldProducts = removeNotProduced(soldProducts,noProduceres);
+
+            if (soldProducts.size() == 0) {
+                addSoldProductJustNoProducerMessages(invoiceNumber);
             }
 
             if (null == documentType) {
@@ -428,6 +439,11 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
 
         return false;
+    }
+
+    private void addSoldProductJustNoProducerMessages(String invoiceNumber) {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.WARN,
+                "ProductDelivery.info.soldProductJustNoProducerMessages", invoiceNumber);
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -766,13 +782,14 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     @SuppressWarnings(value = "unchecked")
     private void productItemStockChecker(String invoiceNumber,
                                          Warehouse warehouse,
-                                         CostCenter costCenter) throws InventoryException {
+                                         CostCenter costCenter,
+                                         List<String> listProductNoProduced) throws InventoryException {
         List<ProductItem> productItems = getEntityManager()
                 .createNamedQuery("SoldProduct.findByProductItem")
                 .setParameter("invoiceNumber", invoiceNumber)
                 .setParameter("companyNumber", warehouse.getId().getCompanyNumber())
                 .getResultList();
-
+        productItems = removeItemsNoproducer(listProductNoProduced,productItems);
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
         for (ProductItem productItem : productItems) {
             BigDecimal total = (BigDecimal) getEntityManager()
@@ -794,6 +811,23 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         if (!errorMessages.isEmpty()) {
             throw new InventoryException(errorMessages);
         }
+    }
+
+    public List<ProductItem> removeItemsNoproducer(List<String> listProductNoProduced,List<ProductItem> productItems)
+    {
+        List<ProductItem> result = new ArrayList<ProductItem>();
+                          result.addAll(productItems);
+        for(ProductItem item:productItems)
+        {
+            for(String codArt: listProductNoProduced)
+            {
+                if(codArt.equals(item.getProductItemCode()))
+                {
+                    result.remove(item);
+                }
+            }
+        }
+        return result;
     }
 
     @SuppressWarnings(value = "unchecked")

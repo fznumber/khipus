@@ -55,7 +55,7 @@ public interface ProductDeliveryService extends GenericService {
             EntryDuplicatedException,
             ConcurrencyException,
             ReferentialIntegrityException,
-            ProductItemNotFoundException, SoldProductNotFoundException;
+            ProductItemNotFoundException, SoldProductNotFoundException, SoldProductJustNoProducer;
 
     ProductDelivery select(ProductDelivery entity);
 
