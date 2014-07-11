@@ -132,7 +132,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{productItemCode}+"-"+$F{name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="221" y="0" width="101" height="20"/>

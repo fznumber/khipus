@@ -467,7 +467,7 @@
                  border="0">
         <s:div id="movementDetailListPanel">
             <div class="buttons">
-                <c:if test="#{not empty warehouseVoucherCreateAction.warehouseVoucher.warehouse and (warehouseVoucherCreateAction.warehouseVoucher.reception or warehouseVoucherCreateAction.warehouseVoucher.input)}">
+                <!--<c:if test="#{not empty warehouseVoucherCreateAction.warehouseVoucher.warehouse and (warehouseVoucherCreateAction.warehouseVoucher.reception or warehouseVoucherCreateAction.warehouseVoucher.input)}">
                     <a4j:commandButton id="addProductItemCommandButton"
                                        action="#{productItemSearchDataModel.reset()}"
                                        value="#{messages['WarehouseVoucher.button.addProductItem']}"
@@ -480,7 +480,7 @@
                         <f:attribute name="dataModelObject" value="#{productItemSearchDataModel}"/>
                     </a4j:commandButton>
                 </c:if>
-                <c:if test="#{not empty warehouseVoucherCreateAction.warehouseVoucher.warehouse and not (warehouseVoucherCreateAction.warehouseVoucher.reception or warehouseVoucherCreateAction.warehouseVoucher.input)}">
+                <c:if test="#{not empty warehouseVoucherCreateAction.warehouseVoucher.warehouse and not (warehouseVoucherCreateAction.warehouseVoucher.reception or warehouseVoucherCreateAction.warehouseVoucher.input)}">-->
                     <a4j:commandButton id="addProductItemCommandButton"
                                        action="#{productItemByWarehouseDataModel.reset()}"
                                        value="#{messages['WarehouseVoucher.button.addProductItem']}"
@@ -492,7 +492,7 @@
                         <f:attribute name="entityManagerName" value=""/>
                         <f:attribute name="dataModelObject" value="#{productItemByWarehouseDataModel}"/>
                     </a4j:commandButton>
-                </c:if>
+                <!--</c:if>-->
             </div>
 
             <table cellpadding="0" cellspacing="0" border="0" width="100%" class="rich-table">

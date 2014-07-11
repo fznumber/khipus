@@ -199,6 +199,8 @@ public final class Constants {
     //condicion purchase order
     public static final String WITH_BILL = "CONFACTURA";
     public static final String WITHOUT_BILL = "SINFACTURA";
+    //
+    public static final String STATE_ITEM_PRODUCT_NOPRODUCER = "NOPRODUCIDO";
 
 
     private Constants() {

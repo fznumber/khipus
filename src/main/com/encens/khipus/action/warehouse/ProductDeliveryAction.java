@@ -160,38 +160,38 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 return Outcome.SUCCESS;
             } catch (InventoryException e) {
                 addInventoryErrorMessages(e.getInventoryMessages());
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (ProductItemNotFoundException e) {
                 addProductItemNotFoundMessage(e.getProductItem().getFullName());
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (ProductItemAmountException e) {
                 addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (CompanyConfigurationNotFoundException e) {
                 addCompanyConfigurationNotFoundErrorMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (FinancesExchangeRateNotFoundException e) {
                 addFinancesExchangeRateNotFoundExceptionMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (FinancesCurrencyNotFoundException e) {
                 addFinancesExchangeRateNotFoundExceptionMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (InventoryProductItemNotFoundException e) {
                 addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
                         e.getProductItem(), e.getWarehouse());
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (ReferentialIntegrityException e) {
                 addDeleteReferentialIntegrityMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (ConcurrencyException e) {
                 addUpdateConcurrencyMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (InventoryUnitaryBalanceException e) {
                 addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             } catch (EntryDuplicatedException e) {
                 addDuplicatedMessage();
-                return Outcome.FAIL;
+                return Outcome.REDISPLAY;
             }
 
         }

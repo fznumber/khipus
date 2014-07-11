@@ -22,6 +22,8 @@ import java.math.BigDecimal;
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codCutCheese"),
         @NamedQuery(name = "SoldProduct.findByInvoiceNumberWithoutCutCheeseAndEDAM",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codCutCheese and soldProduct.productItemCode <> :codEDAMCheese"),
+        @NamedQuery(name = "SoldProduct.findByInvoiceNumberWithoutEDAM",
+                query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber and soldProduct.productItemCode <> :codEDAMCheese"),
         @NamedQuery(name = "SoldProduct.findDelivery",
                 query = "select soldProduct from SoldProduct soldProduct where soldProduct.invoiceNumber =:invoiceNumber and soldProduct.companyNumber =:companyNumber"),
         @NamedQuery(name = "SoldProduct.findByCashSale",

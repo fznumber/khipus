@@ -165,6 +165,21 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
     }
 
     @Override
+    public List<SoldProduct> getSoldProductsWithoutEDAM(String invoiceNumber, String companyNumber) {
+        List<SoldProduct> result = getEntityManager()
+                .createNamedQuery("SoldProduct.findByInvoiceNumberWithoutEDAM")
+                .setParameter("codEDAMCheese", Constants.COD_CHEESE_EDAM)
+                .setParameter("invoiceNumber", invoiceNumber)
+                .setParameter("companyNumber", companyNumber)
+                .getResultList();
+        if (null == result) {
+            result = new ArrayList<SoldProduct>();
+        }
+
+        return result;
+    }
+
+    @Override
     public Map<String, Integer> getSoldProductsPackage(String codArt, Integer amountSoldProductTotal) {
         Map<String, Integer> products = new HashMap<String, Integer>();
             List<Object[]> datas = getEntityManager().createNativeQuery("select cod_art,cantidad \n" +

@@ -29,6 +29,7 @@ import org.jboss.seam.international.StatusMessage;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -76,18 +77,19 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     public void updateOrderEstate(String invoiceNumber) {
 
         getEntityManager().createNativeQuery("update USER01_DAF.pedidos set estado_pedido = :state where pedido = :pedido")
-                                           .setParameter("pedido",invoiceNumber)
-                                           .setParameter("state",Constants.ESTATE_ORDER_DELIVERED)
-                                           .executeUpdate();
+                .setParameter("pedido", invoiceNumber)
+                .setParameter("state", Constants.ESTATE_ORDER_DELIVERED)
+                .executeUpdate();
     }
 
     public void updateOrderIncashEstate(String invoiceNumber) {
 
         getEntityManager().createNativeQuery("update WISE.inv_ventart set ESTADO = :state where no_fact = :pedido")
-                .setParameter("pedido",invoiceNumber)
-                .setParameter("state",Constants.ESTATE_ORDER_DELIVERED_INCASH)
+                .setParameter("pedido", invoiceNumber)
+                .setParameter("state", Constants.ESTATE_ORDER_DELIVERED_INCASH)
                 .executeUpdate();
     }
+
     @SuppressWarnings(value = "unchecked")
     public void deliveryAll(List<String> numberInvoices) throws
             InventoryException,
@@ -101,11 +103,12 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             ConcurrencyException,
             InventoryUnitaryBalanceException,
             EntryDuplicatedException {
-        for(String invoiceNumber:numberInvoices)
-        {
+        List<String> noProducers = findNoProduceres();
+        for (String invoiceNumber : numberInvoices) {
 
             String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", invoiceNumber);
-            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
+            List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+            soldProducts = removeNotProduced(soldProducts,noProducers);
             int pos = changeEdamToPressed(soldProducts);
             WarehouseDocumentType documentType = getFirstConsumptionType();
             //always exist almost one sold product that will be delivery
@@ -145,10 +148,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
             create(productDelivery);
 
-            if(pos>-1)
-            {
+            if (pos > -1) {
                 resetChange(soldProducts.get(pos));
-                approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(),pos);
+                approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(), pos);
                 ProductItem cheesePressed = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
                 ProductItem cheeseEDAM = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
                 cheeseEDAM.setUnitCost(cheesePressed.getUnitCost());
@@ -170,7 +172,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             }
 
             //update state of order
-            if(firstSoldProduct.getOrderNumber() != null)
+            if (firstSoldProduct.getOrderNumber() != null)
                 updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         }
@@ -195,13 +197,13 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         //check if the sold products keep the pending state
         soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
-        List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheese(invoiceNumber, Constants.defaultCompanyNumber);
+        List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
         //List<SoldProduct> soldProducts = soldProductService.getSoldProducts(invoiceNumber, Constants.defaultCompanyNumber);
+        soldProducts = removeNotProduced(soldProducts,findNoProduceres());
         int pos = changeEdamToPressed(soldProducts);
         WarehouseDocumentType documentType = getFirstConsumptionType();
 
-        if(soldProducts.size() == 0)
-        {
+        if (soldProducts.size() == 0) {
             throw new SoldProductNotFoundException();
         }
 
@@ -219,7 +221,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
         }
 
-        productItemStockCheckerWithoutCutCheese(invoiceNumber, warehouse, costCenter);
+        productItemStockChecker(invoiceNumber, warehouse, costCenter);
         //productItemStockChecker(invoiceNumber, warehouse, costCenter);
         Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
@@ -270,7 +272,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         if(pos>-1)
         {
             resetChange(soldProducts.get(pos));
-            approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(),pos);
+            approvalWarehouseVoucherService.resetChangeCheeseEdam(warehouseVoucher.getId(), pos);
             ProductItem cheesePressed = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
             ProductItem cheeseEDAM = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
             cheeseEDAM.setUnitCost(cheesePressed.getUnitCost());
@@ -291,23 +293,21 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
 
         //update state of order
-        if(firstSoldProduct.getOrderNumber() != null)
+        if (firstSoldProduct.getOrderNumber() != null)
             updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         return productDelivery;
     }
 
-    public Integer getAmountSoldProductTotal(OrderItem item,Date date,Employee distribuidor){
-        if(item.getType()=="ESTADO")
+    public Integer getAmountSoldProductTotal(OrderItem item, Date date, Employee distribuidor) {
+        if (item.getType() == "ESTADO")
             return 0;
         Integer val;
-        if(distribuidor != null)
-        {
+        if (distribuidor != null) {
             val = accountItemService.getAmountByDateAndDistributorOrderDelivery(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
             val += accountItemService.getAmountByDateAndDistributorInstitutionDelivery(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
             val += accountItemService.getAmountComboTotalAndDistributor(item.getCodArt(), new BigDecimal(distribuidor.getId()), date);
-        }
-        else {
+        } else {
             val = accountItemService.getAmountByDateAndDistributorOrderDelivery(item.getCodArt(), date);
             val += accountItemService.getAmountByDateAndDistributorInstitutionDelivery(item.getCodArt(), date);
             val += accountItemService.getAmountComboTotalDelivery(item.getCodArt(), date);
@@ -315,71 +315,76 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         return val;
     }
 
-    public Boolean verifyAmounts(List<String> numberInvoices,List<OrderItem> orderItems,Date date,Employee distribuidor){
+    public Boolean verifyAmounts(List<String> numberInvoices, List<OrderItem> orderItems, Date date, Employee distribuidor) {
         Boolean result = false;
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
         BigDecimal totalCheeseEDAM = BigDecimal.ZERO;
         Boolean band = false;
-        for(OrderItem item:orderItems) {
-            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheeseAndEDAM(numberInvoices.get(0), Constants.defaultCompanyNumber);
-            SoldProduct firstSoldProduct = soldProducts.get(0);
-            Warehouse warehouse = firstSoldProduct.getWarehouse();
-            CostCenter costCenter = findPublicCostCenter(warehouse);
-
-            if(item.getType() !="COMBO") {
-                if (item.getCodArt().equals(Constants.COD_CHEESE_EDAM)) {
-                    item.setCodArt(Constants.COD_CHEESE_PRESSED);
-                    band = true;
-                }
-
-                try {
-                    Integer aux = getAmountSoldProductTotal(item, date, distribuidor);
-                    if (item.getCodArt().equals(Constants.COD_CHEESE_PRESSED)) {
-                        totalCheeseEDAM = totalCheeseEDAM.add(new BigDecimal(aux));
-                        aux = totalCheeseEDAM.intValue();
+        List<String> noProduceres = findNoProduceres();
+        for (OrderItem item : orderItems) {
+            if(!notProducer(item.getCodArt(),noProduceres)) {
+                List<SoldProduct> soldProducts = soldProductService.getSoldProducts(numberInvoices.get(0), Constants.defaultCompanyNumber);
+                SoldProduct firstSoldProduct = soldProducts.get(0);
+                Warehouse warehouse = firstSoldProduct.getWarehouse();
+                CostCenter costCenter = findPublicCostCenter(warehouse);
+                if (item.getType() != "COMBO") {
+                    if (item.getCodArt().equals(Constants.COD_CHEESE_EDAM)) {
+                        item.setCodArt(Constants.COD_CHEESE_PRESSED);
+                        band = true;
                     }
-                    approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(aux),
-                            warehouse,
-                            productItemService.findProductItemByCode(item.getCodArt()),
-                            costCenter);
-                } catch (InventoryException e) {
-                    errorMessages.addAll(e.getInventoryMessages());
-                }
 
-                if (band) {
-                    item.setCodArt(Constants.COD_CHEESE_EDAM);
-                    band = false;
-                }
-            }else{
-                Map<String,Integer> productsPackage = soldProductService.getSoldProductsPackage(item.getCodArt(),getAmountSoldProductTotal(item, date, distribuidor));
-                for(Map.Entry<String,Integer> entry:productsPackage.entrySet()) {
                     try {
-
-                        approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(entry.getValue()),
-                                warehouse,
-                                productItemService.findProductItemByCode(entry.getKey()),
-                                costCenter);
+                        Integer aux = getAmountSoldProductTotal(item, date, distribuidor);
+                        if (aux > 0) {
+                            if (item.getCodArt().equals(Constants.COD_CHEESE_PRESSED)) {
+                                totalCheeseEDAM = totalCheeseEDAM.add(new BigDecimal(aux));
+                                aux = totalCheeseEDAM.intValue();
+                            }
+                            approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(aux),
+                                    warehouse,
+                                    productItemService.findProductItemByCode(item.getCodArt()),
+                                    costCenter);
+                        }
                     } catch (InventoryException e) {
                         errorMessages.addAll(e.getInventoryMessages());
                     }
-                }
 
+                    if (band) {
+                        item.setCodArt(Constants.COD_CHEESE_EDAM);
+                        band = false;
+                    }
+                } else {
+                    Map<String, Integer> productsPackage = soldProductService.getSoldProductsPackage(item.getCodArt(), getAmountSoldProductTotal(item, date, distribuidor));
+                    for (Map.Entry<String, Integer> entry : productsPackage.entrySet()) {
+                        try {
+
+                            approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(entry.getValue()),
+                                    warehouse,
+                                    productItemService.findProductItemByCode(entry.getKey()),
+                                    costCenter);
+                        } catch (InventoryException e) {
+                            errorMessages.addAll(e.getInventoryMessages());
+                        }
+                    }
+
+                }
             }
 
         }
-        if(errorMessages.size()>0) {
+        if (errorMessages.size() > 0) {
             addInventoryErrorMessages(errorMessages);
             return true;
         }
 
-        for(String invoiceNumber :numberInvoices) {
+        for (String invoiceNumber : numberInvoices) {
             try {
                 soldProductStateChecker(invoiceNumber, Constants.defaultCompanyNumber);
             } catch (SoldProductDeliveredException e) {
                 addSoldProductDeliveredErrorMessage(invoiceNumber);
                 return true;
             }
-            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutCutCheeseAndEDAM(invoiceNumber, Constants.defaultCompanyNumber);
+            List<SoldProduct> soldProducts = soldProductService.getSoldProductsWithoutEDAM(invoiceNumber, Constants.defaultCompanyNumber);
+            soldProducts = removeNotProduced(soldProducts,noProduceres);
             changeEdamToPressed(soldProducts);
             WarehouseDocumentType documentType = getFirstConsumptionType();
             SoldProduct firstSoldProduct = soldProducts.get(0);
@@ -411,6 +416,18 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
 
         return result;
+    }
+
+    private boolean notProducer(String codArt,List<String> noProduceres) {
+        for(String product:noProduceres)
+        {
+            if(product.equals(codArt))
+            {
+               return true;
+            }
+        }
+
+        return false;
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -450,26 +467,53 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     }
 
     private void resetChange(SoldProduct soldProduct) {
-          ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
-          soldProduct.setProductItemCode(item.getProductItemCode());
-          soldProduct.setProductItem(item);
+        ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_EDAM);
+        soldProduct.setProductItemCode(item.getProductItemCode());
+        soldProduct.setProductItem(item);
     }
 
     private int changeEdamToPressed(List<SoldProduct> soldProducts) {
         int pos = -1;
         int cont = 0;
-        for(SoldProduct soldProduct:soldProducts)
-        {
-            if(soldProduct.getProductItemCode().compareTo(Constants.COD_CHEESE_EDAM) == 0)
-            {
+        for (SoldProduct soldProduct : soldProducts) {
+            if (soldProduct.getProductItemCode().compareTo(Constants.COD_CHEESE_EDAM) == 0) {
                 ProductItem item = productItemService.findProductItemByCode(Constants.COD_CHEESE_PRESSED);
                 soldProduct.setProductItemCode(item.getProductItemCode());
                 soldProduct.setProductItem(item);
                 pos = cont;
             }
-            cont ++;
+            cont++;
         }
         return pos;
+    }
+
+    public List<SoldProduct> removeNotProduced(List<SoldProduct> soldProducts,List<String> noProducer)
+    {
+        List<SoldProduct> result = new ArrayList<SoldProduct>();
+        result.addAll(soldProducts);
+        for(SoldProduct soldProduct:soldProducts)
+        {
+            for(String codArt: noProducer) {
+                if(soldProduct.getProductItemCode().equals(codArt))
+                {
+                    result.remove(soldProduct);
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<String> findNoProduceres() {
+        List<String> result = new ArrayList<String>();
+        try{
+            result = (List<String>) getEntityManager().createNativeQuery("select cod_art from estadoarticulo\n" +
+                    "where estado =:state")
+                    .setParameter("state",Constants.STATE_ITEM_PRODUCT_NOPRODUCER)
+                    .getResultList();
+        }catch(NoResultException e){
+            return result;
+        }
+        return result;
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -511,7 +555,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         CostCenter costCenter = findPublicCostCenter(warehouse);
         //update state of order
         if(firstSoldProduct.getOrderNumber() != null)
-        updateOrderEstate(firstSoldProduct.getOrderNumber());
+            updateOrderEstate(firstSoldProduct.getOrderNumber());
 
         if (null == costCenter) {
             throw new PublicCostCenterNotFound("Cannot find a public Cost Center to complete the delivery.");
@@ -643,11 +687,11 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     }
 
     private WarehouseVoucher createWarehouseVoucherAll(WarehouseDocumentType warehouseDocumentType,
-                                                    Warehouse warehouse,
-                                                    Employee responsible,
-                                                    CostCenter publicCostCenter,
-                                                    String warehouseVoucherDescription,
-                                                    List<SoldProduct> soldProducts)
+                                                       Warehouse warehouse,
+                                                       Employee responsible,
+                                                       CostCenter publicCostCenter,
+                                                       String warehouseVoucherDescription,
+                                                       List<SoldProduct> soldProducts)
             throws InventoryException, ProductItemNotFoundException {
         //Create the WarehouseVoucher
         WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
@@ -754,8 +798,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     @SuppressWarnings(value = "unchecked")
     private void productItemStockCheckerWithoutCutCheese(String invoiceNumber,
-                                         Warehouse warehouse,
-                                         CostCenter costCenter) throws InventoryException {
+                                                         Warehouse warehouse,
+                                                         CostCenter costCenter) throws InventoryException {
         List<ProductItem> productItems = getEntityManager()
                 .createNamedQuery("SoldProduct.findByProductItemWithouCutCheese")
                 .setParameter("invoiceNumber", invoiceNumber)
@@ -788,8 +832,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     @SuppressWarnings(value = "unchecked")
     private void productItemStockCheckerWithoutCutCheeseAndEDAM(String invoiceNumber,
-                                                         Warehouse warehouse,
-                                                         CostCenter costCenter) throws InventoryException {
+                                                                Warehouse warehouse,
+                                                                CostCenter costCenter) throws InventoryException {
         List<ProductItem> productItems = getEntityManager()
                 .createNamedQuery("SoldProduct.findByProductItemWithouCutCheeseAndEDAM")
                 .setParameter("invoiceNumber", invoiceNumber)

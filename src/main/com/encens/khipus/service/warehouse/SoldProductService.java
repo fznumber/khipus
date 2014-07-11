@@ -32,5 +32,7 @@ public interface SoldProductService extends GenericService {
 
     List<SoldProduct> getSoldProductsWithoutCutCheeseAndEDAM(String invoiceNumber, String defaultCompanyNumber);
 
+    public List<SoldProduct> getSoldProductsWithoutEDAM(String invoiceNumber, String companyNumber);
+
     Map<String,Integer> getSoldProductsPackage(String codArt, Integer amountSoldProductTotal);
 }
