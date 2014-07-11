@@ -208,6 +208,9 @@ public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
             } catch (ProductItemNotFoundException e) {
                 addProductItemNotFoundMessage(e.getProductItem().getFullName());
                 continue;
+            } catch (SoldProductJustNoProducer soldProductJustNoProducer) {
+                soldProductJustNoProducer.printStackTrace();
+                continue;
             }
         }
     }
