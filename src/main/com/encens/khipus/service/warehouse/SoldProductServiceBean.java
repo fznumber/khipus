@@ -138,11 +138,10 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
                     .setParameter("idSoldProduct",soldProduct.getId())
                     .getSingleResult();
         }catch (NoResultException e){
-            result = (Date)getEntityManager().createNativeQuery("select mo.fecha from WISE.inv_ventart iv\n" +
-                    "inner join USER01_DAF.b_movimientos mo\n" +
-                    "on mo.nrofactura = iv.no_fact\n" +
-                    "where iv.id_mov = :idSoldProduct")
-                    .setParameter("idSoldProduct",soldProduct.getId())
+            result = (Date)getEntityManager().createNativeQuery("select fecha from USER01_DAF.movimientos\n" +
+                    "where nrofactura = :nro_fact\n" +
+                    "and rownum = 1")
+                    .setParameter("nro_fact",soldProduct.getInvoiceNumber())
                     .getSingleResult();
         }
         return result;
