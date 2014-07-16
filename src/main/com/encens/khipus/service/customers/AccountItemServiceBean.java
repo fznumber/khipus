@@ -513,7 +513,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
         BigDecimal result = BigDecimal.ZERO;
         try{
             result = (BigDecimal)em.createNativeQuery("select \n" +
-                    "nvl(paq.cantidad,0)+nvl(paq.REPOSICION,0)\n" +
+                    "nvl(sum(paq.cantidad+ paq.REPOSICION),0)\n" +
                     "from USER01_DAF.pedidos ped\n" +
                     "inner join USER01_DAF.paquete_pedidos paq\n" +
                     "on paq.pedido = ped.pedido\n" +
