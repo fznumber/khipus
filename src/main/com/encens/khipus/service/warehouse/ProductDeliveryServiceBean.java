@@ -369,6 +369,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                                     productItemService.findProductItemByCode(entry.getKey()),
                                     costCenter);
                         } catch (InventoryException e) {
+                            facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                                    "ProductDelivery.warehouseVoucher.packError",item.getNameItem());
                             errorMessages.addAll(e.getInventoryMessages());
                         }
                     }
