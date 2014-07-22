@@ -914,7 +914,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                          required="false">
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{(productionOrderItem.estateOrder eq 'PENDING' or  productionOrderItem.estateOrder eq 'EXECUTED' ? true : false) and s:hasPermission('SAVEGRAASEPERCENTAGE','VIEW')}">
+                                rendered="#{productionOrderItem.estateOrder != 'TABULATED' and s:hasPermission('SAVEGRAASEPERCENTAGE','VIEW')}">
 
                     <s:defaultAction/>
                 </h:commandButton>
