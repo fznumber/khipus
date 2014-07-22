@@ -360,21 +360,25 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                         band = false;
                     }
                 } else {
-                    Map<String, Integer> productsPackage = soldProductService.getSoldProductsPackage(item.getCodArt(), getAmountSoldProductTotal(item, date, distribuidor));
-                    for (Map.Entry<String, Integer> entry : productsPackage.entrySet()) {
-                        try {
+                    Integer aux = getAmountSoldProductTotal(item, date, distribuidor);
+                    if (aux > 0) {
+                        Map<String, Integer> productsPackage = soldProductService.getSoldProductsPackage(item.getCodArt(),aux);
 
-                            approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(entry.getValue()),
-                                    warehouse,
-                                    productItemService.findProductItemByCode(entry.getKey()),
-                                    costCenter);
-                        } catch (InventoryException e) {
-                            facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                                    "ProductDelivery.warehouseVoucher.packError",item.getNameItem());
-                            errorMessages.addAll(e.getInventoryMessages());
+                        for (Map.Entry<String, Integer> entry : productsPackage.entrySet()) {
+                            try {
+
+                                approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(entry.getValue()),
+                                        warehouse,
+                                        productItemService.findProductItemByCode(entry.getKey()),
+                                        costCenter);
+                            } catch (InventoryException e) {
+                                facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                                        "ProductDelivery.warehouseVoucher.packError", item.getNameItem());
+                                errorMessages.addAll(e.getInventoryMessages());
+                            }
                         }
-                    }
 
+                    }
                 }
             }
 
