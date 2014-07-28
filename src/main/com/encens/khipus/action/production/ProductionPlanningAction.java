@@ -32,11 +32,9 @@ import com.encens.khipus.service.warehouse.WarehouseService;
 import com.encens.khipus.util.*;
 import com.encens.khipus.util.query.QueryUtils;
 import com.encens.khipus.util.warehouse.InventoryMessage;
-import oracle.jdbc.driver.Const;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
-import org.jboss.wsf.spi.invocation.ExtensibleWebServiceContext;
 
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
@@ -109,6 +107,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private static final Integer SCALE = 6;
 
+    private Boolean hasMainProduction = false;
+
     @In
     private SessionUser sessionUser;
     @In
@@ -145,12 +145,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private MetaProductService metaProductService;
     @In
     private VoucherService voucherService;
-    @In
-    private CompanyConfigurationService companyConfigurationService;
 
-    private ProductionOrder totalsMaterials;
-    private ProductionPlanning producedAmountWithExpendAmoutn;
-    private Double totalVolumProductionPlaning;
     private boolean showButtonAddInput = false;
 
     @Override
@@ -2870,6 +2865,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showGenerateAllAccountEntries = false;
         showButtonAddProduct = false;
         showButtonAddInput = false;
+        hasMainProduction = false;
         showInit();
     }
 
@@ -3779,5 +3775,26 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setShowButtonAddInput(boolean showButtonAddInput) {
         this.showButtonAddInput = showButtonAddInput;
+    }
+
+    public void clearProductMain()
+    {
+        productionOrder.setProductMain(null);
+        hasMainProduction = false;
+    }
+
+    public void assignProductMain(ProductionOrder orderItem){
+        productionOrder.setProductMain(orderItem);
+        //productComposition = metaProductService.findProductoComposition(orderItem.getProductComposition());
+        //productCompositionSelected(null);
+        hasMainProduction = true;
+    }
+
+    public Boolean getHasMainProduction() {
+        return hasMainProduction;
+    }
+
+    public void setHasMainProduction(Boolean hasMainProduction) {
+        this.hasMainProduction = hasMainProduction;
     }
 }

@@ -9,9 +9,9 @@
                  xmlns:a4j="http://richfaces.org/a4j"
                  xmlns:app="http://encens.com/products/khipus/facelets"
                  id="#{dialogId}"
-                 onshow="jQuery('##{containerId}\\\\:warehouseProductItemListForm\\\\:productItemCodeField\\\\:productItemCode').focus();">
+                 onshow="jQuery('##{containerId}\\\\:productionOrderForm\\\\:orderProductionCodeField\\\\:orderProductionCode').focus();">
     <c:if test="#{empty dataModel}">
-        <c:set var="dataModel" value="#{warehouseProductItemDataModel}"/>
+        <c:set var="dataModel" value="#{productionOrderSearchDataModel}"/>
     </c:if>
 
     <f:facet name="header">
@@ -20,9 +20,9 @@
     <f:facet name="controls">
         <h:graphicImage value="/img/close.png" style="cursor:pointer" id="closeLink"/>
     </f:facet>
-    <h:form id="warehouseProductItemListForm">
-        <rich:simpleTogglePanel id="warehouseProductItemSearchPanel"
-                                label="#{messages['ProductItem.search']}" switchType="client">
+    <h:form id="productionOrderForm">
+        <rich:simpleTogglePanel id="productionOrderSearchPanel"
+                                label="#{messages['ProductionPlanning.productionOrder.search']}" switchType="client">
             <h:panelGrid columns="2"
                          width="100%"
                          cellpadding="0"
@@ -30,10 +30,10 @@
                          border="0"
                          columnClasses="width50percent,width50percent">
                 <s:div>
-                    <s:decorate id="productItemCodeField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['ProductItem.productItemCode']}</ui:define>
-                        <h:inputText id="productItemCode"
-                                     value="#{dataModel.productItemCode}"
+                    <s:decorate id="orderProductionCodeField" template="/include/inputField.xhtml" styleClass="formRow">
+                        <ui:define name="label">#{messages['ProductionPlanning.productionOrder.code']}</ui:define>
+                        <h:inputText id="orderProductionCode"
+                                     value="#{dataModel.code}"
                                      maxlength="150"
                                      tabindex="1"
                                      styleClass="input"/>
@@ -41,9 +41,9 @@
                 </s:div>
                 <s:div>
                     <s:decorate id="nameField" template="/include/inputField.xhtml" styleClass="formRow">
-                        <ui:define name="label">#{messages['ProductItem.name']}</ui:define>
+                        <ui:define name="label">#{messages['ProductionPlanning.productionOrder.nameProduct']}</ui:define>
                         <h:inputText id="name"
-                                     value="#{dataModel.productItemName}"
+                                     value="#{dataModel.name}"
                                      maxlength="150"
                                      tabindex="2"
                                      styleClass="input"/>
@@ -52,7 +52,7 @@
                         <s:div styleClass="right input">
 
                             <a4j:commandButton action="#{dataModel.search}"
-                                               reRender="productItemList, dataScroller"
+                                               reRender="productionOrder, dataScroller"
                                                styleClass="button"
                                                value="#{messages['Common.search']}"
                                                id="searchButtonId"
@@ -60,7 +60,7 @@
                                 <s:defaultAction/>
                             </a4j:commandButton>
                             <a4j:commandButton action="#{dataModel.clear}"
-                                               reRender="warehouseProductItemSearchPanel, productItemList, dataScroller"
+                                               reRender="productionOrderSearchPanel, productionOrder, dataScroller"
                                                styleClass="button"
                                                value="#{messages['Common.clear']}"
                                                id="clearButtonId"
@@ -73,39 +73,25 @@
         </rich:simpleTogglePanel>
         <br/>
         <rich:dataTable value="#{dataModel}"
-                        var="inventoryItem"
-                        id="productItemList"
+                        var="orderItem"
+                        id="productionOrder"
                         rows="#{sessionUser.rowsPerPage}"
                         width="100%"
                         columnsWidth="45%, 20%, 20%, 15%">
             <f:facet name="header">
                 <rich:columnGroup>
                     <rich:column>
-                        <app:commandSortHeader sortProperty="inventory.productItem.name"
+                        <app:commandSortHeader sortProperty="productionOrder.code"
                                                dataModel="#{dataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['ProductItem.name']}
+                                               reRender="productionOrder, dataScroller">
+                            #{messages['ProductionPlanning.productMain.code']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column>
-                        <app:commandSortHeader sortProperty="inventory.productItem.productItemCode"
+                        <app:commandSortHeader sortProperty="productionOrder.productComposition.processedProduct.name"
                                                dataModel="#{dataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['ProductItem.productItemCode']}
-                        </app:commandSortHeader>
-                    </rich:column>
-                    <rich:column>
-                        <app:commandSortHeader sortProperty="inventory.unitaryBalance"
-                                               dataModel="#{dataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['Inventory.unitaryBalance']}
-                        </app:commandSortHeader>
-                    </rich:column>
-                    <rich:column>
-                        <app:commandSortHeader sortProperty="inventory.productItem.unitCost"
-                                               dataModel="#{dataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['ProductItem.unitCost']}
+                                               reRender="productionOrder, dataScroller">
+                            #{messages['ProductionPlanning.productionOrder.product']}
                         </app:commandSortHeader>
                     </rich:column>
                     <rich:column styleClass="center">
@@ -114,20 +100,10 @@
                 </rich:columnGroup>
             </f:facet>
             <rich:column>
-                <h:outputText value="#{inventoryItem.productItem.name}"/>
+                <h:outputText value="#{orderItem.code}"/>
             </rich:column>
             <rich:column>
-                <h:outputText value="#{inventoryItem.productItem.productItemCode}"/>
-            </rich:column>
-            <rich:column styleClass="right">
-                <h:outputText value="#{inventoryItem.unitaryBalance}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
-                </h:outputText>
-            </rich:column>
-            <rich:column styleClass="right">
-                <h:outputText value="#{inventoryItem.productItem.unitCost}">
-                    <app:realNumberConverter pattern="#{messages['patterns.decimal3FNumber']}"/>
-                </h:outputText>
+                <h:outputText value="#{orderItem.productComposition.processedProduct.name}"/>
             </rich:column>
             <rich:column styleClass="center">
                 <ui:insert name="assignButton"/>
@@ -138,7 +114,7 @@
             </rich:column>
         </rich:dataTable>
 
-        <app:dataScroller id="dataScroller" for="productItemList" dataModel="#{dataModel}"/>
+        <app:dataScroller id="dataScroller" for="productionOrder" dataModel="#{dataModel}"/>
 
         <rich:componentControl for="#{dialogId}"
                                attachTo="closeLink, assignButton"

@@ -16,8 +16,9 @@ envasan una parte Yog sachet frutilla 120cc que es el subsidio
 pero esto si lo registran separado
 exactamente que la leche UHT pasa con el Yogurt frutado 1L envasan subsidio y el normal
 */
-alter table ORDENPRODUCCION ADD (PRODUCTOPRODUCIDO NUMBER(24,0) NULL);
-alter table ORDENPRODUCCION add constraint fk_PRODUCTO_PADRE FOREIGN KEY (PRODUCTOPRODUCIDO) REFERENCES ORDENPRODUCCION(IDORDENPRODUCCION);
+alter table ORDENPRODUCCION ADD (PRODUCTOPADRE NUMBER(24,0) NULL);
+alter table ORDENPRODUCCION add constraint fk_PRODUCTO_PADRE FOREIGN KEY (PRODUCTOPADRE) REFERENCES ORDENPRODUCCION(IDORDENPRODUCCION);
+--alter table ORDENPRODUCCION DROP CONSTRAINT fk_PRODUCTO_PADRE
 --permiso para crear un producto en base a otro
 INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBRERECURSO,IDMODULO)
   VALUES (399, 'CREATEPRODUCTPORTION', NULL, 15,'productionOrderForPlanning.orderProduction.createProductoPortion', 6); 

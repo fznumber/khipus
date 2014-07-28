@@ -50,7 +50,6 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "NO_TRANS",nullable = true)
     private String numberTransaction;
 
-
     @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double expendAmount;
 
@@ -115,6 +114,10 @@ public class ProductionOrder implements BaseModel {
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
+
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "PRODUCTOPADRE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    private ProductionOrder productMain;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
@@ -348,5 +351,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
+    }
+
+    public ProductionOrder getProductMain() {
+        return productMain;
+    }
+
+    public void setProductMain(ProductionOrder productMain) {
+        this.productMain = productMain;
     }
 }

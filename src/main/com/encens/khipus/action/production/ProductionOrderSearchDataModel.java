@@ -2,6 +2,7 @@ package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.admin.BusinessUnit;
+import com.encens.khipus.model.production.ProductionOrder;
 import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehousePK;
 import com.encens.khipus.model.warehouse.WarehouseState;
@@ -11,29 +12,34 @@ import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author
  * @version 2.2
  */
-@Name("warehouseSearchDataModel")
+@Name("productionOrderSearchDataModel")
 @Scope(ScopeType.PAGE)
-public class ProductionOrderSearchDataModel extends QueryDataModel<WarehousePK, Warehouse> {
+public class ProductionOrderSearchDataModel extends QueryDataModel<Long,ProductionOrder> {
+    private String code;
+    private String name;
+    private Date date;
+
     private static final String[] RESTRICTIONS = {
-            "lower(warehouse.name) like concat('%', concat(lower(#{warehouseSearchDataModel.criteria.name}), '%'))",
-            "lower(warehouse.warehouseCode) like concat(lower(#{warehouseSearchDataModel.criteria.warehouseCode}), '%')",
-            "warehouse.state = #{warehouseSearchDataModel.criteria.state}",
-            "warehouse.executorUnit = #{warehouseSearchDataModel.criteria.executorUnit}"};
+            "lower(productionOrder.productComposition.processedProduct.name) like concat('%', concat(lower(#{productionOrderSearchDataModel.name}), '%'))",
+            "productionOrder.code = #{productionOrderSearchDataModel.code}",
+            "productionOrder.productionPlanning.date = #{productionPlanningAction.instance.date}"
+    };
 
     @Create
     public void init() {
-        sortProperty = "warehouse.name";
+        sortProperty = "productionOrder.code";
     }
 
     @Override
     public String getEjbql() {
-        return "select warehouse from Warehouse warehouse";
+        return  " select productionOrder from ProductionOrder productionOrder";
     }
 
     @Override
@@ -41,12 +47,34 @@ public class ProductionOrderSearchDataModel extends QueryDataModel<WarehousePK, 
         return Arrays.asList(RESTRICTIONS);
     }
 
-    public void viewOnlyValidWarehouseStates() {
-        getCriteria().setState(WarehouseState.VIG);
+    @Override
+    public void clear(){
+        code= null;
+        name = null;
+        super.clear();
     }
 
-    public void filterByExecutorUnitCode(BusinessUnit executorUnit) {
-        getCriteria().setExecutorUnit(executorUnit);
-        updateAndSearch();
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
