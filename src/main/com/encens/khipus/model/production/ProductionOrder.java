@@ -60,6 +60,9 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double producedAmount = 0.0;
 
+    @Column(name = "CANTIDADPRODUCIDARESPONSABLE", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private Double producedAmountResponsible = 0.0;
+
     @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double totalPriceMaterial = 0.0;
 
@@ -348,5 +351,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setSelected(Boolean selected) {
         this.selected = selected;
+    }
+
+    public Double getProducedAmountResponsible() {
+        return producedAmountResponsible;
+    }
+
+    public void setProducedAmountResponsible(Double producedAmountResponsible) {
+        this.producedAmountResponsible = producedAmountResponsible;
     }
 }

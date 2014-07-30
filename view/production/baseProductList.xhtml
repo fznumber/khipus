@@ -49,6 +49,10 @@
                                 #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
 
+                            <rich:column>
+                                #{messages['ProductionOrder.producingAmountResposible']}
+                            </rich:column>
+
                             <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
                                 #{messages['BaseProduct.choice']}
                             </rich:column>
@@ -81,6 +85,21 @@
                             <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
                                              styleClass="button"
                                              rendered="#{singleProduct.state eq 'EXECUTED' and s:hasPermission('SETAMOUNTPRODECER','VIEW')}">
+
+                                <s:defaultAction/>
+                            </h:commandButton>
+                        </h:inputText>
+                    </rich:column>
+                    <rich:column>
+                        <h:inputText id = "producedAmountResponsibleField"
+                                     value="#{singleProduct.amountResponsible}"
+                                     maxlength="7" styleClass="input"
+                                     disabled="#{singleProduct.state != 'EXECUTED'}"
+                                     size="10"
+                                     required="false">
+                            <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
+                                             styleClass="button"
+                                             rendered="#{s:hasPermission('AMOUNTPRODUCERRESPONSIBLE','VIEW')}">
 
                                 <s:defaultAction/>
                             </h:commandButton>

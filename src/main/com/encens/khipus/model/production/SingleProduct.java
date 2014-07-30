@@ -41,6 +41,9 @@ public class SingleProduct implements BaseModel {
     @Column(name = "CANTIDAD", nullable = true)
     private Integer amount = 0;
 
+    @Column(name = "CANTIDADPRODUCIDARESPONSABLE", nullable = true)
+    private Integer amountResponsible = 0;
+
     @Column(name = "ESTADO", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
@@ -240,5 +243,13 @@ public class SingleProduct implements BaseModel {
 
     public void setNumberTransaction(String numberTransaction) {
         this.numberTransaction = numberTransaction;
+    }
+
+    public Integer getAmountResponsible() {
+        return amountResponsible;
+    }
+
+    public void setAmountResponsible(Integer amountResponsible) {
+        this.amountResponsible = amountResponsible;
     }
 }
