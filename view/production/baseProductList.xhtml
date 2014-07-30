@@ -94,7 +94,6 @@
                         <h:inputText id = "producedAmountResponsibleField"
                                      value="#{singleProduct.amountResponsible}"
                                      maxlength="7" styleClass="input"
-                                     disabled="#{singleProduct.state != 'EXECUTED'}"
                                      size="10"
                                      required="false">
                             <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
