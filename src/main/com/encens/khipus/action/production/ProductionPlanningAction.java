@@ -953,6 +953,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
         ProductionPlanning productionPlanning = getInstance();
+        if(productionOrder.getProductMain() != null && productionOrder.getProductComposition() == null)
+        {
+            productComposition = new ProductComposition();
+            productComposition.setProcessedProduct(processedProduct);
+            productionOrder.setProductComposition(productComposition);
+        }
 
 
         productionPlanning.getProductionOrderList().add(productionOrder);
@@ -960,7 +966,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         //productionOrder.setProducedAmount(productionOrder.getExpendAmount());
         if (productionOrder.getOrderInputs().size() == 0)
             setInputs();
+        if(productionOrder.getProductMain() == null )
         productionOrder.getOrderInputs().addAll(productIputToFormulation);
+
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (productionPlanning.getId() != null && !verifySotck(productionOrder))
@@ -2192,7 +2200,6 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         return Outcome.SUCCESS;
     }
-
 
     public void selectProcessedProduct(ProcessedProduct processedProduct) {
         dispobleBalance = true;

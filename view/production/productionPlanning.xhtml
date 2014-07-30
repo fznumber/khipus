@@ -180,27 +180,20 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </a4j:commandLink>
         </s:decorate>
 
-        <s:decorate id="productionOrderField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionPlanningAction.managed and productionOrderForPlanning.orderInputs != null}">
+        <s:decorate id="productionOrderModelField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionPlanningAction.managed}">
             <ui:define name="label">#{messages['ProductionPlanning.productMain']}</ui:define>
-            <app:quickSearch id="quickProductionOrder"
-                             textValue="productionOrderForPlanning.productMain.code"
-                             value="#{productionOrderForPlanning.productMain.code}"
-                             searchField="code"
-                             reRender="productionOrderField"
-                             alias="productionOrder">
-                <ui:define name="restrictions">
-                    <app:restriction
-                            condition="productionOrder.estateOrder = #{enumerationUtil.getEnumValue('com.encens.khipus.model.production.ProductionPlanningState', 'PENDING')}"/>
-                </ui:define>
-            </app:quickSearch>
-            <app:selectPopUp id="productionOrder"
-                             textValue="#{productionOrderForPlanning.productMain.productComposition.processedProduct.fullName}"
-                             value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.fullName}"
-                             dataModel="#{productionOrderSearchDataModel}"
-                             clearAction="productionPlanningAction.clearProductMain()"
-                             searchModalPanel="productionOrderSearchModalPanel"
-                             reRender="productionOrderField">
-            </app:selectPopUp>
+            <h:inputText id="productionOrderModel"
+                         value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"
+                         required="false" maxlength="500" styleClass="input" tabindex="5">
+            </h:inputText>
+            <a4j:commandLink id="selectProductionOrderModel"
+                             ajaxSingle="true"
+                             immediate="true"
+                             title="#{messages['ProductionPlanning.selectOrderProduction']}"
+                             onclick="Richfaces.showModalPanel('productionOrderSearchModalPanel');"
+                             rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
+                <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+            </a4j:commandLink>
         </s:decorate>
 
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
@@ -225,6 +218,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                              actionListener="#{productionPlanningAction.productCompositionSelected}"/>
             </h:selectOneMenu>
         </s:decorate>
+
         <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.date']}</ui:define>
             <rich:calendar id="date" value="#{productionPlanning.date}" required="true"
@@ -317,7 +311,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             <h:inputText value="#{productionIngredientItem.amount}"
                                          styleClass="input"
                                          disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem) and productionIngredientItem.type !='ADD'}">
-                                <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
+                                <a4j:support event="onblur" ajaxSingle="false" reRender="productionIngredientList"
                                              actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
 
@@ -326,7 +320,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                              action="#{productionPlanningAction.removeInputForFormulation(productionIngredientItem)}"
                                              ajaxSingle="true"
                                              rendered="#{productionIngredientItem.type == 'ADD'}"
-                                             reRender="productionIngredientList,formulaSet">
+                                             reRender="productionIngredientList">
                                 <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                             </a4j:commandLink>
 

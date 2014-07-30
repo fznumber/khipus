@@ -74,7 +74,7 @@
         <br/>
         <rich:dataTable value="#{dataModel}"
                         var="orderItem"
-                        id="productionOrder"
+                        id="productionOrderSearchDataModelList"
                         rows="#{sessionUser.rowsPerPage}"
                         width="100%"
                         columnsWidth="45%, 20%, 20%, 15%">
@@ -114,7 +114,7 @@
             </rich:column>
         </rich:dataTable>
 
-        <app:dataScroller id="dataScroller" for="productionOrder" dataModel="#{dataModel}"/>
+        <app:dataScroller id="dataScroller" for="productionOrderSearchDataModelList" dataModel="#{dataModel}"/>
 
         <rich:componentControl for="#{dialogId}"
                                attachTo="closeLink, assignButton"
