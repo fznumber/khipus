@@ -17,6 +17,7 @@ import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.production.*;
+import com.encens.khipus.model.products.Product;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.admin.BusinessUnitService;
 import com.encens.khipus.service.employees.JobContractService;
@@ -955,9 +956,12 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductionPlanning productionPlanning = getInstance();
         if(productionOrder.getProductMain() != null && productionOrder.getProductComposition() == null)
         {
-            productComposition = new ProductComposition();
-            productComposition.setProcessedProduct(processedProduct);
-            productionOrder.setProductComposition(productComposition);
+            ProductOrder productOrder = new ProductOrder();
+            productOrder.setMetaProduct(processedProduct);
+            productOrder.setProductionOrder(productionOrder);
+            productionOrder.getProductOrders().add(productOrder);
+            productionOrder.setContainerWeight(0.0);
+            productionOrder.setExpendAmount(0.0);
         }
 
 
@@ -1033,6 +1037,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private Boolean verifySotck(ProductionOrder order) {
         Boolean band = false;
+        if(order.getProductMain() == null)
         for (ProductionIngredient ingredient : order.getProductComposition().getProductionIngredientList()) {
             BigDecimal mountWareHouse = productionPlanningService.getMountInWarehouse(ingredient.getMetaProduct().getProductItem());
             if (!articleEstateService.existArticleEstate(ingredient.getMetaProduct().getProductItem()))
@@ -2944,8 +2949,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private BigDecimal calculateTotalMilkCheese(){
         ProductionPlanning planning = getInstance();
         Double total = 0.0;
+        ProductItem item;
         for(ProductionOrder order: planning.getProductionOrderList()){
-            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_CHEESE) == 0)
+            if(order.getProductMain() != null)
+                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+            else
+                item = order.getProductComposition().getProcessedProduct().getProductItem();
+
+            if(item.getGroupCode().compareTo(Constants.ID_ART_GROUP_CHEESE) == 0)
             for(OrderInput input: order.getOrderInputs())
             {
                 if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
@@ -2961,8 +2972,15 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private BigDecimal calculateTotalMilkUHT(){
         ProductionPlanning planning = getInstance();
         Double total = 0.0;
+        ProductItem item;
         for(ProductionOrder order: planning.getProductionOrderList()){
-            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_UHT) == 0)
+
+            if(order.getProductMain() != null)
+                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+            else
+                item = order.getProductComposition().getProcessedProduct().getProductItem();
+
+            if(item.getGroupCode().compareTo(Constants.ID_ART_GROUP_UHT) == 0)
             for(OrderInput input: order.getOrderInputs())
             {
                 if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)
@@ -2978,8 +2996,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private BigDecimal calculateTotalMilkYogurt(){
         ProductionPlanning planning = getInstance();
         Double total = 0.0;
+        ProductItem item;
         for(ProductionOrder order: planning.getProductionOrderList()){
-            if(order.getProductComposition().getProcessedProduct().getProductItem().getGroupCode().compareTo(Constants.ID_ART_GROUP_YOGURT) == 0)
+            if(order.getProductMain() != null)
+                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+            else
+                item = order.getProductComposition().getProcessedProduct().getProductItem();
+
+            if(item.getGroupCode().compareTo(Constants.ID_ART_GROUP_YOGURT) == 0)
             for(OrderInput input: order.getOrderInputs())
             {
                 if(input.getProductItem().getProductItemCode().compareTo(Constants.ID_ART_RAW_MILK) == 0)

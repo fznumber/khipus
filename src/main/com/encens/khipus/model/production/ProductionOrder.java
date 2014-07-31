@@ -112,7 +112,7 @@ public class ProductionOrder implements BaseModel {
     private List<OrderInput> orderInputs = new ArrayList<OrderInput>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
+    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = true, insertable = true)
     private ProductComposition productComposition;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
@@ -122,6 +122,10 @@ public class ProductionOrder implements BaseModel {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+    @OneToMany(mappedBy = "productionOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<ProductOrder> productOrders = new ArrayList<ProductOrder>();
 
     public Long getId() {
         return id;
@@ -359,5 +363,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setProductMain(ProductionOrder productMain) {
         this.productMain = productMain;
+    }
+
+    public List<ProductOrder> getProductOrders() {
+        return productOrders;
+    }
+
+    public void setProductOrders(List<ProductOrder> productOrders) {
+        this.productOrders = productOrders;
     }
 }
