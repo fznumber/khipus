@@ -49,7 +49,7 @@
                                 #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
 
-                            <rich:column>
+                            <rich:column rendered="#{s:hasPermission('COLUMNAMOUNTPRODUCERRESPONSIBLE','VIEW')}">
                                 #{messages['ProductionOrder.producingAmountResposible']}
                             </rich:column>
 
@@ -90,7 +90,7 @@
                             </h:commandButton>
                         </h:inputText>
                     </rich:column>
-                    <rich:column>
+                    <rich:column rendered="#{s:hasPermission('COLUMNAMOUNTPRODUCERRESPONSIBLE','VIEW')}">
                         <h:inputText id = "producedAmountResponsibleField"
                                      value="#{singleProduct.amountResponsible}"
                                      maxlength="7" styleClass="input"
@@ -98,7 +98,7 @@
                                      required="false">
                             <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
                                              styleClass="button"
-                                             rendered="#{s:hasPermission('AMOUNTPRODUCERRESPONSIBLE','VIEW')}">
+                                             rendered="#{s:hasPermission('AMOUNTPRODUCERRESPONSIBLE','CREATE')}">
 
                                 <s:defaultAction/>
                             </h:commandButton>

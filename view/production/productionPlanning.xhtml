@@ -845,7 +845,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.producingAmount']}
                 </rich:column>
-                <rich:column>
+                <rich:column rendered="#{s:hasPermission('COLUMNAMOUNTPRODUCERRESPONSIBLE','VIEW')}">
                     #{messages['ProductionOrder.producingAmountResposible']}
                 </rich:column>
                 <rich:column rendered="#{s:hasPermission('GENERATEREQUESTBYPLANNIG','VIEW') and ( productionPlanning.state eq 'PENDING' or  productionPlanning.state eq 'EXECUTED')}">
@@ -886,16 +886,15 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 </h:commandButton>
             </h:inputText>
         </rich:column>
-        <rich:column>
+        <rich:column rendered="#{s:hasPermission('COLUMNAMOUNTPRODUCERRESPONSIBLE','VIEW')}">
             <h:inputText id = "producedAmountReponsibleField"
                          value="#{productionOrderItem.producedAmountResponsible}"
                          maxlength="7" styleClass="input"
-                         disabled="#{productionOrderItem.estateOrder == 'PENDING'}"
                          size="10"
                          required="false">
                 <h:commandButton action="#{productionPlanningAction.saveProduccingAmount()}" value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{s:hasPermission('AMOUNTPRODUCERRESPONSIBLE','VIEW')}">
+                                 rendered="#{s:hasPermission('AMOUNTPRODUCERRESPONSIBLE','CREATE')}">
 
                     <s:defaultAction/>
                 </h:commandButton>

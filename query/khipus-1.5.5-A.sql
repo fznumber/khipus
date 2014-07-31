@@ -1,11 +1,14 @@
---Fecha de creacion: 10/06/2014
 --descripcion : Implementar el reporte de leche cruda
---Permiso: Reporte de balance de produccion
-
+--Permiso: contidad producida aprobada
 INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBRERECURSO,IDMODULO)
   VALUES (400, 'AMOUNTPRODUCERRESPONSIBLE', NULL, 15,'menu.warehouse.amuntProducerResponsible', 6); 
 INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
   VALUES (400, 50, 15, 1, 6);   
+--Permiso: ver columna cantidad producia
+INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBRERECURSO,IDMODULO)
+  VALUES (401, 'COLUMNAMOUNTPRODUCERRESPONSIBLE', NULL, 15,'menu.warehouse.amuntProducerResponsibleColumn', 6); 
+INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
+  VALUES (401, 50, 15, 1, 6);   
 --select * from funcionalidad;  
 --select * from modulo;
 --COMMIT
