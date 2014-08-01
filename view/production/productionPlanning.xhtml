@@ -673,7 +673,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <a4j:commandButton action="#{productionPlanningAction.addOrderProduced}"
                                        value="#{messages['ProductionPlanning.materialUpdate']}"
                                        reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                       rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionOrderForPlanning.estateOrder eq 'PENDING' and s:hasPermission('UPDATEORDERPRODUCTION','CREATE')}"
+                                       rendered="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionOrderForPlanning.estateOrder eq 'PENDING' and s:hasPermission('SAVEMATERIALPRODUCTION','VIEW')}"
                             />
                     <rich:spacer width="10"/>
 
@@ -842,7 +842,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                 <rich:column>
                     #{messages['ProductionOrder.expectedAmount']}
                 </rich:column>
-                <rich:column>
+                <rich:column rendered="#{s:hasPermission('VIEWAMOUNTPRODUCERCOLUMN','VIEW')}">
                     #{messages['ProductionOrder.producingAmount']}
                 </rich:column>
                 <rich:column rendered="#{s:hasPermission('COLUMNAMOUNTPRODUCERRESPONSIBLE','VIEW')}">
@@ -871,7 +871,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <rich:column>
             <h:outputText value="#{productionOrderItem.expendAmount}"/>
         </rich:column>
-        <rich:column>
+        <rich:column rendered="#{s:hasPermission('VIEWAMOUNTPRODUCERCOLUMN','VIEW')}">
             <h:inputText id = "producedAmountField"
                          value="#{productionOrderItem.producedAmount}"
                          maxlength="7" styleClass="input"
