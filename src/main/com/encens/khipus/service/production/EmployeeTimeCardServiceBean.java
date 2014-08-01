@@ -144,13 +144,22 @@ public class EmployeeTimeCardServiceBean extends GenericServiceBean implements E
     @Override
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         Double total = productionOrder.getProducedAmount();
-        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
+        String unitMeasure ;
+        ProcessedProduct processedProduct;
+        if(productionOrder.getProductMain() == null) {
+            processedProduct = productionOrder.getProductComposition().getProcessedProduct();
+            unitMeasure = processedProduct.getUnidMeasure();
+        }
+        else {
+            processedProduct = productionOrder.getProductOrders().get(0).getProcessedProduct();
+            unitMeasure = processedProduct.getUnidMeasure();
+        }
         Double amount = 0.0;
-        if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
-            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
+        if (processedProduct.getAmount() != null)
+            amount = processedProduct.getAmount();
 
         if (unitMeasure == "KG" || unitMeasure == "LT")
-            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+            amount = processedProduct.getAmount() * 1000;
 
         total = amount * productionOrder.getProducedAmount();
         return total;

@@ -957,11 +957,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if(productionOrder.getProductMain() != null && productionOrder.getProductComposition() == null)
         {
             ProductOrder productOrder = new ProductOrder();
-            productOrder.setMetaProduct(processedProduct);
+            productOrder.setProcessedProduct(processedProduct);
             productOrder.setProductionOrder(productionOrder);
+            productOrder.setFullName(processedProduct.getFullName());
             productionOrder.getProductOrders().add(productOrder);
             productionOrder.setContainerWeight(0.0);
             productionOrder.setExpendAmount(0.0);
+            adjustCostInput();
         }
 
 
@@ -979,12 +981,54 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             if (update() != Outcome.SUCCESS) {
                 return;
             }
+        if(productionOrder.getProductMain() == null)
         addMessageOrderCreateSuccess(productionOrder.getCode(),productionOrder.getProductComposition().getProcessedProduct().getFullName());
+        else
+        addMessageOrderCreateSuccess(productionOrder.getCode(), productionOrder.getProductOrders().get(0).getProcessedProduct().getFullName());
+
         clearFormulation();
         disableEditingFormula();
         showProductionOrders = true;
         showButtonAddInput = false;
         showInit();
+    }
+    //todo: colocar el valor del costo total de insumos de la orden principal en la tabla PRODUCTOORDEN
+    //para que no se pierda el dato y rehacer los calculos de acuerdo a ese valor
+    private void adjustCostInput() {
+       ProductionOrder mainOrder = productionOrder.getProductMain();
+       ProcessedProduct processedProductMain = mainOrder.getProductComposition().getProcessedProduct();
+       Double totalInput = mainOrder.getTotalPriceInput();
+       Double mainVolume = calculateVolume(processedProductMain,mainOrder.getProducedAmount());
+       Double volumeTotal = mainVolume;
+       Double orderVolume = calculateVolume(productionOrder.getProductOrders().get(0).getProcessedProduct(),productionOrder.getProducedAmount());
+       Double totalInputOrder = mainOrder.getTotalPriceInput();
+
+        for(ProductionOrder order:getInstance().getProductionOrderList())
+        {
+            if(order.getProductMain().getId() == mainOrder.getId())
+            {
+                volumeTotal += calculateVolume(order.getProductOrders().get(0).getProcessedProduct(),order.getProducedAmount());
+            }
+        }
+       Double porcentageOrder = orderVolume * 100 /volumeTotal;
+       Double porcentageOrderMain = mainVolume * 100/volumeTotal;
+       productionOrder.setTotalPriceInput(((porcentageOrder /100)* totalInput)+totalInputOrder);
+
+
+    }
+
+    private Double calculateVolume(ProcessedProduct processedProductMain, Double amount)
+    {
+        Double volumeTotal;
+        if(processedProductMain.getUnidMeasure() == "LT" || processedProductMain.getUnidMeasure() == "KG")
+        {
+            volumeTotal = amount * (processedProduct.getAmount() * 1000);
+        }else
+        {
+            volumeTotal = amount * processedProduct.getAmount();
+        }
+
+        return volumeTotal;
     }
 
     public void updateFormulation() {
@@ -2952,7 +2996,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductItem item;
         for(ProductionOrder order: planning.getProductionOrderList()){
             if(order.getProductMain() != null)
-                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+                item = order.getProductOrders().get(0).getProcessedProduct().getProductItem();
             else
                 item = order.getProductComposition().getProcessedProduct().getProductItem();
 
@@ -2976,7 +3020,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         for(ProductionOrder order: planning.getProductionOrderList()){
 
             if(order.getProductMain() != null)
-                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+                item = order.getProductOrders().get(0).getProcessedProduct().getProductItem();
             else
                 item = order.getProductComposition().getProcessedProduct().getProductItem();
 
@@ -2999,7 +3043,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductItem item;
         for(ProductionOrder order: planning.getProductionOrderList()){
             if(order.getProductMain() != null)
-                item = order.getProductOrders().get(0).getMetaProduct().getProductItem();
+                item = order.getProductOrders().get(0).getProcessedProduct().getProductItem();
             else
                 item = order.getProductComposition().getProcessedProduct().getProductItem();
 
@@ -3412,8 +3456,19 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public Double getTotalVolumProductionPlaning(ProductionOrder productionOrder) {
         Double total = 0.0;
+        ProductItem item,itemOrder;
+        if(productionOrder.getProductMain() == null)
+            item = productionOrder.getProductComposition().getProcessedProduct().getProductItem();
+        else
+            item = productionOrder.getProductOrders().get(0).getProcessedProduct().getProductItem();
+
         for (ProductionOrder order : getInstance().getProductionOrderList()) {
-            if (productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup().getGroup() == order.getProductComposition().getProcessedProduct().getProductItem().getSubGroup().getGroup())
+            if(order.getProductMain() == null)
+                itemOrder = order.getProductComposition().getProcessedProduct().getProductItem();
+            else
+                itemOrder = order.getProductOrders().get(0).getProcessedProduct().getProductItem();
+
+            if (item.getSubGroup().getGroup() == itemOrder.getSubGroup().getGroup())
                 total += employeeTimeCardService.getTotalVolumeOrder(order);
         }
         return total;

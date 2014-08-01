@@ -22,12 +22,15 @@ public class ProductOrder implements BaseModel {
     private Long id;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
-    private MetaProduct metaProduct;
+    @JoinColumn(name = "IDPRODUCTOPROCESADO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    private ProcessedProduct processedProduct;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
+
+    @Column(name = "NOMBREPRODUTO",nullable = false,columnDefinition = "VARCHAR2(100 BYTE)")
+    private String fullName;
 
     public Long getId() {
         return id;
@@ -37,12 +40,12 @@ public class ProductOrder implements BaseModel {
         this.id = id;
     }
 
-    public MetaProduct getMetaProduct() {
-        return metaProduct;
+    public ProcessedProduct getProcessedProduct() {
+        return processedProduct;
     }
 
-    public void setMetaProduct(MetaProduct metaProduct) {
-        this.metaProduct = metaProduct;
+    public void setProcessedProduct(ProcessedProduct processedProduct) {
+        this.processedProduct = processedProduct;
     }
 
     public ProductionOrder getProductionOrder() {
@@ -51,5 +54,13 @@ public class ProductOrder implements BaseModel {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

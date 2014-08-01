@@ -39,7 +39,8 @@ public class ProductionOrderSearchDataModel extends QueryDataModel<Long,Producti
 
     @Override
     public String getEjbql() {
-        return  " select productionOrder from ProductionOrder productionOrder";
+        return  " select productionOrder from ProductionOrder productionOrder " +
+                " where productionOrder.productMain is null";
     }
 
     @Override

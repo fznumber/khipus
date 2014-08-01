@@ -4,7 +4,7 @@
 alter table DOCUMENTOCOMPRA add (ESTADOPAGO number(1) default 0);
 --commit
 --Fecha de creacion: 25/07/2014
--descripcion: Producir un producto en base a otro producuto
+--descripcion: Producir un producto en base a otro producuto
 /*
 Pasa lo siguiente en produccion con la Leche UHT
 Realizan una produccion de leche UHT 950 en un tanque y sacan por ejempo 8000 un., resulta que 2000 es subsidio con otro material de envasado y 6000 es el envasado comun
@@ -16,6 +16,7 @@ envasan una parte Yog sachet frutilla 120cc que es el subsidio
 pero esto si lo registran separado
 exactamente que la leche UHT pasa con el Yogurt frutado 1L envasan subsidio y el normal
 */
+alter table ORDENPRODUCCION MODIFY (IDCOMPOSICIONPRODUCTO NUMBER(24,0) NULL);
 
 CREATE TABLE PRODUCTOORDEN(
    IDPRODUCTOORDEN NUMBER(24,0) NOT NULL
