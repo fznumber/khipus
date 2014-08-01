@@ -45,7 +45,7 @@
 
                             </rich:column>
 
-                            <rich:column>
+                            <rich:column rendered="#{s:hasPermission('VIEWAMOUNTPRODUCERCOLUMN','VIEW')}">
                                 #{messages['ProductionPlanning.producingAmount']}
                             </rich:column>
 
@@ -75,7 +75,7 @@
                     <rich:column>
                         <h:outputText value="#{singleProduct.productProcessingSingle.metaProduct.fullName}"/>
                     </rich:column>
-                    <rich:column>
+                    <rich:column rendered="#{s:hasPermission('VIEWAMOUNTPRODUCERCOLUMN','VIEW')}">
                         <h:inputText id = "producedAmountField"
                                      value="#{singleProduct.amount}"
                                      maxlength="7" styleClass="input"
