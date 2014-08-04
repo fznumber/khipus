@@ -81,6 +81,9 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
 
+    @Column(name = "COSTINSUMOPRINCIPAL", nullable = true,columnDefinition = "NUMBER(16,2)")
+    private Double totalCostInputMain = 0.0;
+
     @Transient
     private Double milk;
 
@@ -371,5 +374,13 @@ public class ProductionOrder implements BaseModel {
 
     public void setProductOrders(List<ProductOrder> productOrders) {
         this.productOrders = productOrders;
+    }
+
+    public Double getTotalCostInputMain() {
+        return totalCostInputMain;
+    }
+
+    public void setTotalCostInputMain(Double totalCostInputMain) {
+        this.totalCostInputMain = totalCostInputMain;
     }
 }
