@@ -424,7 +424,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <s:div>
             <s:decorate id="materialProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
-                <h:outputText value="#{productionOrderForPlanning.productComposition.processedProduct.name}"/>
+                <h:outputText value="#{productionOrderForPlanning.productMain != null? productionOrderForPlanning.productOrders.get(0).processedProduct.fullName :productionOrderForPlanning.productComposition.processedProduct.name}"/>
             </s:decorate>
 
             <s:decorate id="materialCodeField" template="/include/inputField.xhtml" styleClass="formRow">

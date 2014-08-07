@@ -144,8 +144,11 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private MetaProductService metaProductService;
     @In
     private VoucherService voucherService;
+    @In
+    private ProductionOrderService productionOrderService;
 
     private boolean showButtonAddInput = false;
+    private Double volumeTotalInputMain;
 
     @Override
     protected GenericService getService() {
@@ -939,7 +942,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         return false;
     }
-
+    //todo: verificar que el valor inicial del total
     public void addFormulation() {
 
         for(OrderInput input: productionOrder.getOrderInputs())
@@ -959,8 +962,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productOrder.setProductionOrder(productionOrder);
             productOrder.setFullName(processedProduct.getFullName());
 
-            if(productionOrder.getProductMain().getTotalCostInputMain() == 0.0 || productionOrder.getProductMain().getTotalCostInputMain() == null)
+            if(productionOrder.getProductMain().getTotalCostInputMain() == 0.0 || productionOrder.getProductMain().getTotalCostInputMain() == null) {
                 productionOrder.getProductMain().setTotalCostInputMain(productionOrder.getProductMain().getTotalPriceInput());
+                try {
+                    productionOrderService.update(productionOrder.getProductMain());
+                } catch (EntryDuplicatedException e) {
+                    e.printStackTrace();
+                } catch (ConcurrencyException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             productionOrder.getProductOrders().add(productOrder);
             productionOrder.setContainerWeight(0.0);
@@ -976,6 +988,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         if(productionOrder.getProductMain() == null )
         productionOrder.getOrderInputs().addAll(productIputToFormulation);
 
+        setTotalsInputsIni(productionOrder);
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (productionPlanning.getId() != null && !verifySotck(productionOrder))
@@ -1006,20 +1019,39 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     private void updateCostInputs(Double volumeTotal,ProductionOrder  order)
     {
-        Double orderVolume = calculateVolume(order.getProductOrders().get(0).getProcessedProduct(),order.getProductOrders().get(0).getProcessedProduct().getAmount(),order.getProducedAmount());
-        Double porcentageOrder = orderVolume * 100 /volumeTotal;
-        Double totalInput = order.getProductMain().getTotalCostInputMain();
-        order.setTotalCostInputMain((porcentageOrder /100)* totalInput);
-    }
+        Double orderVolume = 0.0;
+        if(order.getProductMain() != null)
+            orderVolume = calculateVolume(order.getProductOrders().get(0).getProcessedProduct(),order.getProductOrders().get(0).getProcessedProduct().getAmount(),order.getProducedAmount());
+        else
+            orderVolume = calculateVolume(order.getProductComposition().getProcessedProduct(),order.getProductComposition().getProcessedProduct().getAmount(),order.getProducedAmount());
 
+        Double porcentageOrder = (orderVolume * 100) /volumeTotal;
+        Double totalInput = 0.0;
+        if(order.getProductMain() != null) {
+            totalInput = order.getProductMain().getTotalCostInputMain();
+            order.setTotalCostInputMain((porcentageOrder / 100) * totalInput);
+        }
+        else {
+            totalInput = order.getTotalCostInputMain();
+            order.setTotalPriceInput((porcentageOrder /100)* totalInput);
+        }
+
+    }
+    //esta mal tiene q tomar el volumen total de la orden principal
     private Double totalVolumeInputs()
     {
         Double volumeTotal = 0.0;
         if(productionOrder.getProductMain() != null)
-            volumeTotal = productionOrder.getProductMain().getTotalCostInputMain();
-        else
-            if(productionOrder.getTotalPriceMaterial() != null)
-            volumeTotal = productionOrder.getTotalCostInputMain();
+            volumeTotal = calculateVolume(productionOrder.getProductMain().getProductComposition().getProcessedProduct(),
+                    productionOrder.getProductMain().getProductComposition().getProcessedProduct().getAmount(),
+                    productionOrder.getProductMain().getProducedAmount());
+        else {
+            if (productionOrder.getTotalCostInputMain() > 0.0) {
+                volumeTotal = calculateVolume(productionOrder.getProductComposition().getProcessedProduct(),
+                        productionOrder.getProductComposition().getProcessedProduct().getAmount(),
+                        productionOrder.getProducedAmount());
+            }
+        }
 
         for(ProductionOrder order:getInstance().getProductionOrderList())
         {
@@ -1038,7 +1070,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         Double volumeTotal;
         if(processedProductMain.getUnidMeasure() == "LT" || processedProductMain.getUnidMeasure() == "KG")
         {
-            volumeTotal = amount * (processedProduct.getAmount() * 1000);
+            volumeTotal = amount * (amountProductProced * 1000);
         }else
         {
             volumeTotal = amount * amountProductProced;
@@ -1062,19 +1094,14 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
         ProductionPlanning planning = getInstance();
         productionOrder.getOrderInputs().addAll(productIputToFormulation);
-        //es necesario fijar el valor de cantidad producida al mismo valor que cantidad desada
-        //para que no afecte en el calculo de las formulas
-        //setProducedAmountWithExpendAmount(planning);
 
-        //if (planning.getId() != null && verifySotckByProductionPlannig(planning))
-        //setInputs();
         setTotalCostProducticionAndUnitPrice(productionOrder);
         setValuesMilks();
         if (planning.getId() != null && !verifySotck(productionOrder))
             if (update() != Outcome.SUCCESS) {
                 return;
             }
-        //setPriceCostInput();
+
         existingFormulation = null;
         disableEditingFormula();
         showProductionOrders = true;
@@ -2389,7 +2416,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder = order;
         if (productionOrder.getId() != null && order.getEstateOrder().equals(PENDING)) {
             setTotalsMaterials(productionOrder);
-            setTotalsInputs(productionOrder);
+            //setTotalsInputs(productionOrder);
             //setTotalHour(productionOrder);
             setTotalIndiRectCost(productionOrder,getInstance().getDate());
             setTotalCostProducticionAndUnitPrice(productionOrder);
@@ -2407,7 +2434,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         ProductionPlanning productionPlanning = getInstance();
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
-            setTotalsInputs(order);
+            //setTotalsInputs(order);
             setTotalIndiRectCost(order,productionPlanning.getDate());
             //setTotalHour(productionOrder);
             setTotalCostProducticionAndUnitPrice(order);
@@ -2552,7 +2579,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public void makeFinalizedOrder() {
-        //getInstance().setState(FINALIZED);
+
         if(verifyAmounts(productionOrder))
         {
             return;
@@ -2565,13 +2592,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
 
-        Double volumeTotal = totalVolumeInputs();
+        volumeTotalInputMain = totalVolumeInputs();
 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
-            if(order.getProductMain() != null)
-                updateCostInputs(volumeTotal, order);
-            if(order.getProductMain() == null && order.getTotalCostInputMain() > 0.0)
-                updateCostInputs(volumeTotal, order);
             setTotalsMaterials(order);
             setTotalsInputs(order);
             setTotalIndiRectCost(order,productionPlanning.getDate());
@@ -3357,7 +3380,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     //todo: isNotCountAs verifica si el insumo no tiene cuenta en ese caso lo salta
-    public void setTotalsInputs(ProductionOrder productionOrder) {
+    public void setTotalsInputsIni(ProductionOrder productionOrder) {
         Double totalInput = 0.0;
 
         for (OrderInput input : productionOrder.getOrderInputs()) {
@@ -3367,12 +3390,33 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             //totalInput = totalInput + ((input.getCostUnit().doubleValue()) * input.getAmount());
             totalInput = totalInput + input.getCostTotal().doubleValue();
         }
-        if(productionOrder.getProductMain() != null)
-        {
-            totalInput += productionOrder.getTotalCostInputMain();
+
+        //productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
+        productionOrder.setTotalPriceInput(totalInput);
+    }
+
+    public void setTotalsInputs(ProductionOrder productionOrder) {
+
+        Double totalInput = 0.0;
+
+        for (OrderInput input : productionOrder.getOrderInputs()) {
+            //totalInput += RoundUtil.getRoundValue((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount(),2, RoundUtil.RoundMode.SYMMETRIC);
+            if (!isNotCountAs(input.getProductItem()))
+                //totalInput = totalInput + ((input.getProductItem().getUnitCost().doubleValue()) * input.getAmount());
+                //totalInput = totalInput + ((input.getCostUnit().doubleValue()) * input.getAmount());
+                totalInput = totalInput + input.getCostTotal().doubleValue();
         }
 
         //productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
+        if(productionOrder.getProductMain() != null) {
+            updateCostInputs(volumeTotalInputMain, productionOrder);
+            totalInput += productionOrder.getTotalCostInputMain();
+        }
+        if(productionOrder.getProductMain() == null && productionOrder.getTotalCostInputMain() > 0.0) {
+            updateCostInputs(volumeTotalInputMain, productionOrder);
+            return;
+        }
+
         productionOrder.setTotalPriceInput(totalInput);
     }
 

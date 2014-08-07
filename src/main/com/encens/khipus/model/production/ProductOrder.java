@@ -29,7 +29,7 @@ public class ProductOrder implements BaseModel {
     @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
-    @Column(name = "NOMBREPRODUTO",nullable = false,columnDefinition = "VARCHAR2(100 BYTE)")
+    @Column(name = "NOMBREPRODUCTO",nullable = false,columnDefinition = "VARCHAR2(100 BYTE)")
     private String fullName;
 
     public Long getId() {
