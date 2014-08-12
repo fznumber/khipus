@@ -1037,26 +1037,30 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         }
 
     }
-    //esta mal tiene q tomar el volumen total de la orden principal
+    //no esta funcionando
     private Double totalVolumeInputs()
     {
         Double volumeTotal = 0.0;
-        if(productionOrder.getProductMain() != null)
+        Long idMain = new Long(0);
+        if(productionOrder.getProductMain() != null) {
             volumeTotal = calculateVolume(productionOrder.getProductMain().getProductComposition().getProcessedProduct(),
                     productionOrder.getProductMain().getProductComposition().getProcessedProduct().getAmount(),
                     productionOrder.getProductMain().getProducedAmount());
+            idMain = productionOrder.getProductMain().getId();
+        }
         else {
             if (productionOrder.getTotalCostInputMain() > 0.0) {
                 volumeTotal = calculateVolume(productionOrder.getProductComposition().getProcessedProduct(),
                         productionOrder.getProductComposition().getProcessedProduct().getAmount(),
                         productionOrder.getProducedAmount());
+                idMain = productionOrder.getId();
             }
         }
 
         for(ProductionOrder order:getInstance().getProductionOrderList())
         {
-            if(order.getProductMain() != null && productionOrder.getProductMain() != null)
-                if(order.getProductMain().getId() == productionOrder.getProductMain().getId())
+            if(order.getProductMain() != null )
+                if(order.getProductMain().getId() == idMain)
                 {
                     volumeTotal += calculateVolume(order.getProductOrders().get(0).getProcessedProduct(),order.getProductOrders().get(0).getProcessedProduct().getAmount(),order.getProducedAmount());
                 }
@@ -1088,7 +1092,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
                 return;
             }
         }
-
+        if(productionOrder.getProductMain() == null)
         if (evaluateMathematicalExpression() == false) {
             return;
         }
@@ -1107,7 +1111,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showProductionOrders = true;
         showButtonAddInput = false;
         showInit();
-        addMessageOrderUpdateSuccess(productionOrder.getCode(),productionOrder.getProductComposition().getProcessedProduct().getFullName());
+        addMessageOrderUpdateSuccess(productionOrder.getCode(),processedProduct.getFullName());
+        productIputToFormulation.clear();
     }
 
     private void addMessageOrderUpdateSuccess(String code, String fullName) {
@@ -1309,7 +1314,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private void setInputs() {
 
         productionOrder.getOrderInputs().clear();
-
+        if(productionOrder.getProductComposition() != null)
         for (ProductionIngredient ingredient : productionOrder.getProductComposition().getProductionIngredientList()) {
             OrderInput input = new OrderInput();
             input.setProductItem(ingredient.getMetaProduct().getProductItem());
@@ -2344,15 +2349,20 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         cancelFormulation();
         //dispobleBalance = false;
-        existingFormulation = new Formulation();
-        existingFormulation.producingAmount = productionOrder.getExpendAmount();
-        existingFormulation.productComposition = productionOrder.getProductComposition();
 
         this.productionOrder = productionOrder;
-        this.productComposition = productionOrder.getProductComposition();
-        this.processedProduct = productComposition.getProcessedProduct();
+        if(productionOrder.getProductMain() != null)
+        {
+            this.processedProduct = productionOrder.getProductOrders().get(0).getProcessedProduct();
+        }else {
+            existingFormulation = new Formulation();
+            existingFormulation.producingAmount = productionOrder.getExpendAmount();
+            existingFormulation.productComposition = productionOrder.getProductComposition();
+            this.productComposition = productionOrder.getProductComposition();
+            this.processedProduct = productComposition.getProcessedProduct();
+            evaluateMathematicalExpression();
+        }
 
-        evaluateMathematicalExpression();
         formulaState = FormulaState.EDIT;
         showProductionOrders = false;
         showButtonAddInput = true;
@@ -2592,7 +2602,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
 
-        volumeTotalInputMain = totalVolumeInputs();
+        if(productionOrder.getProductMain() != null || productionOrder.getTotalCostInputMain() > 0.0)
+            volumeTotalInputMain = totalVolumeInputs();
+        else
+            volumeTotalInputMain = 0.0;
 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
@@ -2743,6 +2756,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showButtonAddProduct = true;
         showSingleProduct = false;
         showGenerateRequestByPlanning = true;
+        hasMainProduction = false;
+
         disableEditingFormula();
     }
 
@@ -3409,10 +3424,16 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
         //productionOrder.setTotalPriceInput(RoundUtil.getRoundValue(totalInput, 2, RoundUtil.RoundMode.SYMMETRIC));
         if(productionOrder.getProductMain() != null) {
+            if(volumeTotalInputMain == 0.0)
+                return;
+
             updateCostInputs(volumeTotalInputMain, productionOrder);
             totalInput += productionOrder.getTotalCostInputMain();
         }
         if(productionOrder.getProductMain() == null && productionOrder.getTotalCostInputMain() > 0.0) {
+            if(volumeTotalInputMain == 0.0)
+                return;
+
             updateCostInputs(volumeTotalInputMain, productionOrder);
             return;
         }
@@ -3951,6 +3972,10 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     }
 
     public Boolean getHasMainProduction() {
+        if(productionOrder.getProductMain() != null)
+            hasMainProduction = true;
+        else
+            hasMainProduction = false;
         return hasMainProduction;
     }
 

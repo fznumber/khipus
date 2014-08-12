@@ -180,10 +180,13 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </a4j:commandLink>
         </s:decorate>
 
-        <s:decorate id="productionOrderModelField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionPlanningAction.managed}">
+        <s:decorate id="productionOrderModelField"
+                    template="/include/inputField.xhtml"
+                    styleClass="formRow"
+                    rendered="#{productionPlanningAction.managed}">
             <ui:define name="label">#{messages['ProductionPlanning.productMain']}</ui:define>
             <h:inputText id="productionOrderModel"
-                         value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"
+                         value="#{productionOrderForPlanning.productMain != null ? productionOrderForPlanning.productMain.productComposition.processedProduct.name : ''}"
                          required="false" maxlength="500" styleClass="input" tabindex="5">
             </h:inputText>
             <a4j:commandLink id="selectProductionOrderModel"
@@ -338,8 +341,15 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <s:div>
                         <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
                                            value="#{messages['ProductionPlanning.create.orderproduction']}"
+                                           immediate="false"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
+                                           rendered="#{!productionPlanningAction.managed and productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
+
+                        <a4j:commandButton id="addInnerButtonImmediate" action="#{productionPlanningAction.addFormulation}"
+                                           value="#{messages['ProductionPlanning.create.orderproduction']}"
+                                           immediate="true"
+                                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
+                                           rendered="#{productionPlanningAction.managed and productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
 
                        <!-- <a4j:commandButton id="generateValeInputButton" action="#{productionPlanningAction.generateValeInput}"
                                            value="#{messages['ProductionPlanning.generateVoucher']}"
@@ -348,6 +358,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 -->
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
+                                           immediate="true"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
                                            rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('UPDATEORDERPRODUCCTION','CREATE')}"/>
                         <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}"
@@ -425,6 +436,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:decorate id="materialProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
                 <h:outputText value="#{productionOrderForPlanning.productMain != null? productionOrderForPlanning.productOrders.get(0).processedProduct.fullName :productionOrderForPlanning.productComposition.processedProduct.name}"/>
+            </s:decorate>
+
+            <s:decorate id="materialProductNameMainField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionOrderForPlanning.productMain != null}">
+                <ui:define name="label">#{messages['ProductionOrder.processedProductMain.name'] }</ui:define>
+                <h:outputText value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"/>
             </s:decorate>
 
             <s:decorate id="materialCodeField" template="/include/inputField.xhtml" styleClass="formRow">
