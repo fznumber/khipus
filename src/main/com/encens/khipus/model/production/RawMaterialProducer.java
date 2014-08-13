@@ -60,8 +60,10 @@ public class RawMaterialProducer extends Person {
     private com.encens.khipus.model.admin.Company company;
 
     @OneToMany(mappedBy = "rawMaterialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    //@Filter(name = "companyFilter")
     private List<CollectedRawMaterial> collectedRawMaterialList = new ArrayList<CollectedRawMaterial>(0);
+
+    @OneToMany(mappedBy = "materialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private List<DiscountReserve> discountReserves = new ArrayList<DiscountReserve>(0);
 
     public String getCodeTaxLicence() {
         return codeTaxLicence;
