@@ -183,10 +183,10 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <s:decorate id="productionOrderModelField"
                     template="/include/inputField.xhtml"
                     styleClass="formRow"
-                    rendered="#{productionPlanningAction.managed}">
+                    rendered="#{productionPlanningAction.managed and productionPlanningAction.showMainProduct}">
             <ui:define name="label">#{messages['ProductionPlanning.productMain']}</ui:define>
             <h:inputText id="productionOrderModel"
-                         value="#{productionOrderForPlanning.productMain != null ? productionOrderForPlanning.productMain.productComposition.processedProduct.name : ''}"
+                         value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"
                          required="false" maxlength="500" styleClass="input" tabindex="5">
             </h:inputText>
             <a4j:commandLink id="selectProductionOrderModel"
@@ -314,7 +314,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             <h:inputText value="#{productionIngredientItem.amount}"
                                          styleClass="input"
                                          disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem) and productionIngredientItem.type !='ADD'}">
-                                <a4j:support event="onblur" ajaxSingle="false" reRender="productionIngredientList"
+                                <a4j:support event="onblur"
+                                             ajaxSingle="false"
+                                             reRender="productionIngredientList"
                                              actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
 

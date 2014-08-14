@@ -148,7 +148,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private ProductionOrderService productionOrderService;
 
     private boolean showButtonAddInput = false;
-    private Double volumeTotalInputMain;
+    private Double volumeTotalInputMain = 0.0;
+    private boolean showMainProduct = true;
 
     @Override
     protected GenericService getService() {
@@ -850,6 +851,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             setInputs();
             dispobleBalance = true;
             showButtonAddInput = true;
+            showMainProduct = false;
 
         } catch (Exception ex) {
             log.error("Exception caught", ex);
@@ -2757,6 +2759,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         showSingleProduct = false;
         showGenerateRequestByPlanning = true;
         hasMainProduction = false;
+        volumeTotalInputMain = 0.0;
+        showMainProduct = true;
 
         disableEditingFormula();
     }
@@ -3981,5 +3985,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
 
     public void setHasMainProduction(Boolean hasMainProduction) {
         this.hasMainProduction = hasMainProduction;
+    }
+
+    public boolean isShowMainProduct() {
+        return showMainProduct;
+    }
+
+    public void setShowMainProduct(boolean showMainProduct) {
+        this.showMainProduct = showMainProduct;
     }
 }
