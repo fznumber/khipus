@@ -50,11 +50,11 @@ public class CollectionRecord implements com.encens.khipus.model.BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.production.ProductiveZone productiveZone;
+    private ProductiveZone productiveZone;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "IDPLANILLAACOPIO", nullable = false, updatable = false, insertable = true)
-    private com.encens.khipus.model.production.CollectionForm collectionForm;
+    private CollectionForm collectionForm;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)

@@ -161,10 +161,12 @@
                 <ui:define name="label">#{messages['RawMaterialPayRoll.productiveZoneName']}</ui:define>
                 <h:inputText id="productiveZone" value="#{rawMaterialPayRoll.fullNameOfProductiveZone}"
                              styleClass="input"
+                             disabled="true"
                              maxlength="150" tabindex="1" readonly="#{rawMaterialPayRollAction.readonly}">
                 </h:inputText>
                 <a4j:commandLink id="selectProductiveZone" ajaxSingle="true" immediate="true" tabindex="2"
                                  title="#{messages['RawMaterialPayRoll.selectProductiveZone']}"
+                                 disabled="true"
                                  onclick="Richfaces.showModalPanel('productiveZoneModalPanel');"
                                  rendered="#{!rawMaterialPayRollAction.managed and !rawMaterialPayRollAction.readonly}">
                     <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
@@ -342,7 +344,7 @@
     <!--<rich:spacer/>
  <h:commandLink value="#{messages['Common.reporte']}" action="#{rawMaterialPayRecordReportAction.generateReport(rawMaterialPayRecordItem)}" />-->
 </rich:column>
-<!--Todo: la columna del total acopiado esta en vaz del total pesado por error-->
+<!--Todo: la columna del total acopiado esta en vez del total pesado por error-->
 <f:facet name="footer">
 
     <rich:columnGroup>

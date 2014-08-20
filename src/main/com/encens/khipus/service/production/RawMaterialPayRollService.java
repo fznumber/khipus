@@ -15,7 +15,9 @@ import java.util.List;
 @Local
 public interface RawMaterialPayRollService extends GenericService {
 
-    public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll) throws EntryNotFoundException, RawMaterialPayRollException;
+    public DiscountProducer findDiscountProducerByDate(Date date);
+
+    public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll,DiscountProducer discountProducer) throws EntryNotFoundException, RawMaterialPayRollException;
 
     void calculateLiquidPayable(RawMaterialPayRoll rawMaterialPayRoll);
 
@@ -58,4 +60,8 @@ public interface RawMaterialPayRollService extends GenericService {
     void approvedDiscountsGAB(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
 
     void approvedRawMaterialPayRoll(Calendar startDate, Calendar endDate, ProductiveZone productiveZone);
+
+    Double getReservProducer(Date startDate, Date endDate);
+
+    void deleteReserveDiscount(Date startDate, Date endDate);
 }
