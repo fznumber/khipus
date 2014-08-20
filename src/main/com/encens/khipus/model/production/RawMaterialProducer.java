@@ -153,6 +153,14 @@ public class RawMaterialProducer extends Person {
     public void setStartDateTaxLicence2011(Date startDateTaxLicence2011) {
         this.startDateTaxLicence2011 = startDateTaxLicence2011;
     }
+
+    public List<DiscountReserve> getDiscountReserves() {
+        return discountReserves;
+    }
+
+    public void setDiscountReserves(List<DiscountReserve> discountReserves) {
+        this.discountReserves = discountReserves;
+    }
 }
 
 

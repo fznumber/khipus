@@ -2,6 +2,7 @@ package com.encens.khipus.service.production;
 
 
 import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.production.ProductiveZone;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -17,6 +18,27 @@ public class CollectedRawMaterialCalculatorServiceBean implements CollectedRawMa
 
     @In("entityManager")
     private EntityManager em;
+
+    @Override
+    public double calculateCollectedAmountBetweenDates(Date startDate,Date endDate, MetaProduct rawMaterial,ProductiveZone productiveZone) {
+        Double sum = (Double)em.createNamedQuery("CollectionForm.calculateWeightedAmountBetweebDateByMetaProductAndGAB")
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .setParameter("metaProduct", rawMaterial)
+                .setParameter("productiveZone", productiveZone)
+                .getSingleResult();
+        return cast(sum);
+    }
+
+    @Override
+    public double calculateCollectedAmountBetweenDates(Date startDate,Date endDate, MetaProduct rawMaterial) {
+        Double sum = (Double)em.createNamedQuery("CollectionForm.calculateWeightedAmountBetweebDateByMetaProduct")
+                .setParameter("startDate", startDate)
+                .setParameter("endDate", endDate)
+                .setParameter("metaProduct", rawMaterial)
+                .getSingleResult();
+        return cast(sum);
+    }
 
     @Override
     public double calculateCollectedAmount(Date date, MetaProduct rawMaterial) {

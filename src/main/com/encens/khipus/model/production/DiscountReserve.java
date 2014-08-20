@@ -23,19 +23,21 @@ import java.util.Date;
 
 @Entity
 @Table(name = "DESCUENTORESERVA")
-@EntityListeners(CompanyListener.class)
 public class DiscountReserve implements BaseModel {
 
     @Id
-    @Column(name = "IDDESCUENTOPRODUCTOR", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDDESCUENTORESERVA", columnDefinition = "NUMBER(24,0)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "DiscountReserve_Generator")
     private Long id;
 
     @Column(name = "MONTO",columnDefinition = "NUMBER(16,2)",nullable = false)
     private Double amount;
 
-    @Column(name = "FECHA",columnDefinition = "DATE",nullable = false)
-    private Date date;
+    @Column(name = "FECHAINI",columnDefinition = "DATE",nullable = false)
+    private Date startDate;
+
+    @Column(name = "FECHAFIN",columnDefinition = "DATE",nullable = false)
+    private Date endDate;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "IDDESCUENTOPRODUCTOR", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
@@ -61,12 +63,20 @@ public class DiscountReserve implements BaseModel {
         this.amount = amount;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public DiscountProducer getDiscountProducer() {

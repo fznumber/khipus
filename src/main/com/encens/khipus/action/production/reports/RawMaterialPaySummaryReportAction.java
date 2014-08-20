@@ -121,6 +121,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         Double diffTotal = rawMaterialPayRollService.getTotalDiff(discounts.unitPrice, startDate, endDate, metaProduct);
         Double balanceWeightTotal = rawMaterialPayRollService.getBalanceWeightTotal(discounts.unitPrice, startDate, endDate, metaProduct);
         Double totalMoneyBalance = totalMoneyCollected + totalDifferencesMoney;
+        Double reservProducer = rawMaterialPayRollService.getReservProducer(startDate,endDate);
 
         Double total = totalMoneyBalance + discounts.otherIncome;
         params.put("total_collected", df.format(discounts.collected));
@@ -135,7 +136,7 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         //discounts
         Double totalDiscount = discounts.alcohol + discounts.concentrated + discounts.yogurt
                 + discounts.veterinary + discounts.credit + discounts.recip + discounts.retention
-                + discounts.otherDiscount;
+                + discounts.otherDiscount+reservProducer;
         //Double liquidPay = totalMoney - totalDifferences;
         params.put("alcohol", df.format(discounts.alcohol));
         params.put("concentrated", df.format(discounts.concentrated));
@@ -147,11 +148,13 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("otrosDescuentos", df.format(discounts.otherDiscount));
         params.put("otrosIngresos", df.format(discounts.otherIncome));
         Double iue, it;
+
         iue = discounts.retention * 0.625;
         //it = discounts.retention * 0.375;
         it = discounts.retention - iue;
         params.put("iue", df.format(iue));
         params.put("it", df.format(it));
+        params.put("reserva_productores", df.format(reservProducer));
         params.put("total_differences", df.format(totalDiscount));
         //todo: modificar ajustar el prorrateo
         Double totalLiquid = total - totalDiscount;

@@ -180,7 +180,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
             rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
             rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
-
+            DiscountProducer discountProducer = rawMaterialPayRollService.findDiscountProducerByDate(rawMaterialPayRoll.getEndDate());
             if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
                 facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
                 return Outcome.FAIL;
@@ -188,7 +188,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             if (rawMaterialPayRoll.getProductiveZone() != null) {
                 rawMaterialPayRollService.validate(rawMaterialPayRoll);
                 rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll);
+                rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll,discountProducer);
                 readonly = true;
             } else {
                 return generateAll();
@@ -245,6 +245,12 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
             rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
             rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+            DiscountProducer discountProducer = rawMaterialPayRollService.findDiscountProducerByDate(rawMaterialPayRoll.getEndDate());
+            if(discountProducer == null)
+            facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.NoFoundReserve");
+            else
+            if(discountProducer.getReserve() == 0.0 )
+                facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"RawMaterialPayRoll.info.NoFoundReserve");
 
             List<ProductiveZone> productiveZones = productiveZoneService.findAllThatDoNotHaveCollectionForm(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate());
             for (ProductiveZone productiveZone : productiveZones) {
@@ -258,7 +264,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 payRoll.setProductiveZone(productiveZone);
                 rawMaterialPayRollService.validate(payRoll);
                 rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
-                rawMaterialPayRollService.generatePayroll(payRoll);
+                rawMaterialPayRollService.generatePayroll(payRoll,discountProducer);
                 rawMaterialPayRollService.createAll(payRoll);
             }
 
@@ -294,6 +300,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
         rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
         rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
+        rawMaterialPayRollService.deleteReserveDiscount(rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
 
         List<RawMaterialPayRoll> rawMaterialPayRolls = rawMaterialPayRollService.findAll(rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(), rawMaterialPayRoll.getMetaProduct());
         if(rawMaterialPayRolls.size() == 0)

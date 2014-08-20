@@ -295,6 +295,9 @@ public class RawMaterialPayRoll implements BaseModel {
     @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
     private double totalLiquidByGAB = 0.0;
 
+    @Column(name = "TOTALDESCUENTORESERVA", columnDefinition = "NUMBER(16,2)", nullable = true)
+    private double totalReserveDicount = 0.0;
+
     public Long getId() {
         return id;
     }
@@ -512,5 +515,13 @@ public class RawMaterialPayRoll implements BaseModel {
 
     public void setTotalWeighedByGAB(double totalWeighedByGAB) {
         this.totalWeighedByGAB = totalWeighedByGAB;
+    }
+
+    public double getTotalReserveDicount() {
+        return totalReserveDicount;
+    }
+
+    public void setTotalReserveDicount(double totalReserveDicount) {
+        this.totalReserveDicount = totalReserveDicount;
     }
 }

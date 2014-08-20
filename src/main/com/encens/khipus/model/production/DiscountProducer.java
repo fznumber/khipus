@@ -26,7 +26,6 @@ import java.util.Date;
 
 @Entity
 @Table(name = "DESCUENTOPRODUCTOR")
-@EntityListeners(CompanyListener.class)
 public class DiscountProducer implements BaseModel {
 
     @Id
@@ -39,6 +38,9 @@ public class DiscountProducer implements BaseModel {
 
     @Column(name = "RESERVA",columnDefinition = "NUMBER(8,5)",nullable = false)
     private Double reserve;
+
+    @Column(name = "RESERVAQUICENTA",columnDefinition = "NUMBER(8,5)",nullable = false)
+    private Double reserveFortnight;
 
     @Column(name = "FECHAINI",columnDefinition = "DATE",nullable = false)
     private Date startDate;
@@ -128,5 +130,13 @@ public class DiscountProducer implements BaseModel {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public Double getReserveFortnight() {
+        return reserveFortnight;
+    }
+
+    public void setReserveFortnight(Double reserveFortnight) {
+        this.reserveFortnight = reserveFortnight;
     }
 }

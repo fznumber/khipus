@@ -14,6 +14,18 @@ import java.util.List;
                             "from CollectionRecord collectionRecord " +
                             "where collectionRecord.collectionForm.date = :date " +
                             "and collectionRecord.collectionForm.metaProduct = :metaProduct"),
+
+        @NamedQuery(name = "CollectionForm.calculateWeightedAmountBetweebDateByMetaProduct",
+                query = " select sum(collectionRecord.weightedAmount) " +
+                        " from CollectionRecord collectionRecord " +
+                        " where collectionRecord.collectionForm.date between :startDate and :endDate" +
+                        " and collectionRecord.collectionForm.metaProduct = :metaProduct"),
+        @NamedQuery(name = "CollectionForm.calculateWeightedAmountBetweebDateByMetaProductAndGAB",
+                query = " select sum(collectionRecord.weightedAmount) " +
+                        " from CollectionRecord collectionRecord " +
+                        " where collectionRecord.collectionForm.date between :startDate and :endDate" +
+                        " and collectionRecord.productiveZone = :productiveZone" +
+                        " and collectionRecord.collectionForm.metaProduct = :metaProduct"),
         @NamedQuery(name = "CollectionForm.calculateUsedAmountOnDateByMetaProduct",
                 query = "select sum(inputProductionVoucher.amount) " +
                         "from ProductionOrder productionOrder " +

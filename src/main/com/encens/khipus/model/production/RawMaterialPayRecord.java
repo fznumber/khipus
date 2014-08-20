@@ -43,6 +43,9 @@ public class RawMaterialPayRecord {
     @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(16,2)", nullable = false)
     private double productiveZoneAdjustment = 0.0;
 
+    @Column(name = "DESCUENTORESERVA",columnDefinition = "NUMBER(16,2)", nullable = false)
+    private double discountReserve = 0.0;
+
     @Column(name = "LICENCIAIMPUESTOS", nullable = true, length = 200)
     private String taxLicense;
 
@@ -171,5 +174,13 @@ public class RawMaterialPayRecord {
 
     public void setStartDateTaxLicence(Date startDateTaxLicence) {
         this.startDateTaxLicence = startDateTaxLicence;
+    }
+
+    public double getDiscountReserve() {
+        return discountReserve;
+    }
+
+    public void setDiscountReserve(double discountReserve) {
+        this.discountReserve = discountReserve;
     }
 }
