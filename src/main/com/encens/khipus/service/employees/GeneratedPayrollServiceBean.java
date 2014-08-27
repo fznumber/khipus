@@ -999,7 +999,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
                 // The current values of SpecialDate for payroll generation
                 List<Date> specialDate4Employee = specialDateService.getSpecialDateRange(employee, gestionPayroll.getInitDate(), gestionPayroll.getEndDate());
                 Map<Date, List<TimeInterval>> specialDateTime4Employee = specialDateService.getSpecialDateTimeRange(employee, gestionPayroll.getInitDate(), gestionPayroll.getEndDate());
-
+                //todo: implementar rotaciones en las badas horarias
                 // here is the control because, each contract may have different variables of cost
                 for (Contract contract : employeeValidContractsList) {
 
