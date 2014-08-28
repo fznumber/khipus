@@ -12,7 +12,6 @@ import org.jboss.seam.annotations.security.Restrict;
  */
 @Name("indirectCostsConfigDataModel")
 @Scope(ScopeType.PAGE)
-@Restrict("#{s:hasPermission('INVENTORY','VIEW')}")
 public class IndirectCostsConfigDataModel extends QueryDataModel<Long,IndirectCostsConfig> {
 
     private static final String[] RESTRICTIONS = {
