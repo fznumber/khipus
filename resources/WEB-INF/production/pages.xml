@@ -460,4 +460,21 @@
         </navigation>
     </page>
 
+    <page view-id="/production/indirectCostsList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{indirectCostsAction.select(item)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/indirectCosts.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
+    <page view-id="/production/indirectCosts.xhtml" no-conversation-view-id="/production/indirectCostsList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/production/indirectCostsList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
 </pages>

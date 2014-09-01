@@ -45,8 +45,8 @@ public class PeriodIndirectCost implements BaseModel {
     @Column(name = "DIA", nullable = true)
     private Integer day;
 
-    @OneToOne(cascade = {})
-    @PrimaryKeyJoinColumn(name = "IDGESTION")
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},optional = false)
+    @JoinColumn(name = "IDGESTION")
     private Gestion gestion;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "periodIndirectCost", cascade = CascadeType.ALL)
