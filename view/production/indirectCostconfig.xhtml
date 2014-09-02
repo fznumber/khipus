@@ -31,7 +31,7 @@
                          action="#{indirectCostsConfigurationAction.create}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','CREATE')}">
+                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','CREATE')}">
             <s:defaultAction/>
         </h:commandButton>
 
@@ -39,13 +39,13 @@
                          action="#{indirectCostsConfigurationAction.update}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','UPDATE')}">
+                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','UPDATE')}">
             <s:defaultAction/>
         </h:commandButton>
 
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
-                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','DELETE')}">
+                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','DELETE')}">
             <rich:componentControl for="deleteConfirmation"
                                    event="onclick"
                                    disableDefault="true"
@@ -114,7 +114,7 @@
                          action="#{indirectCostsConfigurationAction.create}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','CREATE')}">
+                         rendered="#{!indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','CREATE')}">
             <s:defaultAction/>
         </h:commandButton>
 
@@ -122,13 +122,13 @@
                          action="#{indirectCostsConfigurationAction.update}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','UPDATE')}">
+                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','UPDATE')}">
             <s:defaultAction/>
         </h:commandButton>
 
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
-                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','DELETE')}">
+                         rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','DELETE')}">
             <rich:componentControl for="deleteConfirmation"
                                    event="onclick"
                                    disableDefault="true"
@@ -143,7 +143,7 @@
 </h:form>
 
 <s:decorate template="/include/modalDialog.xhtml"
-            rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('PRODUCTDELIVERYBYDATE','DELETE') and !isWarehouseInUse}">
+            rendered="#{indirectCostsConfigurationAction.managed and s:hasPermission('INDIRECTCOSTCONFIGURATION','DELETE') and !isWarehouseInUse}">
     <ui:param name="dialogId" value="deleteConfirmation"/>
     <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
     <ui:define name="dialogContent">

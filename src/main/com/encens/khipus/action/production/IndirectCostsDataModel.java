@@ -80,7 +80,6 @@ public class IndirectCostsDataModel extends QueryDataModel<Long,IndirectCosts> {
 
         private Gestion gestion;
 
-
         private Month month;
 
         private PeriodIndirectCost periodIndirectCost;

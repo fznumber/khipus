@@ -74,7 +74,7 @@
                         </s:decorate>
                     </s:div>
                 </h:panelGrid>
-                <rich:jQuery selector="#account" query="focus()" timing="onload"/>
+                <rich:jQuery selector="#name" query="focus()" timing="onload"/>
             </rich:simpleTogglePanel>
 
             <div class="buttons">
@@ -142,12 +142,12 @@
                     <h:outputText value="#{item.periodIndirectCost.gestion.year}"/>
                 </rich:column>
                 <rich:column styleClass="center">
-                    <h:commandLink value="#{messages['Common.select']}"
+                    <!--<h:commandLink value="#{messages['Common.select']}"
                                    immediate="true"
                                    action="#{indirectCostsConfigurationAction.select(item)}"
                                    rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')}">
                         <s:conversationPropagation value="none"/>
-                    </h:commandLink>
+                    </h:commandLink>-->
                 </rich:column>
             </rich:dataTable>
             <app:dataScroller id="dataScroller" for="indirectCostsList" dataModel="#{indirectCostsDataModel}"/>
