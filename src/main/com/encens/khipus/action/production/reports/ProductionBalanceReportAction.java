@@ -12,6 +12,8 @@ import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
+import org.jboss.seam.faces.FacesMessages;
+import org.jboss.seam.international.StatusMessage;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,9 @@ public class ProductionBalanceReportAction extends GenericReportAction {
 
     @In("CollectionFormService")
     private CollectionFormService collectionFormService;
+
+    @In
+    protected FacesMessages facesMessages;
 
     @Create
     public void init() {
@@ -71,6 +76,12 @@ public class ProductionBalanceReportAction extends GenericReportAction {
         log.debug("Generating production balance report...................");
         HashMap<String, Object> reportParameters = new HashMap<String, Object>();
         CollectionForm collectionForm = collectionFormService.finCollectionFormByDate(date);
+        if(collectionForm == null)
+        {
+            facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO, "Reports.rotatoryFundBalancesDetail.NotFoundMessage");
+            return;
+        }
+
         reportParameters.put("totalCollected",collectionForm.getTotalWeighed());
         reportParameters.put("totalSNG",collectionForm.getGreasePercentage());
         Double total = collectionForm.getTotalWeighed() *(collectionForm.getGreasePercentage() / 100);

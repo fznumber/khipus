@@ -137,7 +137,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalSNG}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement key="date_text" style="titleStyle" positionType="Float" x="298" y="4" width="55" height="12"/>
+					<reportElement key="date_text" style="titleStyle" positionType="Float" x="363" y="4" width="55" height="12"/>
 					<box padding="1">
 						<pen lineStyle="Solid" lineColor="#000000"/>
 					</box>
@@ -145,6 +145,16 @@
 						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression class="java.lang.Double"><![CDATA[$P{total}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="date_text" style="titleStyle" positionType="Float" x="298" y="4" width="65" height="12"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Ingreso= "]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -316,7 +326,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalOutput}.doubleValue()/($P{total}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[($V{totalOutput}.doubleValue()/($P{total}.doubleValue())) * 100]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="3" y="23" width="108" height="13"/>
@@ -325,6 +335,14 @@
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression class="java.lang.String"><![CDATA["Redimiento del día: "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="191" y="23" width="28" height="13"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["%"]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
