@@ -58,10 +58,30 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
         try {
             //todo:verificar q no repita el periodo y q los montos no sean cero
             refreshPeriodIndirectCost();
+            if(indirectCostses == null || indirectCostses.size() == 0)
+            {
+                addNotFoundCostsIndirectMessage();
+                return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+            }
+
             if(periodIndirectCost == null)
             {
                 addNotFoundPeriodMessage();
                 return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+            }
+
+            if(periodIndirectCostService.findPeriodIndirect(periodIndirectCost))
+            {
+                addRepeatedPeriodMessage();
+                return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+            }
+            for(IndirectCosts costs:indirectCostses)
+            {
+                if(costs.getAmountBs().equals(BigDecimal.ZERO))
+                {
+                    addMountZeroMessage();
+                    return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+                }
             }
 
             for(IndirectCosts costs:indirectCostses){
@@ -74,6 +94,21 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
             addDuplicatedMessage();
             return com.encens.khipus.framework.action.Outcome.REDISPLAY;
         }
+    }
+
+    private void addMountZeroMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.mountZero");
+    }
+
+    private void addRepeatedPeriodMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.repeatedPeriod");
+    }
+
+    private void addNotFoundCostsIndirectMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.NotFoundPeriod");
     }
 
     private void addNotFoundPeriodMessage() {
@@ -93,7 +128,7 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
 
     public void findLastPeriod()
     {
-        List<IndirectCosts> costGeneral = indirectCostsService.getIndirectCostGeneral(periodIndirectCostService.findLastPeriodIndirectCost());
+        List<IndirectCosts> costGeneral = indirectCostsService.getIndirectCostGeneral(periodIndirectCostService.findLastPeriodIndirectCostUsed());
        for(IndirectCosts costs:costGeneral){
            IndirectCosts cost= new IndirectCosts();
            cost.setAmountBs(BigDecimal.ZERO);

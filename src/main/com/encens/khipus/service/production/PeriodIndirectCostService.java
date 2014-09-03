@@ -14,4 +14,8 @@ public interface PeriodIndirectCostService {
     public PeriodIndirectCost findLastPeriodIndirectCost();
 
     PeriodIndirectCost findPeriodIndirect(Month month, Gestion gestion);
+
+    boolean findPeriodIndirect(PeriodIndirectCost periodIndirectCost);
+
+    PeriodIndirectCost findLastPeriodIndirectCostUsed();
 }

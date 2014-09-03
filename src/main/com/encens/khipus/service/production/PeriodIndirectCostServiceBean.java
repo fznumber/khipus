@@ -2,8 +2,10 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.production.IndirectCosts;
 import com.encens.khipus.model.production.PeriodIndirectCost;
 
+import com.encens.khipus.model.production.ProductionOrder;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
@@ -54,5 +56,30 @@ public class PeriodIndirectCostServiceBean implements PeriodIndirectCostService 
             return null;
 
         return periodIndirectCostList.get(0);
+    }
+
+    @Override
+    public boolean findPeriodIndirect(PeriodIndirectCost periodIndirectCost) {
+        List<IndirectCosts> indirectCosts;
+        try {
+            indirectCosts = (List<IndirectCosts>) em.createQuery(" select indirectCosts from IndirectCosts indirectCosts " +
+                    " where indirectCosts.periodIndirectCost = :periodIndirectCost ")
+                    .setParameter("periodIndirectCost", periodIndirectCost)
+                    .getResultList();
+        }catch(NoResultException e)
+        {
+            return false;
+        }
+
+        return indirectCosts.size() > 0;
+    }
+
+    @Override
+    public PeriodIndirectCost findLastPeriodIndirectCostUsed() {
+        List<IndirectCosts> indirectCosts = (List<IndirectCosts>)em.createQuery("select indirectCosts from IndirectCosts indirectCosts " +
+                " where indirectCosts.periodIndirectCost is not null" +
+                " order by indirectCosts desc")
+                .getResultList();
+        return  indirectCosts.get(0).getPeriodIndirectCost();
     }
 }
