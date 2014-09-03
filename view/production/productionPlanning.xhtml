@@ -926,7 +926,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <h:inputText id = "greasePercentageField"
                          value="#{productionOrderItem.greasePercentage}"
                          maxlength="5" styleClass="input"
-                         disabled="#{productionOrderItem.estateOrder eq 'FINALIZED' or  productionOrderItem.estateOrder eq 'TABULATED' ? true : false}"
+                         disabled="#{productionOrderItem.estateOrder eq 'TABULATED' ? true : false}"
                          size="10"
                          required="false">
                 <h:commandButton action="#{productionPlanningAction.saveGreasePercentaje(productionOrderItem)}" value="#{messages['Common.save']}"
