@@ -82,4 +82,20 @@ public class PeriodIndirectCostServiceBean implements PeriodIndirectCostService 
                 .getResultList();
         return  indirectCosts.get(0).getPeriodIndirectCost();
     }
+
+    @Override
+    public boolean findPeriodIndirectCostUsed(PeriodIndirectCost periodIndirectCost) {
+        List<IndirectCosts> indirectCosts;
+        try {
+            indirectCosts = (List<IndirectCosts>) em.createQuery(" select indirectCosts from IndirectCosts indirectCosts " +
+                    " where indirectCosts.periodIndirectCost = :periodIndirectCost ")
+                    .setParameter("periodIndirectCost", periodIndirectCost)
+                    .getResultList();
+        }catch(NoResultException e)
+        {
+            return false;
+        }
+
+        return indirectCosts.size() > 0;
+    }
 }

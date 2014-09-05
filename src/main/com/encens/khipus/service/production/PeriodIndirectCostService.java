@@ -18,4 +18,6 @@ public interface PeriodIndirectCostService {
     boolean findPeriodIndirect(PeriodIndirectCost periodIndirectCost);
 
     PeriodIndirectCost findLastPeriodIndirectCostUsed();
+
+    boolean findPeriodIndirectCostUsed(PeriodIndirectCost periodIndirectCost);
 }

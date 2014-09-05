@@ -142,12 +142,12 @@
                     <h:outputText value="#{item.periodIndirectCost.gestion.year}"/>
                 </rich:column>
                 <rich:column styleClass="center">
-                    <!--<h:commandLink value="#{messages['Common.select']}"
+                    <h:commandLink value="#{messages['Common.select']}"
                                    immediate="true"
-                                   action="#{indirectCostsConfigurationAction.select(item)}"
-                                   rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')}">
+                                   action="#{indirectCostsAction.select(item)}"
+                                   rendered="#{s:hasPermission('INDIRECTCOSTS','VIEW')}">
                         <s:conversationPropagation value="none"/>
-                    </h:commandLink>-->
+                    </h:commandLink>
                 </rich:column>
             </rich:dataTable>
             <app:dataScroller id="dataScroller" for="indirectCostsList" dataModel="#{indirectCostsDataModel}"/>

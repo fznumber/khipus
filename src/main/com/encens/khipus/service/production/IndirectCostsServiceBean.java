@@ -81,6 +81,29 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         return indirectCostsList;
     }
 
+    @Override
+    public boolean findPeriodIndirectCostUsed(PeriodIndirectCost periodIndirectCost) {
+        Date startDate = DateUtils.firstDayOfMonth(periodIndirectCost.getMonth(),periodIndirectCost.getGestion().getYear());
+        Date endDate = DateUtils.lastDayOfMonth(periodIndirectCost.getMonth(),periodIndirectCost.getGestion().getYear());
+        List<ProductionPlanning> productionPlannings = new ArrayList<ProductionPlanning>();
+        try{
+            productionPlannings = (List<ProductionPlanning>)em.createQuery(" select productionPlanning from ProductionPlanning productionPlanning " +
+                                                                " where productionPlanning.date between :startDate and :endDate " +
+                                                                " and productionPlanning.state = :state")
+                                                   .setParameter("startDate",startDate,TemporalType.DATE)
+                                                   .setParameter("endDate",endDate,TemporalType.DATE)
+                                                   .setParameter("state",ProductionPlanningState.INSTOCK)
+                                                   .getResultList();
+        }catch (NoResultException e)
+        {
+            return false;
+        }
+        if(productionPlannings == null)
+            return false;
+
+        return productionPlannings.size() > 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public List<IndirectCosts> getIndirectCostByGroup(PeriodIndirectCost indirectCost, SubGroup subGroup)
     {
         List<IndirectCosts> indirectCostsList = new ArrayList<IndirectCosts>();

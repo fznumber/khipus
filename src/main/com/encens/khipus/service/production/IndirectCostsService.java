@@ -35,4 +35,6 @@ public interface IndirectCostsService extends GenericService {
     public PeriodIndirectCost getConcurrentPeroidIndirectCost(Date dateConcurrent);
 
     public List<IndirectCosts> getIndirectCostGeneral(PeriodIndirectCost indirectCost);
+
+    boolean findPeriodIndirectCostUsed(PeriodIndirectCost periodIndirectCost);
 }

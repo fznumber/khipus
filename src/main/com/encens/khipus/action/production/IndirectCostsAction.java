@@ -1,6 +1,8 @@
 package com.encens.khipus.action.production;
 
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.framework.action.*;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
@@ -54,6 +56,36 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
 
     @Override
     @End
+    public String update() {
+        String result = com.encens.khipus.framework.action.Outcome.REDISPLAY;
+        refreshPeriodIndirectCost();
+        if(periodIndirectCost == null)
+        {
+            addNotFoundPeriodMessage();
+            return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+        }
+
+        for(IndirectCosts costs:indirectCostses)
+        {
+            if(costs.getAmountBs().equals(BigDecimal.ZERO))
+            {
+                addMountZeroMessage();
+                return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+            }
+        }
+
+        for(IndirectCosts costs:indirectCostses){
+            costs.setPeriodIndirectCost(periodIndirectCost);
+            setInstance(costs);
+            result = super.update();
+        }
+
+        return result;
+
+    }
+
+    @Override
+    @End
     public String create() {
         try {
             //todo:verificar q no repita el periodo y q los montos no sean cero
@@ -75,6 +107,7 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
                 addRepeatedPeriodMessage();
                 return com.encens.khipus.framework.action.Outcome.REDISPLAY;
             }
+
             for(IndirectCosts costs:indirectCostses)
             {
                 if(costs.getAmountBs().equals(BigDecimal.ZERO))
@@ -108,12 +141,17 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
 
     private void addNotFoundCostsIndirectMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
-                "Indirectcosts.message.NotFoundPeriod");
+                "Indirectcosts.message.CostsIndirect");
     }
 
     private void addNotFoundPeriodMessage() {
         facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
                 "Indirectcosts.message.NotFoundPeriod");
+    }
+
+    private void addInUsedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.InUsed");
     }
 
     public void refreshPeriodIndirectCost() {
@@ -130,13 +168,25 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
     {
         List<IndirectCosts> costGeneral = indirectCostsService.getIndirectCostGeneral(periodIndirectCostService.findLastPeriodIndirectCostUsed());
        for(IndirectCosts costs:costGeneral){
+           if(!findByName(costs.getName()))
+           {
            IndirectCosts cost= new IndirectCosts();
            cost.setAmountBs(BigDecimal.ZERO);
            cost.setName(costs.getName());
            cost.setCostsConifg(costs.getCostsConifg());
            indirectCostses.add(cost);
+           }
        }
 
+    }
+
+    private Boolean findByName(String name) {
+                 for(IndirectCosts costs:indirectCostses)
+                 {
+                     if(costs.getName().equals(name))
+                         return true;
+                 }
+        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public PeriodIndirectCost getPeriodIndirectCost() {
@@ -178,4 +228,33 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
     public void setMonth(Month month) {
         this.month = month;
     }
+
+    public String removeIndirectCosts(IndirectCosts costs) {
+        if(costs.getId() != null)
+            this.indirectCostses.remove(costs);
+        else
+        {
+            setInstance(costs);
+            this.indirectCostses.remove(costs);
+            super.delete();
+        }
+        return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+    }
+
+    @Override
+    @Begin(ifOutcome = com.encens.khipus.framework.action.Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
+    public String select(IndirectCosts costs) {
+        if(indirectCostsService.findPeriodIndirectCostUsed(costs.getPeriodIndirectCost()) || costs.getPeriodIndirectCost() == null)
+        {
+            addInUsedMessage();
+            return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+        }
+
+        this.month = Month.getMonth(costs.getPeriodIndirectCost().getMonth());
+        this.gestion = costs.getPeriodIndirectCost().getGestion();
+        indirectCostses = indirectCostsService.getIndirectCostGeneral(costs.getPeriodIndirectCost());
+        return super.select(costs);
+    }
+
+
 }

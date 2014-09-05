@@ -23,11 +23,22 @@
 <ui:param name="bodyAlign" value="center"/>
 <ui:param name="bodyWidth" value="50%"/>
 
-<ui:param name="selectedTab" value="finances"/>
+<ui:param name="selectedTab" value="products"/>
 <ui:define name="body">
 
 <h:form id="IndirectCostsForm">
     <div class="buttons">
+
+        <a4j:commandButton action="#{indirectCostsAction.findLastPeriod}"
+                           reRender="indirectCostsList"
+                           styleClass="button"
+                           value="#{messages['Indirectcosts.searchLast']}"
+                           ajaxSingle="true"
+                           immediate="true"
+                           tabindex="1">
+            <s:defaultAction/>
+        </a4j:commandButton>
+
         <h:commandButton id="createButtonIdUp"
                          action="#{indirectCostsAction.create}"
                          value="#{messages['Common.save']}"
@@ -36,7 +47,7 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <!--<h:commandButton id="updateButtonIdUp"
+        <h:commandButton id="updateButtonIdUp"
                          action="#{indirectCostsAction.update}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
@@ -44,7 +55,7 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <h:commandButton value="#{messages['Common.delete']}"
+        <!--<h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','DELETE')}">
             <rich:componentControl for="deleteConfirmation"
@@ -65,18 +76,7 @@
                      cellspacing="0"
                      border="0"
                      columnClasses="width50percent,width50percent">
-            <s:div>
-                <a4j:commandButton action="#{indirectCostsAction.findLastPeriod}"
-                                   reRender="indirectCostsList"
-                                   styleClass="button"
-                                   value="#{messages['Indirectcosts.searchLast']}"
-                                   id="searchButtonId"
-                                   ajaxSingle="true"
-                                   immediate="true"
-                                   tabindex="1">
-                    <s:defaultAction/>
-                </a4j:commandButton>
-            </s:div>
+
             <s:div>
                 <s:decorate id="gestionField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['Gestion.gestion']}</ui:define>
@@ -127,18 +127,47 @@
                 <rich:column>
                         #{messages['IndirectCosts.amount']}
                 </rich:column>
+                <rich:column>
+                        #{messages['Common.delete']}
+                </rich:column>
             </rich:columnGroup>
         </f:facet>
+
         <rich:column>
             <h:outputText value="#{item.name}"/>
         </rich:column>
+
         <rich:column>
             <h:inputText value="#{item.amountBs}"/>
         </rich:column>
+
+        <rich:column styleClass="center">
+            <s:div id="removeLinkId">
+                <a4j:commandLink ajaxSingle="true"
+                                 immediate="true"
+                                 title="#{messages['Common.remove']}"
+                                 action="#{indirectCostsAction.removeIndirectCosts(item)}"
+                                 reRender="indirectCostsList">
+                    <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+                </a4j:commandLink>
+            </s:div>
+        </rich:column>
+
     </rich:dataTable>
 
 
     <div class="buttons">
+
+        <a4j:commandButton action="#{indirectCostsAction.findLastPeriod}"
+                           reRender="indirectCostsList"
+                           styleClass="button"
+                           value="#{messages['Indirectcosts.searchLast']}"
+                           ajaxSingle="true"
+                           immediate="true"
+                           tabindex="1">
+            <s:defaultAction/>
+        </a4j:commandButton>
+
         <h:commandButton id="createButtonIdDown"
                          action="#{indirectCostsAction.create}"
                          value="#{messages['Common.save']}"
@@ -147,14 +176,14 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <!--<h:commandButton id="updateButtonId"
+        <h:commandButton id="updateButtonId"
                          action="#{indirectCostsAction.update}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','UPDATE')}">
             <s:defaultAction/>
         </h:commandButton>
-
+        <!--
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','DELETE')}">
