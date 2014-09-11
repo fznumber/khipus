@@ -88,6 +88,13 @@
                                 #{messages['IndirectcostConfig.description']}
                             </app:commandSortHeader>
                         </rich:column>
+                        <rich:column>
+                            <app:commandSortHeader sortProperty="indirectCostsConfig.predefined"
+                                                   dataModel="#{indirectCostsConfigDataModel}"
+                                                   reRender="indirectCostConfigList, dataScroller">
+                                #{messages['IndirectcostConfig.predefined']}
+                            </app:commandSortHeader>
+                        </rich:column>
                         <rich:column styleClass="center">
                             #{messages['Common.action']}
                         </rich:column>
@@ -98,6 +105,9 @@
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{item.description}"/>
+                </rich:column>
+                <rich:column>
+                    <h:outputText value="#{item.predefined ? 'SI' : 'NO'}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"

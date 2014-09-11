@@ -12,4 +12,7 @@ INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBREREC
     VALUES (404, 'INDIRECTCOSTS', NULL, 15,'menu.production.configuration.indirectCosts', 6); 
 INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
   VALUES (404, 50, 15, 1, 6);   
+--
+alter table costosindirectosconf add (PREDEFINIDO NUMBER(1) NULL);
+alter table periodocostoindirecto modify MES NUMBER(2,0) not null unique;
   

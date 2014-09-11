@@ -3,6 +3,7 @@ package com.encens.khipus.service.production;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.IndirectCosts;
+import com.encens.khipus.model.production.IndirectCostsConfig;
 import com.encens.khipus.model.production.PeriodIndirectCost;
 
 import com.encens.khipus.model.production.ProductionOrder;
@@ -81,6 +82,15 @@ public class PeriodIndirectCostServiceBean implements PeriodIndirectCostService 
                 " order by indirectCosts desc")
                 .getResultList();
         return  indirectCosts.get(0).getPeriodIndirectCost();
+    }
+
+    @Override
+    public List<IndirectCostsConfig> findPredefinedIndirectCost() {
+        List<IndirectCostsConfig> indirectCostsConfigs = (List<IndirectCostsConfig>)em.createQuery("select indirectCostsConfig from IndirectCostsConfig indirectCostsConfig " +
+                " where indirectCostsConfig.predefined = true")
+                .getResultList();
+
+        return  indirectCostsConfigs;
     }
 
     @Override

@@ -3,13 +3,17 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
+import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.framework.action.*;
+import com.encens.khipus.model.admin.Company;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.finances.CashAccount;
+import com.encens.khipus.model.finances.CompanyConfiguration;
 import com.encens.khipus.model.production.IndirectCosts;
 import com.encens.khipus.model.production.IndirectCostsConfig;
 import com.encens.khipus.model.production.PeriodIndirectCost;
+import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.production.IndirectCostsService;
 import com.encens.khipus.service.production.PeriodIndirectCostService;
 import com.encens.khipus.util.Constants;
@@ -42,10 +46,16 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
     private IndirectCostsService indirectCostsService;
 
     @In
+    private CompanyConfigurationService companyConfigurationService;
+
+    @In(create = true, value = "periodIndirectCostAction")
+    private PeriodIndirectCostAction periodIndirectCostAction;
+
+    @In
     private PeriodIndirectCostService periodIndirectCostService;
 
     @Factory(value = "indirectCosts", scope = ScopeType.STATELESS)
-    public IndirectCosts initProcessedProduct() {
+    public IndirectCosts initIndirectCosts() {
         return getInstance();
     }
 
@@ -86,6 +96,35 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
 
     @Override
     @End
+    public String delete() {
+
+        refreshPeriodIndirectCost();
+        if(periodIndirectCost == null)
+        {
+            addNotFoundPeriodMessage();
+            return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+        }
+        periodIndirectCostAction.setInstance(periodIndirectCost);
+        if(periodIndirectCostAction.delete().equals(com.encens.khipus.framework.action.Outcome.FAIL))
+            return com.encens.khipus.framework.action.Outcome.FAIL;
+
+        return com.encens.khipus.framework.action.Outcome.SUCCESS;
+    }
+
+    @Override
+    protected void addDeletedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.delete");
+    }
+
+    @Override
+    protected void addUpdatedMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,
+                "Indirectcosts.message.update");
+    }
+
+    @Override
+    @End
     public String create() {
         try {
             //todo:verificar q no repita el periodo y q los montos no sean cero
@@ -96,11 +135,6 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
                 return com.encens.khipus.framework.action.Outcome.REDISPLAY;
             }
 
-            if(periodIndirectCost == null)
-            {
-                addNotFoundPeriodMessage();
-                return com.encens.khipus.framework.action.Outcome.REDISPLAY;
-            }
 
             if(periodIndirectCostService.findPeriodIndirect(periodIndirectCost))
             {
@@ -115,6 +149,24 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
                     addMountZeroMessage();
                     return com.encens.khipus.framework.action.Outcome.REDISPLAY;
                 }
+            }
+
+            if(periodIndirectCost == null)
+            {
+                periodIndirectCost = new PeriodIndirectCost();
+                try {
+                    CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+                    periodIndirectCost.setCompany(companyConfiguration.getCompany());
+                } catch (CompanyConfigurationNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                periodIndirectCost.setGestion(gestion);
+                periodIndirectCost.setMonth(month.getValue() + 1);
+                periodIndirectCostAction.setInstance(periodIndirectCost);
+                if(periodIndirectCostAction.create().equals(com.encens.khipus.framework.action.Outcome.FAIL))
+                    return com.encens.khipus.framework.action.Outcome.FAIL;
+                periodIndirectCost =  periodIndirectCostAction.getInstance();
             }
 
             for(IndirectCosts costs:indirectCostses){
@@ -166,14 +218,14 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
 
     public void findLastPeriod()
     {
-        List<IndirectCosts> costGeneral = indirectCostsService.getIndirectCostGeneral(periodIndirectCostService.findLastPeriodIndirectCostUsed());
-       for(IndirectCosts costs:costGeneral){
-           if(!findByName(costs.getName()))
+        List<IndirectCostsConfig> costGeneral = periodIndirectCostService.findPredefinedIndirectCost();
+       for(IndirectCostsConfig costs:costGeneral){
+           if(!findByName(costs.getDescription()))
            {
            IndirectCosts cost= new IndirectCosts();
            cost.setAmountBs(BigDecimal.ZERO);
-           cost.setName(costs.getName());
-           cost.setCostsConifg(costs.getCostsConifg());
+           cost.setName(costs.getDescription());
+           cost.setCostsConifg(costs);
            indirectCostses.add(cost);
            }
        }
@@ -229,14 +281,15 @@ public class IndirectCostsAction extends GenericAction<IndirectCosts> {
         this.month = month;
     }
 
+    @End
     public String removeIndirectCosts(IndirectCosts costs) {
-        if(costs.getId() != null)
+        if(costs.getId() == null)
             this.indirectCostses.remove(costs);
         else
         {
             setInstance(costs);
-            this.indirectCostses.remove(costs);
             super.delete();
+            this.indirectCostses.remove(costs);
         }
         return com.encens.khipus.framework.action.Outcome.REDISPLAY;
     }

@@ -53,6 +53,9 @@ public class IndirectCostsConfig implements BaseModel {
     @Column(name = "DESCRIPCION")
     private String description;
 
+    @Column(name = "PREDEFINIDO")
+    private Boolean predefined;
+
     @Column(name = "CUENTA", insertable = true, updatable = false, nullable = true)
     @Length(max = 20)
     private String account;
@@ -140,5 +143,13 @@ public class IndirectCostsConfig implements BaseModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getPredefined() {
+        return predefined;
+    }
+
+    public void setPredefined(Boolean predefined) {
+        this.predefined = predefined;
     }
 }

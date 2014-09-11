@@ -107,6 +107,14 @@
             </a4j:commandLink>
         </s:decorate>
 
+        <s:decorate id="predefinedField" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define name="label">
+                <h:outputText value="#{messages['IndirectcostConfig.predefined']}"/>
+            </ui:define>
+            <h:selectBooleanCheckbox value="#{indirectCostsConfig.predefined}">
+            </h:selectBooleanCheckbox>
+        </s:decorate>
+
     </rich:panel>
 
     <div class="buttons">

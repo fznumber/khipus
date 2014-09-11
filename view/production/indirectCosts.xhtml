@@ -55,14 +55,14 @@
             <s:defaultAction/>
         </h:commandButton>
 
-        <!--<h:commandButton value="#{messages['Common.delete']}"
+        <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','DELETE')}">
             <rich:componentControl for="deleteConfirmation"
                                    event="onclick"
                                    disableDefault="true"
                                    operation="show"/>
-        </h:commandButton>-->
+        </h:commandButton>
 
         <h:commandButton action="#{indirectCostsAction.cancel}"
                          value="#{messages['Common.cancel']}"
@@ -115,7 +115,6 @@
     <rich:dataTable value="#{indirectCostsAction.indirectCostses}"
                     var="item"
                     id="indirectCostsList"
-                    rows="#{sessionUser.rowsPerPage}"
                     width="100%"
             >
 
@@ -183,7 +182,6 @@
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','UPDATE')}">
             <s:defaultAction/>
         </h:commandButton>
-        <!--
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
                          rendered="#{indirectCostsAction.managed and s:hasPermission('INDIRECTCOSTS','DELETE')}">
@@ -191,7 +189,7 @@
                                    event="onclick"
                                    disableDefault="true"
                                    operation="show"/>
-        </h:commandButton>                 -->
+        </h:commandButton>
 
         <h:commandButton action="#{indirectCostsAction.cancel}"
                          value="#{messages['Common.cancel']}"
@@ -206,15 +204,13 @@
     <ui:define name="dialogTitle">#{messages['Common.delete.confirmation']}</ui:define>
     <ui:define name="dialogContent">
         <p>
-            <h:outputFormat value="#{messages['Warehouse.delete.confirmation']}">
-                <f:param value="#{indirectCostsConfig.description}"/>
+            <h:outputFormat value="#{messages['Indirectcosts.indirectCostConfiguration.deleteConfirmation']}">
             </h:outputFormat>
         </p>
     </ui:define>
     <ui:define name="dialogOption">
         <a4j:commandButton action="#{indirectCostsAction.delete}"
                            value="#{messages['Common.delete']}"
-                           rendered="#{s:hasPermission('IndirectCostsURATION','DELETE')}"
                            immediate="true"
                            styleClass="button"/>
     </ui:define>
