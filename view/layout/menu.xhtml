@@ -933,7 +933,9 @@
         s:hasPermission('PROCESSEDPRODUCT','VIEW') or
         s:hasPermission('MEASUREUNITPRODUCTION','VIEW') or
         s:hasPermission('PRODUCTIONINPUT','VIEW') or
-        s:hasPermission('PRODUCTIONMATERIAL','VIEW')
+        s:hasPermission('PRODUCTIONMATERIAL','VIEW') or
+        s:hasPermission('INDIRECTCOSTS','VIEW') or
+        s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')
         }">
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
@@ -996,6 +998,20 @@
                    rendered="#{s:hasPermission('PRODUCTIONMATERIAL','VIEW')}">
         <s:link view="/production/productionMaterialList.xhtml"
                 value="#{messages['menu.production.configuration.productionMaterial']}"
+                propagation="none"/>
+    </rich:menuItem>
+    <rich:menuItem submitMode="none"
+                   styleClass="main-menu-item"
+                   rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')}">
+        <s:link view="/production/indirectCostConfigList.xhtml"
+                value="#{messages['menu.production.configuration.indirectCostconfiguration']}"
+                propagation="none"/>
+    </rich:menuItem>
+    <rich:menuItem submitMode="none"
+                   styleClass="main-menu-item"
+                   rendered="#{s:hasPermission('INDIRECTCOSTS','VIEW')}">
+        <s:link view="/production/indirectCostsList.xhtml"
+                value="#{messages['menu.production.configuration.indirectCosts']}"
                 propagation="none"/>
     </rich:menuItem>
 </rich:dropDownMenu>

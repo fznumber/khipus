@@ -3,11 +3,8 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import com.encens.khipus.model.common.Text;
-import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
-import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,7 +15,7 @@ import java.math.BigDecimal;
  * @author Diego Loza
  * @version 1.2.1
  */
-@TableGenerator(name = "IndirectCostsConifg.tableGenerator",
+@TableGenerator(name = "IndirectCosts.tableGenerator",
         table = "SECUENCIA",
         pkColumnName = "TABLA",
         valueColumnName = "VALOR",
@@ -33,7 +30,7 @@ public class IndirectCosts implements BaseModel {
 
     @Id
     @Column(name = "IDCOSTOSINDIRECTOS", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCostsConifg.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "IndirectCosts.tableGenerator")
     private Long id;
 
     @Column(name = "NOMBRE", nullable = true)
@@ -60,7 +57,7 @@ public class IndirectCosts implements BaseModel {
 
     @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "IDCOSTOSINDIRECTOSCONF")
-    private IndirectCostsConifg costsConifg;
+    private IndirectCostsConfig costsConifg;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -122,11 +119,11 @@ public class IndirectCosts implements BaseModel {
         this.productionOrder = productionOrder;
     }
 
-    public IndirectCostsConifg getCostsConifg() {
+    public IndirectCostsConfig getCostsConifg() {
         return costsConifg;
     }
 
-    public void setCostsConifg(IndirectCostsConifg costsConifg) {
+    public void setCostsConifg(IndirectCostsConfig costsConifg) {
         this.costsConifg = costsConifg;
     }
 
