@@ -557,7 +557,7 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
     }
 
     public boolean positiveImprovementMovementType() {
-        return fixedAssetMovementType != null && (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO));
+        return fixedAssetMovementType != null && (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ));
     }
 
     public String positiveImprovement() {

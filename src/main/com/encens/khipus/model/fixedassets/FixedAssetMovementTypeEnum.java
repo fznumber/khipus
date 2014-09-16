@@ -9,7 +9,7 @@ package com.encens.khipus.model.fixedassets;
 public enum FixedAssetMovementTypeEnum {
     ALT("FixedAssetMovementTypeEnum.registration"),
     BAJ("FixedAssetMovementTypeEnum.cancel"),
-    MPO("FixedAssetMovementTypeEnum.positiveImprovement"),
+    MEJ("FixedAssetMovementTypeEnum.positiveImprovement"),
     TRA("FixedAssetMovementTypeEnum.transference");
 
     private String resourceKey;
