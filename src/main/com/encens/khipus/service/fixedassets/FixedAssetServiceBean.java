@@ -690,7 +690,9 @@ public class FixedAssetServiceBean extends GenericServiceBean implements FixedAs
                                     FixedAssetMovement fixedAssetMovement,
                                     FixedAssetMovementType fixedAssetMovementType,
                                     FixedAssetPayment fixedAssetPayment,
-                                    List<FixedAssetPart> fixedAssetParts) throws EntryDuplicatedException,
+                                    List<FixedAssetPart> fixedAssetParts,
+                                    Boolean payNow
+    ) throws EntryDuplicatedException,
             DuplicatedFixedAssetCodeException {
 
         fixedAsset = generateCodes(fixedAsset);
@@ -720,6 +722,7 @@ public class FixedAssetServiceBean extends GenericServiceBean implements FixedAs
 
             fixedAssetMovement.setNewFixedAssetLocation(fixedAsset.getFixedAssetLocation());
 
+            if(payNow){
             if (fixedAsset.getPurchaseOrder() != null) {
                 Voucher voucherForGeneration = createAccountEntryForApprovedFixedAssets(fixedAsset, gloss);
                 fixedAssetMovement.setTransactionNumber(voucherForGeneration.getTransactionNumber());
@@ -747,7 +750,7 @@ public class FixedAssetServiceBean extends GenericServiceBean implements FixedAs
 
             getEntityManager().persist(fixedAssetMovement);
             getEntityManager().flush();
-
+            }
             userTransaction.commit();
         } catch (PersistenceException e) {
             try {
