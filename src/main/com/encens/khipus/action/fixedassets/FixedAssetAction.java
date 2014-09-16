@@ -90,6 +90,8 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
     /* this monthsGuaranty is created in order to support the change duration functionality */
     private Integer monthsGuaranty;
 
+    private Boolean payNowConditions;
+
     @Create
     @SuppressWarnings({"UnusedDeclaration"})
     public String atCreateTime() {
@@ -363,7 +365,7 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
             return Outcome.REDISPLAY;
         }
 
-        if (!hasCompute()) {
+        if (!hasCompute() && payNowConditions) {
             addComputeRequiredMessage();
             return Outcome.REDISPLAY;
         }
@@ -371,7 +373,7 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
             addReComputeRequiredMessage();
             return Outcome.REDISPLAY;
         }
-        if (getInstance().getPurchaseOrder() == null && !checkPayment()) {
+        if (getInstance().getPurchaseOrder() == null && !checkPayment() && payNowConditions) {
             addReComputePaymentRequiredMessage();
             return Outcome.REDISPLAY;
         }
@@ -406,7 +408,8 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
                     fixedAssetMovement,
                     fixedAssetMovementType,
                     getFixedAssetPaymentInstance(),
-                    fixedAssetPartAction.getInstances());
+                    fixedAssetPartAction.getInstances(),
+                    payNowConditions);
             addRegistrationSuccessfulMessage();
             return Outcome.SUCCESS;
         } catch (EntryDuplicatedException e) {
@@ -554,7 +557,7 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
     }
 
     public boolean positiveImprovementMovementType() {
-        return fixedAssetMovementType != null && (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO));
+        return fixedAssetMovementType != null && (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ));
     }
 
     public String positiveImprovement() {
@@ -786,7 +789,7 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
     }
 
     public boolean isShowPaymentDetail() {
-        return isShowRegistrationDetail() && null == getInstance().getPurchaseOrder();
+        return isShowRegistrationDetail() && null == getInstance().getPurchaseOrder() && getPayNowConditions();
     }
 
     public void setShowRegistrationDetail(boolean showRegistrationDetail) {
@@ -970,5 +973,16 @@ public class FixedAssetAction extends GenericAction<FixedAsset> {
 
     public void setBarcodeData(BarcodeData barcodeData) {
         this.barcodeData = barcodeData;
+    }
+
+    public Boolean getPayNowConditions() {
+        if(this.payNowConditions == null)
+            this.payNowConditions = true;
+
+        return payNowConditions;
+    }
+
+    public void setPayNowConditions(Boolean payNowConditions) {
+        this.payNowConditions = payNowConditions;
     }
 }

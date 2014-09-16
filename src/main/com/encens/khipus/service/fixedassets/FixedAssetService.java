@@ -43,7 +43,9 @@ public interface FixedAssetService extends GenericService {
                              FixedAssetMovement fixedAssetMovement,
                              FixedAssetMovementType fixedAssetMovementType,
                              FixedAssetPayment fixedAssetPayment,
-                             List<FixedAssetPart> fixedAssetParts) throws EntryDuplicatedException,
+                             List<FixedAssetPart> fixedAssetParts,
+                             Boolean payNow
+    ) throws EntryDuplicatedException,
             DuplicatedFixedAssetCodeException;
 
     void update(FixedAsset fixedAsset) throws ConcurrencyException, EntryDuplicatedException, DuplicatedFixedAssetCodeException;
