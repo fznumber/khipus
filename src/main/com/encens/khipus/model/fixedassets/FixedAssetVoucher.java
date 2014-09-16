@@ -404,7 +404,7 @@ public class FixedAssetVoucher implements BaseModel {
     }
 
     public boolean isImprovementMovement() {
-        return fixedAssetVoucherType != null && FixedAssetMovementTypeEnum.MPO.equals(fixedAssetVoucherType.getFixedAssetMovementTypeEnum());
+        return fixedAssetVoucherType != null && FixedAssetMovementTypeEnum.MEJ.equals(fixedAssetVoucherType.getFixedAssetMovementTypeEnum());
     }
 
     public boolean isAnnulled() {

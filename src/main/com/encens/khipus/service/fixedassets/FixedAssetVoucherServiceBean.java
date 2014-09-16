@@ -245,7 +245,7 @@ public class FixedAssetVoucherServiceBean extends GenericServiceBean implements 
     private void cleanUnusedData(FixedAssetVoucher fixedAssetVoucher) {
         if (null != fixedAssetVoucher.getFixedAssetVoucherType()) {
             /* for ALT and TRA*/
-            if (!fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+            if (!fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
                 fixedAssetVoucher.setFixedAssetPayment(null);
             } else {
                 if (null != fixedAssetVoucher.getFixedAssetPayment() && !fixedAssetVoucher.getFixedAssetPayment().getPaymentType().equals(PurchaseOrderPaymentType.PAYMENT_WITH_CHECK)) {
@@ -324,7 +324,7 @@ public class FixedAssetVoucherServiceBean extends GenericServiceBean implements 
             cleanUnusedData(fixedAssetVoucher);
             if (fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.TRA)
                     || fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.BAJ)
-                    || fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+                    || fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
                 List<FixedAssetMovement> fixedAssetMovementList = fixedAssetMovementService.findFixedAssetMovementByFixedAssetVoucherAndState(fixedAssetVoucher, FixedAssetMovementState.PEN);
                 /*add all the items added to the fixedAssetList if any*/
                 for (FixedAsset fixedAsset : selectedFixedAssetList) {
@@ -357,7 +357,7 @@ public class FixedAssetVoucherServiceBean extends GenericServiceBean implements 
                             fixedAssetMovement.setBusinessUnit(fixedAssetVoucher.getBusinessUnit());
                         }
                         if (fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.BAJ)
-                                || fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+                                || fixedAssetVoucher.getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
                             fixedAssetMovement.setCustodian(fixedAsset.getCustodianJobContract().getContract().getEmployee());
                             fixedAssetMovement.setCostCenter(fixedAsset.getCostCenter());
                             fixedAssetMovement.setBusinessUnit(fixedAsset.getBusinessUnit());
@@ -548,7 +548,7 @@ public class FixedAssetVoucherServiceBean extends GenericServiceBean implements 
 
                     BigDecimal bsImprovement = BigDecimal.ZERO;
                     List<FixedAssetMovement> fixedAssetItemMovementList =
-                            fixedAssetMovementService.findFixedAssetMovementListByFixedAssetByMovementTypeAndState(fixedAsset, FixedAssetMovementTypeEnum.MPO, FixedAssetMovementState.APR);
+                            fixedAssetMovementService.findFixedAssetMovementListByFixedAssetByMovementTypeAndState(fixedAsset, FixedAssetMovementTypeEnum.MEJ, FixedAssetMovementState.APR);
                     for (FixedAssetMovement fixedAssetMovementAux : fixedAssetItemMovementList) {
                         bsImprovement = BigDecimalUtil.multiply(fixedAssetMovementAux.getUfvAmount(), fixedAssetMovementAux.getLastMonthBsUfvRate());
                     }
@@ -1142,7 +1142,7 @@ public class FixedAssetVoucherServiceBean extends GenericServiceBean implements 
     }
 
     private boolean isImprovementMovement(FixedAssetVoucher fixedAssetVoucher) {
-        return isKindOfMovement(fixedAssetVoucher, FixedAssetMovementTypeEnum.MPO);
+        return isKindOfMovement(fixedAssetVoucher, FixedAssetMovementTypeEnum.MEJ);
     }
 
     /* It is not possible to approve a set of fixed assets if there is another fixedAssetVoucher that contains the same purchaseOrder*/

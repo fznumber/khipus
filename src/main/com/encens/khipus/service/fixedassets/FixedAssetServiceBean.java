@@ -797,7 +797,7 @@ public class FixedAssetServiceBean extends GenericServiceBean implements FixedAs
              * its lastMonthBsSusRate and lastMonthBsUfvRate are the rates given by the date retrieved from the ARGCTC table */
             BigDecimal bsImprovement = BigDecimal.ZERO;
             List<FixedAssetMovement> fixedAssetMovementList =
-                    fixedAssetMovementService.findFixedAssetMovementListByFixedAssetByMovementTypeAndState(fixedAsset, FixedAssetMovementTypeEnum.MPO, FixedAssetMovementState.APR);
+                    fixedAssetMovementService.findFixedAssetMovementListByFixedAssetByMovementTypeAndState(fixedAsset, FixedAssetMovementTypeEnum.MEJ, FixedAssetMovementState.APR);
             for (FixedAssetMovement fixedAssetMovementAux : fixedAssetMovementList) {
                 bsImprovement = BigDecimalUtil.multiply(fixedAssetMovementAux.getUfvAmount(), fixedAssetMovementAux.getLastMonthBsUfvRate());
             }

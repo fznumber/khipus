@@ -145,7 +145,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
                     && !appIdentity.hasPermission("FIXEDASSETTRANSFERENCE", "VIEW")) {
                 remove = true;
             }
-            if (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)
+            if (fixedAssetMovementType.getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)
                     && !appIdentity.hasPermission("FIXEDASSETIMPROVEMENT", "VIEW")) {
                 remove = true;
             }
@@ -184,13 +184,13 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
                 && (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.ALT)
                 || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.TRA)
                 || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.BAJ)
-                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO))) {
+                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ))) {
             fixedAssetMovementDetailList = fixedAssetService.findFixedAssetListByFixedAssetVoucher(getInstance(), null);
         }
         if ((getInstance().getState().equals(FixedAssetVoucherState.PEN))
                 && (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.TRA)
                 || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.BAJ)
-                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO))) {
+                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ))) {
 
             /*in case the redirect from the same page in voucher creation case do not query
             * do not use getter due to contition logic*/
@@ -199,7 +199,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
             for (FixedAsset fixedAsset : getSelectedFixedAssetList()) {
                 selectedFixedAssetIdList.add(fixedAsset.getId());
             }
-            if (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+            if (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
                 /*fill map for improvement*/
                 for (FixedAssetMovement fixedAssetMovement : fixedAssetMovementService.findFixedAssetMovementByFixedAssetVoucher(getInstance(), null)) {
                     try {
@@ -230,7 +230,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
             }
         }
         if (!getInstance().getState().equals(FixedAssetVoucherState.PEN)
-                && getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+                && getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
             try {
                 fixedAssetPayment = getService().findById(FixedAssetPayment.class, getInstance().getFixedAssetPayment().getId());
                 if (!areCurrenciesEqual()
@@ -493,7 +493,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
 
         if (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.TRA)
                 || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.BAJ)
-                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+                || getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
             if (null == getSelectedFixedAssetList() || getSelectedFixedAssetList().size() <= 0) {
                 addEmptySelectedFixedAssetListMessage();
                 return Outcome.REDISPLAY;
@@ -504,7 +504,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
             }
         }
 
-        if (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+        if (getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
             /* check payment distribution */
             BigDecimal movementAmountSum = BigDecimal.ZERO;
             for (FixedAssetMovement fixedAssetMovement : fixedAssetFixedAssetMovementHashMap.values()) {
@@ -1086,7 +1086,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
         /* Redistribute the payment*/
         if (null != getInstance().getFixedAssetVoucherType() &&
                 null != fixedAssetPayment.getPayAmount() &&
-                getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO)) {
+                getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ)) {
 
             int size = 0;
             BigDecimal portion = BigDecimal.ZERO;
@@ -1202,7 +1202,7 @@ public class FixedAssetVoucherAction extends GenericAction<FixedAssetVoucher> {
     }
 
     public boolean isImprovementMovement() {
-        return null != getInstance().getFixedAssetVoucherType() && getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MPO);
+        return null != getInstance().getFixedAssetVoucherType() && getInstance().getFixedAssetVoucherType().getFixedAssetMovementTypeEnum().equals(FixedAssetMovementTypeEnum.MEJ);
     }
 
     public boolean isShowFixedAssetByPurchaseOrderTab() {
