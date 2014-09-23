@@ -1615,6 +1615,209 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
         return PayrollGenerationResult.SUCCESS;
     }
 
+    private void executeAttendanceControlManagersRotation(Calendar endDate, Calendar currentDate, GeneratedPayroll generatedPayroll,
+                                                  Employee employee,
+                                                  Map<Date, List<Date>> rhMarkTimeDateMap4Employee,
+                                                  List<Date> specialDate4BusinessUnit,
+                                                  Map<Date, List<TimeInterval>> specialDateTime4BusinessUnit,
+                                                  List<Date> specialDate4OrganizationalUnit,
+                                                  Map<Date, List<TimeInterval>> specialDateTimeForOrganizationalUnit,
+                                                  List<Date> specialDate4Employee,
+                                                  Map<Date, List<TimeInterval>> specialDateTime4Employee,
+                                                  List<Integer> cumulativeMinutesIntheMonth4ContractList,
+                                                  List<Integer> cumulativePerformanceMinutesIntheMonth4ContractList,
+                                                  List<Integer> cumulativeLatenessMinutesIntheMonth4ContractList,
+                                                  List<Double> cumulativeDayAbsencesIntheMonth4ContractList,
+                                                  List<Integer> totalSumOfMinuteBandAbsencesList) {
+        double perMinuteSalary = 0;
+
+        // iterate all days of the gestion including the last day
+        while (currentDate.compareTo(endDate) <= 0) {
+            Integer cumulativeMinuteBandAbsencesInADay = 0;
+            Integer cumulativeNumberBandAbsencesInADay = 0;
+            Double dayAbsences = 0.0;
+            Integer minutosRetrasoAcum = 0;
+            Integer cumulativeMinuteLatenessInADay4AllContractBands = 0;
+            Integer cumulativeBandsDurationInADay4AllContractBands = 0;
+            //al parecer controla q sea diferente de lunes
+            if (currentDate.get(Calendar.DAY_OF_WEEK) != 1) {
+                // all special DATES 4 this month
+                List<Date> holydaySpecialDateList = new ArrayList<Date>();
+                boolean hasPermission4Today = false;
+                if (specialDate4BusinessUnit.contains(currentDate.getTime()) ||
+                        specialDate4OrganizationalUnit.contains(currentDate.getTime()) ||
+                        specialDate4Employee.contains(currentDate.getTime())) {
+                    hasPermission4Today = true;
+                }
+
+                List<Date> dateTimeRHMarkList = filterDateTimeRHMarkByDate(rhMarkTimeDateMap4Employee, currentDate.getTime());
+
+
+                // lista de bandas horarias rotatorias
+                List<HoraryBandContract> validDayHoraryBand4DateList = specialDateService.getHoraryBandRotatory();
+                // check what bands are valid for this date of the month. Checks all the valid bands for the month.
+
+                int bandAbsences = 0;
+
+                for (int k = 0; k < validDayHoraryBand4DateList.size(); k++) {
+                    HoraryBandContract validDayHoraryBandContract4Date = validDayHoraryBand4DateList.get(k);
+                    int minutosAcumaladosRestraso = 0;
+                    int minuteBandAbsences = 0;
+                    int bandsNumber = validDayHoraryBand4DateList.size();
+
+                    // check if the employee marked this date at this band period and retrive his marks as a list
+                    List<Date> correctMarks = findInitEndRHMarks(dateTimeRHMarkList, validDayHoraryBandContract4Date, currentDate);
+                    Calendar initBandHourCalendar = DateUtils.toCalendar(validDayHoraryBandContract4Date.getHoraryBand().getInitHour());
+                    Calendar endBandHourCalendar = DateUtils.toCalendar(validDayHoraryBandContract4Date.getHoraryBand().getEndHour());
+                    List<Long> bandDifferenceList = this.getDifferenceInHoursMinutesSecondsBetweenMarks(
+                            initBandHourCalendar, endBandHourCalendar);
+                    Long bandDifferenceInMinutes = bandDifferenceList.get(0) * 60 + bandDifferenceList.get(1);
+                    Integer bandDuration = new Integer(bandDifferenceInMinutes.intValue());
+                    cumulativeBandsDurationInADay4AllContractBands += bandDuration;
+                    boolean hasPermission4BandInterval = hasPermissionForBandInterval(
+                            currentDate,
+                            specialDateTime4BusinessUnit,
+                            specialDateTimeForOrganizationalUnit,
+                            specialDateTime4Employee,
+                            validDayHoraryBandContract4Date);
+                    log.debug("hasPermission4BandInterval: " + hasPermission4BandInterval);
+                    // if it isn't sunday
+                    if (!hasPermission4Today) {
+                        // if there are no valid quantity of marks for the HoraryBand It is absence.
+                        // si es A procede a descontar la banda si no tiene ambas marcas
+                        if (employee.getControlFlag() && correctMarks.size() < 2) {
+                            //discount HoraryBand duration
+                            if (!hasPermission4BandInterval) {
+                                cumulativeMinuteBandAbsencesInADay += bandDuration;
+                                cumulativeNumberBandAbsencesInADay++;
+
+                                // compute the absences only in the last band
+                                bandAbsences++;
+                            }
+                            if ((k == (bandsNumber - 1)) && (bandAbsences > 0)) {
+                                if (bandAbsences < bandsNumber) {
+                                    dayAbsences += 0.5;
+                                }
+                                if (bandAbsences == bandsNumber) {
+                                    if (bandsNumber == 1) {
+                                        if (bandDuration >= (8 * 60)) {
+                                            dayAbsences++;
+                                        } else {
+                                            dayAbsences += 0.5;
+                                        }
+                                    } else {
+                                        dayAbsences += 1;
+                                    }
+                                }
+                            }
+                            if (!hasPermission4BandInterval) {
+                                minuteBandAbsences = bandDuration;
+                                totalSumOfMinuteBandAbsencesList.add(minuteBandAbsences);
+                            }
+                        }
+                        // check in case of lateness
+                        // si es d no descuenta nada
+                        if (employee.getControlFlag() && !hasPermission4BandInterval && correctMarks.size() >= 1) {
+                            Calendar employeeInitMarkCalendar = DateUtils.toCalendar(correctMarks.get(0));
+                            // set year and month in case marTime saves only time mark
+                            employeeInitMarkCalendar.set(Calendar.YEAR, correctMarks.get(0).getYear());
+                            employeeInitMarkCalendar.set(Calendar.MONTH, correctMarks.get(0).getMonth());
+
+                            // checks if the employee out of the tolerance range at income in order to apply discounts
+                            if (!this.isMarkInToleranceRange(validDayHoraryBandContract4Date.getTolerance().getBeforeInit(),
+                                    validDayHoraryBandContract4Date.getTolerance().getAfterInit(), initBandHourCalendar, employeeInitMarkCalendar)) {
+                                // aplly discount
+                                // gets the differences between employees init mark and HoraryBand init time
+                                List<Long> differenceList = this.getDifferenceInHoursMinutesSecondsBetweenEmployeeMarkAndHourlyBand(
+                                        initBandHourCalendar, employeeInitMarkCalendar);
+                                Long differenceInHours = differenceList.get(0);
+                                Long differenceInMinutes = differenceList.get(1);
+                                // sum of hour and minutes in a day to be shown in the payroll
+                                Long cumulativeDifferenceInMinutes = differenceInHours * 60 + differenceInMinutes;
+                                boolean isNegative = false;
+                                if (cumulativeDifferenceInMinutes < 0) {
+                                    isNegative = true;
+                                }
+                                minutosAcumaladosRestraso = Math.abs(cumulativeDifferenceInMinutes.intValue());
+                                cumulativeDifferenceInMinutes = Math.abs(cumulativeDifferenceInMinutes);
+                                // in case that the tardiness is at left side of init band mark
+                                int tolerance = 0;
+                                if (isNegative) {
+                                    tolerance = validDayHoraryBandContract4Date.getTolerance().getBeforeInit();
+                                }
+                                // in case that the tardiness is at right side of init band mark
+                                if (!isNegative) {
+                                    tolerance = validDayHoraryBandContract4Date.getTolerance().getAfterInit();
+                                }
+                                if (cumulativeDifferenceInMinutes.intValue() > tolerance) {
+                                    cumulativeMinuteLatenessInADay4AllContractBands += cumulativeDifferenceInMinutes.intValue();
+                                    minutosAcumaladosRestraso = Math.abs(cumulativeDifferenceInMinutes.intValue());
+                                }
+                            }
+
+                            // cast to calendar employees end mark
+                            Calendar employeeEndMarkCalendar = DateUtils.toCalendar(correctMarks.get(1));
+                            // set year and month in case marTime saves only time mark
+                            employeeEndMarkCalendar.set(Calendar.YEAR, correctMarks.get(1).getYear());
+                            employeeEndMarkCalendar.set(Calendar.MONTH, correctMarks.get(1).getMonth());
+
+                            // discount in outcome
+                            if (!this.isMarkInToleranceRange(validDayHoraryBandContract4Date.getTolerance().getBeforeEnd(),
+                                    validDayHoraryBandContract4Date.getTolerance().getAfterEnd(), endBandHourCalendar, employeeEndMarkCalendar)) {
+                                // aplly discount
+                                // gets the differences between employees end mark and HoraryBand end time
+                                List<Long> differenceList = this.getDifferenceInHoursMinutesSecondsBetweenEmployeeMarkAndHourlyBand(
+                                        endBandHourCalendar, employeeEndMarkCalendar);
+                                Long differenceInHours = differenceList.get(0);
+                                Long differenceInMinutes = differenceList.get(1);
+                                Long cumulativeDifferenceInMinutes = differenceInHours * 60 + differenceInMinutes;
+                                boolean isNegative = false;
+                                if (cumulativeDifferenceInMinutes < 0) {
+                                    isNegative = true;
+                                }
+                                cumulativeDifferenceInMinutes = Math.abs(cumulativeDifferenceInMinutes);
+
+                                int tolerance = 0;
+                                if (isNegative) {
+                                    tolerance = validDayHoraryBandContract4Date.getTolerance().getBeforeEnd();
+                                }
+                                // in case that the tardiness is at right side of init band mark
+                                if (!isNegative) {
+                                    tolerance = validDayHoraryBandContract4Date.getTolerance().getAfterEnd();
+                                }
+                                if (cumulativeDifferenceInMinutes.intValue() > tolerance) {
+                                    cumulativeMinuteLatenessInADay4AllContractBands += cumulativeDifferenceInMinutes.intValue();
+                                    minutosAcumaladosRestraso = Math.abs(cumulativeDifferenceInMinutes.intValue());
+                                }
+                            }
+                        }// end if corect marks control
+                        minutosRetrasoAcum += minutosAcumaladosRestraso;
+                        registerControlReportManagers(minutosAcumaladosRestraso, correctMarks, dateTimeRHMarkList,
+                                generatedPayroll, validDayHoraryBandContract4Date, employee, currentDate,
+                                minuteBandAbsences, cumulativeNumberBandAbsencesInADay,
+                                perMinuteSalary, bandDuration);
+                    }// end if every other day
+                    else {
+                        registerControlReportManagers(minutosAcumaladosRestraso, correctMarks, dateTimeRHMarkList,
+                                generatedPayroll, validDayHoraryBandContract4Date, employee, currentDate,
+                                minuteBandAbsences, 0,
+                                perMinuteSalary, bandDuration);
+                    }
+                }// end if holiday control
+            } // end if is not sunday
+            int bandDuration = cumulativeBandsDurationInADay4AllContractBands;
+            int tardiness = cumulativeMinuteLatenessInADay4AllContractBands;
+            int performance = bandDuration - tardiness;
+
+            cumulativeDayAbsencesIntheMonth4ContractList.add(dayAbsences);
+            cumulativeLatenessMinutesIntheMonth4ContractList.add(tardiness);
+            cumulativeMinutesIntheMonth4ContractList.add(bandDuration);
+            cumulativePerformanceMinutesIntheMonth4ContractList.add(performance);
+
+            // go ahead one step in the day of the month for the next iteration
+            currentDate.add(Calendar.DAY_OF_MONTH, 1);
+        }// end for iterate days of gestion
+    }
 
     private void executeAttendanceControlManagers(Calendar endDate, Calendar currentDate, GeneratedPayroll generatedPayroll,
                                                   Employee employee,
@@ -1641,7 +1844,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
             Integer minutosRetrasoAcum = 0;
             Integer cumulativeMinuteLatenessInADay4AllContractBands = 0;
             Integer cumulativeBandsDurationInADay4AllContractBands = 0;
-
+            //al parecer controla q sea diferente de lunes
             if (currentDate.get(Calendar.DAY_OF_WEEK) != 1) {
                 // all special DATES 4 this month
                 List<Date> holydaySpecialDateList = new ArrayList<Date>();

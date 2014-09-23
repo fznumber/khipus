@@ -47,8 +47,10 @@ public class HoraryBand implements BaseModel {
     @Column(name = "horafin")
     private Date endHour;
 
+    @Column(name = "TIPO", nullable = true)
+    private String type;
+
     @Column(name = "diainicio", nullable = false, length = 200)
-    @Length(max = 200)
     private String initDay;
 
     @Column(name = "diafin", nullable = false, length = 200)
@@ -151,5 +153,13 @@ public class HoraryBand implements BaseModel {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
