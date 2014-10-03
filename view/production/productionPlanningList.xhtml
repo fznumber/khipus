@@ -131,7 +131,7 @@
                             </rich:columnGroup>
                         </f:facet>
                         <rich:column>
-                            <h:outputText value="#{productionOrderItem.productComposition.processedProduct.nameCode}"/>
+                            <h:outputText value="#{productionOrderItem.productMain == null ? productionOrderItem.productComposition.processedProduct.nameCode : productionOrderItem.productOrders.get(0).fullName}"/>
                         </rich:column>
 
                         <!--<rich:column>

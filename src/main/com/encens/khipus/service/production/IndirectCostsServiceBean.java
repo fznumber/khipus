@@ -133,7 +133,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, productionOrder, totalVolumGeneralDay, getIndirectCostGeneral(periodIndirectCost)));
-        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, productionOrder, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup())));
+        indirectCostses.addAll(generateCosts(totalDaysNotProducer,periodIndirectCost, productionOrder, totalVolumDay, getIndirectCostByGroup(periodIndirectCost, productionOrder.getProductMain() == null ? productionOrder.getProductComposition().getProcessedProduct().getProductItem().getSubGroup() : productionOrder.getProductOrders().get(0).getProcessedProduct().getProductItem().getSubGroup() )));
 
         /*Double totalVolumeOrder = getTotalVolumeOrder(productionOrder);
         Double totalCostIndirectGeneral = getTotalCostIndirectGeneral();
@@ -308,13 +308,20 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
     public Double getTotalVolumeOrder(ProductionOrder productionOrder) {
         //Double total = productionOrder.getProducedAmount();
         Double total = productionOrder.getExpendAmount();
-        String unitMeasure = productionOrder.getProductComposition().getProcessedProduct().getUnidMeasure();
         Double amount = 0.0;
-        if (productionOrder.getProductComposition().getProcessedProduct().getAmount() != null)
-            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount();
+        ProcessedProduct processedProduct;
+        if(productionOrder.getProductMain() != null)
+            processedProduct = productionOrder.getProductOrders().get(0).getProcessedProduct();
+        else
+            processedProduct = productionOrder.getProductComposition().getProcessedProduct();
+
+        String unitMeasure = processedProduct.getUnidMeasure();
+
+        if (processedProduct.getAmount() != null)
+            amount = processedProduct.getAmount();
 
         if (unitMeasure == "KG" || unitMeasure == "LT")
-            amount = productionOrder.getProductComposition().getProcessedProduct().getAmount() * 1000;
+            amount = processedProduct.getAmount() * 1000;
 
         total = amount * productionOrder.getProducedAmount();
         //total = amount * productionOrder.getExpendAmount();

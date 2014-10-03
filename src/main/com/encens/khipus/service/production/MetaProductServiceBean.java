@@ -2,6 +2,7 @@ package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.production.MetaProduct;
+import com.encens.khipus.model.production.ProductComposition;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -38,6 +39,15 @@ public class MetaProductServiceBean extends GenericServiceBean implements MetaPr
                 .setParameter("productItem", productItem)
                 .getSingleResult();
         return metaProduct;
+    }
+
+    @Override
+    public ProductComposition findProductoComposition(ProductComposition composition)
+    {
+        ProductComposition productComposition = (ProductComposition) em.createQuery("SELECT productComposition from ProductComposition productComposition where productComposition = :composition ")
+                                                .setParameter("composition",composition)
+                                                .getSingleResult();
+        return productComposition;
     }
 
 }

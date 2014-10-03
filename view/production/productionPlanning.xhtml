@@ -166,7 +166,8 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 
         <s:decorate id="processedProductField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.processedProduct']}</ui:define>
-            <h:inputText id="processedProduct" value="#{processedProductForPlanning.fullName}"
+            <h:inputText id="processedProduct"
+                         value="#{processedProductForPlanning.fullName}"
                          required="true" maxlength="500" styleClass="input" tabindex="5"
                          disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
             </h:inputText>
@@ -174,6 +175,25 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                              tabindex="2"
                              title="#{messages['ProductionPlanning.selectProcessedProduct']}"
                              onclick="Richfaces.showModalPanel('processedProductListModalPanel');"
+                             rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
+                <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+            </a4j:commandLink>
+        </s:decorate>
+
+        <s:decorate id="productionOrderModelField"
+                    template="/include/inputField.xhtml"
+                    styleClass="formRow"
+                    rendered="#{productionPlanningAction.managed and productionPlanningAction.showMainProduct}">
+            <ui:define name="label">#{messages['ProductionPlanning.productMain']}</ui:define>
+            <h:inputText id="productionOrderModel"
+                         value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"
+                         required="false" maxlength="500" styleClass="input" tabindex="5">
+            </h:inputText>
+            <a4j:commandLink id="selectProductionOrderModel"
+                             ajaxSingle="true"
+                             immediate="true"
+                             title="#{messages['ProductionPlanning.selectOrderProduction']}"
+                             onclick="Richfaces.showModalPanel('productionOrderSearchModalPanel');"
                              rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
                 <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
             </a4j:commandLink>
@@ -191,16 +211,17 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <h:selectOneMenu id="productComposition" value="#{productionPlanningAction.productComposition}"
                              styleClass="input" tabindex="6"
                              required="true"
-                             disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
+                             disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionPlanningAction.hasMainProduction}">
                 <s:selectItems value="#{productionPlanningAction.productCompositionList}"
                                var="productCompositionItem"
                                label="#{productCompositionItem.name}"
                                noSelectionLabel="" hideNoSelectionLabel="false"/>
                 <s:convertEntity/>
-                <a4j:support ajaxSingle="true" event="onchange" reRender="formulaSet"
+                <a4j:support ajaxSingle="true" event="onchange" reRender="formulaSet,productionOrderField"
                              actionListener="#{productionPlanningAction.productCompositionSelected}"/>
             </h:selectOneMenu>
         </s:decorate>
+
         <s:decorate id="dateField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionPlanning.date']}</ui:define>
             <rich:calendar id="date" value="#{productionPlanning.date}" required="true"
@@ -213,7 +234,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <ui:define name="label">#{messages['ProductionPlanning.espendingAmount']}</ui:define>
             <h:inputText value="#{productionOrderForPlanning.expendAmount}"
                          required="true" styleClass="input" tabindex="5"
-                         disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED'}">
+                         disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionPlanningAction.hasMainProduction}">
                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
                              actionListener="#{productionPlanningAction.evaluateExpressionActionListener}"/>
             </h:inputText>
@@ -228,7 +249,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                immediate="true"
                                oncomplete="Richfaces.showModalPanel('addProductInputsListModalPanel');"
                                actionListener="#{selectPopUpAction.select}"
-                               rendered="#{productionPlanningAction.showButtonAddInput and productionOrderForPlanning.estateOrder != 'FINALIZED' and productionOrderForPlanning.estateOrder != 'TABULATED' and productionOrderForPlanning.estateOrder != 'INSTOCK'}"
+                               rendered="#{(productionPlanningAction.showButtonAddInput and productionOrderForPlanning.estateOrder != 'FINALIZED' and productionOrderForPlanning.estateOrder != 'TABULATED' and productionOrderForPlanning.estateOrder != 'INSTOCK') or productionPlanningAction.hasMainProduction}"
                                reRender="formulaSet,addProductInputsListModalPanelContainer">
                 <f:attribute name="entityManagerName" value=""/>
                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
@@ -293,7 +314,9 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                             <h:inputText value="#{productionIngredientItem.amount}"
                                          styleClass="input"
                                          disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem) and productionIngredientItem.type !='ADD'}">
-                                <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
+                                <a4j:support event="onblur"
+                                             ajaxSingle="false"
+                                             reRender="productionIngredientList"
                                              actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
 
@@ -302,7 +325,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                              action="#{productionPlanningAction.removeInputForFormulation(productionIngredientItem)}"
                                              ajaxSingle="true"
                                              rendered="#{productionIngredientItem.type == 'ADD'}"
-                                             reRender="productionIngredientList,formulaSet">
+                                             reRender="productionIngredientList">
                                 <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                             </a4j:commandLink>
 
@@ -320,8 +343,15 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                     <s:div>
                         <a4j:commandButton id="addInnerButton" action="#{productionPlanningAction.addFormulation}"
                                            value="#{messages['ProductionPlanning.create.orderproduction']}"
+                                           immediate="false"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
-                                           rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
+                                           rendered="#{!productionPlanningAction.managed and productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
+
+                        <a4j:commandButton id="addInnerButtonImmediate" action="#{productionPlanningAction.addFormulation}"
+                                           value="#{messages['ProductionPlanning.create.orderproduction']}"
+                                           immediate="true"
+                                           reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
+                                           rendered="#{productionPlanningAction.managed and productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('CREATEORDERPRODUCCTION','CREATE')}"/>
 
                        <!-- <a4j:commandButton id="generateValeInputButton" action="#{productionPlanningAction.generateValeInput}"
                                            value="#{messages['ProductionPlanning.generateVoucher']}"
@@ -330,6 +360,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
 -->
                         <a4j:commandButton id="updateInnerButton" action="#{productionPlanningAction.updateFormulation}"
                                            value="#{messages['ProductionPlanning.innerButtonUpdate']}"
+                                           immediate="true"
                                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
                                            rendered="#{productionPlanningAction.formulaState eq 'EDIT' and productionOrderForPlanning.estateOrder == 'PENDING' and productionPlanningAction.dispobleBalance and s:hasPermission('UPDATEORDERPRODUCCTION','CREATE')}"/>
                         <a4j:commandButton id="cancelInnerButton" action="#{productionPlanningAction.cancelFormulation}"
@@ -406,7 +437,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
         <s:div>
             <s:decorate id="materialProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
-                <h:outputText value="#{productionOrderForPlanning.productComposition.processedProduct.name}"/>
+                <h:outputText value="#{productionOrderForPlanning.productMain != null? productionOrderForPlanning.productOrders.get(0).processedProduct.fullName :productionOrderForPlanning.productComposition.processedProduct.name}"/>
+            </s:decorate>
+
+            <s:decorate id="materialProductNameMainField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionOrderForPlanning.productMain != null}">
+                <ui:define name="label">#{messages['ProductionOrder.processedProductMain.name'] }</ui:define>
+                <h:outputText value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"/>
             </s:decorate>
 
             <s:decorate id="materialCodeField" template="/include/inputField.xhtml" styleClass="formRow">
@@ -863,7 +899,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </rich:columnGroup>
         </f:facet>
         <rich:column>
-            <h:outputText value="#{productionOrderItem.productComposition.processedProduct.nameCode}"/>
+            <h:outputText value="#{productionOrderItem.productMain == null ? productionOrderItem.productComposition.processedProduct.nameCode : productionOrderItem.productOrders.get(0).fullName}"/>
         </rich:column>
         <rich:column>
             <h:outputText value="#{productionOrderItem.code}"/>
@@ -1285,6 +1321,21 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                            oncomplete="Richfaces.hideModalPanel('processedProductListModalPanel');"
                            style="width:0.8em"/>
 
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="orderProductionListModalPanelContainer"
+            template="/production/productionOrderSearchModalPanel.xhtml">
+    <ui:param name="containerId" value="orderProductionListModalPanelContainer"/>
+    <ui:param name="dialogId" value="productionOrderSearchModalPanel"/>
+    <ui:param name="dataModel" value="#{productionOrderSearchDataModel}"/>
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           action="#{productionPlanningAction.assignProductMain(orderItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image-middle"
+                           reRender="productionOrderField,productionIngredientList,dataScroller,productionPlanningPanel"
+                           oncomplete="Richfaces.hideModalPanel('productionOrderSearchModalPanel');document.getElementById('#{rich:clientId(orderProductionCode)}').focus();"/>
     </ui:define>
 </s:decorate>
 

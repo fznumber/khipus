@@ -1143,7 +1143,9 @@
     </rich:menuItem>
     <rich:menuGroup value="#{messages['menu.production.planification.Reportes']}"
                     rendered="#{
-            s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
+            s:hasPermission('REPORTMILKRAW','VIEW') or
+            s:hasPermission('REPORTPRODUCTPRODUCED','VIEW') or
+            s:hasPermission('REPORTPRODUCCTIONBALANCE','VIEW')}">
 
         <rich:menuItem submitMode="none"
                        styleClass="main-menu-item"

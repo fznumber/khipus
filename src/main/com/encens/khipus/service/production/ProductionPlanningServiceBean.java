@@ -56,8 +56,9 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
         try {
             ProductionPlanning planning = (ProductionPlanning) entity;
             executeMathematicalFormulas(planning);
-            createVouchersForProductionInputs(planning);
-            createVouchersForProductionOutputs(planning);
+            //todo:aumentar la creacion automatica del vale para insumos de producccion
+            //createVouchersForProductionInputs(planning);
+            //createVouchersForProductionOutputs(planning);
             return entity;
         } catch (Exception ex) {
             throw new PersistenceException(ex);
@@ -98,6 +99,7 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
 
     private void executeMathematicalFormulas(ProductionPlanning planning) throws IOException, ProductCompositionException {
         for (ProductionOrder po : planning.getProductionOrderList()) {
+            if(po.getProductMain() == null)
             evaluatorMathematicalExpressionsService.executeMathematicalFormulas(po);
         }
     }

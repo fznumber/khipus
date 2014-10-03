@@ -50,7 +50,6 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "NO_TRANS",nullable = true)
     private String numberTransaction;
 
-
     @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double expendAmount;
 
@@ -84,6 +83,9 @@ public class ProductionOrder implements BaseModel {
 
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
+
+    @Column(name = "COSTINSUMOPRINCIPAL", nullable = true,columnDefinition = "NUMBER(16,2)")
+    private Double totalCostInputMain = 0.0;
 
     @Transient
     private Double milk;
@@ -119,9 +121,17 @@ public class ProductionOrder implements BaseModel {
     @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
 
+    @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
+    @JoinColumn(name = "PRODUCTOPADRE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    private ProductionOrder productMain;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<IndirectCosts> indirectCostses = new ArrayList<IndirectCosts>();
+
+    @OneToMany(mappedBy = "productionOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    private List<ProductOrder> productOrders = new ArrayList<ProductOrder>();
 
     public Long getId() {
         return id;
@@ -359,5 +369,30 @@ public class ProductionOrder implements BaseModel {
 
     public void setProducedAmountResponsible(Double producedAmountResponsible) {
         this.producedAmountResponsible = producedAmountResponsible;
+    }
+
+    public ProductionOrder getProductMain() {
+        return productMain;
+    }
+
+    public void setProductMain(ProductionOrder productMain) {
+        this.productMain = productMain;
+    }
+
+    public List<ProductOrder> getProductOrders() {
+        return productOrders;
+    }
+
+    public void setProductOrders(List<ProductOrder> productOrders) {
+        this.productOrders = productOrders;
+    }
+
+    public Double getTotalCostInputMain() {
+        return totalCostInputMain;
+    }
+
+    public void setTotalCostInputMain(Double totalCostInputMain) {
+        this.totalCostInputMain = totalCostInputMain;
+
     }
 }
