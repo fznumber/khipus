@@ -1039,6 +1039,23 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
                             double salary = job.getSalary().getAmount().doubleValue() / 30 * contractDays;
                             contractsPriceList.add(salary);
                         }
+                        HoraryBandContract horaryBandContractEspecial = getHasHorariEspecial(horaryBandContractList4Contract);
+                        if(horaryBandContractEspecial != null)
+                            executeAttendanceControlManagersRotation(endDate, currentDate, generatedPayroll,
+                                    employee, horaryBandContractEspecial,
+                                    rhMarkTimeDateMap4Employee,
+                                    specialDate4BusinessUnit,
+                                    specialDateTime4BusinessUnit,
+                                    specialDate4OrganizationalUnit.get(job.getOrganizationalUnit().getId()),
+                                    specialDateTimeForOrganizationalUnit.get(job.getOrganizationalUnit().getId()),
+                                    specialDate4Employee,
+                                    specialDateTime4Employee,
+                                    cumulativeMinutesIntheMonth4ContractList,
+                                    cumulativePerformanceMinutesIntheMonth4ContractList,
+                                    cumulativeLatenessMinutesIntheMonth4ContractList,
+                                    cumulativeDayAbsencesIntheMonth4ContractList,
+                                    totalSumOfMinuteBandAbsencesList);
+                        else
                         executeAttendanceControlManagers(endDate, currentDate, generatedPayroll,
                                 employee, horaryBandContractList4Contract,
                                 rhMarkTimeDateMap4Employee,
@@ -1352,6 +1369,15 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
         return PayrollGenerationResult.SUCCESS;
     }
 
+    private HoraryBandContract getHasHorariEspecial(List<HoraryBandContract> horaryBandContractList4Contract) {
+        for(HoraryBandContract horaryBandContract:horaryBandContractList4Contract)
+        {
+            if(horaryBandContract.getTypeHoraryBand() != null)
+                return horaryBandContract;
+        }
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
     public PayrollGenerationResult fillProffesorsPayroll(GeneratedPayroll generatedPayroll, List<Employee> employeeList,
                                                          List<Date> specialDate4BusinessUnit,
                                                          Map<Date, List<TimeInterval>> specialDateTime4BusinessUnit,
@@ -1617,6 +1643,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
 
     private void executeAttendanceControlManagersRotation(Calendar endDate, Calendar currentDate, GeneratedPayroll generatedPayroll,
                                                   Employee employee,
+                                                  HoraryBandContract validDayHoraryBandContract4Date,
                                                   Map<Date, List<Date>> rhMarkTimeDateMap4Employee,
                                                   List<Date> specialDate4BusinessUnit,
                                                   Map<Date, List<TimeInterval>> specialDateTime4BusinessUnit,
@@ -1652,23 +1679,26 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
 
                 List<Date> dateTimeRHMarkList = filterDateTimeRHMarkByDate(rhMarkTimeDateMap4Employee, currentDate.getTime());
 
-
-                // lista de bandas horarias rotatorias
-                List<HoraryBandContract> validDayHoraryBand4DateList = specialDateService.getHoraryBandRotatory();
-                // check what bands are valid for this date of the month. Checks all the valid bands for the month.
+                /*// find the valid HoraryBandContract list for a specific Date. Because may exist horary changes
+                List<HoraryBandContract> validHoraryBandContract4DateList = horaryBandContractService.findValidHoraryBandContracts4Date(horaryBandContractList4Contract, currentDate);
+//                map HoraryBandContract by day for a given date
+                Hashtable<Integer, List<HoraryBandContract>> horaryBandContractMapByDay = horaryBandContractService.getHoraryBandContractMapByDay(validHoraryBandContract4DateList);
+                // lista de bandas horarias contrato por dia
+                List<HoraryBandContract> validDayHoraryBand4DateList = horaryBandContractMapByDay.get(currentDate.get(Calendar.DAY_OF_WEEK));
+                // check what bands are valid for this date of the month. Checks all the valid bands for the month.*/
 
                 int bandAbsences = 0;
 
-                for (int k = 0; k < validDayHoraryBand4DateList.size(); k++) {
-                    HoraryBandContract validDayHoraryBandContract4Date = validDayHoraryBand4DateList.get(k);
+                for (int k = 0; k < validDayHoraryBandContract4Date.getTypeHoraryBand().getHoraryBands().size(); k++) {
+                    HoraryBand horaryBand = validDayHoraryBandContract4Date.getTypeHoraryBand().getHoraryBands().get(k);
                     int minutosAcumaladosRestraso = 0;
                     int minuteBandAbsences = 0;
-                    int bandsNumber = validDayHoraryBand4DateList.size();
+                    int bandsNumber = validDayHoraryBandContract4Date.getTypeHoraryBand().getHoraryBands().size();
 
                     // check if the employee marked this date at this band period and retrive his marks as a list
-                    List<Date> correctMarks = findInitEndRHMarks(dateTimeRHMarkList, validDayHoraryBandContract4Date, currentDate);
-                    Calendar initBandHourCalendar = DateUtils.toCalendar(validDayHoraryBandContract4Date.getHoraryBand().getInitHour());
-                    Calendar endBandHourCalendar = DateUtils.toCalendar(validDayHoraryBandContract4Date.getHoraryBand().getEndHour());
+                    List<Date> correctMarks = findInitEndRHMarks(dateTimeRHMarkList,horaryBand,validDayHoraryBandContract4Date.getTolerance(),validDayHoraryBandContract4Date.getLimit(), currentDate);
+                    Calendar initBandHourCalendar = DateUtils.toCalendar(horaryBand.getInitHour());
+                    Calendar endBandHourCalendar = DateUtils.toCalendar(horaryBand.getEndHour());
                     List<Long> bandDifferenceList = this.getDifferenceInHoursMinutesSecondsBetweenMarks(
                             initBandHourCalendar, endBandHourCalendar);
                     Long bandDifferenceInMinutes = bandDifferenceList.get(0) * 60 + bandDifferenceList.get(1);
@@ -1679,7 +1709,7 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
                             specialDateTime4BusinessUnit,
                             specialDateTimeForOrganizationalUnit,
                             specialDateTime4Employee,
-                            validDayHoraryBandContract4Date);
+                            horaryBand);
                     log.debug("hasPermission4BandInterval: " + hasPermission4BandInterval);
                     // if it isn't sunday
                     if (!hasPermission4Today) {
@@ -2214,6 +2244,38 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
             // go ahead one step in the day of the month for the next iteration
             currentDate.add(Calendar.DAY_OF_MONTH, 1);
         }// end for iterate days of month
+    }
+
+    private boolean hasPermissionForBandInterval(Calendar currentDate,
+                                                 Map<Date, List<TimeInterval>> specialDateTime4BusinessUnit,
+                                                 Map<Date, List<TimeInterval>> specialDateTimeForOrganizationalUnit,
+                                                 Map<Date, List<TimeInterval>> specialDateTime4Employee,
+                                                 HoraryBand horaryBand) {
+        if (specialDateTime4BusinessUnit.containsKey(currentDate.getTime())) {
+            for (TimeInterval timeInterval : specialDateTime4BusinessUnit.get(currentDate.getTime())) {
+
+                if (hasTimeIntervalPermissionForBand(horaryBand, timeInterval)) {
+                    return true;
+                }
+            }
+        }
+        if (specialDateTime4Employee.containsKey(currentDate.getTime())) {
+            for (TimeInterval timeInterval : specialDateTime4Employee.get(currentDate.getTime())) {
+
+                if (hasTimeIntervalPermissionForBand(horaryBand, timeInterval)) {
+                    return true;
+                }
+            }
+        }
+        if (specialDateTimeForOrganizationalUnit.containsKey(currentDate.getTime())) {
+            for (TimeInterval timeInterval : specialDateTimeForOrganizationalUnit.get(currentDate.getTime())) {
+
+                if (hasTimeIntervalPermissionForBand(horaryBand, timeInterval)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean hasPermissionForBandInterval(Calendar currentDate,
@@ -2789,6 +2851,96 @@ public class GeneratedPayrollServiceBean implements GeneratedPayrollService {
             }
             if (nearestInitMark != null) {
                 marksList.add(nearestInitMark);
+            }
+
+        }
+        return marksList;
+    }
+
+    /*
+    Returns RegisterMarkAction list only if the employee has marked at least one time to in and one time to out his horaryBand.
+     the list is a list of two elements, the employee first and last mark for the horaryBand.
+   @param dateRhMarkList a list of marks of an employee given an especific date
+   @param dayHoraryBand a HoraryBand of a especific day that matches with the day of the date of the dateRhMarkList
+    */
+
+    public List<Date> findInitEndRHMarks(List<Date> dateRhMarkList, HoraryBand dayHoraryBand ,Tolerance tolerance ,Limit limit , Calendar dayOfMonthCalendar) {
+        // initially the list to be returned is empty.
+        List<Date> marksList = new ArrayList<Date>();
+        // to catch the first and las ocurrence of marks
+        Date nearestInitMark = null;
+        Date nearestEndMark = null;
+        // the employee at least have marked two times during the day.
+        if (dateRhMarkList.size() >= 2) {
+            Calendar initBandMark = Calendar.getInstance();
+            Calendar endBandMark = Calendar.getInstance();
+            // in order to make a comparison, normalize the year,month and date of the horary band, so that we check only the time not the date
+            initBandMark.set(dayOfMonthCalendar.get(Calendar.YEAR), dayOfMonthCalendar.get(Calendar.MONTH), dayOfMonthCalendar.get(Calendar.DAY_OF_MONTH),
+                    dayHoraryBand.getInitHour().getHours(), dayHoraryBand.getInitHour().getMinutes(), dayHoraryBand.getInitHour().getSeconds());
+            initBandMark.set(Calendar.MILLISECOND, 0);
+            // in order to make a comparison, normalize the year,month and date of the horary band, so that we check only the time not the date
+            endBandMark.set(dayOfMonthCalendar.get(Calendar.YEAR), dayOfMonthCalendar.get(Calendar.MONTH), dayOfMonthCalendar.get(Calendar.DAY_OF_MONTH),
+                    dayHoraryBand.getEndHour().getHours(), dayHoraryBand.getEndHour().getMinutes(), dayHoraryBand.getEndHour().getSeconds());
+            endBandMark.set(Calendar.MILLISECOND, 0);
+            Calendar beforeInitLimit = Calendar.getInstance();
+            Calendar afterEndLimit = Calendar.getInstance();
+            beforeInitLimit.setTime(initBandMark.getTime());
+            beforeInitLimit.add(Calendar.MINUTE, -limit.getBeforeInit());
+            afterEndLimit.setTime(endBandMark.getTime());
+            afterEndLimit.add(Calendar.MINUTE, limit.getAfterEnd());
+            Calendar lastInitEmployeeMark = null;
+            Calendar lastEndEmployeeMark = null;
+
+
+            for (Date rhMarkDateTime : dateRhMarkList) {
+                //RegisterMarkAction rhMark = dateRhMarkList.get(i);
+                Calendar employeeMark = Calendar.getInstance();
+                Date employeeMarkD = new Date((dayOfMonthCalendar.get(Calendar.YEAR) - 1900), dayOfMonthCalendar.get(Calendar.MONTH), dayOfMonthCalendar.get(Calendar.DAY_OF_MONTH),
+                        rhMarkDateTime.getHours(), rhMarkDateTime.getMinutes(), rhMarkDateTime.getSeconds());
+
+
+                // to ensure that the time mark has setted year and month. In case only the time is retrived.
+                employeeMark.set(dayOfMonthCalendar.get(Calendar.YEAR), dayOfMonthCalendar.get(Calendar.MONTH), dayOfMonthCalendar.get(Calendar.DAY_OF_MONTH),
+                        rhMarkDateTime.getHours(), rhMarkDateTime.getMinutes(), rhMarkDateTime.getSeconds());
+                employeeMark.set(Calendar.MILLISECOND, 0);
+
+                employeeMark.setTime(employeeMarkD);
+                //for init mark
+                if ((employeeMark.compareTo(beforeInitLimit) >= 0) && (employeeMark.compareTo(endBandMark) < 0)) {
+                    // override nearest init mark if convenient
+                    if (nearestInitMark == null) {
+                        nearestInitMark = rhMarkDateTime;
+                        lastInitEmployeeMark = employeeMark;
+                    } else {
+                        int initBandEmployeeMarkDifference = ((Long) (Math.abs(initBandMark.getTimeInMillis() - employeeMark.getTimeInMillis()))).intValue();
+                        int initBandNearestInitMarkDifference = ((Long) Math.abs(initBandMark.getTimeInMillis() - lastInitEmployeeMark.getTimeInMillis())).intValue();
+                        if (initBandEmployeeMarkDifference < initBandNearestInitMarkDifference) {
+                            // override with the nearest mark to the init HoraryBand
+                            nearestInitMark = rhMarkDateTime;
+                            lastInitEmployeeMark = employeeMark;
+                        }
+                    }
+                }
+
+                // for end mark
+                if ((employeeMark.compareTo(initBandMark) > 0) && (employeeMark.compareTo(afterEndLimit) <= 0) && nearestInitMark != rhMarkDateTime) {
+                    if (nearestEndMark == null) {
+                        nearestEndMark = rhMarkDateTime;
+                        lastEndEmployeeMark = employeeMark;
+                    } else {
+                        int endBandEmployeeMarkDifference = ((Long) (Math.abs(endBandMark.getTimeInMillis() - employeeMark.getTimeInMillis()))).intValue();
+                        int endBandNearestEndMarkDifference = ((Long) Math.abs(endBandMark.getTimeInMillis() - lastEndEmployeeMark.getTimeInMillis())).intValue();
+                        if (endBandEmployeeMarkDifference < endBandNearestEndMarkDifference) {
+                            nearestEndMark = rhMarkDateTime;
+                            lastEndEmployeeMark = employeeMark;
+                        }
+                    }
+                }
+            }
+            if (nearestInitMark != null && nearestEndMark != null) {
+                marksList.add(nearestInitMark);
+                marksList.add(nearestEndMark);
+
             }
 
         }

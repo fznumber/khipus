@@ -71,6 +71,10 @@ public class HoraryBand implements BaseModel {
     @JoinColumn(name = "idcompania", nullable = false, updatable = false, insertable = true)
     private Company company;
 
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDTIPOBANDAHORARIA", nullable = true, updatable = false, insertable = true)
+    private TypeHoraryBand typeHoraryBand;
+
     public HoraryBand() {
 
     }
@@ -161,5 +165,13 @@ public class HoraryBand implements BaseModel {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public TypeHoraryBand getTypeHoraryBand() {
+        return typeHoraryBand;
+    }
+
+    public void setTypeHoraryBand(TypeHoraryBand typeHoraryBand) {
+        this.typeHoraryBand = typeHoraryBand;
     }
 }
