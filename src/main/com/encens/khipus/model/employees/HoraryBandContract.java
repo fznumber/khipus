@@ -138,6 +138,10 @@ public class HoraryBandContract implements BaseModel, Comparable {
     @JoinColumn(name = "idbandahoraria", nullable = false, updatable = false, insertable = true)
     private HoraryBand horaryBand;
 
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "IDTIPOBANDAHORARIA", nullable = true, updatable = false, insertable = true)
+    private TypeHoraryBand typeHoraryBand;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "idtolerancia", nullable = false, updatable = false, insertable = true)
     private Tolerance tolerance;
@@ -470,5 +474,13 @@ public class HoraryBandContract implements BaseModel, Comparable {
 
     public void setCostPivot(Boolean costPivot) {
         this.costPivot = costPivot;
+    }
+
+    public TypeHoraryBand getTypeHoraryBand() {
+        return typeHoraryBand;
+    }
+
+    public void setTypeHoraryBand(TypeHoraryBand typeHoraryBand) {
+        this.typeHoraryBand = typeHoraryBand;
     }
 }
