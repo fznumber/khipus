@@ -17,6 +17,8 @@ public interface RawMaterialPayRollService extends GenericService {
 
     public DiscountProducer findDiscountProducerByDate(Date date);
 
+    public List<DiscountProducer> findDiscountsProducerByDate(Date date);
+
     public RawMaterialPayRoll generatePayroll(RawMaterialPayRoll rawMaterialPayRoll,DiscountProducer discountProducer) throws EntryNotFoundException, RawMaterialPayRollException;
 
     void calculateLiquidPayable(RawMaterialPayRoll rawMaterialPayRoll);

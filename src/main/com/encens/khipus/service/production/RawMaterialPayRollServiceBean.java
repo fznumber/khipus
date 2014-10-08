@@ -304,6 +304,24 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return discountProducers.get(0);
     }
 
+    public List<DiscountProducer> findDiscountsProducerByDate(Date date) {
+        List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
+        try {
+            discountProducers = (List<DiscountProducer>) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
+                    " where discountProducer.startDate >= :date " +
+                    " and discountProducer.endDate <= :date " +
+                    " and discountProducer.state = 'ENABLE'")
+                    .setParameter("date", date,TemporalType.DATE)
+                    .getResultList();
+        }catch(NoResultException e){
+            return discountProducers;
+        }
+        if(discountProducers.size() == 0)
+            return discountProducers;
+
+        return discountProducers;
+    }
+
     private Map<Date, Double>
     createMapOfCollectedWeights(RawMaterialPayRoll rawMaterialPayRoll) {
         List<Object[]> counts = findTotalCollection("RawMaterialPayRoll.totalCollectedGabBetweenDates", rawMaterialPayRoll);
