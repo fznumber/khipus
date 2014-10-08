@@ -367,6 +367,23 @@
         </navigation>
     </page>
 
+    <page view-id="/production/discountProducerList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{discountProducerAction.select(discountProducerItem)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/discountProducer.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
+    <page view-id="/production/discountProducer.xhtml" no-conversation-view-id="/production/discountProducerList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/production/discountProducerList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
     <page view-id="/production/rawMaterialProducerList.xhtml">
         <end-conversation/>
         <navigation from-action="#{rawMaterialProducerAction.select(rawMaterialProducerItem)}">

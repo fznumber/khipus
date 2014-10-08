@@ -287,18 +287,21 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     }
 
     public DiscountProducer findDiscountProducerByDate(Date date) {
-        DiscountProducer discountProducer;
+        List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
         try {
-            discountProducer = (DiscountProducer) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
-                    " where discountProducer.startDate <= :date " +
-                    " and discountProducer.endDate >= :date " +
+            discountProducers = (List<DiscountProducer>) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
+                    " where discountProducer.startDate >= :date " +
+                    " and discountProducer.endDate <= :date " +
                     " and discountProducer.state = 'ENABLE'")
-                    .setParameter("date", date)
-                    .getSingleResult();
+                    .setParameter("date", date,TemporalType.DATE)
+                    .getResultList();
         }catch(NoResultException e){
             return null;
         }
-        return discountProducer;
+        if(discountProducers.size() == 0)
+            return null;
+
+        return discountProducers.get(0);
     }
 
     private Map<Date, Double>
@@ -843,6 +846,23 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
         }
         return result;
+    }
+
+    public List<DiscountProducer> findDiscountProducerByDate(Date startDate, Date endDate) {
+        List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
+        try {
+            discountProducers = (List<DiscountProducer>) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
+                    " where discountProducer.startDate = :startDate " +
+                    " and discountProducer.endDate = :endDate " +
+                    " and discountProducer.state = 'ENABLE'")
+                    .setParameter("startDate", startDate,TemporalType.DATE)
+                    .setParameter("endDate", endDate,TemporalType.DATE)
+                    .getResultList();
+        }catch(NoResultException e){
+            return null;
+        }
+
+        return discountProducers;
     }
 
     //region: borrar

@@ -77,6 +77,9 @@ public class DiscountProducer implements BaseModel {
     }
 
     public Double getReserve() {
+        if(reserve == null)
+        this.reserve = 0.0001;
+
         return reserve;
     }
 

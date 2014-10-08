@@ -64,4 +64,6 @@ public interface RawMaterialPayRollService extends GenericService {
     Double getReservProducer(Date startDate, Date endDate);
 
     void deleteReserveDiscount(Date startDate, Date endDate);
+
+    List<DiscountProducer> findDiscountProducerByDate(Date startDate, Date endDate);
 }
