@@ -181,6 +181,11 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             rawMaterialPayRoll.setStartDate(dateFormat.parse(dateFormat.format(dateIni.getTime())));
             rawMaterialPayRoll.setEndDate(dateFormat.parse(dateFormat.format(dateEnd.getTime())));
             DiscountProducer discountProducer = rawMaterialPayRollService.findDiscountProducerByDate(rawMaterialPayRoll.getEndDate());
+            if(rawMaterialPayRollService.findDiscountsProducerByDate(rawMaterialPayRoll.getEndDate()).size() > 1)
+            {
+                addDatesDuplicatesMessage();
+                return com.encens.khipus.framework.action.Outcome.REDISPLAY;
+            }
             if (rawMaterialPayRoll.getStartDate().compareTo(rawMaterialPayRoll.getEndDate()) > 0) {
                 facesMessages.addFromResourceBundle(WARN, "RawMaterialPayRoll.warning.startDateGreaterThanEndDate");
                 return Outcome.FAIL;
@@ -200,6 +205,11 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
         return Outcome.REDISPLAY;
+    }
+
+    private void addDatesDuplicatesMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                "DiscountProducer.FindDatesDuplicatesMessage");
     }
 
     public String approvedPayRoll() {
