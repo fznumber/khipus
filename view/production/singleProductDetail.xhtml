@@ -27,6 +27,14 @@
                            rendered="#{productionPlanningAction.singleProduct.state eq 'EXECUTED' }"
                            reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"/>
 
+        <a4j:commandButton value="#{messages['Common.delete']}"
+                         reRender="productionList,formulaSet,ruleBotton2,ruleBotton1,baseProductionList"
+                         styleClass="button"
+                         rendered="#{s:hasPermission('DELETESINGLEPRODUCT','DELETE') and singleProduct.state == 'PENDING'}">
+            <rich:componentControl for="deleteConfirmationSingle" event="onclick" disableDefault="true"
+                                   operation="show"/>
+        </a4j:commandButton>
+
         <!--<a4j:commandButton
                 value="#{messages['ProductionPlanning.generateValeOrder']}"
                 styleClass="button"

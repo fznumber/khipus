@@ -146,6 +146,8 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
     private VoucherService voucherService;
     @In
     private ProductionOrderService productionOrderService;
+    @In(create = true)
+    private SingleProductAction singleProductAction;
 
     private boolean showButtonAddInput = false;
     private Double volumeTotalInputMain = 0.0;
@@ -2684,6 +2686,43 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
+    }
+
+    //public void deleteSingleProduct(SingleProduct singleProduct)
+    public String deleteSingleProduct()
+    {
+        for(BaseProduct base:getInstance().getBaseProducts()){
+            base.getSingleProducts().remove(singleProduct);
+        }
+
+        /*for (ProductionOrder order : getInstance().getProductionOrderList()) {
+                setTotalsMaterials(order);
+                setTotalsInputs(order);
+                setTotalIndiRectCost(order,getInstance().getDate());
+                //setTotalHour(productionOrder);
+                setTotalCostProducticionAndUnitPrice(order);
+        }
+
+        for(BaseProduct base:getInstance().getBaseProducts()){
+
+                for (SingleProduct single : base.getSingleProducts()) {
+                    setTotalsMaterials(single);
+                    setTotalsInputs(base,single);
+                    setTotalIndiRectCost(single,getInstance().getDate());
+                    //setTotalHour(productionOrder);
+                    setTotalCostProducticionAndUnitPrice(single);
+                }
+
+        }
+        setValuesMilks();*/
+        try {
+            getService().update(getInstance());
+        } catch (EntryDuplicatedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ConcurrencyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return Outcome.SUCCESS;
     }
 
     private void notHasIndirectCostMessage() {
