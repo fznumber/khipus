@@ -62,6 +62,9 @@ public class RawMaterialProducer extends Person {
     @OneToMany(mappedBy = "rawMaterialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<CollectedRawMaterial> collectedRawMaterialList = new ArrayList<CollectedRawMaterial>(0);
 
+    @OneToMany(mappedBy = "rawMaterialProducerTax", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private List<ProducerTax> producerTaxes = new ArrayList<ProducerTax>(0);
+
     @OneToMany(mappedBy = "materialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<DiscountReserve> discountReserves = new ArrayList<DiscountReserve>(0);
 
@@ -160,6 +163,14 @@ public class RawMaterialProducer extends Person {
 
     public void setDiscountReserves(List<DiscountReserve> discountReserves) {
         this.discountReserves = discountReserves;
+    }
+
+    public List<ProducerTax> getProducerTaxes() {
+        return producerTaxes;
+    }
+
+    public void setProducerTaxes(List<ProducerTax> producerTaxes) {
+        this.producerTaxes = producerTaxes;
     }
 }
 

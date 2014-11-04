@@ -202,7 +202,7 @@
     </app:fieldset>
 
     <app:fieldset id="taxFieldSet" title="#{messages['RawMaterialProducer.taxLicense']}">
-        <s:decorate id="codeTaxLicenseField" template="/include/inputField.xhtml" styleClass="formRow">
+        <!--<s:decorate id="codeTaxLicenseField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialProducer.codeTaxLicense']}</ui:define>
             <h:inputText id="codeTaxLicense" value="#{rawMaterialProducer.codeTaxLicence}"
                          styleClass="input" required="false" maxlength="150" tabindex="10">
@@ -220,7 +220,8 @@
             <rich:calendar showWeekDaysBar="false" showFooter="true"
                            value="#{rawMaterialProducer.expirationDateTaxLicence}"
                            popup="true"/>
-        </s:decorate>
+        </s:decorate>-->
+            <ui:include src="rawMaterialProducerGestionTaxListForm.xhtml.xhtml"/>
     </app:fieldset>
 
     <rich:spacer height="10" />
@@ -314,5 +315,21 @@
 </s:decorate>
 
 <rich:jQuery selector="#name" query="focus()" timing="onload"/>
+
+<s:decorate id="gestionTaxModalPanelContainer"
+            template="/production/gestionTaxModalPanel.xhtml">
+    <ui:param name="containerId" value="gestionTaxModalPanelContainer"/>
+    <ui:param name="dialogId" value="gestionTaxModalPanel"/>
+    <ui:define name="addButton">
+        <a4j:commandButton id="addButton"
+                           immediate="true"
+                           ajaxSingle="true"
+                           action="#{warehousePurchaseOrderDetailListCreateAction.addProductItems(provideSearchDataModel.selectedProductItems)}"
+                           value="#{messages['Common.add']}"
+                           reRender="gestionTaxDetailsPanel"
+                           styleClass="button"
+                           oncomplete="Richfaces.hideModalPanel('gestionTaxModalPanel');"/>
+    </ui:define>
+</s:decorate>
 </ui:define>
 </ui:composition>
