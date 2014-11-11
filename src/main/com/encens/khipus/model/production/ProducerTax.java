@@ -4,9 +4,6 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @TableGenerator(name = "ProducerTax_Generator",
         table = "SECUENCIA",
@@ -20,14 +17,14 @@ import java.util.List;
 public class ProducerTax implements BaseModel {
 
     @Id
-    @Column(name = "idgimpuestoproductor", columnDefinition = "NUMBER(24)", nullable = false)
+    @Column(name = "idimpuestoproductor", columnDefinition = "NUMBER(24)", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProducerTax_Generator")
     private Long id;
 
     @Column(name = "numeroformulario",nullable = false)
-    private Integer formNumber;
+    private String formNumber;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE,CascadeType.PERSIST})
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private RawMaterialProducer rawMaterialProducerTax;
 
@@ -51,11 +48,11 @@ public class ProducerTax implements BaseModel {
         this.gestionTax = gestionTax;
     }
 
-    public Integer getFormNumber() {
+    public String getFormNumber() {
         return formNumber;
     }
 
-    public void setFormNumber(Integer formNumber) {
+    public void setFormNumber(String formNumber) {
         this.formNumber = formNumber;
     }
 

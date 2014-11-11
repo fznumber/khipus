@@ -2,6 +2,7 @@ package com.encens.khipus.action.production;
 
 import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.finances.Provide;
+import com.encens.khipus.model.production.GestionTax;
 import com.encens.khipus.model.warehouse.ProductItem;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
@@ -10,6 +11,7 @@ import org.jboss.seam.annotations.Scope;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,29 +19,27 @@ import java.util.List;
  * @version 2.2
  */
 
-@Name("provideSearchDataModel")
+@Name("gestionTaxSearchDataModel")
 @Scope(ScopeType.PAGE)
-public class GestionTaxSearchDataModel extends QueryDataModel<Long, Provide> {
+public class GestionTaxSearchDataModel extends QueryDataModel<Long, GestionTax> {
 
-    private String productItemName;
-    private String productItemCode;
+    private Date startDate;
+    private Date endDate;
 
     private static final String[] RESTRICTIONS =
             {
-                    "lower(productItem.id.productItemCode) like concat(lower(#{provideSearchDataModel.productItemCode}), '%')",
-                    "lower(productItem.name) like concat('%',concat(lower(#{provideSearchDataModel.productItemName}), '%'))",
-                    "element.providerCode = #{provideSearchDataModel.criteria.providerCode}",
-                    "productItem.state = #{enumerationUtil.getEnumValue('com.encens.khipus.model.warehouse.ProductItemState', 'VIG')}"
+                    "gestionTax.startDate = #{gestionTaxSearchDataModel.startDate} ",
+                    "gestionTax.endDate = #{gestionTaxSearchDataModel.endDate} "
             };
 
     @Create
     public void init() {
-        sortProperty = "productItem.name";
+        sortProperty = "gestionTax.endDate";
     }
 
     @Override
     public String getEjbql() {
-        return "select productItem from Provide element inner join element.productItem productItem";
+        return "select gestionTax from GestionTax gestionTax";
     }
 
     @Override
@@ -47,34 +47,28 @@ public class GestionTaxSearchDataModel extends QueryDataModel<Long, Provide> {
         return Arrays.asList(RESTRICTIONS);
     }
 
-    public String getProductItemName() {
-        return productItemName;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setProductItemName(String productItemName) {
-        this.productItemName = productItemName;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public String getProductItemCode() {
-        return productItemCode;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setProductItemCode(String productItemCode) {
-        this.productItemCode = productItemCode;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
-    public void filterByProviderCode(String providerCode) {
-        getCriteria().setProviderCode(providerCode);
-        updateAndSearch();
-    }
-
-
-    public List<ProductItem> getSelectedProductItems() {
+    public List<GestionTax> getSelectedGestionTaxs() {
         List ids = super.getSelectedIdList();
 
-        List<ProductItem> result = new ArrayList<ProductItem>();
+        List<GestionTax> result = new ArrayList<GestionTax>();
         for (Object id : ids) {
-            result.add(getEntityManager().find(ProductItem.class, id));
+            result.add(getEntityManager().find(GestionTax.class, id));
         }
 
         return result;

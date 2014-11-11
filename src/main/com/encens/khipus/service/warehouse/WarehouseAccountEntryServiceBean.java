@@ -131,7 +131,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     purchaseOrderPayment.getSourceAmount(),
                     purchaseOrderPayment.getSourceCurrency(),
                     bankExchangeRate,
-                    purchaseOrderPayment.getCheckDestination(),
+                    purchaseOrderPayment.getPurchaseOrder().getExecutorUnit(),
                     purchaseOrderPayment.getDescription());
         } else if (PurchaseOrderPaymentType.PAYMENT_CASHBOX.equals(purchaseOrderPayment.getPaymentType())) {
             voucher = VoucherBuilder.newGeneralVoucher(Constants.CASHBOX_PAYMENT_VOUCHER_FORM, purchaseOrderPayment.getDescription());

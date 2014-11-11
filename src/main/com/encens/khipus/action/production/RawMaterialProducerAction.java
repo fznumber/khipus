@@ -154,7 +154,7 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
            logProductiveZone.setRawMaterialProducer(getInstance());
            logProductiveZoneService.createLog(logProductiveZone);
         }
-
+        super.setOp(OP_UPDATE);
         return super.update();
     }
 
@@ -266,5 +266,34 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
 
     public void setShowOptionsProductiveZone(boolean showOptionsProductiveZone) {
         this.showOptionsProductiveZone = showOptionsProductiveZone;
+    }
+
+    public void removeGestionTax(ProducerTax producerTax){
+        getInstance().getProducerTaxes().remove(producerTax);
+
+
+    }
+
+    public void addGestionTaxs(List<GestionTax> gestionTaxes)
+    {
+        for(GestionTax gestionTax:gestionTaxes)
+        {
+            if(gestionTaxWasChoise(gestionTax))
+            {ProducerTax producerTax = new ProducerTax();
+                producerTax.setGestionTax(gestionTax);
+                producerTax.setRawMaterialProducerTax(getInstance());
+                getInstance().getProducerTaxes().add(producerTax);
+            }
+        }
+    }
+
+    public Boolean gestionTaxWasChoise(GestionTax gestionTax)
+    {
+        for(ProducerTax tax:getInstance().getProducerTaxes())
+        {
+            if(tax.getGestionTax().getId() == gestionTax.getId())
+                return false;
+        }
+        return true;
     }
 }

@@ -206,10 +206,14 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             auxearnedMoney = aux.earnedMoney;
             auxcollectedTotalMoney = aux.collectedTotalMoney;
             record.setTotalPayCollected(RoundUtil.getRoundValue(rawMaterialPayRoll.getUnitPrice() * auxcollectedAmount, 2, RoundUtil.RoundMode.SYMMETRIC));
-            if (isValidLicence(aux.producer.getCodeTaxLicence(), aux.producer.getStartDateTaxLicence(), aux.producer.getExpirationDateTaxLicence())) {
-                record.setTaxLicense(aux.producer.getCodeTaxLicence());
-                record.setExpirationDateTaxLicence(aux.producer.getExpirationDateTaxLicence());
-                record.setStartDateTaxLicence(aux.producer.getStartDateTaxLicence());
+            ProducerTax producerTax = getProducerTaxValid(aux.producer,record.getRawMaterialPayRoll().getStartDate(),record.getRawMaterialPayRoll().getEndDate());
+            String codTaxLicence = producerTax != null ? producerTax.getFormNumber(): null;
+            Date taxStartDate = producerTax != null ? producerTax.getGestionTax().getStartDate():null;
+            Date taxEndDate = producerTax != null ? producerTax.getGestionTax().getEndDate():null;
+            if (isValidLicence(codTaxLicence, taxStartDate, taxEndDate)) {
+                record.setTaxLicense(codTaxLicence);
+                record.setExpirationDateTaxLicence(taxStartDate);
+                record.setStartDateTaxLicence(taxEndDate);
             }
 
             RawMaterialProducerDiscount discount = salaryMovementProducerService.prepareDiscount(aux.producer, rawMaterialPayRoll.getStartDate(), rawMaterialPayRoll.getEndDate(),rawMaterialPayRoll.getProductiveZone());
@@ -284,6 +288,16 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         rawMaterialPayRoll.setTotalAdjustmentByGAB(totalAdjustment);
         rawMaterialPayRoll.setTotalOtherIncomeByGAB(totalIncome);
         return rawMaterialPayRoll;
+    }
+
+    private ProducerTax getProducerTaxValid(RawMaterialProducer producer, Date startDate, Date endDate) {
+        for(ProducerTax producerTax:producer.getProducerTaxes())
+        {
+            if(producerTax.getGestionTax().getEndDate().compareTo(endDate) <= 0)
+                if(producerTax.getGestionTax().getStartDate().compareTo(startDate) >= 0)
+                    return producerTax;
+        }
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public DiscountProducer findDiscountProducerByDate(Date date) {

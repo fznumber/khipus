@@ -21,35 +21,24 @@
                                    oncomplete="Richfaces.showModalPanel('gestionTaxModalPanel');"
                                    actionListener="#{selectPopUpAction.select}"
                                    reRender="gestionTaxModalPanel">
-                    <f:attribute name="entityManagerName" value=""/>
-                    <f:attribute name="dataModelObject" value="#{provideSearchDataModel}"/>
-                    <app:criteriaValue fieldName="providerCode"
-                                       value="#{warehousePurchaseOrderAction.purchaseOrder.provider.id.providerCode}"/>
                 </a4j:commandButton>
             </div>
 
-            <rich:dataTable value="#{warehousePurchaseOrderDetailListCreateAction.instances}"
+            <rich:dataTable value="#{rawMaterialProducer.producerTaxes}"
                             var="instance"
                             id="instancesList"
-                            rows="#{warehousePurchaseOrderDetailListCreateAction.rows}"
-                            width="100%"
-                            columnsWidth="30%, 20%, 15%, 15%, 15%, 5%">
+                            rows="7"
+                            width="100%">
                 <f:facet name="header">
                     <rich:columnGroup>
                         <rich:column styleClass="center">
-                            #{messages['WarehousePurchaseOrderDetail.productItem']}
+                            #{messages['GestionTax.numberForm']}
                         </rich:column>
                         <rich:column>
-                            #{messages['WarehousePurchaseOrderDetail.purchaseMeasureUnit']}
+                            #{messages['GestionTax.startDate']}
                         </rich:column>
                         <rich:column>
-                            #{messages['WarehousePurchaseOrderDetail.providerUnitPrice']}
-                        </rich:column>
-                        <rich:column>
-                            #{messages['WarehousePurchaseOrderDetail.requestedQuantity']}
-                        </rich:column>
-                        <rich:column>
-                            #{messages['WarehousePurchaseOrderDetail.totalAmount']}
+                            #{messages['GestionTax.endDate']}
                         </rich:column>
                         <rich:column>
                             #{messages['Common.action']}
@@ -57,75 +46,25 @@
                     </rich:columnGroup>
                 </f:facet>
                 <rich:column>
-                    <h:outputText value="#{instance.productItem.fullName}"/>
+                    <h:inputText id="formNumber"
+                                 value="#{instance.formNumber}"
+                                 styleClass="input"
+                                 required="true">
+                    </h:inputText>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{instance.purchaseMeasureUnit.name}"/>
+                    <h:outputText value="#{instance.gestionTax.startDate}"/>
                 </rich:column>
-                <rich:column styleClass="center">
-                    <s:div id="unitCostDivId">
-                        <h:inputText id="unitCostInputTextId"
-                                     value="#{instance.unitCost}"
-                                     styleClass="inputSmall right"
-                                     required="true">
-                            <app:realNumberConverter minimum="0"
-                                                     pattern="#{messages['patterns.decimal6FNumber']}"
-                                                     forId="unitCostInputTextId"/>
-                            <a4j:support event="onblur"
-                                         ajaxSingle="true"
-                                         action="#{warehousePurchaseOrderDetailListCreateAction.updateTotalAmount(instance)}"
-                                         reRender="unitCostDivId, quantityDivId, totalAmountDivId"/>
-                        </h:inputText>
-                        <h:message for="unitCostInputTextId"
-                                   styleClass="errors"
-                                   style="display:block;"/>
-                    </s:div>
-                </rich:column>
-                <rich:column styleClass="center">
-                    <s:div id="quantityDivId">
-                        <h:inputText id="quantityInputTextId"
-                                     value="#{instance.requestedQuantity}"
-                                     styleClass="inputSmall right"
-                                     required="true">
-                            <app:realNumberConverter minimum="0.001"
-                                                     pattern="#{messages['patterns.decimal6FNumber']}"
-                                                     forId="quantityInputTextId"/>
-                            <a4j:support event="onblur"
-                                         ajaxSingle="true"
-                                         action="#{warehousePurchaseOrderDetailListCreateAction.updateTotalAmount(instance)}"
-                                         reRender="quantityDivId, totalAmountDivId"/>
-                        </h:inputText>
-                        <h:message for="quantityInputTextId"
-                                   styleClass="errors"
-                                   style="display:block;"/>
-                    </s:div>
-                </rich:column>
-                <rich:column styleClass="center">
-                    <s:div id="totalAmountDivId">
-                        <h:inputText id="totalAmountInputTextId"
-                                     value="#{instance.totalAmount}"
-                                     styleClass="inputSmall right"
-                                     required="true">
-                            <app:realNumberConverter minimum="0"
-                                                     pattern="#{messages['patterns.decimal6FNumber']}"
-                                                     forId="totalAmountInputTextId"/>
-                            <a4j:support event="onblur"
-                                         ajaxSingle="true"
-                                         action="#{warehousePurchaseOrderDetailListCreateAction.updateUnitCost(instance)}"
-                                         reRender="unitCostDivId, quantityDivId, totalAmountDivId"/>
-                        </h:inputText>
-                        <h:message for="totalAmountInputTextId"
-                                   styleClass="errors"
-                                   style="display:block;"/>
-                    </s:div>
+                <rich:column>
+                    <h:outputText value="#{instance.gestionTax.endDate}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <s:div id="removeLinkId">
                         <a4j:commandLink ajaxSingle="true"
                                          immediate="true"
                                          title="#{messages['Common.remove']}"
-                                         action="#{warehousePurchaseOrderDetailListCreateAction.removeInstance(instance)}"
-                                         reRender="purchaseOrderDetailsPanel">
+                                         action="#{rawMaterialProducerAction.removeGestionTax(instance)}"
+                                         reRender="gestionTaxDetailsPanel">
                             <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
                         </a4j:commandLink>
                     </s:div>

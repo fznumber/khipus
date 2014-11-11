@@ -8,39 +8,39 @@
                  xmlns:a4j="http://richfaces.org/a4j"
                  xmlns:app="http://encens.com/products/khipus/facelets"
                  id="#{dialogId}"
-                 onshow="jQuery('##{containerId}\\\\:productItemListForm\\\\:productItemCodeField\\\\:productItemCode').focus();">
+                 onshow="jQuery('##{containerId}\\\\:gestionTaxListForm\\\\:gestionTaxCodeField\\\\:gestionTaxCode').focus();">
     <f:facet name="header">
-        <h:outputText>#{messages['ProductItem.list']}</h:outputText>
+        <h:outputText>#{messages['GestionTax.list']}</h:outputText>
     </f:facet>
     <f:facet name="controls">
         <h:graphicImage value="/img/close.png" style="cursor:pointer" id="closeLink"/>
     </f:facet>
-    <h:form id="productItemListForm">
-        <rich:simpleTogglePanel label="#{messages['ProductItem.search']}" switchType="client">
+    <h:form id="gestionTaxListForm">
+        <rich:simpleTogglePanel label="#{messages['GestionTax.search']}" switchType="client">
             <h:panelGrid columns="2"
                          width="100%"
                          cellpadding="0"
                          cellspacing="0"
                          border="0"
                          columnClasses="width50percent,width50percent">
-                <s:decorate id="productItemCodeField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductItem.productItemCode']}</ui:define>
-                    <h:inputText id="productItemCode"
-                                 value="#{provideSearchDataModel.productItemCode}"
+                <s:decorate id="startDateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['GestionTax.startDate']}</ui:define>
+                    <h:inputText id="startDate"
+                                 value="#{gestionTaxSearchDataModel.startDate}"
                                  maxlength="150"
                                  tabindex="1"
                                  styleClass="input"/>
                 </s:decorate>
-                <s:decorate id="nameField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductItem.name']}</ui:define>
-                    <h:inputText id="name"
-                                 value="#{provideSearchDataModel.productItemName}"
+                <s:decorate id="endDateField" template="/include/inputField.xhtml" styleClass="formRow">
+                    <ui:define name="label">#{messages['GestionTax.endDate']}</ui:define>
+                    <h:inputText id="endDate"
+                                 value="#{gestionTaxSearchDataModel.endDate}"
                                  maxlength="150"
                                  tabindex="2"
                                  styleClass="input">
                     </h:inputText>
-                    <a4j:commandButton action="#{provideSearchDataModel.search}"
-                                       reRender="productItemList, dataScroller"
+                    <a4j:commandButton action="#{gestionTaxSearchDataModel.search}"
+                                       reRender="gestionTaxList, dataScroller"
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
                                        id="searchButtonId"
@@ -55,53 +55,44 @@
         <div class="buttons">
             <ui:insert name="addButton"/>
         </div>
-        <rich:dataTable value="#{provideSearchDataModel}"
-                        var="productItemItem"
-                        id="productItemList"
+        <rich:dataTable value="#{gestionTaxSearchDataModel}"
+                        var="gestionTaxItem"
+                        id="gestionTaxList"
                         rows="#{sessionUser.rowsPerPage}"
-                        width="100%"
-                        columnsWidth="5%, 30%, 65%">
+                        width="100%">
             <f:facet name="header">
                 <rich:columnGroup>
                     <rich:column styleClass="center">
-                        <app:selectCheckboxHeader dataModel="#{provideSearchDataModel}"
-                                                  reRender="productItemList, dataScroller"/>
+                        <app:selectCheckboxHeader dataModel="#{gestionTaxSearchDataModel}"
+                                                  reRender="gestionTaxList, dataScroller"/>
                     </rich:column>
                     <rich:column>
-                        <app:commandSortHeader sortProperty="productItem.productItemCode"
-                                               dataModel="#{provideSearchDataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['ProductItem.productItemCode']}
-                        </app:commandSortHeader>
+                            #{messages['GestionTax.startDate']}
                     </rich:column>
                     <rich:column>
-                        <app:commandSortHeader sortProperty="productItem.name"
-                                               dataModel="#{provideSearchDataModel}"
-                                               reRender="productItemList, dataScroller">
-                            #{messages['ProductItem.name']}
-                        </app:commandSortHeader>
+                            #{messages['GestionTax.endDate']}
                     </rich:column>
                 </rich:columnGroup>
             </f:facet>
             <rich:column styleClass="center">
                 <h:selectBooleanCheckbox id="selectCheckboxItem"
                                          immediate="true"
-                                         value="#{provideSearchDataModel.selectedList[provideSearchDataModel.page][productItemItem.id]}">
+                                         value="#{gestionTaxSearchDataModel.selectedList[gestionTaxSearchDataModel.page][gestionTaxItem.id]}">
                     <a4j:support event="onchange"
                                  reRender="selectCheckboxItem"/>
                 </h:selectBooleanCheckbox>
             </rich:column>
             <rich:column>
-                <h:outputText value="#{productItemItem.productItemCode}"/>
+                <h:outputText value="#{gestionTaxItem.startDate}"/>
             </rich:column>
             <rich:column>
-                <h:outputText value="#{productItemItem.name}"/>
+                <h:outputText value="#{gestionTaxItem.endDate}"/>
             </rich:column>
         </rich:dataTable>
 
         <app:dataScroller id="dataScroller"
-                          for="productItemList"
-                          dataModel="#{provideSearchDataModel}"/>
+                          for="gestionTaxList"
+                          dataModel="#{gestionTaxSearchDataModel}"/>
 
         <rich:componentControl for="#{dialogId}"
                                attachTo="closeLink, addButton"

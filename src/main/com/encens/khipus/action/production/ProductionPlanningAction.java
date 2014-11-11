@@ -3473,6 +3473,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             updateCostInputs(volumeTotalInputMain, productionOrder);
             totalInput += productionOrder.getTotalCostInputMain();
         }
+        if(productionOrder.getProductMain() != null)
         if(productionOrder.getProductMain() == null && productionOrder.getTotalCostInputMain() > 0.0) {
             if(volumeTotalInputMain == 0.0)
                 return;
