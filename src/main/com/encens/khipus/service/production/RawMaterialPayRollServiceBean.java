@@ -206,7 +206,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             auxearnedMoney = aux.earnedMoney;
             auxcollectedTotalMoney = aux.collectedTotalMoney;
             record.setTotalPayCollected(RoundUtil.getRoundValue(rawMaterialPayRoll.getUnitPrice() * auxcollectedAmount, 2, RoundUtil.RoundMode.SYMMETRIC));
-            ProducerTax producerTax = getProducerTaxValid(aux.producer,record.getRawMaterialPayRoll().getStartDate(),record.getRawMaterialPayRoll().getEndDate());
+            ProducerTax producerTax = getProducerTaxValid(aux.producer,rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate());
             String codTaxLicence = producerTax != null ? producerTax.getFormNumber(): null;
             Date taxStartDate = producerTax != null ? producerTax.getGestionTax().getStartDate():null;
             Date taxEndDate = producerTax != null ? producerTax.getGestionTax().getEndDate():null;
@@ -293,8 +293,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
     private ProducerTax getProducerTaxValid(RawMaterialProducer producer, Date startDate, Date endDate) {
         for(ProducerTax producerTax:producer.getProducerTaxes())
         {
-            if(producerTax.getGestionTax().getEndDate().compareTo(endDate) <= 0)
-                if(producerTax.getGestionTax().getStartDate().compareTo(startDate) >= 0)
+            if(producerTax.getGestionTax().getEndDate().compareTo(endDate) >= 0)
+                if(producerTax.getGestionTax().getStartDate().compareTo(startDate) <= 0)
                     return producerTax;
         }
         return null;  //To change body of created methods use File | Settings | File Templates.
@@ -618,7 +618,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             }
 
             Double earned = amount * rawMaterialPayRoll.getUnitPrice();
-            Double withholding = (hasLicense(rawMaterialProducer, date) ? 0.0 : earned * taxRate);
+            //si tiene el registro del impuesto no se le hace el descuento
+            Double withholding = (hasLicense(rawMaterialProducer, rawMaterialPayRoll.getStartDate(),rawMaterialPayRoll.getEndDate()) ? 0.0 : earned * taxRate);
 
             aux.collectedAmount += amount;
             aux.earnedMoney += earned;
@@ -841,10 +842,11 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return true;
     }
 
-    private boolean hasLicense(RawMaterialProducer rawMaterialProducer, Date date) {
-        if (!isValidLicence(rawMaterialProducer.getCodeTaxLicence(), rawMaterialProducer.getStartDateTaxLicence(), rawMaterialProducer.getExpirationDateTaxLicence()))
+    private boolean hasLicense(RawMaterialProducer rawMaterialProducer, Date startDate,Date endDate) {
+        ProducerTax producerTax = getProducerTaxValid(rawMaterialProducer,startDate,endDate);
+        if(producerTax == null)
             return false;
-        if (!isDateInRange(date, rawMaterialProducer.getStartDateTaxLicence(), rawMaterialProducer.getExpirationDateTaxLicence()))
+        if (!isValidLicence(producerTax.getFormNumber(), producerTax.getGestionTax().getStartDate(), producerTax.getGestionTax().getEndDate()))
             return false;
 
         return true;
@@ -896,6 +898,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
         return discountProducers;
     }
+
+
 
     //region: borrar
     /*
@@ -1129,6 +1133,16 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                     .setParameter("endDate", endDate, TemporalType.DATE)
                     .executeUpdate();
         }
+    }
+
+    @Override
+    public void approvedReservProductor(Calendar startDate, Calendar endDate) {
+        getEntityManager().createQuery("update DiscountProducer discountProducer set discountProducer.state = 'APPROVED'" +
+                " where discountProducer.startDate = :startDate" +
+                " and discountProducer.endDate = :endDate ")
+                .setParameter("startDate", startDate, TemporalType.DATE)
+                .setParameter("endDate", endDate, TemporalType.DATE)
+                .executeUpdate();
     }
 
     @Override

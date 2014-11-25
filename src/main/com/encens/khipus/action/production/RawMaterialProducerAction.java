@@ -13,6 +13,7 @@ import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +42,9 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
     @In
     private SalaryMovementProducerService salaryMovementProducerService;
 
+    @In(create = true)
+    private ProducerTaxAction producerTaxAction;
+
     public List<Extension> extensionList;
     private boolean showExtension = false;
     private boolean moveDiscoints = true;
@@ -49,6 +53,7 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
 
     private List<ProductiveZone> productiveZones;
     private ProductiveZone  productiveZoneConcurrent;
+    private List<ProducerTax> producerTaxesDelete = new ArrayList<ProducerTax>();
 
     @Override
     protected GenericService getService() {
@@ -154,7 +159,23 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
            logProductiveZone.setRawMaterialProducer(getInstance());
            logProductiveZoneService.createLog(logProductiveZone);
         }
-        super.setOp(OP_UPDATE);
+        for(ProducerTax tax:producerTaxesDelete)
+        {
+            producerTaxAction.setInstance(tax);
+            producerTaxAction.delete();
+        }
+
+        for(ProducerTax tax :getInstance().getProducerTaxes())
+        {
+            if(tax.getId() == null)
+            {
+                producerTaxAction.setInstance(tax);
+                producerTaxAction.create();
+            }
+
+        }
+
+        //super.setOp(OP_UPDATE);
         return super.update();
     }
 
@@ -270,8 +291,7 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
 
     public void removeGestionTax(ProducerTax producerTax){
         getInstance().getProducerTaxes().remove(producerTax);
-
-
+        producerTaxesDelete.add(producerTax);
     }
 
     public void addGestionTaxs(List<GestionTax> gestionTaxes)
@@ -285,13 +305,17 @@ public class RawMaterialProducerAction extends GenericAction<RawMaterialProducer
                 getInstance().getProducerTaxes().add(producerTax);
             }
         }
+        for(ProducerTax tax:getInstance().getProducerTaxes())
+        {
+            producerTaxesDelete.remove(tax);
+        }
     }
 
     public Boolean gestionTaxWasChoise(GestionTax gestionTax)
     {
         for(ProducerTax tax:getInstance().getProducerTaxes())
         {
-            if(tax.getGestionTax().getId() == gestionTax.getId())
+            if(tax.getGestionTax().getId().compareTo(gestionTax.getId()) == 0)
                 return false;
         }
         return true;

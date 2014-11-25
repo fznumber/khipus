@@ -936,6 +936,7 @@
         s:hasPermission('PRODUCTIONMATERIAL','VIEW') or
         s:hasPermission('INDIRECTCOSTS','VIEW') or
         s:hasPermission('RESERVPRODUCERMILK','VIEW') or
+        s:hasPermission('GESTIONTAX','VIEW') or
         s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')
         }">
     <rich:menuItem submitMode="none"
@@ -964,6 +965,13 @@
                    rendered="#{s:hasPermission('PRODUCTIVEZONE','VIEW')}">
         <s:link view="/production/productiveZoneList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.productiveZone']}"
+                propagation="none"/>
+    </rich:menuItem>
+    <rich:menuItem submitMode="none"
+                   styleClass="main-menu-item"
+                   rendered="#{s:hasPermission('GESTIONTAX','VIEW')}">
+        <s:link view="/production/gestionTaxList.xhtml"
+                value="#{messages['GestionTax.CreateGestionTax']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"

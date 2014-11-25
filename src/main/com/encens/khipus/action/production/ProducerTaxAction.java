@@ -3,6 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
 import com.encens.khipus.model.production.GestionTax;
+import com.encens.khipus.model.production.ProducerTax;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.End;
 import org.jboss.seam.annotations.Factory;
@@ -17,52 +18,19 @@ import org.jboss.seam.international.StatusMessage;
  * Time: 05:25 PM
  * To change this template use File | Settings | File Templates.
  */
-@Name("gestionTaxAction")
+@Name("producerTaxAction")
 @Scope(ScopeType.CONVERSATION)
-public class ProducerTaxAction extends GenericAction<GestionTax> {
+public class ProducerTaxAction extends GenericAction<ProducerTax> {
 
     //TODO change the name initContinent
-    @Factory(value = "gestionTax", scope = ScopeType.STATELESS)
-    public GestionTax initContinent() {
+    @Factory(value = "producerTax", scope = ScopeType.STATELESS)
+    public ProducerTax initContinent() {
         return getInstance();
     }
 
     @Override
     protected String getDisplayNameProperty() {
-        return "endDate";
+        return "formNumber";
     }
-
-    @Override
-    @End
-    public String update() {
-        if(getInstance().getProducerTaxes().size() > 0)
-        {
-         addInUsedMessage();
-            return Outcome.REDISPLAY;
-        }
-    return super.update();
-    }
-
-    @Override
-    @End
-    public String delete() {
-        if(getInstance().getProducerTaxes().size() > 0)
-        {
-            addInUsedDeleteMessage();
-            return Outcome.REDISPLAY;
-        }
-     return super.delete();
-    }
-
-    private void addInUsedDeleteMessage() {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "GestionTax.InUsedMessageDelete");
-    }
-
-    private void addInUsedMessage() {
-        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                "GestionTax.InUsedMessage");
-    }
-
 
 }

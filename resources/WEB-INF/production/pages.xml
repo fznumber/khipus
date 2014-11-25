@@ -367,6 +367,23 @@
         </navigation>
     </page>
 
+    <page view-id="/production/gestionTaxList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{gestionTaxAction.select(gestionTaxItem)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/production/gestionTax.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
+    <page view-id="/production/gestionTax.xhtml" no-conversation-view-id="/production/gestionTaxList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/production/gestionTaxList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+
     <page view-id="/production/discountProducerList.xhtml">
         <end-conversation/>
         <navigation from-action="#{discountProducerAction.select(discountProducerItem)}">

@@ -45,4 +45,10 @@ public interface CompanyConfigurationService extends GenericService {
     String findDefaultPurchaseOrderRemakePaymentUserNumber() throws CompanyConfigurationNotFoundException;
 
     Integer findDefaultPurchaseOrderRemakeYear() throws CompanyConfigurationNotFoundException;
+
+    double findUnitPriceMilk() throws CompanyConfigurationNotFoundException;
+
+    double findIT() throws CompanyConfigurationNotFoundException;
+
+    double finIUE() throws CompanyConfigurationNotFoundException;
 }

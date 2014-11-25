@@ -11,6 +11,7 @@ import com.encens.khipus.model.employees.Month;
 import com.encens.khipus.model.production.MetaProduct;
 import com.encens.khipus.model.production.Periodo;
 import com.encens.khipus.model.production.ProductiveZone;
+import com.encens.khipus.model.production.RawMaterialPayRoll;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
 import org.jboss.seam.ScopeType;
@@ -147,9 +148,12 @@ public class RawMaterialPaySummaryReportAction extends GenericReportAction {
         params.put("retention", df.format(discounts.retention));
         params.put("otrosDescuentos", df.format(discounts.otherDiscount));
         params.put("otrosIngresos", df.format(discounts.otherIncome));
-        Double iue, it;
+        Double iue, it,porcentageIUE;
+        RawMaterialPayRoll rawMaterialPayRoll =  rawMaterialPayRollService.getTotalsRawMaterialPayRoll(startDate,endDate,null,null);
+        porcentageIUE = rawMaterialPayRoll.getIue() / rawMaterialPayRoll.getTaxRate();
 
-        iue = discounts.retention * 0.625;
+        //iue = discounts.retention * 0.625;
+        iue = discounts.retention * porcentageIUE;
         //it = discounts.retention * 0.375;
         it = discounts.retention - iue;
         params.put("iue", df.format(iue));

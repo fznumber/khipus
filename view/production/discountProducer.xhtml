@@ -113,7 +113,7 @@
                     </s:decorate>
                 </s:div>
 
-                <s:div id="stateDiv">
+                <!--<s:div id="stateDiv">
                     <s:decorate id="redistributePaymentField"
                                 template="/include/inputField.xhtml"
                                 styleClass="formRow">
@@ -124,7 +124,7 @@
                             <a4j:support event="onclick" ajaxSingle="true" reRender="stateDiv"/>
                         </h:selectBooleanCheckbox>
                     </s:decorate>
-                </s:div>
+                </s:div>-->
 
 
             </rich:panel>
@@ -135,7 +135,7 @@
                                  rendered="#{!discountProducerAction.managed and s:hasPermission('RESERVPRODUCERMILK','CREATE')}"/>
                 <h:commandButton action="#{discountProducerAction.update}" value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{discountProducerAction.managed and s:hasPermission('RESERVPRODUCERMILK','UPDATE')}"/>
+                                 rendered="#{discountProducerAction.managed and s:hasPermission('RESERVPRODUCERMILK','UPDATE') and discountProducer.state == 'ENABLE'}"/>
                 <h:commandButton value="#{messages['Common.delete']}"
                                  styleClass="button"
                                  rendered="#{discountProducerAction.managed and s:hasPermission('RESERVPRODUCERMILK','DELETE')}">

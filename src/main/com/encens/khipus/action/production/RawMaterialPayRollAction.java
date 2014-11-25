@@ -3,6 +3,7 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
+import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
@@ -10,8 +11,10 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
+import com.encens.khipus.model.finances.CompanyConfiguration;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.employees.GestionService;
+import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.util.DateUtils;
@@ -39,6 +42,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     private boolean readonly;
     private boolean generateAll = true;
     private boolean delete = false;
+    private boolean editPriceMilk = false;
+    private boolean editIUE = false;
+    private boolean editIT = false;
     private Gestion gestion;
     private Month month;
     private Periodo periodo;
@@ -56,6 +62,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
     @In
     private GestionService gestionService;
 
+    @In
+    private CompanyConfigurationService companyConfigurationService;
+
     @Override
     protected GenericService getService() {
         return rawMaterialPayRollService;
@@ -63,7 +72,22 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @Factory(value = "rawMaterialPayRoll", scope = ScopeType.STATELESS)
     public RawMaterialPayRoll initRawMaterialPayRoll() {
-
+        try {
+            getInstance().setUnitPrice(companyConfigurationService.findUnitPriceMilk());
+        } catch (CompanyConfigurationNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            getInstance().setIt(companyConfigurationService.findIT());
+        } catch (CompanyConfigurationNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            getInstance().setIue(companyConfigurationService.finIUE());
+        } catch (CompanyConfigurationNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        getInstance().setTaxRate(getInstance().getIt() + getInstance().getIue());
         return getInstance();
     }
 
@@ -196,6 +220,25 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll,discountProducer);
                 readonly = true;
             } else {
+                CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+                if(editPriceMilk)
+                {
+                    companyConfiguration.setUnitPriceMilk(getInstance().getUnitPrice());
+                }
+                if(editIT)
+                {
+                    companyConfiguration.setIt(getInstance().getIt());
+                }
+                if(editIUE)
+                {
+                    companyConfiguration.setIue(getInstance().getIue());
+                }
+
+                if(editPriceMilk || editIUE || editIT)
+                {
+                    companyConfigurationService.update(companyConfiguration);
+                }
+
                 return generateAll();
             }
         } catch (RawMaterialPayRollException ex) {
@@ -230,6 +273,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         rawMaterialPayRollService.approvedDiscounts(startDate,endDate,productiveZone);
         rawMaterialPayRollService.approvedDiscountsGAB(startDate, endDate, productiveZone);
         rawMaterialPayRollService.approvedRawMaterialPayRoll(startDate,endDate,productiveZone);
+        rawMaterialPayRollService.approvedReservProductor(startDate,endDate);
 
             addSuccessApprobedPayRoll(startDate,endDate);
         return Outcome.SUCCESS;
@@ -474,5 +518,29 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     public void setProductiveZone(ProductiveZone productiveZone) {
         this.productiveZone = productiveZone;
+    }
+
+    public boolean isEditPriceMilk() {
+        return editPriceMilk;
+    }
+
+    public void setEditPriceMilk(boolean editPriceMilk) {
+        this.editPriceMilk = editPriceMilk;
+    }
+
+    public boolean isEditIUE() {
+        return editIUE;
+    }
+
+    public void setEditIUE(boolean editIUE) {
+        this.editIUE = editIUE;
+    }
+
+    public boolean isEditIT() {
+        return editIT;
+    }
+
+    public void setEditIT(boolean editIT) {
+        this.editIT = editIT;
     }
 }

@@ -226,6 +226,12 @@ public class RawMaterialPayRoll implements BaseModel {
     @Column(name = "TASAIMPUESTO", columnDefinition = "NUMBER(3,2)", nullable = false)
     private double taxRate;
 
+    @Column(name = "IUE",columnDefinition = "NUMBER(3,2)", nullable = false)
+    private double iue;
+
+    @Column(name = "IT",columnDefinition = "NUMBER(3,2)", nullable = false)
+    private double it;
+
     @Column(name = "ESTADO", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private StatePayRoll state = StatePayRoll.PENDING;
@@ -355,8 +361,7 @@ public class RawMaterialPayRoll implements BaseModel {
     }
 
     public double getUnitPrice() {
-        //return unitPrice;
-        return 3.0;
+        return unitPrice;
     }
 
     public void setUnitPrice(double unitPrice) {
@@ -389,8 +394,9 @@ public class RawMaterialPayRoll implements BaseModel {
     }
 
     public double getTaxRate() {
-        //return taxRate;
-        return 8.0;
+        taxRate = this.getIt() + this.getIue();
+        return taxRate;
+        //return 8.0;
     }
 
     public void setTaxRate(double taxRate) {
@@ -523,5 +529,21 @@ public class RawMaterialPayRoll implements BaseModel {
 
     public void setTotalReserveDicount(double totalReserveDicount) {
         this.totalReserveDicount = totalReserveDicount;
+    }
+
+    public double getIue() {
+        return iue;
+    }
+
+    public void setIue(double iue) {
+        this.iue = iue;
+    }
+
+    public double getIt() {
+        return it;
+    }
+
+    public void setIt(double it) {
+        this.it = it;
     }
 }

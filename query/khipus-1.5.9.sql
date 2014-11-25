@@ -26,6 +26,20 @@ INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
   VALUES (406, 50, 15, 1, 6);   
 -- select * from funcionalidad  
 --COMMIT
+INSERT  INTO FUNCIONALIDAD (IDFUNCIONALIDAD,CODIGO,DESCRIPCION,PERMISO,NOMBRERECURSO,IDMODULO)
+  VALUES (407, 'DELETESINGLEPRODUCT', NULL, 15,'SingleProduct.delete', 6); 
+INSERT  INTO DERECHOACCESO (IDFUNCIONALIDAD,IDROL,PERMISO,IDCOMPANIA,IDMODULO)
+  VALUES (407, 50, 15, 1, 6);   
+--  
+/*select * from impuestoproductor;*/
+/*select * from gestionimpuesto;*/
+
+--Insert into GESTIONIMPUESTO (IDGESTIONIMPUESTO,FECHAINICIO,FECHAFIN) values (1,to_date('01/11/2013','DD/MM/YYYY'),to_date('31/10/2014','DD/MM/YYYY'));
+Insert into impuestoproductor (idimpuestoproductor,numeroformulario,idproductormateriaprima,idgestionimpuesto) 
+select idproductormateriaprima,LICENCIAIMPUESTOS,idproductormateriaprima,1 from productormateriaprima
+where FECHAINICIALICENCIAIMPUESTO = to_date('01/11/13')
+and fechaexpiralicenciaimpuesto = to_date('31/10/14');
+--commit
 
 
   

@@ -34,6 +34,7 @@ public class DiscountProducerAction extends GenericAction<DiscountProducer> {
         getInstance().setAverage(0.0);
         getInstance().setReserveFortnight(0.0);
         getInstance().setTc(0.0);
+        getInstance().setState("ENABLE");
         return getInstance();
     }
 

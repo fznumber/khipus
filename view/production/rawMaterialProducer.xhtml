@@ -202,7 +202,7 @@
     </app:fieldset>
 
     <app:fieldset id="taxFieldSet" title="#{messages['RawMaterialProducer.taxLicense']}">
-        <s:decorate id="codeTaxLicenseField" template="/include/inputField.xhtml" styleClass="formRow">
+        <!--<s:decorate id="codeTaxLicenseField" template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['RawMaterialProducer.codeTaxLicense']}</ui:define>
             <h:inputText id="codeTaxLicense" value="#{rawMaterialProducer.codeTaxLicence}"
                          styleClass="input" required="false" maxlength="150" tabindex="10">
@@ -220,8 +220,8 @@
             <rich:calendar showWeekDaysBar="false" showFooter="true"
                            value="#{rawMaterialProducer.expirationDateTaxLicence}"
                            popup="true"/>
-        </s:decorate>
-            <!--<ui:include src="/production/rawMaterialProducerGestionTaxListForm.xhtml"/>-->
+        </s:decorate>-->
+            <ui:include src="/production/rawMaterialProducerGestionTaxListForm.xhtml"/>
     </app:fieldset>
 
     <rich:spacer height="10" />

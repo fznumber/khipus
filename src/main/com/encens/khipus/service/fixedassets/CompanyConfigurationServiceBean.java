@@ -99,4 +99,32 @@ public class CompanyConfigurationServiceBean extends GenericServiceBean implemen
         }
         return remakeYear;
     }
+
+    @Override
+    public double findUnitPriceMilk() throws CompanyConfigurationNotFoundException {
+        double unitPrice = findCompanyConfiguration().getUnitPriceMilk();
+        if(unitPrice == 0.0){
+            throw new CompanyConfigurationNotFoundException("The default unit price milk for current company \"" + Constants.defaultCompanyNumber + "\" haven't been configured");
+        }
+         return unitPrice;
+    }
+
+    @Override
+    public double findIT() throws CompanyConfigurationNotFoundException {
+        double it = findCompanyConfiguration().getIt();
+        if(it == 0.0){
+            throw new CompanyConfigurationNotFoundException("The default IT. for current company \"" + Constants.defaultCompanyNumber + "\" haven't been configured");
+        }
+        return it;
+    }
+
+    @Override
+    public double finIUE() throws CompanyConfigurationNotFoundException {
+        double iue = findCompanyConfiguration().getIue();
+        if(iue == 0.0){
+            throw new CompanyConfigurationNotFoundException("The default Iue. for current company \"" + Constants.defaultCompanyNumber + "\" haven't been configured");
+        }
+        return iue;
+    }
+
 }

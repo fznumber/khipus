@@ -25,20 +25,15 @@
                          columnClasses="width50percent,width50percent">
                 <s:decorate id="startDateField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['GestionTax.startDate']}</ui:define>
-                    <h:inputText id="startDate"
-                                 value="#{gestionTaxSearchDataModel.startDate}"
-                                 maxlength="150"
-                                 tabindex="1"
-                                 styleClass="input"/>
+                    <rich:calendar value="#{gestionTaxSearchDataModel.startDate}"
+                                   tabindex="1" styleClass="input">
+                    </rich:calendar>
                 </s:decorate>
                 <s:decorate id="endDateField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['GestionTax.endDate']}</ui:define>
-                    <h:inputText id="endDate"
-                                 value="#{gestionTaxSearchDataModel.endDate}"
-                                 maxlength="150"
-                                 tabindex="2"
-                                 styleClass="input">
-                    </h:inputText>
+                    <rich:calendar value="#{gestionTaxSearchDataModel.endDate}"
+                                   tabindex="2" styleClass="input">
+                    </rich:calendar>
                     <a4j:commandButton action="#{gestionTaxSearchDataModel.search}"
                                        reRender="gestionTaxList, dataScroller"
                                        styleClass="button"

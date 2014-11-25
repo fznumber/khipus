@@ -62,7 +62,7 @@ public class RawMaterialProducer extends Person {
     @OneToMany(mappedBy = "rawMaterialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<CollectedRawMaterial> collectedRawMaterialList = new ArrayList<CollectedRawMaterial>(0);
 
-    @OneToMany(mappedBy = "rawMaterialProducerTax", fetch = FetchType.LAZY, cascade = {CascadeType.ALL,CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE})
+    @OneToMany(mappedBy = "rawMaterialProducerTax", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private List<ProducerTax> producerTaxes = new ArrayList<ProducerTax>(0);
 
     @OneToMany(mappedBy = "materialProducer", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})

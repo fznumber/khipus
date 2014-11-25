@@ -331,6 +331,15 @@ public class CompanyConfiguration {
     @Type(type = com.encens.khipus.model.usertype.IntegerBooleanUserType.NAME)
     private boolean retentionForLoanAndAdvance;
 
+    @Column(name = "PRECIOUNITARIOLECHE",nullable = true)
+    private double unitPriceMilk;
+
+    @Column(name = "IT")
+    private double it;
+
+    @Column(name = "IUE")
+    private double iue;
+
     @Column(name = "AUTOMODIFCONTRATO", nullable = false)
     @Type(type = com.encens.khipus.model.usertype.IntegerBooleanUserType.NAME)
     private boolean contractModificationAuthorization;
@@ -1010,5 +1019,29 @@ public class CompanyConfiguration {
 
     public void setDefaultAccountancyUserProduction(FinanceUser defaultAccountancyUserProduction) {
         this.defaultAccountancyUserProduction = defaultAccountancyUserProduction;
+    }
+
+    public double getUnitPriceMilk() {
+        return unitPriceMilk;
+    }
+
+    public void setUnitPriceMilk(double unitPriceMilk) {
+        this.unitPriceMilk = unitPriceMilk;
+    }
+
+    public double getIt() {
+        return it;
+    }
+
+    public void setIt(double it) {
+        this.it = it;
+    }
+
+    public double getIue() {
+        return iue;
+    }
+
+    public void setIue(double iue) {
+        this.iue = iue;
     }
 }

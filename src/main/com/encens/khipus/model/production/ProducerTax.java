@@ -24,11 +24,11 @@ public class ProducerTax implements BaseModel {
     @Column(name = "numeroformulario",nullable = false)
     private String formNumber;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH,CascadeType.REMOVE,CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private RawMaterialProducer rawMaterialProducerTax;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "idgestionimpuesto", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
     private GestionTax gestionTax;
 

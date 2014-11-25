@@ -108,7 +108,16 @@
 
             <s:decorate id="unitPriceField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['RawMaterialPayRoll.unitPrice']}</ui:define>
-                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true" disabled="true"
+                <h:inputText value="#{rawMaterialPayRoll.unitPrice}" required="true"
+                             readonly="#{!rawMaterialPayRollAction.editPriceMilk}"/>
+                <a4j:commandButton immediate="true" reRender="unitPriceField" action="#{rawMaterialPayRollAction.setEditPriceMilk(true)}" value="Editar">
+
+                </a4j:commandButton>
+            </s:decorate>
+
+            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['RawMaterialPayRoll.taxRate']}</ui:define>
+                <h:inputText value="#{rawMaterialPayRoll.taxRate}" required="true" disabled="true"
                              readonly="#{rawMaterialPayRollAction.readonly}"/>
             </s:decorate>
 

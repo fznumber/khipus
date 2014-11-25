@@ -56,19 +56,17 @@
                 </f:facet>
 
                 <s:decorate id="nameField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['gestionTax.name']}</ui:define>
-                    <h:inputText id="name" value="#{gestionTax.name}" styleClass="input" required="true"
-                                 maxlength="200" tabindex="3">
-                        <a4j:support event="onblur" reRender="nameField"/>
-                    </h:inputText>
+                    <ui:define name="label">#{messages['GestionTax.startDate']}</ui:define>
+                    <rich:calendar value="#{gestionTax.startDate}"
+                                   tabindex="1" styleClass="input">
+                    </rich:calendar>
                 </s:decorate>
 
                 <s:decorate id="numberField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['gestionTax.number']}</ui:define>
-                    <h:inputText id="number" value="#{gestionTax.number}" styleClass="input" required="true"
-                                 maxlength="100" tabindex="3">
-                        <a4j:support event="onblur" reRender="numberField"/>
-                    </h:inputText>
+                    <ui:define name="label">#{messages['GestionTax.endDate']}</ui:define>
+                    <rich:calendar value="#{gestionTax.endDate}"
+                                   tabindex="2" styleClass="input">
+                    </rich:calendar>
                 </s:decorate>
 
                 <!--<s:decorate id="groupField" template="/include/inputField.xhtml" styleClass="formRow">
