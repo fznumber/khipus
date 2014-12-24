@@ -28,19 +28,23 @@
                     </h:inputText>
                 </s:decorate>-->
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductDelivery.documentNumber']}</ui:define>
-                    <h:inputText id="invoiceNumber"
-                                 value="#{productDeliveryDataModel.criteria.invoiceNumber}"
-                                 maxlength="20"
-                                 tabindex="2"
-                                 styleClass="input">
-                    </h:inputText>
-                    <a4j:commandButton action="#{productDeliveryDataModel.search}"
+                    <ui:define name="label">#{messages['Order.report.dateInvoice']}</ui:define>
+                    <rich:calendar id="dateDelivery"
+                                   value="#{printInvoiceDataModel.criteria.dateDelicery}"
+                                   datePattern="#{messages['patterns.date']}"
+                                   enableManualInput="true"
+                                   required="true"
+                                   tabindex="1">
+                        <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                           timeZone="#{sessionUser.timeZone}"
+                                           type="date"/>
+                    </rich:calendar>
+                    <a4j:commandButton action="#{printInvoiceDataModel.search}"
                                        reRender="productDeliveryList, dataScroller"
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
                                        id="searchButtonId"
-                                       tabindex="3">
+                                       tabindex="2">
                         <s:defaultAction/>
                     </a4j:commandButton>
                 </s:decorate>
@@ -49,17 +53,20 @@
 
 
             <div class="buttons">
-                <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
-                          view="/warehouse/productDelivery.xhtml"
-                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
-                          styleClass="button"
-                          propagation="begin"/>
 
                 <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"
                           view="/warehouse/productDeliveryByDate.xhtml"
-                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          rendered="#{s:hasPermission('PRINTINVOICE','CREATE')}"
                           styleClass="button"
                           propagation="begin"/>
+
+                <h:commandLink action="#{printInvoiceReportAction.generateReport(customerOrderItem)}"
+                               immediate="true"
+                               rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
+                    <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
+                                    title="#{messages['ProductDelivery.button.generateDocument']}"/>
+                </h:commandLink>
+
             </div>
 
             <div class="buttons">
@@ -75,8 +82,8 @@
 
             </div>
             <rich:dataTable id="productDeliveryList"
-                            value="#{productDeliveryDataModel}"
-                            var="productDeliveryItem"
+                            value="#{printInvoiceDataModel}"
+                            var="customerOrderItem"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%"
                             columnsWidth="60%, 15%, 15%, 10%">
@@ -87,17 +94,17 @@
                             #{messages['ProductDelivery.nameClient']}
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productDelivery.invoiceNumber"
-                                                   dataModel="#{productDeliveryDataModel}"
+                            <app:commandSortHeader sortProperty="customerOrder.order"
+                                                   dataModel="#{printInvoiceDataModel}"
                                                    reRender="productDeliveryList, dataScroller">
                                 #{messages['ProductDelivery.documentNumber']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
-                            <app:commandSortHeader sortProperty="productDelivery.warehouseVoucher.number"
-                                                   dataModel="#{productDeliveryDataModel}"
+                            <app:commandSortHeader sortProperty="customerOrder.total"
+                                                   dataModel="#{printInvoiceDataModel}"
                                                    reRender="productDeliveryList, dataScroller">
-                                #{messages['ProductDelivery.warehouseVoucher']}
+                                #{messages['CustomerOrder.total']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column styleClass="center">
@@ -106,42 +113,37 @@
                     </rich:columnGroup>
                 </f:facet>
                 <rich:column>
-                    <h:outputText value="#{productDeliveryItem.fullNameClient}"/>
+                    <h:outputText value="#{customerOrderItem.clientOrder.hst}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{productDeliveryItem.invoiceNumber}"/>
+                    <h:outputText value="#{customerOrderItem.id}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{productDeliveryItem.warehouseVoucher.number}"/>
+                    <h:outputText value="#{customerOrderItem.total}"/>
                 </rich:column>
                 <rich:column styleClass="center">
                     <h:commandLink value="#{messages['Common.select']}"
                                    immediate="true"
-                                   action="#{productDeliveryAction.select(productDeliveryItem)}"
-                                   rendered="#{s:hasPermission('PRODUCTDELIVERY','VIEW')}">
+                                   action="#{printInvoiceReportAction.select(customerOrderItem)}"
+                                   rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
                         <s:conversationPropagation value="none"/>
                     </h:commandLink>
 
                     &#160;
-                    <h:commandLink action="#{productDeliveryReceiptReportAction.generateReport(productDeliveryItem)}"
+                    <h:commandLink action="#{printInvoiceReportAction.generateReport(customerOrderItem)}"
                                    immediate="true"
-                                   rendered="#{s:hasPermission('PRODUCTDELIVERY','VIEW')}">
+                                   rendered="#{s:hasPermission('PRINTINVOICE','CREATE')}">
                         <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
                                         title="#{messages['ProductDelivery.button.generateDocument']}"/>
                     </h:commandLink>
                 </rich:column>
             </rich:dataTable>
-            <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{productDeliveryDataModel}"/>
+            <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{printInvoiceDataModel}"/>
             <div class="buttons">
-                <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
-                          view="/warehouse/productDelivery.xhtml"
-                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
-                          styleClass="button"
-                          propagation="begin"/>
 
                 <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"
                           view="/warehouse/productDeliveryByDate.xhtml"
-                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          rendered="#{s:hasPermission('PRINTINVOICE','CREATE')}"
                           styleClass="button"
                           propagation="begin"/>
             </div>

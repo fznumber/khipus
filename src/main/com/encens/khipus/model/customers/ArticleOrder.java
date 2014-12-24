@@ -15,90 +15,64 @@ import javax.persistence.*;
  * To change this template use File | Settings | File Templates.
  */
 
-/*@TableGenerator(name = "ArticleOrder_Generator",
-        table = "SECUENCIA",
-        pkColumnName = "TABLA",
-        valueColumnName = "VALOR",
-        pkColumnValue = "PEDIDOS",
-        allocationSize = 10)
-
 @Entity
 @Table(name = "ARTICULOS_PEDIDO",schema = Constants.CASHBOX_SCHEMA)
 //@Filter(name = "companyFilter")
-//@EntityListeners(CompanyListener.class)*/
-public class ArticleOrder {
-    /*@Column(name = "PEDIDO", nullable = false, length = 10)
-    @Length(max = 10)
-    private String order;
+//@EntityListeners(CompanyListener.class)
 
-    @Column(name = "ID", nullable = false, length = 20)
-    @Length(max = 20)
-    private String orderID;
+public class ArticleOrder {
+    @EmbeddedId
+    private ArticleOrderPK id = new ArticleOrderPK();
 
     @Column(name = "ID1", nullable = false, length = 10)
     @Length(max = 10)
     private Integer orderID1;
 
-*//*    @Column(name = "ID_CUENTA", nullable = false, length = 10)
-    private Integer idAccount;
-
-    @Column(name = "COD_ART", nullable = false, length = 6)
+    @Column(name = "COD_ART", nullable = false, length = 6,insertable=false,updatable=false)
     @Length(max = 6)
     private String codArt;
 
-    @Column(name = "NO_CIA", nullable = false, length = 2)
+/*    @Column(name = "NO_CIA", nullable = false, length = 2)
     @Length(max = 2)
-    private String companyNumber;*//*
+    private String companyNumber;*/
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA"),
+            @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART")
+    })
+    private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumns({
-            @JoinColumn(name = "PEDIDO", referencedColumnName = "PEDIDO"),
-            @JoinColumn(name = "ID", referencedColumnName = "ID"),
-            @JoinColumn(name = "ID1", referencedColumnName = "ID1")
-    })
+    @JoinColumn(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = true, updatable = false, insertable = false)
     private CustomerOrder customerOrder;
-
+/*
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
             @JoinColumn(name = "ID_CUENTA", referencedColumnName = "ID_CUENTA"),
             @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART"),
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA")
     })
-    private AccountItem accountItem;
+    private AccountItem accountItem;*/
 
-    @Column(name = "CANTIDAD", nullable = true)
+    @Column(name = "CANTIDAD", nullable = true,columnDefinition = "NUMBER(10,0)")
     private Integer amount;
 
-    @Column(name = "COD_ALM", nullable = true )
+    @Column(name = "COD_ALM", nullable = true ,columnDefinition = "VARCHAR2(6 BYTE)")
     private String codWarehouse;
 
-    @Column(name = "PRECIO",nullable = true )
+    @Column(name = "PRECIO",nullable = true ,columnDefinition = "NUMBER(10,2)")
     private Double price;
 
-    @Column(name = "REPOSICION",nullable = true)
+    @Column(name = "REPOSICION",nullable = true, columnDefinition = "NUMBER")
     private Integer reposicion;
 
-    @Column(name = "TOTAL",nullable = true)
+    @Column(name = "TOTAL",nullable = true,columnDefinition = "NUMBER(10,2)")
     private Double total;
 
-    @Column(name = "PROMOCION",nullable = true)
+    @Column(name = "PROMOCION",nullable = true,columnDefinition = "NUMBER")
     private Integer promotion;
 
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
-    public String getOrderID() {
-        return orderID;
-    }
-
-    public void setOrderID(String orderID) {
-        this.orderID = orderID;
-    }
 
     public Integer getOrderID1() {
         return orderID1;
@@ -106,14 +80,6 @@ public class ArticleOrder {
 
     public void setOrderID1(Integer orderID1) {
         this.orderID1 = orderID1;
-    }
-
-    *//*public Integer getIdAccount() {
-        return idAccount;
-    }
-
-    public void setIdAccount(Integer idAccount) {
-        this.idAccount = idAccount;
     }
 
     public String getCodArt() {
@@ -124,15 +90,15 @@ public class ArticleOrder {
         this.codArt = codArt;
     }
 
-    public String getCompanyNumber() {
+   /* public String getCompanyNumber() {
         return companyNumber;
     }
 
     public void setCompanyNumber(String companyNumber) {
         this.companyNumber = companyNumber;
-    }*//*
+    }*/
 
-    public CustomerOrder getCustomerOrder() {
+    /*public CustomerOrder getCustomerOrder() {
         return customerOrder;
     }
 
@@ -146,7 +112,7 @@ public class ArticleOrder {
 
     public void setAccountItem(AccountItem accountItem) {
         this.accountItem = accountItem;
-    }
+    }*/
 
     public Integer getAmount() {
         return amount;
@@ -195,4 +161,28 @@ public class ArticleOrder {
     public void setPromotion(Integer promotion) {
         this.promotion = promotion;
     }
-*/}
+
+    public ProductItem getProductItem() {
+        return productItem;
+    }
+
+    public void setProductItem(ProductItem productItem) {
+        this.productItem = productItem;
+    }
+
+    public ArticleOrderPK getId() {
+        return id;
+    }
+
+    public void setId(ArticleOrderPK id) {
+        this.id = id;
+    }
+
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
+    }
+
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
+    }
+}

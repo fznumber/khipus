@@ -4,11 +4,15 @@ import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
+import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.model.admin.User;
+import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.Dosage;
 import com.encens.khipus.model.warehouse.InventoryMovement;
 import com.encens.khipus.model.warehouse.InventoryMovementPK;
 import com.encens.khipus.model.warehouse.ProductDelivery;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
+import com.encens.khipus.service.customers.DosageSevice;
 import com.encens.khipus.service.warehouse.WarehouseService;
 import com.encens.khipus.util.MessageUtils;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
@@ -22,6 +26,7 @@ import org.jboss.seam.annotations.security.Restrict;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import com.encens.khipus.util.MoneyUtil;
 
 /**
  * Encens S.R.L.
@@ -30,7 +35,7 @@ import java.util.Map;
  * @author
  * @version $Id: PrintInvoiceReportAction.java  23-sep-2010 18:25:14$
  */
-@Name("productDeliveryReceiptReportAction")
+@Name("printInvoiceReportAction")
 @Scope(ScopeType.PAGE)
 public class PrintInvoiceReportAction extends GenericReportAction {
 
@@ -38,67 +43,48 @@ public class PrintInvoiceReportAction extends GenericReportAction {
     private User currentUser;
     @In
     private WarehouseService warehouseService;
+    /*@In(create = true)
+    private DosageSevice dosageSevice;*/
 
-
-    private ProductDelivery productDelivery;
-    private WarehouseVoucher warehouseVoucher;
+    private Dosage dosage;
+    private CustomerOrder customerOrder;
+    private MoneyUtil moneyUtil;
 
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
-    public void generateReport(ProductDelivery productDelivery) {
+    public void generateReport(CustomerOrder order) {
         log.debug("Generate PrintInvoiceReportAction......");
-
+        try {
+            dosage = warehouseService.findById(Dosage.class,new Long(110));
+        } catch (EntryNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        moneyUtil = new MoneyUtil();
+        customerOrder = order;
         setReportFormat(ReportFormat.PDF);
 
         Map params = new HashMap();
-        //set restrictions filters
-        setProductDelivery(productDelivery);
-        if (productDelivery.getWarehouseVoucher() != null) {
-            setWarehouseVoucher(productDelivery.getWarehouseVoucher());
 
-            //add detail sub report
-            addVoucherMovementDetailSubReport(params);
-        }
-        params.putAll(getReportParams(getWarehouseVoucher()));
-        super.generateReport("productDeliveryReceiptReport", "/warehouse/reports/productDeliveryReceiptReport.jrxml", PageFormat.LETTER, PageOrientation.PORTRAIT, MessageUtils.getMessage("Reports.productDeliveryReceipt.title"), params);
+        addVoucherMovementDetailSubReport(params);
+
+        params.putAll(getReportParams(null));
+        super.generateReport("productDeliveryReceiptReport",
+                            "/customers/reports/invoiceReceptionReport.jrxml",
+                            PageFormat.LEGAL,
+                            PageOrientation.PORTRAIT,
+                            MessageUtils.getMessage("Reports.productDeliveryReceipt.title"),
+                            params);
     }
 
     @Override
     protected String getEjbql() {
-        return "SELECT DISTINCT " +
-                "productDelivery.id," +
-                "productDelivery.invoiceNumber," +
-                "soldProduct.firstName," +
-                "soldProduct.secondName," +
-                "soldProduct.names," +
-                "soldProduct.personalIdentification," +
-                "branch.description," +
-                "warehouseVoucher.date," +
-                "warehouseVoucher.number," +
-                "warehouseVoucher.state," +
-                "executorUnit.executorUnitCode," +
-                "organization.name," +
-                "costCenter.code," +
-                "costCenter.description," +
-                "warehouse.warehouseCode," +
-                "warehouse.name," +
-                "responsible.lastName," +
-                "responsible.maidenName," +
-                "responsible.firstName" +
-                " FROM ProductDelivery productDelivery" +
-                " LEFT JOIN productDelivery.soldProductList soldProduct" +
-                " LEFT JOIN soldProduct.branch branch" +
-                " LEFT JOIN productDelivery.warehouseVoucher warehouseVoucher" +
-                " LEFT JOIN warehouseVoucher.executorUnit executorUnit" +
-                " LEFT JOIN executorUnit.organization organization" +
-                " LEFT JOIN warehouseVoucher.costCenter costCenter" +
-                " LEFT JOIN warehouseVoucher.warehouse warehouse" +
-                " LEFT JOIN warehouseVoucher.responsible responsible";
+        return "SELECT customerOrder.id " +
+                " FROM CustomerOrder customerOrder";
     }
 
     @Create
     public void init() {
-        restrictions = new String[]{"productDelivery = #{productDeliveryReceiptReportAction.productDelivery}"};
-        sortProperty = "productDelivery.id";
+        restrictions = new String[]{"customerOrder = #{printInvoiceReportAction.customerOrder}"};
+        //sortProperty = "productDelivery.id";
     }
 
 
@@ -108,12 +94,21 @@ public class PrintInvoiceReportAction extends GenericReportAction {
      * @return Map
      */
     private Map<String, Object> getReportParams(WarehouseVoucher warehouseVoucher) {
-        InventoryMovement inventoryMovement = findInventoryMovement(warehouseVoucher);
+
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("userLoginParam", currentUser.getEmployee().getFullName());
-        paramMap.put("descriptionParam", inventoryMovement != null ? paramAsString(inventoryMovement.getDescription()) : "");
-        paramMap.put("hasWarehouseVoucherParam", String.valueOf(warehouseVoucher != null));
+        paramMap.put("nitEmpresa","123456022");
+        paramMap.put("numFac",dosage.getNumberCurrent());
+        paramMap.put("numAutorizacion",dosage.getNumberAuthorization());
+        paramMap.put("nitCliente",customerOrder.getClientOrder().getNumberDoc());
+        paramMap.put("fecha",customerOrder.getDateDelicery());
+        paramMap.put("nombreCliente",customerOrder.getClientOrder().getHst());//verificar el nombre del cliente
+        paramMap.put("fechaLimite",dosage.getDateExpiration());
+        paramMap.put("codigoControl",moneyUtil.getCodigoDeControl(dosage.getKey()));
+        //verificar por que no requiere el codigo de control
+        paramMap.put("llaveQR",moneyUtil.getLlaveQR(dosage.getNumberAuthorization().toString(),dosage.getNumberCurrent(),customerOrder.getClientOrder().getNumberDoc(),customerOrder.getDateDelicery(),customerOrder.getTotal().intValue(),dosage.getKey()));
+        paramMap.put("totalLiteral",moneyUtil.Convertir(customerOrder.getTotal().toString(), true));
+        paramMap.put("total",customerOrder.getTotal());
 
         return paramMap;
     }
@@ -129,25 +124,23 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         Map<String, Object> params = new HashMap<String, Object>();
 
         String ejbql = "SELECT " +
-                "movementDetail.productItem.productItemCode," +
-                "movementDetail.productItem.name," +
-                "movementDetail.quantity," +
-                "movementDetail.measureUnit.name" +
-                " FROM MovementDetail movementDetail" +
-                " WHERE movementDetail.sourceId is null";
+                " articleOrder.amount, " +
+                " articleOrder.productItem.name, " +
+                " articleOrder.price, " +
+                " articleOrder.total "+
+                " FROM ArticleOrder articleOrder";
 
         String[] restrictions = new String[]{
-                "movementDetail.companyNumber=#{productDeliveryReceiptReportAction.warehouseVoucher.id.companyNumber}",
-                "movementDetail.transactionNumber=#{productDeliveryReceiptReportAction.warehouseVoucher.id.transactionNumber}",
-                "movementDetail.state=#{productDeliveryReceiptReportAction.warehouseVoucher.state}"};
 
-        String orderBy = "movementDetail.productItem.name";
+                "articleOrder.customerOrder = #{printInvoiceReportAction.customerOrder}"};
+
+        String orderBy = "articleOrder.productItem.name";
 
         //generate the sub report
-        String subReportKey = "PRODDELIVERYMOVDETAILSUBREPORT";
+        String subReportKey = "INVOICEDETAILSUBREPORT";
         TypedReportData subReportData = super.generateSubReport(
                 subReportKey,
-                "/warehouse/reports/productDeliveryMovementDetailSubReport.jrxml",
+                "/customers/reports/invoiceDetailSubReport.jrxml",
                 PageFormat.LETTER,
                 PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), orderBy),
@@ -158,35 +151,11 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         mainReportParams.put(subReportKey, subReportData.getJasperReport());
     }
 
-
-    private String paramAsString(Object value) {
-        return value != null ? value.toString() : "";
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
     }
 
-    private InventoryMovement findInventoryMovement(WarehouseVoucher warehouseVoucher) {
-        InventoryMovement inventoryMovement = null;
-        if (warehouseVoucher != null) {
-            InventoryMovementPK inventoryMovementPK = new InventoryMovementPK(warehouseVoucher.getId().getCompanyNumber(),
-                    warehouseVoucher.getId().getTransactionNumber(),
-                    warehouseVoucher.getState().name());
-            inventoryMovement = warehouseService.findInventoryMovement(inventoryMovementPK);
-        }
-        return inventoryMovement;
-    }
-
-    public ProductDelivery getProductDelivery() {
-        return productDelivery;
-    }
-
-    public void setProductDelivery(ProductDelivery productDelivery) {
-        this.productDelivery = productDelivery;
-    }
-
-    public WarehouseVoucher getWarehouseVoucher() {
-        return warehouseVoucher;
-    }
-
-    public void setWarehouseVoucher(WarehouseVoucher warehouseVoucher) {
-        this.warehouseVoucher = warehouseVoucher;
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
     }
 }

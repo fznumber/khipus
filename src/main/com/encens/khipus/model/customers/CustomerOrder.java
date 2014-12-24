@@ -5,6 +5,7 @@ import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.contacts.Address;
 import com.encens.khipus.model.contacts.Zone;
 import com.encens.khipus.model.employees.Employee;
+import com.encens.khipus.model.production.OrderMaterial;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
@@ -12,7 +13,9 @@ import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,8 +38,12 @@ import java.util.Date;
 //@EntityListeners(CompanyListener.class)
 public class CustomerOrder implements BaseModel {
 
-    @EmbeddedId
-    private CustomerOrderPK id = new CustomerOrderPK();
+    /*@EmbeddedId
+    private CustomerOrderPK id = new CustomerOrderPK();*/
+    @Id
+    @Column(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CustomerOrder_Generator")
+    private Long id;
 
     @Column(name = "ID1", nullable = false, insertable = false, updatable = false)
     private Integer orderID1;
@@ -93,13 +100,32 @@ public class CustomerOrder implements BaseModel {
     @Column(name = "DISTRIBUIDOR")
     private Long distributorID;
 
-    public CustomerOrderPK getId() {
+    @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
+    private List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(0);
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<ArticleOrder> getArticleOrders() {
+        return articleOrders;
+    }
+
+    public void setArticleOrders(List<ArticleOrder> articleOrders) {
+        this.articleOrders = articleOrders;
+    }
+
+    /*public CustomerOrderPK getId() {
         return id;
     }
 
     public void setId(CustomerOrderPK id) {
         this.id = id;
-    }
+    }*/
 
     public Integer getOrderID1() {
         return orderID1;
@@ -220,4 +246,20 @@ public class CustomerOrder implements BaseModel {
     public void setDistributorID(Long distributorID) {
         this.distributorID = distributorID;
     }
+
+    public ClientOrder getClientOrder() {
+        return clientOrder;
+    }
+
+    public void setClientOrder(ClientOrder clientOrder) {
+        this.clientOrder = clientOrder;
+    }
+
+   /* public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }*/
 }

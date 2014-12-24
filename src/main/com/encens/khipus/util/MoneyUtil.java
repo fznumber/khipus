@@ -1,4 +1,11 @@
 package com.encens.khipus.util;
+
+import org.osbosoftware.facturas.CodigoControl7;
+import org.osbosoftware.facturas.core.AllegedRC4;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 /**
  * Created with IntelliJ IDEA.
@@ -129,5 +136,40 @@ public class MoneyUtil{
             n = getUnidades(millon) + "millon ";
         }
         return n + getMiles(miles);
+    }
+
+    public String getCodigoDeControl(String dosificacion)
+    {
+        String codigo= "";
+        try {
+            AllegedRC4 allegedRC4 = new AllegedRC4();
+            codigo = allegedRC4.encripta("18isw",dosificacion);
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return codigo;
+    }
+
+    public String getLlaveQR(String numeroAutorizacion,BigDecimal numeroFactura,String nitCi, Date fecha, int monto,String llaveDosificacion)
+    {
+        String llave= "";
+        try {
+            CodigoControl7 cc7 = new CodigoControl7();
+            cc7.setNumeroAutorizacion(numeroAutorizacion);
+            cc7.setNumeroFactura(numeroFactura.longValue());
+            cc7.setNitci(nitCi);
+            String formato = "yyyyMMdd";
+            SimpleDateFormat sdf = new SimpleDateFormat(formato);
+            fecha = sdf.parse("20070702");
+            cc7.setFechaTransaccion(fecha);
+            cc7.setMonto(monto);
+            cc7.setLlaveDosificacion(llaveDosificacion);
+            llave =cc7.obtener();
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return llave;
     }
 }
