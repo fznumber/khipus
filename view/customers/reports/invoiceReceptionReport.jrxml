@@ -15,12 +15,10 @@
 	<parameter name="llaveQR" class="java.lang.String"/>
 	<parameter name="totalLiteral" class="java.lang.String"/>
 	<parameter name="total" class="java.math.BigDecimal"/>
-	<field name="customerOrder.id" class="java.lang.Long">
-		<fieldDescription><![CDATA[COLUMN_1]]></fieldDescription>
-	</field>
+	<parameter name="tipoEtiqueta" class="java.lang.String"/>
 	<group name="productDeliveryGroup">
 		<groupHeader>
-			<band height="127">
+			<band height="125">
 				<frame>
 					<reportElement positionType="Float" x="-3" y="2" width="582" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -110,18 +108,6 @@
 						<textElement textAlignment="Left"/>
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{nombreCliente}]]></textFieldExpression>
 					</textField>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="277" y="0" width="66" height="12"/>
-						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-							<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-							<topPen lineWidth="0.0"/>
-							<leftPen lineWidth="0.0"/>
-							<bottomPen lineWidth="0.0"/>
-							<rightPen lineWidth="0.0"/>
-						</box>
-						<textElement textAlignment="Left"/>
-						<textFieldExpression class="java.lang.Long"><![CDATA[$F{customerOrder.id}]]></textFieldExpression>
-					</textField>
 				</frame>
 				<subreport isUsingCache="true">
 					<reportElement positionType="Float" x="3" y="24" width="562" height="36"/>
@@ -158,12 +144,6 @@
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{totalLiteral}]]></textFieldExpression>
 					</textField>
 				</frame>
-				<componentElement>
-					<reportElement x="450" y="72" width="82" height="50"/>
-					<jr:DataMatrix xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" textPosition="bottom">
-						<jr:codeExpression><![CDATA[$P{llaveQR}]]></jr:codeExpression>
-					</jr:DataMatrix>
-				</componentElement>
 				<frame>
 					<reportElement positionType="Float" x="3" y="72" width="386" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -191,6 +171,17 @@
 						<textFieldExpression class="java.util.Date"><![CDATA[$P{fechaLimite}]]></textFieldExpression>
 					</textField>
 				</frame>
+				<image scaleImage="RetainShape" onErrorType="Icon">
+					<reportElement key="COMPANY_LOGO_ELEMENT" x="493" y="60" width="72" height="58" isRemoveLineWhenBlank="true"/>
+					<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/customers/reports/qr_inv.png")]]></imageExpression>
+				</image>
 			</band>
 		</groupHeader>
 		<groupFooter>

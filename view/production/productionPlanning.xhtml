@@ -180,24 +180,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </a4j:commandLink>
         </s:decorate>
 
-        <s:decorate id="productionOrderModelField"
-                    template="/include/inputField.xhtml"
-                    styleClass="formRow"
-                    rendered="#{productionPlanningAction.managed and productionPlanningAction.showMainProduct}">
-            <ui:define name="label">#{messages['ProductionPlanning.productMain']}</ui:define>
-            <h:inputText id="productionOrderModel"
-                         value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"
-                         required="false" maxlength="500" styleClass="input" tabindex="5">
-            </h:inputText>
-            <a4j:commandLink id="selectProductionOrderModel"
-                             ajaxSingle="true"
-                             immediate="true"
-                             title="#{messages['ProductionPlanning.selectOrderProduction']}"
-                             onclick="Richfaces.showModalPanel('productionOrderSearchModalPanel');"
-                             rendered="#{productionPlanningAction.formulaState eq 'NEW' and productionOrderForPlanning.estateOrder != 'EXECUTED'}">
-                <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
-            </a4j:commandLink>
-        </s:decorate>
+
 
         <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
             <ui:define name="label">#{messages['ProductionOrder.order']}</ui:define>
@@ -211,7 +194,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <h:selectOneMenu id="productComposition" value="#{productionPlanningAction.productComposition}"
                              styleClass="input" tabindex="6"
                              required="true"
-                             disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionPlanningAction.hasMainProduction}">
+                             disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' }">
                 <s:selectItems value="#{productionPlanningAction.productCompositionList}"
                                var="productCompositionItem"
                                label="#{productCompositionItem.name}"
@@ -230,11 +213,11 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             </rich:calendar>
         </s:decorate>
 
-        <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+        <s:decorate template="/include/inputField.xhtml" styleClass="formRow" id="IDexpendAmount">
             <ui:define name="label">#{messages['ProductionPlanning.espendingAmount']}</ui:define>
             <h:inputText value="#{productionOrderForPlanning.expendAmount}"
                          required="true" styleClass="input" tabindex="5"
-                         disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' or productionPlanningAction.hasMainProduction}">
+                         disabled="#{productionOrderForPlanning.estateOrder eq 'EXECUTED' }">
                 <a4j:support event="onblur" ajaxSingle="false" reRender="formulaSet"
                              actionListener="#{productionPlanningAction.evaluateExpressionActionListener}"/>
             </h:inputText>
@@ -249,7 +232,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                immediate="true"
                                oncomplete="Richfaces.showModalPanel('addProductInputsListModalPanel');"
                                actionListener="#{selectPopUpAction.select}"
-                               rendered="#{(productionPlanningAction.showButtonAddInput and productionOrderForPlanning.estateOrder != 'FINALIZED' and productionOrderForPlanning.estateOrder != 'TABULATED' and productionOrderForPlanning.estateOrder != 'INSTOCK') or productionPlanningAction.hasMainProduction}"
+                               rendered="#{(productionPlanningAction.showButtonAddInput and productionOrderForPlanning.estateOrder != 'FINALIZED' and productionOrderForPlanning.estateOrder != 'TABULATED' and productionOrderForPlanning.estateOrder != 'INSTOCK') }"
                                reRender="formulaSet,addProductInputsListModalPanelContainer">
                 <f:attribute name="entityManagerName" value=""/>
                 <f:attribute name="dataModelObject" value="#{productItemInputSearchDataModel}"/>
@@ -316,7 +299,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                                          disabled="#{!productionPlanningAction.isParameterized(productionIngredientItem) and productionIngredientItem.type !='ADD'}">
                                 <a4j:support event="onblur"
                                              ajaxSingle="false"
-                                             reRender="productionIngredientList"
+                                             reRender="productionIngredientList,formulaSet"
                                              actionListener="#{productionPlanningAction.evaluateParameterizedExpressionActionListener(productionIngredientItem)}"/>
                             </h:inputText>
 
@@ -435,15 +418,7 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
                  columnClasses="width50percent, width50percent">
 
         <s:div>
-            <s:decorate id="materialProductNameField" template="/include/inputField.xhtml" styleClass="formRow">
-                <ui:define name="label">#{messages['ProductionOrder.processedProduct.name'] }</ui:define>
-                <h:outputText value="#{productionOrderForPlanning.productMain != null? productionOrderForPlanning.productOrders.get(0).processedProduct.fullName :productionOrderForPlanning.productComposition.processedProduct.name}"/>
-            </s:decorate>
 
-            <s:decorate id="materialProductNameMainField" template="/include/inputField.xhtml" styleClass="formRow" rendered="#{productionOrderForPlanning.productMain != null}">
-                <ui:define name="label">#{messages['ProductionOrder.processedProductMain.name'] }</ui:define>
-                <h:outputText value="#{productionOrderForPlanning.productMain.productComposition.processedProduct.name}"/>
-            </s:decorate>
 
             <s:decorate id="materialCodeField" template="/include/inputField.xhtml" styleClass="formRow">
                 <ui:define name="label">#{messages['ProductionOrder.processedProduct.code']}</ui:define>

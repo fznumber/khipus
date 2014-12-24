@@ -18,19 +18,23 @@
 
             <rich:simpleTogglePanel label="#{messages['ProductDelivery.search']}" switchType="client">
 
-                <!--<s:decorate template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['ProductDelivery.nameClient']}</ui:define>
-                    <h:inputText id="fullNameClient"
-                                 value="#{productDeliveryDataModel.criteria.fullNameClient}"
-                                 maxlength="150"
-                                 tabindex="1"
-                                 styleClass="input">
-                    </h:inputText>
-                </s:decorate>-->
+                <s:decorate id="invoiceTypeField"
+                            template="/include/inputField.xhtml"
+                            styleClass="formRow">
+                    <h:selectOneRadio value="#{printInvoiceReportAction.invoicePrintType}"
+                                      layout="lineDirection"
+                                      rendered="#{printInvoiceReportAction.imprimirCopia}">
+                        <s:selectItems value="#{invoicePrintTypes}"
+                                       var="element"
+                                       label="#{messages[element.resourceKey]}"/>
+                        <s:convertEnum/>
+                    </h:selectOneRadio>
+                </s:decorate>
+
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['Order.report.dateInvoice']}</ui:define>
                     <rich:calendar id="dateDelivery"
-                                   value="#{printInvoiceDataModel.criteria.dateDelicery}"
+                                   value="#{printInvoiceReportAction.printInvoiceDataModel.criteria.dateDelicery}"
                                    datePattern="#{messages['patterns.date']}"
                                    enableManualInput="true"
                                    required="true"
@@ -39,8 +43,8 @@
                                            timeZone="#{sessionUser.timeZone}"
                                            type="date"/>
                     </rich:calendar>
-                    <a4j:commandButton action="#{printInvoiceDataModel.search}"
-                                       reRender="productDeliveryList, dataScroller"
+                    <a4j:commandButton action="#{printInvoiceReportAction.search}"
+                                       reRender="productDeliveryList, dataScroller,invoiceTypeField"
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
                                        id="searchButtonId"
@@ -62,7 +66,7 @@
 
                 <h:commandLink action="#{printInvoiceReportAction.generateReport(customerOrderItem)}"
                                immediate="true"
-                               rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
+                               rendered="#{s:hasPermission('for()','VIEW')}">
                     <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
                                     title="#{messages['ProductDelivery.button.generateDocument']}"/>
                 </h:commandLink>
@@ -82,7 +86,7 @@
 
             </div>
             <rich:dataTable id="productDeliveryList"
-                            value="#{printInvoiceDataModel}"
+                            value="#{printInvoiceReportAction.printInvoiceDataModel}"
                             var="customerOrderItem"
                             rows="#{sessionUser.rowsPerPage}"
                             width="100%"
@@ -95,14 +99,14 @@
                         </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="customerOrder.order"
-                                                   dataModel="#{printInvoiceDataModel}"
+                                                   dataModel="#{printInvoiceReportAction.printInvoiceDataModel}"
                                                    reRender="productDeliveryList, dataScroller">
                                 #{messages['ProductDelivery.documentNumber']}
                             </app:commandSortHeader>
                         </rich:column>
                         <rich:column>
                             <app:commandSortHeader sortProperty="customerOrder.total"
-                                                   dataModel="#{printInvoiceDataModel}"
+                                                   dataModel="#{printInvoiceReportAction.printInvoiceDataModel}"
                                                    reRender="productDeliveryList, dataScroller">
                                 #{messages['CustomerOrder.total']}
                             </app:commandSortHeader>
@@ -138,7 +142,7 @@
                     </h:commandLink>
                 </rich:column>
             </rich:dataTable>
-            <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{printInvoiceDataModel}"/>
+            <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{printInvoiceReportAction.printInvoiceDataModel}"/>
             <div class="buttons">
 
                 <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"

@@ -1042,7 +1042,9 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
             //rawMaterialPayRoll.setProductiveZone((ProductiveZone) (datas.get(0)[13]));
             rawMaterialPayRoll.setUnitPrice((Double) (datas.get(0)[14]));
             rawMaterialPayRoll.setTotalReserveDicount((Double) (datas.get(0)[15]));
-
+            rawMaterialPayRoll.setIue((Double) (datas.get(0)[16]));
+            rawMaterialPayRoll.setIt((Double) (datas.get(0)[17]));
+            rawMaterialPayRoll.setTaxRate((Double) (datas.get(0)[18]));
         } catch (Exception e) {
             log.debug("Not found totals RawMaterialPayRoll...." + e);
         }
@@ -1070,12 +1072,15 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 "sum(rawMaterialPayRoll.totalLiquidByGAB), " +
                 "sum(rawMaterialPayRoll.productiveZone), " +
                 "rawMaterialPayRoll.unitPrice, " +
-                "sum(rawMaterialPayRoll.totalReserveDicount) " +
+                "sum(rawMaterialPayRoll.totalReserveDicount), " +
+                " rawMaterialPayRoll.iue, " +
+                " rawMaterialPayRoll.it, " +
+                " rawMaterialPayRoll.taxRate " +
                 "from RawMaterialPayRoll rawMaterialPayRoll " +
                 "where rawMaterialPayRoll.startDate = :startDate " +
                 "and rawMaterialPayRoll.endDate <=  :endDate"
                 + restricZone + restricMeta
-                + "GROUP BY rawMaterialPayRoll.unitPrice";
+                + " GROUP BY rawMaterialPayRoll.unitPrice,rawMaterialPayRoll.iue,rawMaterialPayRoll.it,rawMaterialPayRoll.taxRate ";
     }
 
     @Override

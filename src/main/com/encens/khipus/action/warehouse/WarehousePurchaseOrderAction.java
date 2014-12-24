@@ -420,7 +420,7 @@ public class WarehousePurchaseOrderAction extends GenericAction<PurchaseOrder> {
             return Outcome.REDISPLAY;
         }
 
-        if (!checkPayment()) {
+        if (false) {
             addReComputePaymentRequiredMessage();
             return Outcome.REDISPLAY;
         }

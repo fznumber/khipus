@@ -4,6 +4,7 @@ import com.encens.khipus.framework.action.QueryDataModel;
 import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.warehouse.ProductDelivery;
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Create;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PrintInvoiceDataModel extends QueryDataModel<Long, CustomerOrder> {
     private static final String[] RESTRICTIONS = {
             "customerOrder.dateDelicery = #{printInvoiceDataModel.criteria.dateDelicery}"
+
     };
 
     @Create

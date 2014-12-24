@@ -168,7 +168,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     public Integer getAmount(String codArt,String codPedido){
         BigDecimal result = BigDecimal.ZERO;
         try{
-          result = (BigDecimal)em.createNativeQuery("SELECT nvl(cantidad,0)+ nvl(reposicion,0)+ nvl(promocion,0) FROM USER01_DAF.articulos_pedido \n" +
+          result = (BigDecimal)em.createNativeQuery("SELECT nvl(sum(nvl(cantidad,0)+ nvl(reposicion,0)+ nvl(promocion,0)),0) FROM USER01_DAF.articulos_pedido \n" +
                   "where cod_art = :codArt\n" +
                   "and pedido = :codPedido")
                  .setParameter("codPedido",codPedido)

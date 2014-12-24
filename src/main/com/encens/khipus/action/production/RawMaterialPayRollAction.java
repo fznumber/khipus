@@ -316,6 +316,9 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 payRoll.setUnitPrice(rawMaterialPayRoll.getUnitPrice());
                 payRoll.setTaxRate(rawMaterialPayRoll.getTaxRate());
                 payRoll.setProductiveZone(productiveZone);
+                payRoll.setTaxRate(rawMaterialPayRoll.getTaxRate());
+                payRoll.setIt(rawMaterialPayRoll.getIt());
+                payRoll.setIue(rawMaterialPayRoll.getIue());
                 rawMaterialPayRollService.validate(payRoll);
                 rawMaterialPayRoll.getRawMaterialPayRecordList().clear();
                 rawMaterialPayRollService.generatePayroll(payRoll,discountProducer);

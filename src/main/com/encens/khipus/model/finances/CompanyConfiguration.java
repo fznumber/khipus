@@ -331,14 +331,14 @@ public class CompanyConfiguration {
     @Type(type = com.encens.khipus.model.usertype.IntegerBooleanUserType.NAME)
     private boolean retentionForLoanAndAdvance;
 
-    @Column(name = "PRECIOUNITARIOLECHE",nullable = true)
-    private double unitPriceMilk;
+    @Column(name = "PRECIOUNITARIOLECHE",columnDefinition = "number(5,2)",nullable = true)
+    private Double unitPriceMilk;
 
-    @Column(name = "IT")
-    private double it;
+    @Column(name = "IT",columnDefinition = "number(3,2)",nullable = true)
+    private Double it;
 
-    @Column(name = "IUE")
-    private double iue;
+    @Column(name = "IUE",columnDefinition = "number(3,2)",nullable = true)
+    private Double iue;
 
     @Column(name = "AUTOMODIFCONTRATO", nullable = false)
     @Type(type = com.encens.khipus.model.usertype.IntegerBooleanUserType.NAME)

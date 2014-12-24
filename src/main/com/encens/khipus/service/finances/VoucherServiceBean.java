@@ -114,9 +114,9 @@ public class VoucherServiceBean implements VoucherService {
                                           String financesModule) throws CompanyConfigurationNotFoundException {
         if(numberTransction.isEmpty())
             numberTransction = "%";
-
+         //wise.aprobar_asientos.gen_compro
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
-        em.createNativeQuery("call wise.aprobar_asientos.gen_compro( " +
+        em.createNativeQuery("CALL WISE.APROBAR_ASIENTOS.GEN_COMPRO( " +
                 ":financesModule, \n" + //MODULO
                 ":cia,\n" + //CIA
                 ":businessUnit,\n" + //UNIDAD EJECUTORA

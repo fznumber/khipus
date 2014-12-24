@@ -2606,10 +2606,17 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         productionOrder.setEstateOrder(FINALIZED);
         ProductionPlanning productionPlanning = getInstance();
 
-        if(productionOrder.getProductMain() != null || productionOrder.getTotalCostInputMain() > 0.0)
-            volumeTotalInputMain = totalVolumeInputs();
-        else
+        if(productionOrder.getProductMain() != null )
+        {
+            if(productionOrder.getTotalCostInputMain() != null)
+            {
+                if(productionOrder.getTotalCostInputMain() > 0.0)
+                   volumeTotalInputMain = totalVolumeInputs();
+            }
+            else
             volumeTotalInputMain = 0.0;
+        }
+
 
         for (ProductionOrder order : productionPlanning.getProductionOrderList()) {
             setTotalsMaterials(order);
