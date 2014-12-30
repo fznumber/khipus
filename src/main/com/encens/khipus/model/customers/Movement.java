@@ -137,7 +137,7 @@ public class Movement implements BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
     @JoinColumn(name = "PEDIDO", columnDefinition = "VARCHAR2(50 BYTE)")
-    private CustomerOrder customerOrder;
+    private CustomerOrder customerOrderMovement;
 
     @Temporal(value = TemporalType.DATE)
     @Column(name = "FECHA_REGISTRO")
@@ -411,12 +411,12 @@ public class Movement implements BaseModel {
         this.descrOrder = descrOrder;
     }
 
-    public CustomerOrder getCustomerOrder() {
-        return customerOrder;
+    public CustomerOrder getCustomerOrderMovement() {
+        return customerOrderMovement;
     }
 
-    public void setCustomerOrder(CustomerOrder customerOrder) {
-        this.customerOrder = customerOrder;
+    public void setCustomerOrderMovement(CustomerOrder customerOrderMovement) {
+        this.customerOrderMovement = customerOrderMovement;
     }
 
     public Date getDateRecord() {

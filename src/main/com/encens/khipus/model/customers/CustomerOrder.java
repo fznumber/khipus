@@ -103,6 +103,9 @@ public class CustomerOrder implements BaseModel {
     @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
     private List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(0);
 
+    @OneToMany(mappedBy = "customerOrderMovement", fetch = FetchType.LAZY)
+    private List<Movement> movements = new ArrayList<Movement>(0);
+
     public Long getId() {
         return id;
     }
@@ -255,7 +258,15 @@ public class CustomerOrder implements BaseModel {
         this.clientOrder = clientOrder;
     }
 
-   /* public String getOrder() {
+    public List<Movement> getMovements() {
+        return movements;
+    }
+
+    public void setMovements(List<Movement> movements) {
+        this.movements = movements;
+    }
+
+    /* public String getOrder() {
         return order;
     }
 

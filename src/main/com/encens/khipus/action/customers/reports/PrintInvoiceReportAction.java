@@ -5,6 +5,7 @@ import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
 import com.encens.khipus.action.reports.ReportFormat;
+import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.model.admin.User;
@@ -44,11 +45,9 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
     @In
     private User currentUser;
-
     @In
     private WarehouseService warehouseService;
-    /*@In(create = true)
-    private DosageSevice dosageSevice;*/
+
     @In(create = true)
     private PrintInvoiceDataModel printInvoiceDataModel;
 
@@ -83,15 +82,20 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
         Map params = new HashMap();
 
-        addVoucherMovementDetailSubReport(params);
+        addVoucherMovementDetailSubReport(params,order);
         String etiqueta;
+        String codControl;
+        BigDecimal numberAuthorization = dosage.getNumberAuthorization();
+        String key = dosage.getKey();
 
         if(imprimirCopia)
             etiqueta = "COPIA";
         else
             etiqueta = "ORIGINAL";
 
-        params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta));
+        ControlCode controlCode = generateCodControl(customerOrder,numberAuthorization,key);
+
+        params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
         super.generateReport("productDeliveryReceiptReport",
                             "/customers/reports/invoiceReceptionReport.jrxml",
                             PageFormat.LEGAL,
@@ -113,55 +117,112 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
         TypedReportData typedReportData;
         setReportFormat(ReportFormat.PDF);
-
+        String etiqueta ;
+        String codControl;
+        BigDecimal numberAuthorization = dosage.getNumberAuthorization();
+        String key = dosage.getKey();
         Map params = new HashMap();
 
-        addVoucherMovementDetailSubReport(params);
+
         customerOrder = customerOrders.get(0);
-        typedReportData = super.getReport("printInvoiceReceiptReport"
-                , "/customers/reports/invoiceReceptionReport.jrxml"
-                , "FACTURA"
-                , params);
         if(!imprimirCopia)
         {
-            int numberInvoice = dosage.getNumberCurrent().intValue();
-            for(CustomerOrder order:customerOrders){
-                customerOrder = order;
-                params.putAll(getReportParams(numberInvoice,"ORIGINAL"));
+            etiqueta = "ORIGINAL";
+        }else{
+            etiqueta = "COPIA";
+        }
+            long numberInvoice;
+        typedReportData =   addVoucherMovementDetailSubReport(params,customerOrders.get(0));
+        typedReportData.getJasperPrint().getPages().clear();
 
-                TypedReportData reportData = super.getReport("printInvoiceReceiptReport"
-                        , "/customers/reports/invoiceReceptionReport.jrxml"
-                        , "FACTURA"
-                        , params);
+        for(CustomerOrder order:customerOrders){
+                numberInvoice = dosage.getNumberCurrent().longValue();
+                //customerOrder = order;
+                ControlCode controlCode = generateCodControl(order,numberAuthorization,key);
 
+               params.putAll(getReportParams(numberInvoice,etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
+               TypedReportData reportData =   addVoucherMovementDetailSubReport(params,order);
 
                     for(JRPrintPage page:(List<JRPrintPage>)reportData.getJasperPrint().getPages())
-                    typedReportData.getJasperPrint().addPage(page);
+                        typedReportData.getJasperPrint().addPage(page);
+
+                if(!imprimirCopia)
+                {
+                    createArticleOrders( order,numberInvoice,controlCode.getCodigoControl());
+                    createReImprint(customerOrder,dosage,numberInvoice,currentUser);
+                }
+                else
+                    updateReImprint(order);
 
                 numberInvoice ++;
+                dosage.setNumberCurrent(new BigDecimal(numberInvoice));
+
+
             }
+
+            try {
+                warehouseService.update(dosage);
+            } catch (EntryDuplicatedException e) {
+                e.printStackTrace();
+            } catch (ConcurrencyException e) {
+                e.printStackTrace();
+            }
+
             try {
                 GenerationReportData generationReportData = new GenerationReportData(typedReportData);
                 generationReportData.exportReport();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
-
-
-                for(CustomerOrder order:customerOrders){
-                    for(ArticleOrder articleOrder:order.getArticleOrders()){
-                        createArticleOrder(articleOrder,order);
-                    }
-                }
-                int aux = dosage.getNumberCurrent().intValue() +1;
-                dosage.setNumberCurrent(new BigDecimal(aux));
-        }else{
-
-        }
 
     }
 
-    private void createArticleOrder(ArticleOrder articleOrder,CustomerOrder order)
+    private  void createReImprint(CustomerOrder order, Dosage dosage, long numberInvoice, User currentUser) {
+        RePrints rePrints = new RePrints();
+        rePrints.setNumberReImprent(0);
+        rePrints.setState("R");
+        rePrints.setDosage(dosage);
+        rePrints.setNumberInvoice(numberInvoice);
+        rePrints.setCustomerOrder(order);
+        rePrints.setDateEmission(order.getDateDelicery());
+        rePrints.setDateRePrint(new Date());
+        rePrints.setGloss("");//verificar
+        rePrints.setNit(order.getClientOrder().getNumberDoc());
+        rePrints.setIdUsrEmission(currentUser.getId());
+        rePrints.setIdUsrRePint(currentUser.getId());//verificar
+        try {
+            rePrintsService.create(rePrints);
+        } catch (EntryDuplicatedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    private void updateReImprint(CustomerOrder order) {
+       RePrints rePrints =  rePrintsService.findReprintByCustomerOrder(order);
+       Integer aux = rePrints.getNumberReImprent();
+       aux ++;
+       rePrints.setNumberReImprent(aux);
+        try {
+            rePrintsService.update(rePrints);
+        } catch (EntryDuplicatedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ConcurrencyException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    private void createArticleOrders(CustomerOrder order,Long numberInvoice,String codControl)
+    {
+        List<ArticleOrder> articleOrders = movementService.findArticleOrdersByCustomerOrder(order);
+        for(ArticleOrder articleOrder:articleOrders){
+            if(!imprimirCopia)
+            {
+                createMovement(articleOrder,order,codControl,numberInvoice);
+            }
+        }
+    }
+
+    private void createMovement(ArticleOrder articleOrder,CustomerOrder order,String codControl,Long numberInvoice)
     {
         Movement movement = new Movement();
         movement.setDate(order.getDateDelicery());
@@ -174,10 +235,10 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         movement.setUsrID(currentUser.getId());
         movement.setEstCod("2009");
         movement.setCoin("B");
-        movement.setPiID(articleOrder.getCustomerOrder().getId());
+        movement.setPiID(articleOrder.getCustomerOrder());
         //movement.setNumberPrePrint();verificar
-        movement.setNumberInvoice(dosage.getNumberCurrent().longValue());
-        movement.setCodControl(moneyUtil.getCodigoDeControl(dosage.getKey()));
+        movement.setNumberInvoice(numberInvoice);
+        movement.setCodControl(codControl);
         movement.setDosage(dosage);
         movement.setNit(order.getClientOrder().getNumberDoc());
         movement.setMount(articleOrder.getAmount());
@@ -185,7 +246,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         movement.setTypeChange(6.96);
         movement.setTotalInvoice(order.getTotal().doubleValue());
         //movement.setDescrOrder();verificar
-        movement.setCustomerOrder(order);
+        movement.setCustomerOrderMovement(order);
         try {
             movementService.create(movement);
         } catch (EntryDuplicatedException e) {
@@ -210,16 +271,10 @@ public class PrintInvoiceReportAction extends GenericReportAction {
      *
      * @return Map
      */
-    private Map<String, Object> getReportParams(int numfac,String etiqueta) {
+    private Map<String, Object> getReportParams(long numfac,String etiqueta,String codControl, String keyQR) {
 
         String filePath = FileCacheLoader.i.getPath("/customers/reports/qr_inv.png");
 
-        String keyQR = moneyUtil.getLlaveQR(dosage.getNumberAuthorization().toString()
-                                            ,dosage.getNumberCurrent()
-                                            ,customerOrder.getClientOrder().getNumberDoc()
-                                            ,customerOrder.getDateDelicery()
-                                            ,customerOrder.getTotal().intValue()
-                                            ,dosage.getKey());
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("nitEmpresa","123456022");
         paramMap.put("numFac",numfac);
@@ -228,7 +283,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         paramMap.put("fecha",customerOrder.getDateDelicery());
         paramMap.put("nombreCliente",customerOrder.getClientOrder().getHst());//verificar el nombre del cliente
         paramMap.put("fechaLimite",dosage.getDateExpiration());
-        paramMap.put("codigoControl",moneyUtil.getCodigoDeControl(dosage.getKey()));
+        paramMap.put("codigoControl",codControl);
         paramMap.put("tipoEtiqueta",etiqueta);
         //verificar por que no requiere el codigo de control
 
@@ -239,15 +294,30 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         return paramMap;
     }
 
+    private ControlCode generateCodControl(CustomerOrder order,BigDecimal numberAutorization,String key)
+    {
+        Double importeBaseCreditFisical = order.getTotal().doubleValue() * 0.13;
+        ControlCode controlCode = new ControlCode("123456789012"
+                                                   ,numberAutorization.intValue()
+                                                   ,numberAutorization.toString()
+                                                   ,order.getDateDelicery()
+                                                   ,order.getTotal().doubleValue()
+                                                   ,importeBaseCreditFisical
+                                                   ,order.getClientOrder().getNumberDoc()
+                                                 );
+          moneyUtil.getLlaveQR(controlCode,key);
+        return controlCode;
+    }
+
     /**
      * add voucher movement detail sub report in main report
      *
-     * @param mainReportParams
+     * @param
      */
-    private void addVoucherMovementDetailSubReport(Map mainReportParams) {
+    private TypedReportData addVoucherMovementDetailSubReport(Map<String, Object> params,CustomerOrder order) {
         log.debug("Generating addVoucherMovementDetailSubReport.............................");
 
-        Map<String, Object> params = new HashMap<String, Object>();
+         this.customerOrder = order;
 
         String ejbql = "SELECT " +
                 " articleOrder.amount, " +
@@ -258,23 +328,24 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
         String[] restrictions = new String[]{
 
-                "articleOrder.customerOrder = #{printInvoiceReportAction.customerOrder}"};
+                "articleOrder.customerOrder = #{printInvoiceReportAction.customerOrder.getId()}"};
 
         String orderBy = "articleOrder.productItem.name";
 
         //generate the sub report
         String subReportKey = "INVOICEDETAILSUBREPORT";
-        TypedReportData subReportData = super.generateSubReport(
+        return super.getReport(
                 subReportKey,
-                "/customers/reports/invoiceDetailSubReport.jrxml",
+                "/customers/reports/invoiceReceptionReport.jrxml",
                 PageFormat.LETTER,
                 PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), orderBy),
+                "DEFAULT",
                 params);
 
         //add in main report params
-        mainReportParams.putAll(subReportData.getReportParams());
-        mainReportParams.put(subReportKey, subReportData.getJasperReport());
+        /*mainReportParams.putAll(subReportData.getReportParams());
+        mainReportParams.put(subReportKey, subReportData.getJasperReport());*/
     }
 
     @Factory(value = "invoicePrintTypes", scope = ScopeType.STATELESS)
@@ -291,7 +362,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         else
             imprimirCopia = false;
 
-        customerOrders = printInvoiceDataModel.getResultList();
+        customerOrders = printInvoiceDataModel.getList(0,printInvoiceDataModel.getCount().intValue());
 
     }
 

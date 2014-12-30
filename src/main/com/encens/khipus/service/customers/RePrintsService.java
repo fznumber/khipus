@@ -1,6 +1,8 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.RePrints;
 
 import javax.ejb.Local;
 
@@ -13,4 +15,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface RePrintsService extends GenericService {
+    RePrints findReprintByCustomerOrder(CustomerOrder order);
 }

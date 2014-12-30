@@ -58,15 +58,9 @@
 
             <div class="buttons">
 
-                <s:button value="#{messages['menu.warehouse.productDeliveryByDate']}"
-                          view="/warehouse/productDeliveryByDate.xhtml"
-                          rendered="#{s:hasPermission('PRINTINVOICE','CREATE')}"
-                          styleClass="button"
-                          propagation="begin"/>
-
-                <h:commandLink action="#{printInvoiceReportAction.generateReport(customerOrderItem)}"
+                <h:commandLink action="#{printInvoiceReportAction.generateReport()}"
                                immediate="true"
-                               rendered="#{s:hasPermission('for()','VIEW')}">
+                               rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
                     <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
                                     title="#{messages['ProductDelivery.button.generateDocument']}"/>
                 </h:commandLink>
