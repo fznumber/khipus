@@ -43,9 +43,11 @@ public class ArticleOrder {
     })
     private ProductItem productItem;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    /*@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = true, updatable = false, insertable = false)
-    private CustomerOrder customerOrder;
+    private CustomerOrder customerOrder;*/
+    @Column(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = false)
+    private Long customerOrder;
 /*
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumns({
@@ -178,11 +180,11 @@ public class ArticleOrder {
         this.id = id;
     }
 
-    public CustomerOrder getCustomerOrder() {
+    public Long getCustomerOrder() {
         return customerOrder;
     }
 
-    public void setCustomerOrder(CustomerOrder customerOrder) {
+    public void setCustomerOrder(Long customerOrder) {
         this.customerOrder = customerOrder;
     }
 }
