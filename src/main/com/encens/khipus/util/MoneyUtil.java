@@ -1,9 +1,12 @@
 package com.encens.khipus.util;
 
+import com.encens.khipus.model.customers.ControlCode;
 import org.osbosoftware.facturas.CodigoControl7;
 import org.osbosoftware.facturas.core.AllegedRC4;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -151,7 +154,7 @@ public class MoneyUtil{
         return codigo;
     }
 
-    public String getLlaveQR(String numeroAutorizacion,BigDecimal numeroFactura,String nitCi, Date fecha, int monto,String llaveDosificacion)
+    public String getLlaveQR(String numeroAutorizacion,BigDecimal numeroFactura,String nitCi, Date fecha, Double monto,String llaveDosificacion)
     {
         String llave= "";
         try {
@@ -159,11 +162,15 @@ public class MoneyUtil{
             cc7.setNumeroAutorizacion(numeroAutorizacion);
             cc7.setNumeroFactura(numeroFactura.longValue());
             cc7.setNitci(nitCi);
-            String formato = "yyyyMMdd";
-            SimpleDateFormat sdf = new SimpleDateFormat(formato);
-            fecha = sdf.parse("20070702");
-            cc7.setFechaTransaccion(fecha);
-            cc7.setMonto(monto);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date fechaEmision = new Date();
+            try {
+               fechaEmision = dateFormat.parse(dateFormat.format(fecha));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            cc7.setFechaTransaccion(fechaEmision );
+            cc7.setMonto(monto.intValue());
             cc7.setLlaveDosificacion(llaveDosificacion);
             llave =cc7.obtener();
 
@@ -172,4 +179,24 @@ public class MoneyUtil{
         }
         return llave;
     }
+
+    public void getLlaveQR(ControlCode controlCode,String llaveDosificacion)
+    {
+        String llave= "";
+        try {
+            CodigoControl7 cc7 = new CodigoControl7();
+            cc7.setNumeroAutorizacion(controlCode.getNumeroAutorizacion());
+            cc7.setNumeroFactura(controlCode.getNumberInvoice());
+            cc7.setNitci(controlCode.getNitCliente());
+            cc7.setFechaTransaccion(controlCode.getFechaEmision());
+            cc7.setMonto(controlCode.getTotal().intValue());
+            cc7.setLlaveDosificacion(llaveDosificacion);
+            controlCode.setCodigoControl(cc7.obtener());
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
 }

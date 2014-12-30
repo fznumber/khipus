@@ -93,9 +93,9 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         else
             etiqueta = "ORIGINAL";
 
-        codControl = generateCodControl(customerOrder,numberAuthorization,key);
+        ControlCode controlCode = generateCodControl(customerOrder,numberAuthorization,key);
 
-        params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta,codControl));
+        params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
         super.generateReport("productDeliveryReceiptReport",
                             "/customers/reports/invoiceReceptionReport.jrxml",
                             PageFormat.LEGAL,
@@ -138,9 +138,9 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         for(CustomerOrder order:customerOrders){
                 numberInvoice = dosage.getNumberCurrent().longValue();
                 //customerOrder = order;
-                codControl = generateCodControl(order,numberAuthorization,key);
+                ControlCode controlCode = generateCodControl(order,numberAuthorization,key);
 
-               params.putAll(getReportParams(numberInvoice,etiqueta,codControl.toString()));
+               params.putAll(getReportParams(numberInvoice,etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
                TypedReportData reportData =   addVoucherMovementDetailSubReport(params,order);
 
                     for(JRPrintPage page:(List<JRPrintPage>)reportData.getJasperPrint().getPages())
@@ -148,7 +148,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
                 if(!imprimirCopia)
                 {
-                    createArticleOrders( order,numberInvoice,codControl);
+                    createArticleOrders( order,numberInvoice,controlCode.getCodigoControl());
                     createReImprint(customerOrder,dosage,numberInvoice,currentUser);
                 }
                 else
@@ -271,16 +271,10 @@ public class PrintInvoiceReportAction extends GenericReportAction {
      *
      * @return Map
      */
-    private Map<String, Object> getReportParams(long numfac,String etiqueta,String codControl) {
+    private Map<String, Object> getReportParams(long numfac,String etiqueta,String codControl, String keyQR) {
 
         String filePath = FileCacheLoader.i.getPath("/customers/reports/qr_inv.png");
 
-        String keyQR = moneyUtil.getLlaveQR(dosage.getNumberAuthorization().toString()
-                                            ,dosage.getNumberCurrent()
-                                            ,customerOrder.getClientOrder().getNumberDoc()
-                                            ,customerOrder.getDateDelicery()
-                                            ,customerOrder.getTotal().intValue()
-                                            ,dosage.getKey());
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("nitEmpresa","123456022");
         paramMap.put("numFac",numfac);
@@ -300,14 +294,19 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         return paramMap;
     }
 
-    private String generateCodControl(CustomerOrder order,BigDecimal numerAutorization,String key)
+    private ControlCode generateCodControl(CustomerOrder order,BigDecimal numberAutorization,String key)
     {
-        return  moneyUtil.getLlaveQR(numerAutorization.toString()
-                ,dosage.getNumberCurrent()
-                ,order.getClientOrder().getNumberDoc()
-                ,order.getDateDelicery()
-                ,order.getTotal().intValue()
-                ,key);
+        Double importeBaseCreditFisical = order.getTotal().doubleValue() * 0.13;
+        ControlCode controlCode = new ControlCode("123456789012"
+                                                   ,numberAutorization.intValue()
+                                                   ,numberAutorization.toString()
+                                                   ,order.getDateDelicery()
+                                                   ,order.getTotal().doubleValue()
+                                                   ,importeBaseCreditFisical
+                                                   ,order.getClientOrder().getNumberDoc()
+                                                 );
+          moneyUtil.getLlaveQR(controlCode,key);
+        return controlCode;
     }
 
     /**
