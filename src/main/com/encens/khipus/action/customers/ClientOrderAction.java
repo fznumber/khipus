@@ -1,26 +1,25 @@
 package com.encens.khipus.action.customers;
 
 import com.encens.khipus.framework.action.GenericAction;
-import com.encens.khipus.model.customers.Credit;
+import com.encens.khipus.model.customers.ClientOrder;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Factory;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.security.Restrict;
 
 /**
- * Actions for Credit
+ * Actions for ClientOrder
  *
- * @author:
+ * @author: Ariel Siles Encinas
  */
 
-@Name("creditAction")
+@Name("clientOrderAction")
 @Scope(ScopeType.CONVERSATION)
-public class ClientOrderAction extends GenericAction<Credit> {
+public class ClientOrderAction extends GenericAction<ClientOrder> {
 
-    @Factory(value = "credit", scope = ScopeType.STATELESS)
-    @Restrict("#{s:hasPermission('CREDIT','VIEW')}")
-    public Credit initCredit() {
+    @Factory(value = "clientOrder", scope = ScopeType.STATELESS)
+    //@Restrict("#{s:hasPermission('CREDIT','VIEW')}")
+    public ClientOrder initClientOrder() {
         return getInstance();
     }
 }

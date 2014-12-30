@@ -1,11 +1,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml"
-     xmlns:ui="http://java.sun.com/jsf/facelets"
      xmlns:h="http://java.sun.com/jsf/html"
-     xmlns:f="http://java.sun.com/jsf/core"
      xmlns:rich="http://richfaces.org/rich"
-     xmlns:c="http://java.sun.com/jstl/core"
-     xmlns:app="http://encens.com/products/khipus/facelets"
-     xmlns:s="http://jboss.com/products/seam/taglib" xmlns:a4j="http://richfaces.org/a4j">
+     xmlns:s="http://jboss.com/products/seam/taglib">
 <h:form id="mainMenuForm" style="margin:0;padding:0">
 <div id="menu">
 <rich:toolBar id="mainToolBar" styleClass="mail-toolbar" contentClass="mail-toolbar-content">
@@ -38,7 +34,7 @@
             s:hasPermission('CUSTOMERCATEGORY','VIEW') or
             s:hasPermission('PRINTINVOICE','VIEW') or
             s:hasPermission('PARTNERCLUBCATEGORY','VIEW')}">
-    <h:panelGrid columns="3" cellpadding="0" cellspacing="0" border="0"
+    <h:panelGrid columns="4" cellpadding="0" cellspacing="0" border="0"
                  columnClasses="tab-separator,tab-separator,tab-end-separator">
 
         <rich:dropDownMenu value="#{messages['menu.customers.order']}"
@@ -84,6 +80,12 @@
                         value="#{messages['menu.customers.sales.cashBoxTransaction']}"/>
             </rich:menuItem>
         </rich:dropDownMenu>
+
+        <s:link view="/customers/cashSale.xhtml"
+                value="#{messages['menu.customers.sales.cashSales']}"
+                styleClass="tab-cell"
+                propagation="none"/>
+
         <rich:dropDownMenu value="#{messages['menu.customers.configuration']}" rendered="#{
                 s:hasPermission('BANKENTITY','VIEW') or
                 s:hasPermission('CREDIT','VIEW') or

@@ -1,17 +1,11 @@
 package com.encens.khipus.model.customers;
 
 import com.encens.khipus.model.BaseModel;
-import com.encens.khipus.model.CompanyListener;
-import com.encens.khipus.model.contacts.Address;
-import com.encens.khipus.model.contacts.Zone;
-import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,6 +64,15 @@ public class ClientOrder implements BaseModel {
     @OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID", nullable = false, updatable = false, insertable = false)
+    private ClientPerson clientPerson;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID", nullable = false, updatable = false, insertable = false)
+    private ClientInstitution clientInstitution;
 
     public Long getId() {
         return id;
@@ -157,5 +160,27 @@ public class ClientOrder implements BaseModel {
 
     public void setCustomerOrders(List<CustomerOrder> customerOrders) {
         this.customerOrders = customerOrders;
+    }
+
+    public ClientPerson getClientPerson() {
+        return clientPerson;
+    }
+
+    public void setClientPerson(ClientPerson clientPerson) {
+        this.clientPerson = clientPerson;
+    }
+
+    public ClientInstitution getClientInstitution() {
+        return clientInstitution;
+    }
+
+    public void setClientInstitution(ClientInstitution clientInstitution) {
+        this.clientInstitution = clientInstitution;
+    }
+
+    public String getFullName() {
+        //return (lastName != null ? lastName + " " : "") + (maidenName != null ? maidenName + " " : "") + (firstName != null ? firstName : "");
+        return (type.equals("P") ? clientPerson.getName() + " " + clientPerson.getLastName() + " " + clientPerson.getMaidenName()
+                                 : clientInstitution.getName() );
     }
 }
