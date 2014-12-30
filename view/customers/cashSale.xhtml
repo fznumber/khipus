@@ -57,6 +57,27 @@
         </a4j:commandLink>
     </s:decorate>
 
+    <s:decorate id="clientOrderField" template="/include/inputField.xhtml" styleClass="formRow">
+        <ui:define name="label">#{messages['Invoice.customer']}</ui:define>
+        <h:inputText styleClass="input" readonly="true"
+                     value="#{clientOrderDataModel.clientOrder.numberDoc}"
+                     tabindex="3"/>
+        <a4j:commandLink id="selectClientOrder" ajaxSingle="true" immediate="true"
+                         tabindex="4"
+                         title="#{messages['Invoice.customer']}"
+                         reRender="clientOrderField"
+                         onclick="Richfaces.showModalPanel('clientOrderListModalPanel');">
+            <h:graphicImage value="/img/search.jpg" styleClass="select-image-middle"/>
+        </a4j:commandLink>
+        <a4j:commandLink id="clearClientOrder" ajaxSingle="true" immediate="true"
+                         tabindex="5"
+                         title="#{messages['Common.clear']}"
+                         action="#{clientOrderDataModel.clearClientOrder()}"
+                         reRender="clientOrderField">
+            <h:graphicImage value="/img/clear.jpg" styleClass="select-image-middle"/>
+        </a4j:commandLink>
+    </s:decorate>
+
 </s:div>
 
 <s:div id="contraAccountDiv">
@@ -346,17 +367,17 @@
     </ui:define>
 </s:decorate>
 
-<s:decorate id="generalEmployeeListModalPanelContainer" template="/employees/generalEmployeeListModalPanel.xhtml">
-    <ui:param name="dialogId" value="generalEmployeeListModalPanel"/>
-    <ui:param name="dataModel" value="#{generalEmployeeDataModel}"/>
+<s:decorate id="clientOrderListModalPanelContainer" template="/customers/clientOrderListModalPanel.xhtml">
+    <ui:param name="dialogId" value="clientOrderListModalPanel"/>
+    <ui:param name="dataModel" value="#{clientOrderDataModel}"/>
     <ui:define name="assignButton">
         <a4j:commandButton id="assignButton" title="#{messages['Common.choose']}"
-                           action="#{jobContractDataModel.setEmployee(employeeItem)}"
+                           action="#{clientOrderDataModel.setClientOrder(clientOrderItem)}"
                            image="/img/active.gif"
                            styleClass="select-image-middle"
                            ajaxSingle="true"
-                           reRender="employeeField"
-                           oncomplete="Richfaces.hideModalPanel('generalEmployeeListModalPanel');"/>
+                           reRender="clientOrderField"
+                           oncomplete="Richfaces.hideModalPanel('clientOrderListModalPanel');"/>
     </ui:define>
 </s:decorate>
 
