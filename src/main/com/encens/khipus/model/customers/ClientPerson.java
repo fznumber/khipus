@@ -12,7 +12,6 @@ import javax.persistence.*;
 
 @NamedQueries(
         {
-
         }
 )
 
