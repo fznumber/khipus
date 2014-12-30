@@ -1,6 +1,8 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.customers.Movement;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
@@ -38,4 +40,21 @@ public class MovementServiceBean extends ExtendedGenericServiceBean implements M
         return movements;
     }
 
- }
+    @Override
+    public List<ArticleOrder> findArticleOrdersByCustomerOrder(CustomerOrder order) {
+        List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>();
+        try{
+
+            articleOrders = (List<ArticleOrder>) getEntityManager().createQuery(" select articleOrder from ArticleOrder articleOrder " +
+                                                                                " where articleOrder.customerOrder = :idCustomerOrder ")
+                                                                    .setParameter("idCustomerOrder",order.getId())
+                                                                    .getResultList();
+
+        }catch(NoResultException e){
+            return articleOrders;
+
+        }
+        return  articleOrders;
+    }
+
+}

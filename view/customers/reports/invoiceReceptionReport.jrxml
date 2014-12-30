@@ -5,7 +5,7 @@
 	<property name="ireport.y" value="0"/>
 	<template><![CDATA[com.encens.khipus.util.FileCacheLoader.i.getPath("/include/reports/voucherReportStyles.jrtx")]]></template>
 	<parameter name="nitEmpresa" class="java.lang.String"/>
-	<parameter name="numFac" class="java.math.BigDecimal"/>
+	<parameter name="numFac" class="java.lang.Long"/>
 	<parameter name="numAutorizacion" class="java.math.BigDecimal"/>
 	<parameter name="nitCliente" class="java.lang.String"/>
 	<parameter name="fecha" class="java.util.Date"/>
@@ -16,9 +16,21 @@
 	<parameter name="totalLiteral" class="java.lang.String"/>
 	<parameter name="total" class="java.math.BigDecimal"/>
 	<parameter name="tipoEtiqueta" class="java.lang.String"/>
+	<field name="articleOrder.amount" class="java.lang.Integer">
+		<fieldDescription><![CDATA[COLUMN_1]]></fieldDescription>
+	</field>
+	<field name="articleOrder.productItem.name" class="java.lang.String">
+		<fieldDescription><![CDATA[COLUMN_2]]></fieldDescription>
+	</field>
+	<field name="articleOrder.price" class="java.lang.Double">
+		<fieldDescription><![CDATA[COLUMN_3]]></fieldDescription>
+	</field>
+	<field name="articleOrder.total" class="java.lang.Double">
+		<fieldDescription><![CDATA[COLUMN_4]]></fieldDescription>
+	</field>
 	<group name="productDeliveryGroup">
 		<groupHeader>
-			<band height="125">
+			<band height="37">
 				<frame>
 					<reportElement positionType="Float" x="-3" y="2" width="582" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
@@ -109,16 +121,44 @@
 						<textFieldExpression class="java.lang.String"><![CDATA[$P{nombreCliente}]]></textFieldExpression>
 					</textField>
 				</frame>
-				<subreport isUsingCache="true">
-					<reportElement positionType="Float" x="3" y="24" width="562" height="36"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<subreportParameter name="JPA_ENTITY_MANAGER">
-						<subreportParameterExpression><![CDATA[$P{JPA_ENTITY_MANAGER}]]></subreportParameterExpression>
-					</subreportParameter>
-					<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{INVOICEDETAILSUBREPORT}]]></subreportExpression>
-				</subreport>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="25" width="74" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["CANTIDAD"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="382" y="25" width="69" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["PRECIO UNIT."]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="451" y="25" width="100" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["SUBTOTAL"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="74" y="25" width="308" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["CONCEPTO"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="85">
 				<frame>
-					<reportElement positionType="Float" x="3" y="60" width="447" height="12"/>
+					<reportElement positionType="Float" x="0" y="0" width="447" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 						<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="50" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -145,7 +185,7 @@
 					</textField>
 				</frame>
 				<frame>
-					<reportElement positionType="Float" x="3" y="72" width="386" height="12"/>
+					<reportElement positionType="Float" x="0" y="12" width="386" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 						<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -172,7 +212,7 @@
 					</textField>
 				</frame>
 				<image scaleImage="RetainShape" onErrorType="Icon">
-					<reportElement key="COMPANY_LOGO_ELEMENT" x="493" y="60" width="72" height="58" isRemoveLineWhenBlank="true"/>
+					<reportElement key="COMPANY_LOGO_ELEMENT" x="452" y="0" width="130" height="85" isRemoveLineWhenBlank="true"/>
 					<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 						<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<topPen lineWidth="0.0"/>
@@ -183,9 +223,6 @@
 					<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/customers/reports/qr_inv.png")]]></imageExpression>
 				</image>
 			</band>
-		</groupHeader>
-		<groupFooter>
-			<band height="12"/>
 		</groupFooter>
 	</group>
 	<title>
@@ -220,11 +257,47 @@
 	<columnHeader>
 		<band/>
 	</columnHeader>
+	<detail>
+		<band height="13">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="74" y="0" width="308" height="12"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{articleOrder.productItem.name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="74" height="12"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{articleOrder.amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="382" y="0" width="70" height="12"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{articleOrder.price}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="451" y="0" width="100" height="12"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{articleOrder.total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
 	<columnFooter>
 		<band/>
 	</columnFooter>
 	<pageFooter>
-		<band height="13" splitType="Stretch">
+		<band height="24" splitType="Stretch">
 			<frame>
 				<reportElement style="detailStyle" positionType="Float" mode="Opaque" x="0" y="0" width="582" height="12"/>
 				<box padding="0">
@@ -235,12 +308,22 @@
 					<box padding="1">
 						<pen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<textElement textAlignment="Left">
-						<font size="9"/>
+					<textElement textAlignment="Center">
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA["ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS.EL USO ILÍCITO DE ÉSTA SERÁ SANCIONADO DE ACUERDO A LEY"]]></textFieldExpression>
 				</textField>
 			</frame>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="10" y="10" width="582" height="12"/>
+				<box padding="1">
+					<pen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Ley Nº453: El proveedor debe brindar atención sin discrimanción, con respeto, calidez y coordialidad a los usuarios y consumidores"]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>

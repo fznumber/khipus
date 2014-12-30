@@ -1,6 +1,8 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.customers.Movement;
 
 import javax.ejb.Local;
@@ -17,4 +19,6 @@ import java.util.List;
 @Local
 public interface MovementService extends GenericService {
     List<Movement> findMovementByDate(Date date);
+
+    List<ArticleOrder> findArticleOrdersByCustomerOrder(CustomerOrder order);
 }

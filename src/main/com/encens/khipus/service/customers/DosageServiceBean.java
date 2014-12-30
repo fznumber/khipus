@@ -27,10 +27,11 @@ import java.util.Map;
 @AutoCreate
 public class DosageServiceBean extends GenericServiceBean implements DosageSevice {
 
-    @In("#{entityManager}")
-    private EntityManager em;
-
     @In
     protected Map<String, String> messages;
 
+    @Override
+    public void find() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
