@@ -171,7 +171,7 @@
 						<textElement textAlignment="Right"/>
 						<textFieldExpression class="java.lang.String"><![CDATA["Código de Control:"]]></textFieldExpression>
 					</textField>
-					<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 						<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="123" y="0" width="263" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 							<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,7 +181,7 @@
 							<rightPen lineWidth="0.0"/>
 						</box>
 						<textElement textAlignment="Left"/>
-						<textFieldExpression class="java.util.Date"><![CDATA[$P{codigoControl}]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA[$P{codigoControl}]]></textFieldExpression>
 					</textField>
 				</frame>
 				<image scaleImage="RetainShape" onErrorType="Icon">
@@ -272,7 +272,7 @@
 	<title>
 		<band height="102">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="" style="titleStyle" positionType="Float" x="162" y="72" width="140" height="30"/>
+				<reportElement key="" style="titleStyle" positionType="Float" x="189" y="72" width="140" height="30"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -286,7 +286,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["FACTURA"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="186" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -298,7 +298,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["COOPERATIVA INTEGRAL DE SERVICIOS"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="18" width="123" height="12"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="18" width="184" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -310,7 +310,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["COCHABAMBA LTDA."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="30" width="123" height="18"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="30" width="184" height="18"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -324,7 +324,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Av. Costanera s/n Zona Central"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="48" width="123" height="12"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="48" width="184" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -336,7 +336,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Telfs. 4577009-4577003 Punata"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="60" width="123" height="12"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="60" width="184" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -348,7 +348,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["SUCURSAL 2"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="72" width="123" height="12"/>
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="72" width="184" height="12"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -429,7 +429,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Left"/>
-				<textFieldExpression class="java.lang.Long"><![CDATA[]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Long"><![CDATA[$P{numFac}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="415" y="42" width="115" height="12"/>
@@ -443,9 +443,6 @@
 				<textElement textAlignment="Left"/>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{numAutorizacion}]]></textFieldExpression>
 			</textField>
-			<rectangle radius="10">
-				<reportElement x="302" y="0" width="228" height="72"/>
-			</rectangle>
 		</band>
 	</title>
 	<pageHeader>

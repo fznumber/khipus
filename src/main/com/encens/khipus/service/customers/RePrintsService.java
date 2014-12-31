@@ -16,4 +16,8 @@ import javax.ejb.Local;
 @Local
 public interface RePrintsService extends GenericService {
     RePrints findReprintByCustomerOrder(CustomerOrder order);
+
+    String findNameClient(CustomerOrder order);
+
+    /*String findNitClient(CustomerOrder order);*/
 }

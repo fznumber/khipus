@@ -34,7 +34,7 @@
                 <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['Order.report.dateInvoice']}</ui:define>
                     <rich:calendar id="dateDelivery"
-                                   value="#{printInvoiceReportAction.printInvoiceDataModel.criteria.dateDelicery}"
+                                   value="#{printInvoiceReportAction.printInvoiceDataModel.date}"
                                    datePattern="#{messages['patterns.date']}"
                                    enableManualInput="true"
                                    required="true"

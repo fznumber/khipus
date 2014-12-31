@@ -11,6 +11,7 @@ import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,8 +22,9 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
 public class PrintInvoiceDataModel extends QueryDataModel<Long, CustomerOrder> {
+    private Date date;
     private static final String[] RESTRICTIONS = {
-            "customerOrder.dateDelicery = #{printInvoiceDataModel.criteria.dateDelicery}"
+            "customerOrder.dateDelicery = #{printInvoiceDataModel.date}"
 
     };
 
@@ -40,5 +42,16 @@ public class PrintInvoiceDataModel extends QueryDataModel<Long, CustomerOrder> {
     @Override
     public List<String> getRestrictions() {
         return Arrays.asList(RESTRICTIONS);
+    }
+
+    public Date getDate() {
+        if(date == null)
+            date = new Date();
+
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
