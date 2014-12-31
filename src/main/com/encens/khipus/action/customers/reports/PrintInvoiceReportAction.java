@@ -93,7 +93,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         else
             etiqueta = "ORIGINAL";
 
-        ControlCode controlCode = generateCodControl(customerOrder,numberAuthorization,key);
+        ControlCode controlCode = generateCodControl(customerOrder,dosage.getNumberCurrent().intValue(),numberAuthorization,key);
 
         params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
         super.generateReport("productDeliveryReceiptReport",
@@ -131,14 +131,14 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         }else{
             etiqueta = "COPIA";
         }
-            long numberInvoice;
+            Integer numberInvoice;
         typedReportData =   addVoucherMovementDetailSubReport(params,customerOrders.get(0));
         typedReportData.getJasperPrint().getPages().clear();
 
         for(CustomerOrder order:customerOrders){
-                numberInvoice = dosage.getNumberCurrent().longValue();
+                numberInvoice = dosage.getNumberCurrent().intValue();
                 //customerOrder = order;
-                ControlCode controlCode = generateCodControl(order,numberAuthorization,key);
+                ControlCode controlCode = generateCodControl(order,numberInvoice,numberAuthorization,key);
 
                params.putAll(getReportParams(numberInvoice,etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
                TypedReportData reportData =   addVoucherMovementDetailSubReport(params,order);
@@ -148,7 +148,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
 
                 if(!imprimirCopia)
                 {
-                    createArticleOrders( order,numberInvoice,controlCode.getCodigoControl());
+                    createArticleOrders( order,(long)numberInvoice,controlCode.getCodigoControl());
                     createReImprint(customerOrder,dosage,numberInvoice,currentUser);
                 }
                 else
@@ -294,11 +294,11 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         return paramMap;
     }
 
-    private ControlCode generateCodControl(CustomerOrder order,BigDecimal numberAutorization,String key)
+    private ControlCode generateCodControl(CustomerOrder order,Integer numberInvoice,BigDecimal numberAutorization,String key)
     {
         Double importeBaseCreditFisical = order.getTotal().doubleValue() * 0.13;
         ControlCode controlCode = new ControlCode("123456789012"
-                                                   ,numberAutorization.intValue()
+                                                   ,numberInvoice
                                                    ,numberAutorization.toString()
                                                    ,order.getDateDelicery()
                                                    ,order.getTotal().doubleValue()
@@ -306,6 +306,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
                                                    ,order.getClientOrder().getNumberDoc()
                                                  );
           moneyUtil.getLlaveQR(controlCode,key);
+        controlCode.generarCodigoQR();
         return controlCode;
     }
 
@@ -340,7 +341,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
                 PageFormat.LETTER,
                 PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), orderBy),
-                "DEFAULT",
+                "FACTURAS",
                 params);
 
         //add in main report params

@@ -139,7 +139,7 @@ public class ControlCode {
         this.descuentosBonificaciones = descuentosBonificaciones;
     }
 
-    public String getCodigoQR()
+    public void generarCodigoQR()
     {
         this.keyQR =  nitEmpresa +"|"+
                 numberInvoice +"|"+
@@ -153,7 +153,6 @@ public class ControlCode {
                 importeVentasGrabadas +"|"+
                 importeSujetoCreditoFisical +"|"+
                 descuentosBonificaciones +"|";
-        return this.keyQR;
     }
 
     public String getNitEmpresa() {

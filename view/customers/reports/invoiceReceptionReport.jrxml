@@ -156,11 +156,11 @@
 			</band>
 		</groupHeader>
 		<groupFooter>
-			<band height="85">
+			<band height="122">
 				<frame>
-					<reportElement positionType="Float" x="0" y="0" width="447" height="12"/>
+					<reportElement positionType="Float" x="0" y="12" width="386" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="50" height="12"/>
+						<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 							<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							<topPen lineWidth="0.0"/>
@@ -169,10 +169,10 @@
 							<rightPen lineWidth="0.0"/>
 						</box>
 						<textElement textAlignment="Right"/>
-						<textFieldExpression class="java.lang.String"><![CDATA["Son:"]]></textFieldExpression>
+						<textFieldExpression class="java.lang.String"><![CDATA["Código de Control:"]]></textFieldExpression>
 					</textField>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-						<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="50" y="0" width="397" height="12"/>
+					<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+						<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="123" y="0" width="263" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 							<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							<topPen lineWidth="0.0"/>
@@ -181,11 +181,46 @@
 							<rightPen lineWidth="0.0"/>
 						</box>
 						<textElement textAlignment="Left"/>
-						<textFieldExpression class="java.lang.String"><![CDATA[$P{totalLiteral}]]></textFieldExpression>
+						<textFieldExpression class="java.util.Date"><![CDATA[$P{codigoControl}]]></textFieldExpression>
 					</textField>
 				</frame>
+				<image scaleImage="RetainShape" onErrorType="Icon">
+					<reportElement key="COMPANY_LOGO_ELEMENT" x="449" y="12" width="130" height="85" isRemoveLineWhenBlank="true"/>
+					<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/customers/reports/qr_inv.png")]]></imageExpression>
+				</image>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="382" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["SON: "+$P{totalLiteral}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="382" y="0" width="69" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.lang.String"><![CDATA["TOTAL Bs."]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement style="headerStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="451" y="0" width="100" height="12"/>
+					<box padding="1">
+						<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{total}]]></textFieldExpression>
+				</textField>
 				<frame>
-					<reportElement positionType="Float" x="0" y="12" width="386" height="12"/>
+					<reportElement positionType="Float" x="0" y="24" width="386" height="12"/>
 					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 						<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
 						<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
@@ -211,24 +246,33 @@
 						<textFieldExpression class="java.util.Date"><![CDATA[$P{fechaLimite}]]></textFieldExpression>
 					</textField>
 				</frame>
-				<image scaleImage="RetainShape" onErrorType="Icon">
-					<reportElement key="COMPANY_LOGO_ELEMENT" x="452" y="0" width="130" height="85" isRemoveLineWhenBlank="true"/>
-					<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-						<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-						<topPen lineWidth="0.0"/>
-						<leftPen lineWidth="0.0"/>
-						<bottomPen lineWidth="0.0"/>
-						<rightPen lineWidth="0.0"/>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="97" width="582" height="12"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression class="java.io.InputStream"><![CDATA[com.encens.khipus.util.JSFUtil.getServletContext().getResourceAsStream("/customers/reports/qr_inv.png")]]></imageExpression>
-				</image>
+					<textElement textAlignment="Center">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS.EL USO ILÍCITO DE ÉSTA SERÁ SANCIONADO DE ACUERDO A LEY"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="109" width="582" height="12"/>
+					<box padding="1">
+						<pen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="6"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Ley Nº453: El proveedor debe brindar atención sin discrimanción, con respeto, calidez y coordialidad a los usuarios y consumidores"]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupFooter>
 	</group>
 	<title>
-		<band height="78">
+		<band height="102">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="" style="titleStyle" positionType="Float" x="162" y="48" width="140" height="30"/>
+				<reportElement key="" style="titleStyle" positionType="Float" x="162" y="72" width="140" height="30"/>
 				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<topPen lineWidth="0.0"/>
@@ -241,14 +285,167 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["FACTURA"]]></textFieldExpression>
 			</textField>
-			<frame>
-				<reportElement x="415" y="10" width="100" height="20"/>
-				<textField>
-					<reportElement x="0" y="0" width="100" height="20"/>
-					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA["Prueba"]]></textFieldExpression>
-				</textField>
-			</frame>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["COOPERATIVA INTEGRAL DE SERVICIOS"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="18" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["COCHABAMBA LTDA."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="30" width="123" height="18"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Av. Costanera s/n Zona Central"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="48" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Telfs. 4577009-4577003 Punata"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="60" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["SUCURSAL 2"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="72" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Av. Libertadores 454 Zona:Mirabel"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="2" y="84" width="123" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["PUNATA - COCHABAMBA - BOLIVIA"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="329" y="12" width="86" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["NIT:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="329" y="30" width="86" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Nº FACTURA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="headerStyleBlank" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="329" y="42" width="86" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Nº AUTORIZACIÓN:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="415" y="12" width="115" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{nitEmpresa}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="415" y="30" width="115" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.lang.Long"><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="415" y="42" width="115" height="12"/>
+				<box padding="1" topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$P{numAutorizacion}]]></textFieldExpression>
+			</textField>
+			<rectangle radius="10">
+				<reportElement x="302" y="0" width="228" height="72"/>
+			</rectangle>
 		</band>
 	</title>
 	<pageHeader>
@@ -258,7 +455,7 @@
 		<band/>
 	</columnHeader>
 	<detail>
-		<band height="13">
+		<band height="12">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement style="detailStyle" positionType="Float" stretchType="RelativeToTallestObject" mode="Opaque" x="74" y="0" width="308" height="12"/>
 				<box padding="1">
@@ -297,33 +494,6 @@
 		<band/>
 	</columnFooter>
 	<pageFooter>
-		<band height="24" splitType="Stretch">
-			<frame>
-				<reportElement style="detailStyle" positionType="Float" mode="Opaque" x="0" y="0" width="582" height="12"/>
-				<box padding="0">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-					<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="582" height="12"/>
-					<box padding="1">
-						<pen lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center">
-						<font size="7"/>
-					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA["ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS.EL USO ILÍCITO DE ÉSTA SERÁ SANCIONADO DE ACUERDO A LEY"]]></textFieldExpression>
-				</textField>
-			</frame>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement style="detailStyle" stretchType="RelativeToTallestObject" mode="Opaque" x="10" y="10" width="582" height="12"/>
-				<box padding="1">
-					<pen lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center">
-					<font size="6"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Ley Nº453: El proveedor debe brindar atención sin discrimanción, con respeto, calidez y coordialidad a los usuarios y consumidores"]]></textFieldExpression>
-			</textField>
-		</band>
+		<band height="24" splitType="Stretch"/>
 	</pageFooter>
 </jasperReport>
