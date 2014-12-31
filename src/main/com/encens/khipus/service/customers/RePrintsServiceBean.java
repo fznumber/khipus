@@ -38,13 +38,19 @@ public class RePrintsServiceBean extends ExtendedGenericServiceBean implements R
     @Override
     public String findNameClient(CustomerOrder order) {
         String name ;
-
-            name = (String)getEntityManager().createNativeQuery(" select razon_soc from INSTITUCIONES where pi_id = :idOrden")
-                    .setParameter("idOrder",order.getClientOrder().getId())
+        String sql;
+        if(order.getClientOrder().getType().compareTo("P") == 0)
+            sql = "select nom from PERSONAS where pi_id = :id";
+        else
+            sql = " select razon_soc from INSTITUCIONES where pi_id = :id";
+        try{
+            name = (String)getEntityManager().createNativeQuery(sql)
+                    .setParameter("id",order.getClientOrder().getId())
                     .getSingleResult();
-            name += (String)getEntityManager().createNativeQuery(" select nom from PERSONAS where pi_id :idOrden")
-                    .setParameter("idOrder",order.getClientOrder().getId())
-                    .getSingleResult();
+        }catch (NoResultException e)
+        {
+            return "s/n";
+        }
         return name;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

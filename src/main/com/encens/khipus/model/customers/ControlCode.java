@@ -1,6 +1,7 @@
 package com.encens.khipus.model.customers;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -141,18 +142,21 @@ public class ControlCode {
 
     public void generarCodigoQR()
     {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+        String date = sdf.format(fechaEmision);
+        DecimalFormat format = new DecimalFormat("#.00");
         this.keyQR =  nitEmpresa +"|"+
                 numberInvoice +"|"+
                 numeroAutorizacion +"|"+
-                fechaEmision +"|"+
-                total +"|"+
-                importeBaseCreditFisical +"|"+
+                date +"|"+
+                format.format(total) +"|"+
+                format.format(importeBaseCreditFisical) +"|"+
                 codigoControl +"|"+
                 nitCliente +"|"+
                 importeICE +"|"+
                 importeVentasGrabadas +"|"+
                 importeSujetoCreditoFisical +"|"+
-                descuentosBonificaciones +"|";
+                descuentosBonificaciones;
     }
 
     public String getNitEmpresa() {
