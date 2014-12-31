@@ -34,4 +34,37 @@ public class RePrintsServiceBean extends ExtendedGenericServiceBean implements R
             }
         return rePrints;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public String findNameClient(CustomerOrder order) {
+        String name ;
+        String sql;
+        if(order.getClientOrder().getType().compareTo("P") == 0)
+            sql = "select nom||' '||ap||' '||am from user01_daf.PERSONAS where pi_id =:id";
+        else
+            sql = " select razon_soc from user01_daf.INSTITUCIONES where pi_id =:id";
+        try{
+            name = (String)getEntityManager().createNativeQuery(sql)
+                    .setParameter("id",order.getClientOrder().getId())
+                    .getSingleResult();
+        }catch (NoResultException e)
+        {
+            return "s/n";
+        }
+        return name;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+   /* @Override
+    public String findNitClient(CustomerOrder order) {
+        String name = "";
+        try{
+            name = (String)getEntityManager().createNativeQuery(" select razon_soc from INSTITUCIONES where pi_id = :idOrden")
+                    .setParameter("idOrder",order.getId())
+                    .getSingleResult();
+        }catch (NoResultException e)
+        {
+            return "";
+        }
+        return name;  //To change body of implemented methods use File | Settings | File Templates.
+    }*/
 }
