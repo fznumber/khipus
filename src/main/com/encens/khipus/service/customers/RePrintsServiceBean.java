@@ -40,9 +40,9 @@ public class RePrintsServiceBean extends ExtendedGenericServiceBean implements R
         String name ;
         String sql;
         if(order.getClientOrder().getType().compareTo("P") == 0)
-            sql = "select nom from PERSONAS where pi_id = :id";
+            sql = "select nom||' '||ap||' '||am from user01_daf.PERSONAS where pi_id =:id";
         else
-            sql = " select razon_soc from INSTITUCIONES where pi_id = :id";
+            sql = " select razon_soc from user01_daf.INSTITUCIONES where pi_id =:id";
         try{
             name = (String)getEntityManager().createNativeQuery(sql)
                     .setParameter("id",order.getClientOrder().getId())

@@ -171,6 +171,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        imprimirCopia = true;
 
     }
 

@@ -58,11 +58,12 @@
 
             <div class="buttons">
 
-                <h:commandLink action="#{printInvoiceReportAction.generateReport()}"
+                <a4j:commandLink action="#{printInvoiceReportAction.generateReport()}"
                                immediate="true"
+                               reRender="ProductDeliverySearch"
                                value="Generar Facturas"
                                rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
-                </h:commandLink>
+                </a4j:commandLink>
 
             </div>
 
