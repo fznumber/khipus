@@ -60,7 +60,7 @@
 
                 <a4j:commandLink action="#{printInvoiceReportAction.generateReport()}"
                                immediate="true"
-                               reRender="ProductDeliverySearch"
+                               reRender="invoiceTypeField"
                                value="Generar Facturas"
                                rendered="#{s:hasPermission('PRINTINVOICE','VIEW')}">
                 </a4j:commandLink>

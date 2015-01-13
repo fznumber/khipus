@@ -61,6 +61,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
     private Boolean imprimirCopia = false;
     private List<Movement> movements = new ArrayList<Movement>();
     private List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+    private List<RePrints> rePrintsNews = new ArrayList<RePrints>();
+    private List<Movement> movementsNews = new ArrayList<Movement>();
     private Date date;
 
     @Restrict("#{s:hasPermission('PRINTINVOICE','VIEW')}")
@@ -118,7 +120,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         BigDecimal numberAuthorization = dosage.getNumberAuthorization();
         String key = dosage.getKey();
         Map params = new HashMap();
-
+        rePrintsNews.clear();
+        movementsNews.clear();
 
         customerOrder = customerOrders.get(0);
         if(!imprimirCopia)
@@ -171,9 +174,24 @@ public class PrintInvoiceReportAction extends GenericReportAction {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        createNesmovements();
+        createNewReImprint();
         imprimirCopia = true;
 
     }
+
+    private void createNewReImprint()
+    {
+        for(RePrints rePrints:rePrintsNews)
+        {
+             try {
+                rePrintsService.create(rePrints);
+            } catch (EntryDuplicatedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+    }
+
 
     private  void createReImprint(CustomerOrder order, Dosage dosage, long numberInvoice, User currentUser) {
         RePrints rePrints = new RePrints();
@@ -188,11 +206,12 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         rePrints.setNit(order.getClientOrder().getNumberDoc());
         rePrints.setIdUsrEmission(currentUser.getId());
         rePrints.setIdUsrRePint(currentUser.getId());//verificar
-        try {
+        rePrintsNews.add(rePrints);
+       /* try {
             rePrintsService.create(rePrints);
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        }*/
     }
 
     private void updateReImprint(CustomerOrder order) {
@@ -245,11 +264,24 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         movement.setTotalInvoice(order.getTotal().doubleValue());
         //movement.setDescrOrder();verificar
         movement.setCustomerOrderMovement(order);
-        try {
+        movementsNews.add(movement);
+        /*try {
             movementService.create(movement);
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        }*/
+    }
+
+    private void createNesmovements()
+    {
+         for(Movement movement:movementsNews)
+         {
+              try {
+                movementService.create(movement);
+              } catch (EntryDuplicatedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+              }
+         }
     }
 
     @Override
@@ -336,7 +368,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/customers/reports/invoiceReceptionReport.jrxml",
-                PageFormat.LETTER,
+                PageFormat.CUSTOM,
                 PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), orderBy),
                 "FACTURAS",
