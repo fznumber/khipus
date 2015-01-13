@@ -72,25 +72,25 @@ public class SingleProduct implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<OrderMaterial> orderMaterials = new ArrayList<OrderMaterial>();
 
-    @Column(name = "COSTOTOTALMATERIALES", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALMATERIALES", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal totalMaterial = new BigDecimal(0.0);
 
-    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal totalInput = new BigDecimal(0.0);
 
-    @Column(name = "COSTOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal costLabor = new BigDecimal(0.0);
 
-    @Column(name = "COSTOTOTALINDIRECTO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALINDIRECTO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal totalIndirecCost = new BigDecimal(0.0);
 
-    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal unitCost = new BigDecimal(0.0);
 
-    @Column(name = "PORCENTAJEGRASA", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "PORCENTAJEGRASA", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal greasePorentage = new BigDecimal(0.0);
 
-    @Column(name = "COSTOTOTALPRODUCCION", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTALPRODUCCION", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal totalCostProduction = new BigDecimal(0.0);
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "singleProduct", cascade = CascadeType.ALL)
