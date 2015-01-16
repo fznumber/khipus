@@ -10,18 +10,16 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.customers.*;
-import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.reports.GenerationReportData;
-import com.encens.khipus.service.customers.DosageSevice;
 import com.encens.khipus.service.customers.MovementService;
 import com.encens.khipus.service.customers.RePrintsService;
 import com.encens.khipus.service.warehouse.WarehouseService;
 import com.encens.khipus.util.FileCacheLoader;
 import com.encens.khipus.util.MessageUtils;
+import com.encens.khipus.util.MoneyUtil;
 import com.encens.khipus.util.barcode.BarcodeRenderer;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
 import net.sf.jasperreports.engine.JRPrintPage;
-import org.apache.taglibs.standard.extra.spath.RelativePath;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.annotations.security.Restrict;
@@ -29,8 +27,6 @@ import org.jboss.seam.annotations.security.Restrict;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-
-import com.encens.khipus.util.MoneyUtil;
 
 /**
  * Encens S.R.L.
@@ -65,6 +61,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
     private Boolean imprimirCopia = false;
     private List<Movement> movements = new ArrayList<Movement>();
     private List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+    private List<RePrints> rePrintsNews = new ArrayList<RePrints>();
+    private List<Movement> movementsNews = new ArrayList<Movement>();
     private Date date;
 
     @Restrict("#{s:hasPermission('PRINTINVOICE','VIEW')}")
@@ -94,8 +92,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
             etiqueta = "ORIGINAL";
 
         ControlCode controlCode = generateCodControl(customerOrder,dosage.getNumberCurrent().intValue(),numberAuthorization,key);
-
-        params.putAll(getReportParams(dosage.getNumberCurrent().intValue(),etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
+        String nameClient = rePrintsService.findNameClient(order);
+        params.putAll(getReportParams(nameClient,dosage.getNumberCurrent().intValue(),etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
         super.generateReport("productDeliveryReceiptReport",
                             "/customers/reports/invoiceReceptionReport.jrxml",
                             PageFormat.LEGAL,
@@ -122,7 +120,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         BigDecimal numberAuthorization = dosage.getNumberAuthorization();
         String key = dosage.getKey();
         Map params = new HashMap();
-
+        rePrintsNews.clear();
+        movementsNews.clear();
 
         customerOrder = customerOrders.get(0);
         if(!imprimirCopia)
@@ -139,8 +138,9 @@ public class PrintInvoiceReportAction extends GenericReportAction {
                 numberInvoice = dosage.getNumberCurrent().intValue();
                 //customerOrder = order;
                 ControlCode controlCode = generateCodControl(order,numberInvoice,numberAuthorization,key);
+               String nameClient = rePrintsService.findNameClient(order);
 
-               params.putAll(getReportParams(numberInvoice,etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
+               params.putAll(getReportParams(nameClient,numberInvoice,etiqueta,controlCode.getCodigoControl(),controlCode.getKeyQR()));
                TypedReportData reportData =   addVoucherMovementDetailSubReport(params,order);
 
                     for(JRPrintPage page:(List<JRPrintPage>)reportData.getJasperPrint().getPages())
@@ -174,8 +174,24 @@ public class PrintInvoiceReportAction extends GenericReportAction {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        createNesmovements();
+        createNewReImprint();
+        imprimirCopia = true;
 
     }
+
+    private void createNewReImprint()
+    {
+        for(RePrints rePrints:rePrintsNews)
+        {
+             try {
+                rePrintsService.create(rePrints);
+            } catch (EntryDuplicatedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+    }
+
 
     private  void createReImprint(CustomerOrder order, Dosage dosage, long numberInvoice, User currentUser) {
         RePrints rePrints = new RePrints();
@@ -190,11 +206,12 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         rePrints.setNit(order.getClientOrder().getNumberDoc());
         rePrints.setIdUsrEmission(currentUser.getId());
         rePrints.setIdUsrRePint(currentUser.getId());//verificar
-        try {
+        rePrintsNews.add(rePrints);
+       /* try {
             rePrintsService.create(rePrints);
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        }*/
     }
 
     private void updateReImprint(CustomerOrder order) {
@@ -247,11 +264,24 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         movement.setTotalInvoice(order.getTotal().doubleValue());
         //movement.setDescrOrder();verificar
         movement.setCustomerOrderMovement(order);
-        try {
+        movementsNews.add(movement);
+        /*try {
             movementService.create(movement);
         } catch (EntryDuplicatedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        }*/
+    }
+
+    private void createNesmovements()
+    {
+         for(Movement movement:movementsNews)
+         {
+              try {
+                movementService.create(movement);
+              } catch (EntryDuplicatedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+              }
+         }
     }
 
     @Override
@@ -271,7 +301,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
      *
      * @return Map
      */
-    private Map<String, Object> getReportParams(long numfac,String etiqueta,String codControl, String keyQR) {
+    private Map<String, Object> getReportParams(String nameClient,long numfac,String etiqueta,String codControl, String keyQR) {
 
         String filePath = FileCacheLoader.i.getPath("/customers/reports/qr_inv.png");
 
@@ -281,7 +311,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         paramMap.put("numAutorizacion",dosage.getNumberAuthorization());
         paramMap.put("nitCliente",customerOrder.getClientOrder().getNumberDoc());
         paramMap.put("fecha",customerOrder.getDateDelicery());
-        paramMap.put("nombreCliente",customerOrder.getClientOrder().getHst());//verificar el nombre del cliente
+        paramMap.put("nombreCliente",nameClient);//verificar el nombre del cliente
         paramMap.put("fechaLimite",dosage.getDateExpiration());
         paramMap.put("codigoControl",codControl);
         paramMap.put("tipoEtiqueta",etiqueta);
@@ -338,7 +368,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         return super.getReport(
                 subReportKey,
                 "/customers/reports/invoiceReceptionReport.jrxml",
-                PageFormat.LETTER,
+                PageFormat.CUSTOM,
                 PageOrientation.PORTRAIT,
                 createQueryForSubreport(subReportKey, ejbql, Arrays.asList(restrictions), orderBy),
                 "FACTURAS",
@@ -363,7 +393,8 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         else
             imprimirCopia = false;
 
-        customerOrders = printInvoiceDataModel.getList(0,printInvoiceDataModel.getCount().intValue());
+        //customerOrders = printInvoiceDataModel.getList(0,printInvoiceDataModel.getCount().intValue());
+        customerOrders = printInvoiceDataModel.getList(0,printInvoiceDataModel.getNumberOfRows());
 
     }
 

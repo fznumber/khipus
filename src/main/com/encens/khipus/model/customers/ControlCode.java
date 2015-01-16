@@ -1,6 +1,7 @@
 package com.encens.khipus.model.customers;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,10 +22,10 @@ public class ControlCode {
     private Double importeBaseCreditFisical;
     private String codigoControl;
     private String nitCliente;
-    private Integer importeICE;
-    private Integer importeVentasGrabadas;
-    private Integer importeSujetoCreditoFisical;
-    private Integer descuentosBonificaciones;
+    private String importeICE;
+    private String importeVentasGrabadas;
+    private String importeSujetoCreditoFisical;
+    private String descuentosBonificaciones;
     private String keyQR;
 
     public ControlCode(String nitEmpresa,
@@ -48,10 +49,10 @@ public class ControlCode {
         this.importeBaseCreditFisical = importeBaseCreditFisical;
         this.codigoControl = codigoControl;
         this.nitCliente = nitCliente;
-        this.importeICE = 0;
-        this.importeVentasGrabadas = 0;
-        this.importeSujetoCreditoFisical = 0;
-        this.descuentosBonificaciones = 0;
+        this.importeICE = "0.00";
+        this.importeVentasGrabadas = "0.00";
+        this.importeSujetoCreditoFisical = "0.00";
+        this.descuentosBonificaciones = "0.00";
     }
 
     public ControlCode(String nitEmpresa,
@@ -73,10 +74,10 @@ public class ControlCode {
         this.total = total;
         this.importeBaseCreditFisical = importeBaseCreditFisical;
         this.nitCliente = nitCliente;
-        this.importeICE = 0;
-        this.importeVentasGrabadas = 0;
-        this.importeSujetoCreditoFisical = 0;
-        this.descuentosBonificaciones = 0;
+        this.importeICE = "0.00";
+        this.importeVentasGrabadas = "0.00";
+        this.importeSujetoCreditoFisical = "0.00";
+        this.descuentosBonificaciones = "0.00";
     }
 
     public ControlCode(String nitEmpresa,
@@ -87,10 +88,10 @@ public class ControlCode {
                        Double importeBaseCreditFisical,
                        String codigoControl,
                        String nitCliente,
-                       Integer importeICE,
-                       Integer importeVentasGrabadas,
-                       Integer importeSujetoCreditoFisical,
-                       Integer descuentosBonificaciones) {
+                       String importeICE,
+                       String importeVentasGrabadas,
+                       String importeSujetoCreditoFisical,
+                       String descuentosBonificaciones) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         try {
             this.fechaEmision = dateFormat.parse(dateFormat.format(fechaEmision));
@@ -117,10 +118,10 @@ public class ControlCode {
                        Double total,
                        Double importeBaseCreditFisical,
                        String nitCliente,
-                       Integer importeICE,
-                       Integer importeVentasGrabadas,
-                       Integer importeSujetoCreditoFisical,
-                       Integer descuentosBonificaciones) {
+                       String importeICE,
+                       String importeVentasGrabadas,
+                       String importeSujetoCreditoFisical,
+                       String descuentosBonificaciones) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         try {
             this.fechaEmision = dateFormat.parse(dateFormat.format(fechaEmision));
@@ -141,18 +142,21 @@ public class ControlCode {
 
     public void generarCodigoQR()
     {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+        String date = sdf.format(fechaEmision);
+        DecimalFormat format = new DecimalFormat("#.00");
         this.keyQR =  nitEmpresa +"|"+
                 numberInvoice +"|"+
                 numeroAutorizacion +"|"+
-                fechaEmision +"|"+
-                total +"|"+
-                importeBaseCreditFisical +"|"+
+                date +"|"+
+                format.format(total) +"|"+
+                format.format(importeBaseCreditFisical) +"|"+
                 codigoControl +"|"+
                 nitCliente +"|"+
                 importeICE +"|"+
                 importeVentasGrabadas +"|"+
                 importeSujetoCreditoFisical +"|"+
-                descuentosBonificaciones +"|";
+                descuentosBonificaciones;
     }
 
     public String getNitEmpresa() {
@@ -219,35 +223,35 @@ public class ControlCode {
         this.nitCliente = nitCliente;
     }
 
-    public Integer getImporteICE() {
+    public String getImporteICE() {
         return importeICE;
     }
 
-    public void setImporteICE(Integer importeICE) {
+    public void setImporteICE(String importeICE) {
         this.importeICE = importeICE;
     }
 
-    public Integer getImporteVentasGrabadas() {
+    public String getImporteVentasGrabadas() {
         return importeVentasGrabadas;
     }
 
-    public void setImporteVentasGrabadas(Integer importeVentasGrabadas) {
+    public void setImporteVentasGrabadas(String importeVentasGrabadas) {
         this.importeVentasGrabadas = importeVentasGrabadas;
     }
 
-    public Integer getImporteSujetoCreditoFisical() {
+    public String getImporteSujetoCreditoFisical() {
         return importeSujetoCreditoFisical;
     }
 
-    public void setImporteSujetoCreditoFisical(Integer importeSujetoCreditoFisical) {
+    public void setImporteSujetoCreditoFisical(String importeSujetoCreditoFisical) {
         this.importeSujetoCreditoFisical = importeSujetoCreditoFisical;
     }
 
-    public Integer getDescuentosBonificaciones() {
+    public String getDescuentosBonificaciones() {
         return descuentosBonificaciones;
     }
 
-    public void setDescuentosBonificaciones(Integer descuentosBonificaciones) {
+    public void setDescuentosBonificaciones(String descuentosBonificaciones) {
         this.descuentosBonificaciones = descuentosBonificaciones;
     }
 

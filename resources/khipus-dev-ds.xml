@@ -8,8 +8,8 @@
         <jndi-name>khipusDatasource</jndi-name>
         <connection-url>jdbc:oracle:thin:@181.177.142.74:1521:orcl</connection-url>
         <driver-class>oracle.jdbc.OracleDriver</driver-class>
-        <user-name>eos</user-name>
-        <password>eos.pwd</password>
+        <user-name>sis</user-name>
+        <password>sis.pwd</password>
         <min-pool-size>5</min-pool-size>
         <max-pool-size>100</max-pool-size>
         <blocking-timeout-millis>5000</blocking-timeout-millis>
