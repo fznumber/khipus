@@ -102,8 +102,6 @@ public class CompanyConfigurationServiceBean extends GenericServiceBean implemen
 
     @Override
     public double findUnitPriceMilk() throws CompanyConfigurationNotFoundException {
-        System.out.println("findCompanyConfiguration() ---->: " + findCompanyConfiguration());
-        System.out.println("findCompanyConfiguration().getUnitPriceMilk()---->: " + findCompanyConfiguration().getUnitPriceMilk());
         double unitPrice = findCompanyConfiguration().getUnitPriceMilk();
         if(unitPrice == 0.0){
             throw new CompanyConfigurationNotFoundException("The default unit price milk for current company \"" + Constants.defaultCompanyNumber + "\" haven't been configured");

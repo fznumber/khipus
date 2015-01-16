@@ -72,7 +72,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
 
     @Factory(value = "rawMaterialPayRoll", scope = ScopeType.STATELESS)
     public RawMaterialPayRoll initRawMaterialPayRoll() {
-        try {
+        /*try {
             getInstance().setUnitPrice(companyConfigurationService.findUnitPriceMilk());
         } catch (CompanyConfigurationNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -86,7 +86,10 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
             getInstance().setIue(companyConfigurationService.finIUE());
         } catch (CompanyConfigurationNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        }*/
+        getInstance().setIt(0.5);
+        getInstance().setIue(0.3);
+        getInstance().setUnitPrice(3.0);
         getInstance().setTaxRate(getInstance().getIt() + getInstance().getIue());
         return getInstance();
     }
@@ -220,7 +223,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 rawMaterialPayRollService.generatePayroll(rawMaterialPayRoll,discountProducer);
                 readonly = true;
             } else {
-                CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
+                /*CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
                 if(editPriceMilk)
                 {
                     companyConfiguration.setUnitPriceMilk(getInstance().getUnitPrice());
@@ -237,7 +240,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
                 if(editPriceMilk || editIUE || editIT)
                 {
                     companyConfigurationService.update(companyConfiguration);
-                }
+                }*/
 
                 return generateAll();
             }

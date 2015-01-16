@@ -21,6 +21,7 @@ public class ProductionOrderCodeGeneratorServiceBean implements ProductionOrderC
 
     @Override
     public int findLasCounter(String seed) {
+        seed = seed + "%";
         List<String> codes = entityManager.createNamedQuery("ProductionOrder.findBySubDateOnCode")
                                           .setParameter("seed", seed)
                                           .getResultList();
@@ -31,6 +32,8 @@ public class ProductionOrderCodeGeneratorServiceBean implements ProductionOrderC
                 greatest = code;
             }
         }
+        if(seed.length() == 0)
+            return 0;
 
         String integerPart = greatest.substring(seed.length());
         return Integer.parseInt(integerPart);
