@@ -5,7 +5,6 @@
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
                 xmlns:c="http://java.sun.com/jstl/core"
-                xmlns:app="http://encens.com/products/khipus/facelets"
                 xmlns:rich="http://richfaces.org/rich"
                 template="/layout/template.xhtml">
 
@@ -28,14 +27,17 @@
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.create}"
                                  value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
+                                 rendered="#{!rawMaterialCollectionSessionAction.managed
+                                 }"/>
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.update}"
                                  value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending
+                                 }"/>
                 <h:commandButton value="#{messages['Common.delete']}"
                                  styleClass="button"
-                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending
+                                 }">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>
@@ -186,14 +188,17 @@
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.create}"
                                  value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{!rawMaterialCollectionSessionAction.managed and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','CREATE')}"/>
+                                 rendered="#{!rawMaterialCollectionSessionAction.managed
+                                 }"/>
                 <h:commandButton action="#{rawMaterialCollectionSessionAction.update}"
                                  value="#{messages['Common.save']}"
                                  styleClass="button"
-                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','UPDATE')}"/>
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending
+                                 }"/>
                 <h:commandButton value="#{messages['Common.delete']}"
                                  styleClass="button"
-                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending and s:hasPermission('RAWMATERIALCOLLECTIONSESSION','DELETE')}">
+                                 rendered="#{rawMaterialCollectionSessionAction.managed and rawMaterialCollectionSessionAction.pending
+                                 }">
                     <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                            operation="show"/>
                 </h:commandButton>

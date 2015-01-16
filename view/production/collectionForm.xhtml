@@ -41,22 +41,25 @@
     <div class="buttons">
         <h:commandButton value="#{messages['CollectionForm.approve']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and s:hasPermission('COLLECTIONFORMAPPROVAL','VIEW')}">
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending
+                         }">
             <rich:componentControl for="approveConfirmation" event="onclick" disableDefault="true" operation="show"/>
         </h:commandButton>
 
         <h:commandButton action="#{collectionFormAction.create}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{!collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','CREATE')}"/>
+                         rendered="#{!collectionFormAction.managed
+                         }"/>
 
         <h:commandButton action="#{collectionFormAction.update}"
                          value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','UPDATE') and collectionFormAction.pending}"/>
+                         rendered="#{collectionFormAction.managed
+                             and collectionFormAction.pending}"/>
 
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','DELETE') and collectionFormAction.pending}">
+                         rendered="#{collectionFormAction.managed  and collectionFormAction.pending}">
 
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
         </h:commandButton>
@@ -209,19 +212,23 @@
     <div class="buttons">
         <h:commandButton value="#{messages['CollectionForm.approve']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and s:hasPermission('COLLECTIONFORMAPPROVAL','VIEW')}">
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending
+                         }">
             <rich:componentControl for="approveConfirmation" event="onclick" disableDefault="true" operation="show"/>
         </h:commandButton>
 
         <h:commandButton action="#{collectionFormAction.create}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{!collectionFormAction.managed and s:hasPermission('COLLECTIONFORM','CREATE')}"/>
+                         rendered="#{!collectionFormAction.managed
+                         }"/>
         <h:commandButton action="#{collectionFormAction.update}" value="#{messages['Common.save']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and  s:hasPermission('COLLECTIONFORM','UPDATE')}"/>
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending
+                         }"/>
         <h:commandButton value="#{messages['Common.delete']}"
                          styleClass="button"
-                         rendered="#{collectionFormAction.managed and collectionFormAction.pending and s:hasPermission('COLLECTIONFORM','DELETE')}">
+                         rendered="#{collectionFormAction.managed and collectionFormAction.pending
+                         }">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true"
                                    operation="show"/>
         </h:commandButton>

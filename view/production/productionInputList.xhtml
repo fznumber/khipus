@@ -50,7 +50,9 @@
 
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" view="/production/productionInput.xhtml" styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('PRODUCTIONINPUT','CREATE')}"/>
+                          propagation="none"
+
+                        />
             </div>
             <rich:dataTable value="#{productionInputDataModel}" var="productionInputItem" id="productionInputList"
                             rows="#{sessionUser.rowsPerPage}"

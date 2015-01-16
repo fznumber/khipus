@@ -72,7 +72,9 @@
             <div class="buttons">
                 <s:button value="#{messages['Common.new']}" action="#{rawMaterialProducerAction.startCreate}"
                           styleClass="button"
-                          propagation="none" rendered="#{s:hasPermission('RAWMATERIALPRODUCER','CREATE')}"/>
+                          propagation="none"
+
+                        />
             </div>
             <rich:dataTable value="#{rawMaterialProducerDataModel}" var="rawMaterialProducerItem"
                             id="rawMaterialProducerList"

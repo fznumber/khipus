@@ -14,7 +14,7 @@
     <c:if test="#{empty dataModel}">
         <c:set var="dataModel" value="#{cashAccountDataModel}"/>
     </c:if>
-
+<!--
     <c:if test="#{not empty hasAccountingPermission}">
         #{dataModel.criteria.setHasAccountingPermission(hasAccountingPermission)}
     </c:if>
@@ -41,7 +41,7 @@
     </c:if>
     <c:if test="#{not empty accountClass}">
         #{dataModel.criteria.setAccountClass(accountClass)}
-    </c:if>
+    </c:if>-->
 
     <f:facet name="header">
         <h:outputText>#{messages['CashAccount.list']}</h:outputText>

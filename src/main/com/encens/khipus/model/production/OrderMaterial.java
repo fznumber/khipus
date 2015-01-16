@@ -49,10 +49,10 @@ public class OrderMaterial implements BaseModel {
     @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
     private Double amountReturned = 0.0;
 
-    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal costTotal = new BigDecimal(0.0);
 
-    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBERNUMBER(16,6)")
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal costUnit = new BigDecimal(0.0);
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)

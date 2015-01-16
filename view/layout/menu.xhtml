@@ -934,108 +934,107 @@
         styleClass="tab-cell"
         propagation="none"/>
 
-<rich:dropDownMenu value="#{messages['menu.products.configuration']}" rendered="#{
-        s:hasPermission('PRODUCTTYPE','VIEW') or
-        s:hasPermission('PRODUCTSTATE','VIEW') or
-        s:hasPermission('PRODUCTDISCOUNTRULE','VIEW') or
-        s:hasPermission('PRODUCTIVEZONE','VIEW') or
-        s:hasPermission('RAWMATERIALPRODUCER','VIEW') or
-        s:hasPermission('PROCESSEDPRODUCT','VIEW') or
-        s:hasPermission('MEASUREUNITPRODUCTION','VIEW') or
-        s:hasPermission('PRODUCTIONINPUT','VIEW') or
-        s:hasPermission('PRODUCTIONMATERIAL','VIEW') or
-        s:hasPermission('INDIRECTCOSTS','VIEW') or
-        s:hasPermission('RESERVPRODUCERMILK','VIEW') or
-        s:hasPermission('GESTIONTAX','VIEW') or
-        s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')
-        }">
+<rich:dropDownMenu value="#{messages['menu.products.configuration']}" >
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTTYPE','VIEW')}">
+
+            >
         <s:link view="/products/productTypeList.xhtml"
                 value="#{messages['menu.products.configuration.productType']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTSTATE','VIEW')}">
+
+            >
         <s:link view="/products/productStateList.xhtml"
                 value="#{messages['menu.products.configuration.productState']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTDISCOUNTRULE','VIEW')}">
+
+            >
         <s:link view="/products/productDiscountRuleList.xhtml"
                 value="#{messages['menu.products.configuration.productDiscountRule']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTIVEZONE','VIEW')}">
+
+            >
         <s:link view="/production/productiveZoneList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.productiveZone']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('GESTIONTAX','VIEW')}">
+
+            >
         <s:link view="/production/gestionTaxList.xhtml"
                 value="#{messages['GestionTax.CreateGestionTax']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RESERVPRODUCERMILK','VIEW')}">
+
+            >
         <s:link view="/production/discountProducerList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.reservProducerMilk']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RAWMATERIALPRODUCER','VIEW')}">
+
+            >
         <s:link view="/production/rawMaterialProducerList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.rawMaterialProducer']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PROCESSEDPRODUCT','VIEW')}">
+
+            >
         <s:link view="/production/processedProductList.xhtml"
                 value="#{messages['menu.production.configuration.processedProduct']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('MEASUREUNITPRODUCTION','VIEW')}">
+
+            >
         <s:link view="/production/measureUnitProductionList.xhtml"
                 value="#{messages['menu.production.configuration.measureUnitProduction']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTIONINPUT','VIEW')}">
+
+            >
         <s:link view="/production/productionInputList.xhtml"
                 value="#{messages['menu.production.configuration.productionInput']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('PRODUCTIONMATERIAL','VIEW')}">
+
+            >
         <s:link view="/production/productionMaterialList.xhtml"
                 value="#{messages['menu.production.configuration.productionMaterial']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('INDIRECTCOSTCONFIGURATION','VIEW')}">
+
+            >
         <s:link view="/production/indirectCostConfigList.xhtml"
                 value="#{messages['menu.production.configuration.indirectCostconfiguration']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('INDIRECTCOSTS','VIEW')}">
+
+            >
         <s:link view="/production/indirectCostsList.xhtml"
                 value="#{messages['menu.production.configuration.indirectCosts']}"
                 propagation="none"/>
@@ -1043,28 +1042,25 @@
 </rich:dropDownMenu>
 
 <rich:dropDownMenu value="#{messages['menu.production.rawMaterialCollection']}"
-                   rendered="#{
-        s:hasPermission('RAWMATERIALREJECTIONNOTE','VIEW') or
-        s:hasPermission('RAWMATERIALCOLLECTIONSESSION','VIEW') or
-        s:hasPermission('COLLECTIONFORM','VIEW')}">
+        >
 
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RAWMATERIALREJECTIONNOTE','VIEW')}">
+                   >
         <s:link view="/production/rawMaterialRejectionNoteList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.rawMaterialRejectionNote']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RAWMATERIALCOLLECTIONSESSION','VIEW')}">
+                   >
         <s:link view="/production/rawMaterialCollectionSessionList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.rawMaterialCollectionSession']}"
                 propagation="none"/>
     </rich:menuItem>
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('COLLECTIONFORM','VIEW')}">
+                   >
         <s:link view="/production/collectionFormList.xhtml"
                 value="#{messages['menu.production.rawMaterialCollection.collectionForm']}"
                 propagation="none"/>
@@ -1072,14 +1068,11 @@
 </rich:dropDownMenu>
 
 <rich:dropDownMenu value="#{messages['menu.production.supplierPayments']}"
-                   rendered="#{
-        s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','VIEW') or
-        s:hasPermission('RAWMATERIALPAYROLL','VIEW')
-         }">
+                   >
 
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RAWMATERIALPRODUCERDISCOUNT','VIEW')}">
+                   >
         <s:link view="/production/salaryMovementProducerList.xhtml"
                 value="#{messages['menu.production.supplierPayments.rawMaterialProducerDiscount']}"
                 propagation="none"/>
@@ -1095,7 +1088,7 @@
 
     <rich:menuItem submitMode="none"
                    styleClass="main-menu-item"
-                   rendered="#{s:hasPermission('RAWMATERIALPAYROLL','VIEW')}">
+                   >
         <s:link view="/production/rawMaterialPayRollList.xhtml"
                 value="#{messages['menu.production.supplierPayments.rawMaterialPayRoll']}"
                 propagation="none"/>
@@ -1103,11 +1096,10 @@
 
 
     <rich:menuGroup value="#{messages['menu.production.supplierPayments.reports']}"
-                    rendered="#{
-            s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
+                    >
         <rich:menuItem submitMode="none"
                        styleClass="main-menu-item"
-                       rendered="#{s:hasPermission('REPORTSUMMARYPAYRAWMATERIAL','VIEW')}">
+                       >
 
             <s:link view="/production/reports/rawMaterialPaySummaryReport.xhtml"
                     value="#{messages['menu.production.supplierPayments.reports.summary']}"
@@ -1116,7 +1108,7 @@
 
         <rich:menuItem submitMode="none"
                        styleClass="main-menu-item"
-                       rendered="#{s:hasPermission('REPORTPAYROLL','VIEW')}">
+                       >
 
             <s:link view="/production/reports/rawMaterialPayRollReport.xhtml"
                     value="#{messages['menu.production.supplierPayments.reports.payRoll']}"

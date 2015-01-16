@@ -47,6 +47,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService {
     private EntityManager khipusListEm;
 
     public User findByUsernameAndPasswordAndCompany(String username, String password, String companyLogin) throws EntryNotFoundException {
+        System.out.println("passwd: " + password);
         try {
             return (User) em.createNamedQuery("User.findByUsernameAndPasswordAndCompany")
                     .setParameter("username", username)

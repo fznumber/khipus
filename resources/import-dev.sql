@@ -57,7 +57,8 @@ insert into derechoacceso(idfuncionalidad,idrol,permiso,idcompania) values (18,1
 insert into tipodocumento(idtipodocumento, nombre, version, idcompania) values(1,'CI',1,1);
 insert into entidad (identidad, noidentificacion, version, idtipodocumento, idcompania) values (1,'123456789', 0, 1, 1);
 insert into persona (idpersona, apellidopaterno, apellidomaterno, nombres, fechanacimiento, profesion, idcompania) values (1, 'Siles', 'Encinas', 'Ariel', NULL, NULL, 1);
-insert into empleado (idempleado, fechaingreso, fechasalida, salario, idcompania) values (1, NULL, NULL, NULL, 1);
+
+insert into empleado (idempleado, fechaingreso, fechasalida, salario, idcompania, flagafp, flagcontrol, flagjubilado, codigomarcacion, tipodepago, flagret) values (1, NULL, NULL, NULL, 1, 0, 0, 0, '123456789', 'PAYMENT_WITH_CHECK', 0);
 insert into usuario (idusuario, usuario, clave, email, fechacreacion, idcompania) values (1, 'root', '8a8b61dff6b4f92b0cec80be671d61cd23e6391d', NULL, '2008-08-31 22:06:52', 1);
 
 insert into usuariorol(idusuario,idrol) values (1,1);
