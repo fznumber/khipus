@@ -22,8 +22,8 @@
         <track-connection-by-tx/>
         <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
         <xa-datasource-property name="URL">jdbc:oracle:thin:@181.177.142.74:1521:orcl</xa-datasource-property>
-        <xa-datasource-property name="User">eos</xa-datasource-property>
-        <xa-datasource-property name="Password">eos.pwd</xa-datasource-property>
+        <xa-datasource-property name="User">sis</xa-datasource-property>
+        <xa-datasource-property name="Password">sis.pwd</xa-datasource-property>
         <isSameRM-override-value>false</isSameRM-override-value>
         <no-tx-separate-pools/>
         <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
@@ -33,5 +33,4 @@
         </metadata>
     </xa-datasource>
 </datasources>
-
 

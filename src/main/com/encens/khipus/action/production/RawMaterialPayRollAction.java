@@ -87,8 +87,8 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         } catch (CompanyConfigurationNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }*/
-        getInstance().setIt(0.5);
-        getInstance().setIue(0.3);
+        getInstance().setIt(0.3);
+        getInstance().setIue(0.5);
         getInstance().setUnitPrice(3.0);
         getInstance().setTaxRate(getInstance().getIt() + getInstance().getIue());
         return getInstance();
