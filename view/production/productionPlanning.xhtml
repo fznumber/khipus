@@ -69,12 +69,12 @@
             <s:defaultAction/>
         </h:commandButton>
 
-      <!--  <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
+        <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{productionPlanningAction.managed and s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
                          tabindex="3">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
-        </h:commandButton>-->
+        </h:commandButton>
 
         <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.back']}"
                          styleClass="button" immediate="true"
@@ -993,12 +993,12 @@ value="#{productionOrderForPlanning.estateOrder == 'PENDING' ? messages['product
             <s:defaultAction/>
         </h:commandButton>
 
-       <!-- <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
+        <h:commandButton value="#{messages['ProductionPlanning.deletePlannigDay']}"
                          styleClass="button"
                          rendered="#{s:hasPermission('PRODUCTDISTRIBUTION','DELETE')}"
                          tabindex="3">
             <rich:componentControl for="deleteConfirmation" event="onclick" disableDefault="true" operation="show"/>
-        </h:commandButton>-->
+        </h:commandButton>
 
         <h:commandButton action="#{productionPlanningAction.cancel}" value="#{messages['Common.back']}"
                          styleClass="button" tabindex="21" immediate="true"/>

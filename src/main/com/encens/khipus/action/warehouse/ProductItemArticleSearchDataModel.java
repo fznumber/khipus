@@ -59,9 +59,9 @@ public class ProductItemArticleSearchDataModel extends QueryDataModel<ProductIte
     public List<String> getGroups() {
         if(groups.size()==0)
         {
-            groups.add("7");
-            groups.add("8");
-            groups.add("9");
+            groups.add("4");
+            groups.add("5");
+            groups.add("6");
         };
         return groups;
     }
