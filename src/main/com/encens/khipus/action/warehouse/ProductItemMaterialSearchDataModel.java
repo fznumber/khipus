@@ -59,7 +59,7 @@ public class ProductItemMaterialSearchDataModel extends QueryDataModel<ProductIt
     public List<String> getGroups() {
         if(groups.size()==0)
         {
-            groups.add("4");
+            groups.add("3");
         };
         return groups;
     }
