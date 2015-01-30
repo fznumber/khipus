@@ -3,7 +3,6 @@ package com.encens.khipus.action.production;
 import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
-import com.encens.khipus.exception.finances.CompanyConfigurationNotFoundException;
 import com.encens.khipus.exception.production.RawMaterialPayRollException;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
@@ -11,13 +10,11 @@ import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.employees.Gestion;
 import com.encens.khipus.model.employees.GestionPayroll;
 import com.encens.khipus.model.employees.Month;
-import com.encens.khipus.model.finances.CompanyConfiguration;
 import com.encens.khipus.model.production.*;
 import com.encens.khipus.service.employees.GestionService;
 import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
-import com.encens.khipus.util.DateUtils;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
 import org.jboss.seam.international.StatusMessage;
@@ -89,7 +86,7 @@ public class RawMaterialPayRollAction extends GenericAction<RawMaterialPayRoll> 
         }*/
         getInstance().setIt(0.3);
         getInstance().setIue(0.5);
-        getInstance().setUnitPrice(3.0);
+        getInstance().setUnitPrice(3.5);
         getInstance().setTaxRate(getInstance().getIt() + getInstance().getIue());
         return getInstance();
     }
