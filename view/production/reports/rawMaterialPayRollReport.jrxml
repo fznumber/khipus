@@ -118,7 +118,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{nombre_gab} + " Precio Unitario: 3.00 Bs."]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{nombre_gab} + " Precio Unitario: 3.50 Bs."]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
