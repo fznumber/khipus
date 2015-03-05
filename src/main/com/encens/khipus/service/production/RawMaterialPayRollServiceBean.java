@@ -304,8 +304,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
         try {
             discountProducers = (List<DiscountProducer>) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
-                    " where discountProducer.startDate >= :date " +
-                    " and discountProducer.endDate <= :date " +
+                    " where discountProducer.startDate <= :date " +
+                    " and discountProducer.endDate >= :date " +
                     " and discountProducer.state = 'ENABLE'")
                     .setParameter("date", date,TemporalType.DATE)
                     .getResultList();
@@ -322,8 +322,8 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
         try {
             discountProducers = (List<DiscountProducer>) getEntityManager().createQuery(" SELECT discountProducer from DiscountProducer discountProducer " +
-                    " where discountProducer.startDate >= :date " +
-                    " and discountProducer.endDate <= :date " +
+                    " where discountProducer.startDate <= :date " +
+                    " and discountProducer.endDate >= :date " +
                     " and discountProducer.state = 'ENABLE'")
                     .setParameter("date", date,TemporalType.DATE)
                     .getResultList();

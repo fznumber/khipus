@@ -52,8 +52,8 @@ public class Mark implements BaseModel {
     @Column(name = "IDCOMPANIA", insertable = false, updatable = false)
     private Long companyId;
 
-    @Column(name = "MAR_IN_OUT", insertable = false, updatable = false)
-    private String marInOut;
+    /*@Column(name = "MAR_IN_OUT", insertable = false, updatable = false)
+    private Number marInOut;*/
 
     @Column(name = "MARHORA", insertable = false, updatable = false)
     @Temporal(TemporalType.TIME)
@@ -84,7 +84,7 @@ public class Mark implements BaseModel {
         this.marState = mark.getMarState();
         this.seat = mark.getSeat();
         this.companyId = mark.getCompanyId();
-        this.marInOut = mark.getMarInOut();
+        /*this.marInOut = mark.getMarInOut();*/
         this.marTime = mark.getMarTime();
         this.startMarDate = mark.getStartMarDate();
         this.endMarDate = mark.getEndMarDate();
@@ -156,13 +156,13 @@ public class Mark implements BaseModel {
         this.companyId = companyId;
     }
 
-    public String getMarInOut() {
+    /*public String getMarInOut() {
         return marInOut;
     }
 
     public void setMarInOut(String marInOut) {
         this.marInOut = marInOut;
-    }
+    }*/
 
     public Date getMarTime() {
         return marTime;
