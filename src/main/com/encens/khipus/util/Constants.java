@@ -170,13 +170,13 @@ public final class Constants {
     public static  final String ESTATE_ARTICLE_NOTVERIFY = "NOVERIFICABLE";
     public static final String ESTATE_COSTCONFIG = "MANOOBRA";
     //id Milk
-    public static final String ID_ART_RAW_MILK = "26";
+    public static final String ID_ART_RAW_MILK = "1";
     public static final WarehousePK COD_WAREHUOSE_MILK_COLLECTED = new WarehousePK("01","5");
 
-    public static final String COD_ART_WATER = "93";
-    public static final String ID_ART_GROUP_CHEESE = "9";
-    public static final String ID_ART_GROUP_UHT = "7";
-    public static final String ID_ART_GROUP_YOGURT = "8";
+    public static final String COD_ART_WATER = "152";
+    public static final String ID_ART_GROUP_CHEESE = "6";
+    public static final String ID_ART_GROUP_UHT = "4";
+    public static final String ID_ART_GROUP_YOGURT = "5";
     //DELIVERED
     public static final String ESTATE_ORDER_DELIVERED_INCASH = "DELIVERED";
     public static final String ESTATE_ORDER_DELIVERED = "ECH";
