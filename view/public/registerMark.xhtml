@@ -5,12 +5,10 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:a4j="http://richfaces.org/a4j"
-                xmlns:c="http://java.sun.com/jstl/core"
                 xmlns:rich="http://richfaces.org/rich"
-                xmlns:app="http://encens.com/products/khipus/facelets"
                 template="/layout/templateRegisterMark.xhtml">
     <ui:define name="pageTitle">#{messages['RHMark.search']}</ui:define>
-    <ui:param name="bodyWidth" value="90%"/>
+    <ui:param name="bodyWidth" value="50%"/>
     <ui:param name="bodyAlign" value="center"/>
     <ui:param name="showPowered" value="true"/>
     <ui:define name="head">
@@ -25,13 +23,18 @@
                 <f:facet name="header">
                     #{messages['RHMark.new']}
                 </f:facet>
-                <h:panelGrid columns="1" width="70%" columnClasses="top-aligned">
-                    <span id="date_server" style="position:absolute;left:690px;top:25px; font-size: 16px;"></span>
+                <h:panelGrid columns="1" width="100%" columnClasses="top-aligned">
+                    <!--<span id="date_server" style="position:absolute;left:690px;top:25px; font-size: 16px;"></span>-->
                     <!--<h:inputHidden id="marDate" value="#{rHMark.marDate}">
                         <f:convertDateTime pattern="#{messages['patterns.date']}"/>
                     </h:inputHidden>-->
 
                     <s:div>
+                        <s:decorate id="dateMarkField" template="/include/inputField.xhtml" styleClass="formRow">
+                            <ui:define name="label">Fecha: </ui:define>
+                            <span id="date_server"></span>
+                        </s:decorate>
+
                         <s:decorate id="marPerIdField" template="/include/inputField.xhtml" styleClass="formRow">
                             <ui:define name="label">#{messages['RHMark.marRefCard']}</ui:define>
                                 <h:inputText id="marRefCard"
@@ -53,7 +56,7 @@
                             <ui:define name="label">#{messages['RegisterMarck.description']}</ui:define>
                             <h:inputTextarea id="description"
                                              value="#{rHMark.description}"
-                                             style="margin: 0px; width: 400px; height: 100px;"
+                                             style="margin: 0px; width: 250px; height: 100px;"
                                              styleClass="input textarea"
                                              tabindex="2"
                                     />

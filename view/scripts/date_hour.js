@@ -53,7 +53,8 @@ function show5(hours,minutes,seconds,fecha){
     if (seconds<=9)
         seconds="0"+seconds
 
-    fecha_servidor="<font face='Arial' ><b><font size='3'>Fecha del Servidor: </font>"+fecha+"</b></font>"
+    // fecha_servidor="<font face='Arial' ><b><font size='3'>Fecha del Servidor: </font>"+fecha+"</b></font>"
+    fecha_servidor="<font face='Arial' ><b>"+fecha+ " " + hours+":"+minutes+":"+seconds + "</b></font>"
     hora_servidor="<font face='Arial' ><b><font size='3'></font>"+hours+":"+minutes+":"+seconds+"</b></font>"
 
     if (document.layers){
