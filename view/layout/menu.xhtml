@@ -1829,6 +1829,13 @@
                 value="#{messages['menu.rrhh.configuration.currency']}"
                 propagation="none"/>
     </rich:menuItem>
+    <rich:menuItem submitMode="none"
+                   styleClass="main-menu-item"
+                   rendered="#{s:hasPermission('CONTRACTMODE','VIEW')}">
+        <s:link view="/employees/contractModeList.xhtml"
+                value="#{messages['menu.employees.configuration.contractMode']}"
+                propagation="none"/>
+    </rich:menuItem>
 </rich:dropDownMenu>
 </h:panelGrid>
 </rich:tab>

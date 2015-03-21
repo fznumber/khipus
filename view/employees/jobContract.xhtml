@@ -83,7 +83,9 @@
         <ui:param name="contract" value="${jobContractAction.contract}"/>
         <ui:param name="charge" value="${jobContractAction.charge}"/>
         <ui:param name="showCharge" value="${true}"/>
-        <c:set var="editable" value="#{!jobContractAction.managed or jobContractAction.contractEditable}"/>
+
+        <!--CONTROLA EDICION DE LOS CONTRATOS PUESTO-->
+        <!--<c:set var="editable" value="#{!jobContractAction.managed or jobContractAction.contractEditable}"/>-->
     </ui:include>
 
     <h:panelGrid columns="2" width="100%" cellpadding="0" cellspacing="0" border="0"
@@ -148,9 +150,9 @@
                     <ui:define name="label">#{messages['KindOfSalary.type']}</ui:define>
                     <h:selectOneMenu id="kindOfSalary" value="#{jobContractAction.salary.kindOfSalary}"
                                      styleClass="input"
-                                     required="true"
-                                     rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
-                                     tabindex="37">
+                                     rendered="#{s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
+                                     required="true" tabindex="37">
+                                     <!--rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"-->
                         <s:selectItems value="#{jobContractAction.kindOfSalaryList}" var="kindOfSalary"
                                        label="#{kindOfSalary.type}"
                                        noSelectionLabel=""
@@ -158,7 +160,7 @@
                         <s:convertEntity/>
                     </h:selectOneMenu>
                     <h:outputText value="#{jobContractAction.salary.kindOfSalary.type}"
-                                  rendered="#{jobContractAction.contractBlocked and !s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"/>
+                                  rendered="#{!s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"/>
                 </s:decorate>
             </s:div>
 
@@ -166,29 +168,33 @@
                 <s:decorate id="currencyField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['Salary.currency']}</ui:define>
                     <h:selectOneMenu id="currency" value="#{jobContractAction.salary.currency}" styleClass="input"
-                                     rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
+                                     rendered="#{s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
                                      required="true" tabindex="39">
+                                     <!--rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"-->
                         <s:selectItems value="#{currencyList}" var="currency"
                                        label="#{currency.nameSymbol}"
                                        noSelectionLabel="" hideNoSelectionLabel="false"/>
                         <s:convertEntity/>
                     </h:selectOneMenu>
                     <h:outputText value="#{jobContractAction.salary.currency.nameSymbol}"
-                                  rendered="#{jobContractAction.contractBlocked and !s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"/>
+                                  rendered="#{!s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"/>
+                                  <!--rendered="#{jobContractAction.contractBlocked and !s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"-->
                 </s:decorate>
 
                 <s:decorate id="amountField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['Salary.amount']}</ui:define>
                     <h:inputText id="amount" value="#{jobContractAction.salary.amount}" required="true"
                                  maxlength="100" styleClass="input"
-                                 rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
+                                 rendered="#{s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"
                                  tabindex="40">
+                                 <!--rendered="#{!jobContractAction.contractBlocked or s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"-->
                         <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}" forId="amount"/>
                         <f:validateDoubleRange maximum="#{messages['validator.maxDoubleRange']}"
                                                minimum="#{messages['validator.minDoubleRange']}"/>
                     </h:inputText>
                     <h:outputText value="#{jobContractAction.salary.amount}"
-                                  rendered="#{jobContractAction.contractBlocked and !s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}">
+                                  rendered="#{!s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}">
+                                  <!--rendered="#{jobContractAction.contractBlocked and !s:hasPermission('CONTRACTMODIFICATIONCODE','VIEW')}"-->
                         <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                     </h:outputText>
                 </s:decorate>
