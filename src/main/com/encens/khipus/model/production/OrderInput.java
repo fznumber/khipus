@@ -27,8 +27,9 @@ public class OrderInput implements BaseModel {
     @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
     private Double amount;
 
-    @Column(name = "CANTIDADSTOCK", nullable = false, columnDefinition = "NUMBER(24,0)")
-    private BigDecimal amountStock;
+    /* TODO: cambiar nullable a false */
+    @Column(name = "CANTIDADSTOCK", nullable = true, columnDefinition = "NUMBER(24,0)")
+    private BigDecimal amountStock = new BigDecimal(0.0);
 
     @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
     private BigDecimal costUnit = new BigDecimal(0.0);
