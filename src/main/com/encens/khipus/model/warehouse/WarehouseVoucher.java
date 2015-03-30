@@ -40,7 +40,7 @@ import java.util.List;
 })
 
 @Entity
-@Table(name = "INV_VALES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_vales", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 @Filter(name = com.encens.khipus.util.Constants.BUSINESS_UNIT_FILTER_NAME)
 public class WarehouseVoucher implements BaseModel {

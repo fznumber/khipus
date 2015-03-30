@@ -20,7 +20,7 @@ import java.util.List;
 public class GestionTax implements BaseModel {
 
     @Id
-    @Column(name = "idgestionimpuesto", columnDefinition = "NUMBER(24)", nullable = false)
+    @Column(name = "idgestionimpuesto", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "GestionTax_Generator")
     private Long id;
 

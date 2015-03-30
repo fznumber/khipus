@@ -58,7 +58,7 @@ public class EmployeeTimeCard implements BaseModel {
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDay;
 
-    @Column(name = "COSTOPORHORA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "COSTOPORHORA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double costPerHour;
 
     @Column(name = "DESCRIPCION", nullable = true)

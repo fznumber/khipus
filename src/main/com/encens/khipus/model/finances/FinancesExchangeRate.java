@@ -30,7 +30,7 @@ import java.math.BigDecimal;
 
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "ARCGTC", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "arcgtc", schema = Constants.FINANCES_SCHEMA)
 public class FinancesExchangeRate implements BaseModel {
     @EmbeddedId
     @AttributeOverrides({

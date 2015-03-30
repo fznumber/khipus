@@ -28,7 +28,7 @@ import javax.persistence.*;
 public class MeasureUnitProduction implements BaseModel {
 
     @Id
-    @Column(name = "IDUNIDADMEDIDAPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDUNIDADMEDIDAPRODUCCION", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "MeasureUnitProduction_Generator")
     private Long id;
 
@@ -43,7 +43,7 @@ public class MeasureUnitProduction implements BaseModel {
     private long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Company getCompany() {

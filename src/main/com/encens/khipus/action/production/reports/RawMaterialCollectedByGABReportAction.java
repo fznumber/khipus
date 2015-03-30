@@ -152,7 +152,7 @@ public class RawMaterialCollectedByGABReportAction extends GenericReportAction {
                     "  from sesionacopio sa\n" +
                     "                              inner join acopiomateriaprima am\n" +
                     "                              on am.idsesionacopio = sa.idsesionacopio\n" +
-                    "                              inner join EOS.persona pe \n" +
+                    "                              inner join persona pe \n" +
                     "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
                     "                              inner join zonaproductiva zp\n" +
                     "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +

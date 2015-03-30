@@ -53,7 +53,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "PAGOORDENCOMPRA", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "pagoordencompra", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class PurchaseOrderPayment implements BaseModel {
 

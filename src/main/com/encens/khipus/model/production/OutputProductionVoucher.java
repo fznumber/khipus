@@ -22,23 +22,23 @@ import javax.persistence.*;
 public class OutputProductionVoucher implements BaseModel {
 
     @Id
-    @Column(name = "IDVALEPRODUCTOTERMINADO",columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDVALEPRODUCTOTERMINADO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "OutputProductionVoucher_Generator")
     private Long id;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(name = "IDORDENPRODUCCION",columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(name = "IDPRODUCTOPROCESADO",columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTOPROCESADO", nullable = false, updatable = false, insertable = true)
     private ProcessedProduct processedProduct;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    @JoinColumn(name = "IDENTRADAORDENPRODUCCION",columnDefinition = "NUMBER(24,0)" ,nullable = true, updatable = true, insertable = true)
+    @JoinColumn(name = "IDENTRADAORDENPRODUCCION" ,nullable = true, updatable = true, insertable = true)
     private IncomingProductionOrder incomingProductionOrder;
 
-    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition="NUMBER(24,0)")
+    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition="DECIMAL(24,0)")
     private Double producedAmount;
 
     @Column(name = "OBSERVACIONES", nullable = true, length = 1500)

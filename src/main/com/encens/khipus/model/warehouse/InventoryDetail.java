@@ -35,7 +35,7 @@ import java.math.BigDecimal;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "INV_INVENTARIO_DETALLE", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_inventario_detalle", schema = Constants.FINANCES_SCHEMA)
 public class InventoryDetail implements BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "InventoryDetail.tableGenerator")

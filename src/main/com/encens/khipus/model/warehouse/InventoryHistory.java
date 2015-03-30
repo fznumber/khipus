@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  * @version 2.0
  */
 @Entity
-@Table(name = "INV_INVMES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_invmes", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class InventoryHistory implements BaseModel {
 

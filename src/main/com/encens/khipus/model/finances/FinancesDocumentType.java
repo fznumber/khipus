@@ -17,7 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CK_TIPODOCS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "ck_tipodocs", schema = Constants.FINANCES_SCHEMA)
 public class FinancesDocumentType implements BaseModel {
 
     @EmbeddedId

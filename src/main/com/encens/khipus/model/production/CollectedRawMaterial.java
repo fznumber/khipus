@@ -1,29 +1,31 @@
 package com.encens.khipus.model.production;
 
+import com.encens.khipus.model.CompanyListener;
+import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.admin.Company;
 import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
 
-@TableGenerator(name = "CollectedRawMaterial_Generator",
-        table = "SECUENCIA",
-        pkColumnName = "TABLA",
-        valueColumnName = "VALOR",
-        pkColumnValue = "ACOPIOMATERIAPRIMA",
-        allocationSize = 10)
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "CollectedRawMaterial.tableGenerator",
+        table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
+        pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
+        valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
+        pkColumnValue = "acopiomateriaprima",
+        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
-@Table(name = "ACOPIOMATERIAPRIMA", uniqueConstraints = @UniqueConstraint(columnNames = {"IDSESIONACOPIO", "IDPRODUCTORMATERIAPRIMA"}))
-@Filter(name = "companyFilter")
-@EntityListeners(com.encens.khipus.model.CompanyListener.class)
+@Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
+@EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
+@Table(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "acopiomateriaprima", uniqueConstraints = @UniqueConstraint(columnNames = {"IDSESIONACOPIO", "IDPRODUCTORMATERIAPRIMA"}))
 public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
 
     @Id
     @Column(name = "IDACOPIOMATERIAPRIMA", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectedRawMaterial_Generator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectedRawMaterial.tableGenerator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "DECIMAL(16,2)")
     private Double amount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -422,8 +422,11 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
                 .setParameter("metaProduct", metaProduct)
                 .getResultList();
         //summaryTotal.differencesTotal = ((Double)datas.get(0)[0] !=null) ? (Double)datas.get(0)[0] : 0.0 ;
-        summaryTotal.balanceWeightTotal = ((Double) datas.get(0)[0] != null) ? (Double) datas.get(0)[0] : 0.0;
-        summaryTotal.collectedTotal = ((Double) datas.get(0)[1] != null) ? (Double) datas.get(0)[1] : 0.0;
+        /*summaryTotal.balanceWeightTotal = ((Double) datas.get(0)[0] != null) ? (Double) datas.get(0)[0] : 0.0;
+        summaryTotal.collectedTotal = ((Double) datas.get(0)[1] != null) ? (Double) datas.get(0)[1] : 0.0;*/
+        //Change to MYSQL:
+        summaryTotal.balanceWeightTotal = ( datas.get(0)[0] != null) ?  (Integer) datas.get(0)[0] : 0.0;
+        summaryTotal.collectedTotal = ( datas.get(0)[1] != null) ? (Integer) datas.get(0)[1] : 0.0;
         return summaryTotal;
     }
 
@@ -1192,7 +1195,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
     @Override
     public Double getReservProducer(Date startDate, Date endDate) {
-        BigDecimal result = (BigDecimal)getEntityManager().createNativeQuery("select nvl(sum(monto),0.0) from DESCUENTORESERVA\n" +
+        BigDecimal result = (BigDecimal)getEntityManager().createNativeQuery("select IFNULL(sum(monto),0.0) from DESCUENTORESERVA\n" +
                 "where FECHAINI = :startDate\n " +
                 "and FECHAFIN  = :endDate")
                 .setParameter("startDate",startDate,TemporalType.DATE)
@@ -1204,7 +1207,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
 
     @Override
     public void deleteReserveDiscount(Date startDate, Date endDate) {
-        getEntityManager().createNativeQuery("delete descuentoreserva where fechaini = :startDate\n" +
+        getEntityManager().createNativeQuery("delete from descuentoreserva where fechaini = :startDate\n" +
                 "and fechafin = :endDate")
                 .setParameter("startDate",startDate,TemporalType.DATE)
                 .setParameter("endDate",endDate,TemporalType.DATE)

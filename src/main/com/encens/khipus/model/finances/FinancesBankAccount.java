@@ -19,7 +19,7 @@ import javax.persistence.*;
 })
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "CK_CTAS_BCO", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "ck_ctas_bco", schema = Constants.FINANCES_SCHEMA)
 public class FinancesBankAccount implements BaseModel {
 
     @EmbeddedId

@@ -25,7 +25,7 @@ public class RawMaterialRejectionNote implements com.encens.khipus.model.BaseMod
     @Column(name = "FECHA",columnDefinition = "DATE" , nullable = false)
     private Date date;
 
-    @Column(name = "CANTIDADRECHAZADA", columnDefinition = "NUMBER(15,0)", nullable = false, length = 1000)
+    @Column(name = "CANTIDADRECHAZADA", columnDefinition = "DECIMAL(15,0)", nullable = false, length = 1000)
     private Double rejectedAmount;
 
     @Column(name = "ACIDA", nullable = true, length = 1000)

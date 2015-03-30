@@ -44,7 +44,7 @@ import java.math.BigDecimal;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CG_MOVDET", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_movdet", schema = Constants.FINANCES_SCHEMA)
 public class AccountingMovementDetail implements BaseModel {
 
     @EmbeddedId

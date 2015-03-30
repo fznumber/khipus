@@ -33,7 +33,7 @@ public class IncomingProductionOrder implements BaseModel {
     @Column(name = "OBSERVACIONRECEPCION", nullable = true, length = 1500)
     private String receivedObservation;
 
-    @Column(name = "CANTIDADENTREGADA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADENTREGADA", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private double deliveredAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

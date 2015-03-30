@@ -1,18 +1,12 @@
 package com.encens.khipus.model.production;
 
 
-import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +35,7 @@ import java.util.List;
 public class RawMaterialCollectionSession implements com.encens.khipus.model.BaseModel {
 
     @Id
-    @Column(name = "IDSESIONACOPIO",columnDefinition = "NUMBER(24,0)" , nullable = false)
+    @Column(name = "IDSESIONACOPIO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RawMaterialCollectionSession_Generator")
     private Long id;
 
@@ -53,11 +47,11 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
     private ProductionCollectionState state = ProductionCollectionState.PENDING;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDZONAPRODUCTIVA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false, updatable = false, insertable = true)
     private ProductiveZone productiveZone;
 
     @OneToMany(mappedBy = "rawMaterialCollectionSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -65,7 +59,7 @@ public class RawMaterialCollectionSession implements com.encens.khipus.model.Bas
     private List<CollectedRawMaterial> collectedRawMaterialList = new ArrayList<CollectedRawMaterial>();
 
     @OneToOne
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @Version

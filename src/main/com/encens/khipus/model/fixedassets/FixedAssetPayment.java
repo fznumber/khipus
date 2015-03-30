@@ -26,11 +26,11 @@ import java.util.Date;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "AF_PAGO",
+        pkColumnValue = "af_pago",
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
-@Table(name = "AF_PAGO", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "af_pago", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class FixedAssetPayment implements BaseModel {
 

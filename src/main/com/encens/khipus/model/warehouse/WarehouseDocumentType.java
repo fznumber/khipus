@@ -19,7 +19,7 @@ import javax.persistence.*;
                 " order by w.id.documentCode")
 })
 @Entity
-@Table(name = "INV_TIPODOCS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_tipodocs", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class WarehouseDocumentType implements BaseModel {
     @EmbeddedId

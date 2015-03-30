@@ -46,7 +46,7 @@ import java.util.List;
 public class ProductiveZone implements BaseModel {
 
     @Id
-    @Column(name = "IDZONAPRODUCTIVA", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDZONAPRODUCTIVA", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductiveZone_Generator")
     private Long id;
 
@@ -64,7 +64,7 @@ public class ProductiveZone implements BaseModel {
     private long version;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 

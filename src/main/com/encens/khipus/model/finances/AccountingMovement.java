@@ -26,7 +26,7 @@ import java.util.List;
 })
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CG_MOVMAE", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_movmae", schema = Constants.FINANCES_SCHEMA)
 public class AccountingMovement implements BaseModel {
 
     @EmbeddedId

@@ -1,7 +1,7 @@
 package com.encens.khipus.model.production;
 
-import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -87,10 +87,10 @@ public class CollectionForm implements com.encens.khipus.model.BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<CollectionRecord> collectionRecordList = new ArrayList<CollectionRecord>();
 
-    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "DECIMAL(16,2)")
     private Double greasePercentage = 0.0;
 
-    @Column(name = "TOTALPESADO",nullable = true,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "TOTALPESADO",nullable = true,columnDefinition = "DECIMAL(16,2)")
     private Double totalWeighed = 0.0;
 
     @OneToOne

@@ -36,7 +36,7 @@ import java.util.List;
 })
 
 @Entity
-@Table(name = "INV_ARTICULOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_articulos", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class ProductItem implements BaseModel {
 

@@ -4,10 +4,8 @@ import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
 import com.encens.khipus.model.employees.Gestion;
-import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Filter;
-import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ import java.util.List;
 public class PeriodIndirectCost implements BaseModel {
 
     @Id
-    @Column(name = "IDPERIODOCOSTOINDIRECTO", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDPERIODOCOSTOINDIRECTO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "PeriodIndirectCost_Generator")
     private Long id;
 

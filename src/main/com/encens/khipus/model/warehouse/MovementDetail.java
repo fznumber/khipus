@@ -123,7 +123,7 @@ import java.util.List;
 @SequenceGenerator(name = "MovementDetail.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".INV_MOVDET_SEQ")
 
 @Entity
-@Table(name = "INV_MOVDET", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_movdet", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class MovementDetail implements BaseModel {
     @Id

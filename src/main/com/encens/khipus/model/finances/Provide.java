@@ -30,7 +30,7 @@ import java.util.List;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class})
-@Table(name = "ARTICULO_POR_PROVEEDOR", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {@UniqueConstraint(columnNames = {"NO_CIA", "COD_ART", "COD_PROV"})})
+@Table(name = "articulo_por_proveedor", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {@UniqueConstraint(columnNames = {"NO_CIA", "COD_ART", "COD_PROV"})})
 public class Provide implements BaseModel {
 
     @Id

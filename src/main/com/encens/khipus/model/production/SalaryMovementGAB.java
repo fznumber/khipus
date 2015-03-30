@@ -53,7 +53,7 @@ public class SalaryMovementGAB implements com.encens.khipus.model.BaseModel {
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")
     private Date date;
 
-    @Column(name = "VALOR",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "VALOR",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double valor;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -25,7 +25,7 @@ public class FinishedGoodsInventory implements BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "FinishedGoodsInventory_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double amount;
 
     @Column(name = "FECHA", nullable = false, columnDefinition = "DATE")

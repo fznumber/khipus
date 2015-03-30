@@ -17,7 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CXP_TIPODOCS", catalog = Constants.FINANCES_SCHEMA)
+@Table(name = "cxp_tipodocs", catalog = Constants.FINANCES_SCHEMA)
 public class PayableDocumentType implements BaseModel {
     @EmbeddedId
     private PayableDocumentTypePk id = new PayableDocumentTypePk();

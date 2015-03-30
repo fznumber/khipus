@@ -17,16 +17,16 @@ import javax.persistence.*;
 public class ProductOrder implements BaseModel {
 
     @Id
-    @Column(name = "IDPRODUCTOORDEN", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDPRODUCTOORDEN", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductOrder_Generator")
     private Long id;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDPRODUCTOPROCESADO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTOPROCESADO", nullable = false, updatable = false, insertable = true)
     private ProcessedProduct processedProduct;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @Column(name = "NOMBREPRODUCTO",nullable = false,columnDefinition = "VARCHAR2(100 BYTE)")

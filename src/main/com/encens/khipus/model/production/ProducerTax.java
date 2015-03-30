@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class ProducerTax implements BaseModel {
 
     @Id
-    @Column(name = "idimpuestoproductor", columnDefinition = "NUMBER(24)", nullable = false)
+    @Column(name = "idimpuestoproductor", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProducerTax_Generator")
     private Long id;
 

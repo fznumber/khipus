@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "CG_DETPLANTI", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_detplanti", schema = Constants.FINANCES_SCHEMA)
 public class AccountingTemplateDetail implements BaseModel {
 
     @Id

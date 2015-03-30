@@ -15,7 +15,7 @@ import javax.persistence.*;
  */
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CXP_CLASEPROV", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cxp_claseprov", schema = Constants.FINANCES_SCHEMA)
 public class ProviderClass implements BaseModel {
     @EmbeddedId
     private ProviderClassPk id = new ProviderClassPk();

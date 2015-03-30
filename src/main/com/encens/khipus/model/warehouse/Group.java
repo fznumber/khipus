@@ -26,7 +26,7 @@ import java.util.List;
 })
 
 @Entity
-@Table(name = "INV_GRUPOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_grupos", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class Group implements BaseModel {
 

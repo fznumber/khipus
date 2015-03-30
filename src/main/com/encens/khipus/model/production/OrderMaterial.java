@@ -33,26 +33,26 @@ import java.math.BigDecimal;
 public class OrderMaterial implements BaseModel {
 
     @Id
-    @Column(name = "IDORDENMATERIAL", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDORDENMATERIAL", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "OrderMaterial_Generator")
     private Long id;
 
-    @Column(name = "CANTIDADPESOSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESOSOLICITADA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double amountRequired = 0.0;
 
-    @Column(name = "CANTIDADUNIDADSOLICITADA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADUNIDADSOLICITADA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double amountRequiredUnit = 0.0;
 
-    @Column(name = "CANTIDADPESOUSADA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESOUSADA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double amountUsed = 0.0;
 
-    @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CANTIDADPESORETORNADA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double amountReturned = 0.0;
 
-    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal costTotal = new BigDecimal(0.0);
 
-    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal costUnit = new BigDecimal(0.0);
 
     @Column(name = "COD_ART", insertable = false, updatable = false, nullable = false)
@@ -70,15 +70,15 @@ public class OrderMaterial implements BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinColumn(name = "IDPRODUCTOSIMPLE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTOSIMPLE", nullable = true, updatable = false, insertable = true)
     private SingleProduct singleProduct;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Long getId() {

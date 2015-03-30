@@ -7,7 +7,6 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,7 +30,7 @@ import java.util.List;
 public class ArticleEstate implements BaseModel {
 
     @Id
-    @Column(name = "IDESTADOARTICULO", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDESTADOARTICULO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ArticleEstate_Generator")
     private Long id;
 

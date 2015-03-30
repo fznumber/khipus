@@ -27,11 +27,11 @@ import javax.persistence.*;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "MODULOPROV",
+        pkColumnValue = "moduloprov",
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 @Entity
 @EntityListeners({CompanyNumberListener.class})
-@Table(schema = com.encens.khipus.util.Constants.FINANCES_SCHEMA, name = "MODULOPROV")
+@Table(schema = com.encens.khipus.util.Constants.FINANCES_SCHEMA, name = "moduloprov")
 public class ModuleProvider implements BaseModel {
     @Id
     @Column(name = "IDMODULOPROV", nullable = false)

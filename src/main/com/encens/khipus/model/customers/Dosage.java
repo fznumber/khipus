@@ -27,11 +27,11 @@ import java.util.Date;
 public class Dosage implements BaseModel {
 
     @Id
-    @Column(name = "ID", columnDefinition = "NUMBER(10,0)", nullable = false)
+    @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "Dosage_Generator")
     private Long id;
 
-    @Column(name = "NROAUTORIZACION", nullable = false, columnDefinition = "NUMBER(15,0)")
+    @Column(name = "NROAUTORIZACION", nullable = false, columnDefinition = "DECIMAL(15,0)")
     private BigDecimal numberAuthorization = new BigDecimal(0.0);
 
     @Temporal(value = TemporalType.DATE)
@@ -47,13 +47,13 @@ public class Dosage implements BaseModel {
     @Column(name="EST_COD")
     private String estCod;
 
-    @Column(name = "FACTURADEL", nullable = false, columnDefinition = "NUMBER(10,0)")
+    @Column(name = "FACTURADEL", nullable = false, columnDefinition = "DECIMAL(10,0)")
     private BigDecimal invoiceFrom = new BigDecimal(0.0);
 
-    @Column(name = "FACTURAAL", nullable = false, columnDefinition = "NUMBER(10,0)")
+    @Column(name = "FACTURAAL", nullable = false, columnDefinition = "DECIMAL(10,0)")
     private BigDecimal invoiceTo = new BigDecimal(0.0);
 
-    @Column(name = "NRO_ACTUAL", nullable = false, columnDefinition = "NUMBER")
+    @Column(name = "NRO_ACTUAL", nullable = false, columnDefinition = "DECIMAL(10,0)")
     private BigDecimal numberCurrent = new BigDecimal(0.0);
 
     public Long getId() {

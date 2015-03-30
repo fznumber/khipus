@@ -23,7 +23,7 @@ import java.util.List;
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
-@Table(name = "ENTREGAARTICULO", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "entregaarticulo", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class ProductDelivery implements BaseModel {
     @Id

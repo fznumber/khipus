@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "CG_PLANTILLAS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_plantillas", schema = Constants.FINANCES_SCHEMA)
 public class AccountingTemplate implements BaseModel {
 
     @EmbeddedId

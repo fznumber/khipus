@@ -26,7 +26,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "INV_MOV", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_mov", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class InventoryMovement implements BaseModel {
     @EmbeddedId

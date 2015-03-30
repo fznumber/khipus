@@ -29,7 +29,7 @@ import static com.encens.khipus.model.usertype.StringBooleanUserType.*;
 })
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CK_DOCUS", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {
+@Table(name = "ck_docus", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {
         @UniqueConstraint(columnNames = {"NO_CIA", "CTA_BCO", "PROCEDENCIA", "TIPO_DOC", "NO_DOC"})
 })
 public class FinanceDocument implements BaseModel {

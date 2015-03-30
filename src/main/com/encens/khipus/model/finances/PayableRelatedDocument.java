@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CXP_DOCREL", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cxp_docrel", schema = Constants.FINANCES_SCHEMA)
 public class PayableRelatedDocument implements BaseModel {
 
     @EmbeddedId

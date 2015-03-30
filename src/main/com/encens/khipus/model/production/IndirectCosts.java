@@ -36,7 +36,7 @@ public class IndirectCosts implements BaseModel {
     @Column(name = "NOMBRE", nullable = true)
     private String name;
 
-    @Column(name = "MONTOBS", nullable = false, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "MONTOBS", nullable = false, columnDefinition = "DECIMAL(16,2)")
     private BigDecimal amountBs;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})

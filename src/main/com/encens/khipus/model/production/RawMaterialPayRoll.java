@@ -220,16 +220,16 @@ public class RawMaterialPayRoll implements BaseModel {
     @Column(name = "FECHAFIN", columnDefinition = "DATE", nullable = false)
     private Date endDate;
 
-    @Column(name = "PRECIOUNITARIO", columnDefinition = "NUMBER(9,2)", nullable = false)
+    @Column(name = "PRECIOUNITARIO", columnDefinition = "DECIMAL(9,2)", nullable = false)
     private double unitPrice;
 
-    @Column(name = "TASAIMPUESTO", columnDefinition = "NUMBER(3,2)", nullable = false)
+    @Column(name = "TASAIMPUESTO", columnDefinition = "DECIMAL(3,2)", nullable = false)
     private double taxRate;
 
-    @Column(name = "IUE",columnDefinition = "NUMBER(3,2)", nullable = false)
+    @Column(name = "IUE",columnDefinition = "DECIMAL(3,2)", nullable = false)
     private double iue;
 
-    @Column(name = "IT",columnDefinition = "NUMBER(3,2)", nullable = false)
+    @Column(name = "IT",columnDefinition = "DECIMAL(3,2)", nullable = false)
     private double it;
 
     @Column(name = "ESTADO", nullable = false, length = 50)
@@ -256,52 +256,52 @@ public class RawMaterialPayRoll implements BaseModel {
     @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
     //todo: cambiar TOTALACOPIADOXGAB -> TOTALPESADOXGAB
-    @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALACOPIADOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalWeighedByGAB = 0.0;
 
-    @Column(name = "TOTALPESADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALPESADOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalCollectedByGAB = 0.0;
 
-    @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALMONTOACOPIOADOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalMountCollectdByGAB = 0.0;
 
-    @Column(name = "TOTALRETENCIONESXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALRETENCIONESXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalRetentionGAB = 0.0;
 
-    @Column(name = "TOTALCREDITOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALCREDITOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalCreditByGAB = 0.0;
 
-    @Column(name = "TOTALVETERINARIOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALVETERINARIOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalVeterinaryByGAB = 0.0;
 
-    @Column(name = "TOTALALCOHOLXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALALCOHOLXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalAlcoholByGAB = 0.0;
 
-    @Column(name = "TOTALCONCENTRADOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALCONCENTRADOSXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalConcentratedByGAB = 0.0;
 
-    @Column(name = "TOTALYOGURDXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALYOGURDXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalYogourdByGAB = 0.0;
 
-    @Column(name = "TOTALTACHOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALTACHOSXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalRecipByGAB = 0.0;
 
-    @Column(name = "TOTADESCUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTADESCUENTOSXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalDiscountByGAB = 0.0;
 
-    @Column(name = "TOTALOTROSDECUENTOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALOTROSDECUENTOSXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalOtherDiscountByGAB = 0.0;
 
-    @Column(name = "TOTALAJUSTEXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALAJUSTEXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalAdjustmentByGAB = 0.0;
 
-    @Column(name = "TOTALOTROSINGRESOSXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALOTROSINGRESOSXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalOtherIncomeByGAB = 0.0;
 
-    @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALIQUIDOXGAB", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalLiquidByGAB = 0.0;
 
-    @Column(name = "TOTALDESCUENTORESERVA", columnDefinition = "NUMBER(16,2)", nullable = true)
+    @Column(name = "TOTALDESCUENTORESERVA", columnDefinition = "DECIMAL(16,2)", nullable = true)
     private double totalReserveDicount = 0.0;
 
     public Long getId() {

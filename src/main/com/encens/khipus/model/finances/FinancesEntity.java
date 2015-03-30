@@ -21,7 +21,7 @@ import javax.persistence.*;
 @SequenceGenerator(name = "FinancesEntity.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_entidad")
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "SF_ENTIDADES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sf_entidades", schema = Constants.FINANCES_SCHEMA)
 public class FinancesEntity implements BaseModel {
 
     @Id

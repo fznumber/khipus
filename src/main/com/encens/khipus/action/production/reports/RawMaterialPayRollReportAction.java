@@ -14,7 +14,6 @@ import com.encens.khipus.reports.GenerationReportData;
 import com.encens.khipus.service.production.ProductiveZoneService;
 import com.encens.khipus.service.production.RawMaterialPayRollService;
 import com.encens.khipus.service.production.RawMaterialPayRollServiceBean;
-import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
 import com.encens.khipus.util.MoneyUtil;
 import com.jatun.titus.reportgenerator.util.TypedReportData;
@@ -537,7 +536,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         sql += "  from sesionacopio sa\n" +
                 "                              inner join acopiomateriaprima am\n" +
                 "                              on am.idsesionacopio = sa.idsesionacopio\n" +
-                "                              inner join EOS.persona pe \n" +
+                "                              inner join persona pe \n" +
                 "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
                 "                              inner join zonaproductiva zp\n" +
                 "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
@@ -630,7 +629,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                         "  from sesionacopio sa\n" +
                         "                              inner join acopiomateriaprima am\n" +
                         "                              on am.idsesionacopio = sa.idsesionacopio\n" +
-                        "                              inner join EOS.persona pe \n" +
+                        "                              inner join persona pe \n" +
                         "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
                         "                              inner join zonaproductiva zp\n" +
                         "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
@@ -641,7 +640,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             else
                 sql += ((cont == 1) ? "" : " , ") + "    (select 0.0 AS CANTIDAD , pe.nombres||' '||pe.apellidopaterno ||' '||pe.apellidomaterno as productor, PM.IDPRODUCTORMATERIAPRIMA\n" +
                         "  from PRODUCTORMATERIAPRIMA PM                             \n" +
-                        "                              inner join EOS.persona pe \n" +
+                        "                              inner join persona pe \n" +
                         "                              on PM.IDPRODUCTORMATERIAPRIMA=pe.idpersona                               \n" +
                         "                              WHERE PM.idzonaproductiva = " + zone.getId().toString() + "\n" +
                         "                              ORDER BY pe.nombres" +

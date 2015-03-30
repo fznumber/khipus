@@ -33,7 +33,7 @@ import java.util.List;
 public class ProductionOrder implements BaseModel {
 
     @Id
-    @Column(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDORDENPRODUCCION", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionOrder_Generator")
     private Long id;
 
@@ -50,41 +50,41 @@ public class ProductionOrder implements BaseModel {
     @Column(name = "NO_TRANS",nullable = true)
     private String numberTransaction;
 
-    @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADESPERADA", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double expendAmount;
 
-    @Column(name = "PESOCONTENEDOR", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "PESOCONTENEDOR", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double containerWeight;
 
-    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADPRODUCIDA", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double producedAmount = 0.0;
 
-    @Column(name = "CANTIDADPRODUCIDARESPONSABLE", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADPRODUCIDARESPONSABLE", nullable = true, columnDefinition = "DECIMAL(24,0)")
     private Double producedAmountResponsible = 0.0;
 
-    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PRECIOTOTALMATERIAL", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double totalPriceMaterial = 0.0;
 
-    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PORCENTAJEGRASA",nullable = true,columnDefinition = "DECIMAL(16,2)")
     private Double greasePercentage = 0.0;
 
-    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PRECIOTOTALINSUMO", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double totalPriceInput = 0.0;
 
-    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PRECIOTOTALMANOOBRA", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double totalPriceJourney = 0.0;
 
-    @Column(name = "TOTALCOSTOINDIRECTO", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "TOTALCOSTOINDIRECTO", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double totalIndirectCosts = 0.0;
 
-    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "COSTOTOALPRODUCCION", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double totalCostProduction = 0.0;
 
 
-    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal unitCost = BigDecimal.ZERO;
 
-    @Column(name = "COSTINSUMOPRINCIPAL", nullable = true,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "COSTINSUMOPRINCIPAL", nullable = true,columnDefinition = "DECIMAL(16,2)")
     private Double totalCostInputMain = 0.0;
 
     @Transient
@@ -94,11 +94,11 @@ public class ProductionOrder implements BaseModel {
     private Boolean selected = true;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", nullable = false, updatable = false, insertable = true)
     private ProductionPlanning productionPlanning;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)
@@ -118,11 +118,11 @@ public class ProductionOrder implements BaseModel {
     private List<OrderInput> orderInputs = new ArrayList<OrderInput>();
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
+    @JoinColumn(name = "IDCOMPOSICIONPRODUCTO", nullable = false, updatable = true, insertable = true)
     private ProductComposition productComposition;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "PRODUCTOPADRE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    @JoinColumn(name = "PRODUCTOPADRE", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productMain;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "productionOrder", cascade = CascadeType.ALL)

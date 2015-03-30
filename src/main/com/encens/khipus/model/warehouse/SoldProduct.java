@@ -3,7 +3,6 @@ package com.encens.khipus.model.warehouse;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.cashbox.Branch;
-import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.util.Constants;
 import org.hibernate.validator.Length;
 
@@ -48,7 +47,7 @@ import java.math.BigDecimal;
 
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "INV_VENTART", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_ventart", schema = Constants.FINANCES_SCHEMA)
 public class SoldProduct implements BaseModel {
     @Id
     @Column(name = "ID_MOV", nullable = false)

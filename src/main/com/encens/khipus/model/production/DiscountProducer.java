@@ -1,10 +1,6 @@
 package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
-import com.encens.khipus.model.CompanyListener;
-import com.encens.khipus.model.warehouse.ProductItem;
-import org.hibernate.annotations.Filter;
-import org.hibernate.validator.Length;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -29,17 +25,17 @@ import java.util.Date;
 public class DiscountProducer implements BaseModel {
 
     @Id
-    @Column(name = "IDDESCUENTOPRODUCTOR", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDDESCUENTOPRODUCTOR", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "DiscountProducer_Generator")
     private Long id;
 
-    @Column(name = "PROMEDIOLECHE",columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "PROMEDIOLECHE",columnDefinition = "DECIMAL(16,2)",nullable = false)
     private Double average;
 
-    @Column(name = "RESERVA",columnDefinition = "NUMBER(8,5)",nullable = false)
+    @Column(name = "RESERVA",columnDefinition = "DECIMAL(8,5)",nullable = false)
     private Double reserve;
 
-    @Column(name = "RESERVAQUICENTA",columnDefinition = "NUMBER(8,5)",nullable = false)
+    @Column(name = "RESERVAQUICENTA",columnDefinition = "DECIMAL(8,5)",nullable = false)
     private Double reserveFortnight;
 
     @Column(name = "FECHAINI",columnDefinition = "DATE",nullable = false)
@@ -48,13 +44,13 @@ public class DiscountProducer implements BaseModel {
     @Column(name = "FECHAFIN",columnDefinition = "DATE",nullable = false)
     private Date endDate;
 
-    @Column(name = "MONTOTOTALMN",columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "MONTOTOTALMN",columnDefinition = "DECIMAL(16,2)",nullable = false)
     private Double amountMN;
 
-    @Column(name = "MONTOTOTALME",columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "MONTOTOTALME",columnDefinition = "DECIMAL(16,2)",nullable = false)
     private Double amountME;
 
-    @Column(name = "TC",columnDefinition = "NUMBER(5,2)",nullable = false)
+    @Column(name = "TC",columnDefinition = "DECIMAL(5,2)",nullable = false)
     private Double tc;
 
     @Column(name = "ESTADO",columnDefinition = "VARCHAR(10)",nullable = false)

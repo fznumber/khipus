@@ -22,7 +22,7 @@ import javax.persistence.*;
 })
 
 @Entity
-@Table(name = "INV_SUBGRUPOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_subgrupos", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class SubGroup implements BaseModel {
     @EmbeddedId

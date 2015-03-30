@@ -32,7 +32,7 @@ import static com.encens.khipus.model.usertype.StringBooleanUserType.*;
 @Entity
 @EntityListeners({CompanyListener.class, CompanyNumberListener.class, UpperCaseStringListener.class})
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
-@Table(name = "CONFIGURACION", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "configuracion", schema = Constants.FINANCES_SCHEMA)
 public class CompanyConfiguration {
     @Id
     @Column(name = "NO_CIA", nullable = false, updatable = false)
@@ -331,13 +331,13 @@ public class CompanyConfiguration {
     @Type(type = com.encens.khipus.model.usertype.IntegerBooleanUserType.NAME)
     private boolean retentionForLoanAndAdvance;
 
-    @Column(name = "PRECIOUNITARIOLECHE",columnDefinition = "number(5,2)",nullable = true)
+    @Column(name = "PRECIOUNITARIOLECHE",columnDefinition = "DECIMAL(5,2)",nullable = true)
     private Double unitPriceMilk;
 
-    @Column(name = "IT",columnDefinition = "number(3,2)",nullable = true)
+    @Column(name = "IT",columnDefinition = "DECIMAL(3,2)",nullable = true)
     private Double it;
 
-    @Column(name = "IUE",columnDefinition = "number(3,2)",nullable = true)
+    @Column(name = "IUE",columnDefinition = "DECIMAL(3,2)",nullable = true)
     private Double iue;
 
     @Column(name = "AUTOMODIFCONTRATO", nullable = false)

@@ -3,9 +3,7 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import com.encens.khipus.model.warehouse.ProductItem;
 import org.hibernate.annotations.Filter;
-import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
@@ -33,7 +31,7 @@ import java.util.Date;
 public class LogProductiveZone implements BaseModel {
 
     @Id
-    @Column(name = "IDLOGZONAPRODUCTIVA", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDLOGZONAPRODUCTIVA", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "LogProductiveZone_Generator")
     private Long id;
 
@@ -46,15 +44,15 @@ public class LogProductiveZone implements BaseModel {
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false)
     private RawMaterialProducer rawMaterialProducer;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDZONAPRODUCTIVA", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @JoinColumn(name = "IDZONAPRODUCTIVA", nullable = false)
     private ProductiveZone productiveZone;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 

@@ -22,7 +22,7 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "ARCGCC", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "arcgcc", schema = Constants.FINANCES_SCHEMA)
 public class ExchangeKind implements BaseModel {
 
     @Id

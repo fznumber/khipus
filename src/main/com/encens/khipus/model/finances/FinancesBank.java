@@ -43,7 +43,7 @@ import java.util.List;
 
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "CK_BANCOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "ck_bancos", schema = Constants.FINANCES_SCHEMA)
 public class FinancesBank implements BaseModel {
 
     @Id

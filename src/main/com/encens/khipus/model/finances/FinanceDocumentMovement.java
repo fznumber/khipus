@@ -22,7 +22,7 @@ import java.util.Date;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CK_MOVS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "ck_movs", schema = Constants.FINANCES_SCHEMA)
 public class FinanceDocumentMovement implements BaseModel {
 
     @EmbeddedId

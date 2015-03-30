@@ -39,11 +39,11 @@ import java.math.BigDecimal;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "COM_DETOC",
+        pkColumnValue = "com_detoc",
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "COM_DETOC", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = @UniqueConstraint(columnNames = {"NO_CIA", "NO_ORDEN", "NRO"}))
+@Table(name = "com_detoc", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = @UniqueConstraint(columnNames = {"NO_CIA", "NO_ORDEN", "NRO"}))
 public class PurchaseOrderDetail implements BaseModel {
 
     @Id

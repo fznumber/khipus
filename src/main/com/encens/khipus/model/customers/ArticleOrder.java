@@ -1,6 +1,5 @@
 package com.encens.khipus.model.customers;
 
-import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.util.Constants;
 import org.hibernate.validator.Length;
@@ -57,22 +56,22 @@ public class ArticleOrder {
     })
     private AccountItem accountItem;*/
 
-    @Column(name = "CANTIDAD", nullable = true,columnDefinition = "NUMBER(10,0)")
+    @Column(name = "CANTIDAD", nullable = true)
     private Integer amount;
 
     @Column(name = "COD_ALM", nullable = true ,columnDefinition = "VARCHAR2(6 BYTE)")
     private String codWarehouse;
 
-    @Column(name = "PRECIO",nullable = true ,columnDefinition = "NUMBER(10,2)")
+    @Column(name = "PRECIO",nullable = true ,columnDefinition = "DECIMAL(10,2)")
     private Double price;
 
-    @Column(name = "REPOSICION",nullable = true, columnDefinition = "NUMBER")
+    @Column(name = "REPOSICION",nullable = true)
     private Integer reposicion;
 
-    @Column(name = "TOTAL",nullable = true,columnDefinition = "NUMBER(10,2)")
+    @Column(name = "TOTAL",nullable = true,columnDefinition = "DECIMAL(10,2)")
     private Double total;
 
-    @Column(name = "PROMOCION",nullable = true,columnDefinition = "NUMBER")
+    @Column(name = "PROMOCION",nullable = true)
     private Integer promotion;
 
 

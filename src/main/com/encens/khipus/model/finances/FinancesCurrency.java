@@ -25,7 +25,7 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CG_MONEDA", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_moneda", schema = Constants.FINANCES_SCHEMA)
 public class FinancesCurrency implements BaseModel {
     @EmbeddedId
     private FinancesCurrencyPk id = new FinancesCurrencyPk();

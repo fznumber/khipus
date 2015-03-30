@@ -31,7 +31,7 @@ import javax.persistence.*;
 public class ConfigGroup implements BaseModel {
 
     @Id
-    @Column(name = "IDCONFIGRUPO", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDCONFIGRUPO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ConfigGroup_Generator")
     private Long id;
 

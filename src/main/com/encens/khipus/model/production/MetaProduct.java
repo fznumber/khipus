@@ -34,7 +34,7 @@ import java.io.Serializable;
 public class MetaProduct implements Serializable, BaseModel {
 
     @Id
-    @Column(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDMETAPRODUCTOPRODUCCION", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "MetaProduct_Generator")
     private Long id;
 
@@ -70,7 +70,7 @@ public class MetaProduct implements Serializable, BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDUNIDADMEDIDAPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = true, insertable = true)
+    @JoinColumn(name = "IDUNIDADMEDIDAPRODUCCION", nullable = true, updatable = true, insertable = true)
     private MeasureUnitProduction measureUnitProduction;
 
     /*@ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
@@ -78,7 +78,7 @@ public class MetaProduct implements Serializable, BaseModel {
     private BaseProduct baseProduct;*/
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     public Company getCompany() {

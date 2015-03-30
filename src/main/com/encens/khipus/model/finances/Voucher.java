@@ -23,7 +23,7 @@ import java.util.List;
 @SequenceGenerator(name = "Voucher.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_trans")
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "SF_TMPENC", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sf_tmpenc", schema = Constants.FINANCES_SCHEMA)
 public class Voucher implements BaseModel{
     @Id
     @GeneratedValue(generator = "Voucher.sequenceGenerator")

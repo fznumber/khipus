@@ -30,7 +30,7 @@ public class Movement implements BaseModel {
     /*@EmbeddedId
     private CustomerOrderPK id = new CustomerOrderPK();*/
     @Id
-    @Column(name = "ID", columnDefinition = "NUMBER(20,0)", nullable = false)
+    @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "Movement_Generator")
     private Long id;
 
@@ -53,16 +53,16 @@ public class Movement implements BaseModel {
     @Column(name = "CASOESPECIAL", columnDefinition = "VARCHAR2(1 BYTE)")
     private String caseEspecial;
 
-    @Column(name = "MONTOTESO", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "MONTOTESO", columnDefinition = "DECIMAL(10,2)")
     private Double mountTeso;
 
-    @Column(name = "MONTOCUST", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "MONTOCUST", columnDefinition = "DECIMAL(10,2)")
     private Double mountCust;
 
-    @Column(name = "CUEN_ID", columnDefinition = "NUMBER(10,0)")
+    @Column(name = "CUEN_ID")
     private Long accountID;
 
-    @Column(name = "USUA_ID", columnDefinition = "NUMBER(10,0)")
+    @Column(name = "USUA_ID")
     private Long usrID;
 
     @Column(name = "EST_COD", columnDefinition = "VARCHAR2(15 BYTE)")
@@ -90,28 +90,28 @@ public class Movement implements BaseModel {
     private String codControl;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "DOSI_ID", columnDefinition = "NUMBER(10,0)")
+    @JoinColumn(name = "DOSI_ID")
     private Dosage dosage;
 
     @Column(name = "NIT", columnDefinition = "VARCHAR2(30 BYTE)")
     private String nit;
 
-    @Column(name = "CANT", columnDefinition = "NUMBER(10,0)")
+    @Column(name = "CANT")
     private Integer mount;
 
-    @Column(name = "DESCUENTO", columnDefinition = "NUMBER(10,0)")
+    @Column(name = "DESCUENTO", columnDefinition = "DECIMAL(10,0)")
     private Double discount;
 
     @Column(name = "SOLIDARIDAD", columnDefinition = "VARCHAR2(1 BYTE)")
     private String solidarity;
 
-    @Column(name = "MONTODESC", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "MONTODESC", columnDefinition = "DECIMAL(10,2)")
     private Double mountDiscount;
 
-    @Column(name = "DESCREAL", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "DESCREAL", columnDefinition = "DECIMAL(10,2)")
     private Double descreal;
 
-    @Column(name = "MONTONETO", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "MONTONETO", columnDefinition = "DECIMAL(10,2)")
     private Double mountNeto;
 
     @Column(name = "TIPO_PAGO", columnDefinition = "VARCHAR2(10 BYTE)")
@@ -123,13 +123,13 @@ public class Movement implements BaseModel {
     @Column(name = "PLAN_ESTUDIO", columnDefinition = "VARCHAR2(30 BYTE)")
     private String studyPlan;
 
-    @Column(name = "TIPO_CAMBIO", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "TIPO_CAMBIO", columnDefinition = "DECIMAL(10,2)")
     private Double typeChange;
 
-    @Column(name = "TOTAL_FACTURA", columnDefinition = "NUMBER(10,2)")
+    @Column(name = "TOTAL_FACTURA", columnDefinition = "DECIMAL(10,2)")
     private Double totalInvoice;
 
-    @Column(name = "NRO_CREDITOS", columnDefinition = "NUMBER")
+    @Column(name = "NRO_CREDITOS", columnDefinition = "DECIMAL(22,0)")
     private Double numberCredit;
 
     @Column(name = "DESC_PEDIDO", columnDefinition = "VARCHAR2(500 BYTE)")

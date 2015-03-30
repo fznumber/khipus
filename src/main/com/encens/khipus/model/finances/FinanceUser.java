@@ -14,7 +14,7 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "USUARIOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "usuarios", schema = Constants.FINANCES_SCHEMA)
 public class FinanceUser implements BaseModel {
     @Id
     @Column(name = "NO_USR", nullable = false, length = 4)

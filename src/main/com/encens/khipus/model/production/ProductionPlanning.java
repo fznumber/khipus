@@ -51,7 +51,7 @@ public class ProductionPlanning implements BaseModel {
     public static final String UNIQUE_DATE = "UNIQUE_DATE";
 
     @Id
-    @Column(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDPLANIFICACIONPRODUCCION", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "ProductionPlanning_Generator")
     private Long id;
 
@@ -70,7 +70,7 @@ public class ProductionPlanning implements BaseModel {
     private ProductionPlanningState state = ProductionPlanningState.PENDING;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private Company company;
 
     @OneToMany(mappedBy = "productionPlanning", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -83,19 +83,19 @@ public class ProductionPlanning implements BaseModel {
     //@OrderBy("code desc")
     private List<BaseProduct> baseProducts = new ArrayList<BaseProduct>();
 
-    @Column(name = "TOTALLECHEPRODUCIDA", nullable = true, columnDefinition = "NUMBER(9)")
+    @Column(name = "TOTALLECHEPRODUCIDA", nullable = true, columnDefinition = "DECIMAL(9,0)")
     private BigDecimal totalMilk = new BigDecimal(0.0);
 
-    @Column(name = "TOTALLECHEQUESO", nullable = true, columnDefinition = "NUMBER(9)")
+    @Column(name = "TOTALLECHEQUESO", nullable = true, columnDefinition = "DECIMAL(9,0)")
     private BigDecimal totalMilkCheese = new BigDecimal(0.0);
 
-    @Column(name = "TOTALLECHEUHT", nullable = true, columnDefinition = "NUMBER(9)")
+    @Column(name = "TOTALLECHEUHT", nullable = true, columnDefinition = "DECIMAL(9,0)")
     private BigDecimal totalMilkUHT = new BigDecimal(0.0);
 
-    @Column(name = "TOTALLECHEYOGURT", nullable = true, columnDefinition = "NUMBER(9)")
+    @Column(name = "TOTALLECHEYOGURT", nullable = true, columnDefinition = "DECIMAL(9,0)")
     private BigDecimal totalMilkYogurt = new BigDecimal(0.0);
 
-    @Column(name = "TOTALLECHEREPROCESO", nullable = true, columnDefinition = "NUMBER(9)")
+    @Column(name = "TOTALLECHEREPROCESO", nullable = true, columnDefinition = "DECIMAL(9,0)")
     private BigDecimal totalMilkReprocessed = new BigDecimal(0.0);
 
     public Company getCompany() {

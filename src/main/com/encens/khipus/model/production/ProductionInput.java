@@ -22,7 +22,7 @@ import javax.persistence.*;
 public class ProductionInput extends MetaProduct {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA",columnDefinition = "NUMBER(24,0)" , nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA" , nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     public com.encens.khipus.model.admin.Company getCompany() {

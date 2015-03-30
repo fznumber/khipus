@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 })
 
 @Entity
-@Table(name = "INV_INVENTARIO", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_inventario", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class Inventory implements BaseModel {
     @EmbeddedId

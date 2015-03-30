@@ -1,7 +1,6 @@
 package com.encens.khipus.model.production;
 
 import com.encens.khipus.model.BaseModel;
-import com.encens.khipus.model.CompanyListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,11 +25,11 @@ import java.util.Date;
 public class DiscountReserve implements BaseModel {
 
     @Id
-    @Column(name = "IDDESCUENTORESERVA", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDDESCUENTORESERVA", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "DiscountReserve_Generator")
     private Long id;
 
-    @Column(name = "MONTO",columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "MONTO", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private Double amount;
 
     @Column(name = "FECHAINI",columnDefinition = "DATE",nullable = false)
@@ -40,11 +39,11 @@ public class DiscountReserve implements BaseModel {
     private Date endDate;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDDESCUENTOPRODUCTOR", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = true, insertable = true)
+    @JoinColumn(name = "IDDESCUENTOPRODUCTOR", nullable = false, updatable = true, insertable = true)
     private DiscountProducer discountProducer;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTORMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
     private RawMaterialProducer materialProducer;
 
     public Long getId() {

@@ -21,22 +21,22 @@ import javax.persistence.*;
 @EntityListeners(CompanyListener.class)
 public class InputProductionVoucher implements BaseModel {
     @Id
-    @Column(name = "IDVALEINSUMOSREQUERIDOS", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDVALEINSUMOSREQUERIDOS", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "InputProductionVoucher_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double amount;
 
-    @Column(name = "PRECIOCOSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,2)")
+    @Column(name = "PRECIOCOSTOTOTAL", nullable = true, columnDefinition = "DECIMAL(16,2)")
     private Double priceCostTotal = 0.0;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDMETAPRODUCTOPRODUCCION", nullable = false, updatable = false, insertable = true)
     private MetaProduct metaProduct;
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", nullable = false, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @Version

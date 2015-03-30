@@ -13,7 +13,7 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 public class ArticleOrderPK implements Serializable {
-    @Column(name = "ID_CUENTA", nullable = false, length = 10,columnDefinition = "NUMBER(10,0)")
+    @Column(name = "ID_CUENTA", nullable = false, length = 10)
     @Length(max = 10)
     private Long idAccount;
 

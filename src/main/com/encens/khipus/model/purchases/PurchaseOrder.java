@@ -49,7 +49,7 @@ import java.util.List;
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 @Filter(name = com.encens.khipus.util.Constants.BUSINESS_UNIT_FILTER_NAME)
-@Table(name = "COM_ENCOC", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "com_encoc", schema = Constants.FINANCES_SCHEMA)
 public class PurchaseOrder implements BaseModel {
 
     @Id

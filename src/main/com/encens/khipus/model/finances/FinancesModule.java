@@ -14,7 +14,7 @@ import java.util.Date;
  * @version 2.0
  */
 @Entity
-@Table(name = "SF_MODULOS", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sf_modulos", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class FinancesModule implements BaseModel {
     @EmbeddedId

@@ -3,13 +3,11 @@ package com.encens.khipus.model.production;
 import com.encens.khipus.model.BaseModel;
 import com.encens.khipus.model.CompanyListener;
 import com.encens.khipus.model.admin.Company;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 import org.hibernate.validator.NotNull;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +34,14 @@ import java.util.List;
 public class BaseProduct implements BaseModel {
 
     @Id
-    @Column(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDPRODUCTOBASE", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "BaseProduct_Generator")
     private Long id;
 
     @Column(name = "UNIDADES", nullable = true)
     private Integer units;
 
-    @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "NUMBER(8,2)")
+    @Column(name = "VOLUMEN", nullable = true ,columnDefinition = "DECIMAL(8,2)")
     private Double volume;
 
     @Column(name = "ESTADO", length = 20, nullable = false)
@@ -64,11 +62,11 @@ public class BaseProduct implements BaseModel {
     private List<ProductProcessing> productProcessings = new ArrayList<ProductProcessing>();
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPLANIFICACIONPRODUCCION", nullable = false, updatable = false, insertable = true)
     private ProductionPlanning productionPlanningBase;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     @NotNull
     private Company company;
 
@@ -76,7 +74,7 @@ public class BaseProduct implements BaseModel {
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     private List<SingleProduct> singleProducts = new ArrayList<SingleProduct>();
 
-    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOTOTALINSUMOS", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal totalInput = new BigDecimal(0.0);
 
     @OneToMany(mappedBy = "baseProductInput", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

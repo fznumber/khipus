@@ -25,7 +25,7 @@ import java.util.List;
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CXP_PROVEEDORES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cxp_proveedores", schema = Constants.FINANCES_SCHEMA)
 public class Provider implements BaseModel {
 
     @EmbeddedId

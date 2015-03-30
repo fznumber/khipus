@@ -6,7 +6,6 @@ import com.encens.khipus.model.UpperCaseStringListener;
 import com.encens.khipus.model.admin.BusinessUnit;
 import com.encens.khipus.model.cashbox.Branch;
 import com.encens.khipus.model.employees.Employee;
-import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.util.Constants;
 import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
@@ -21,7 +20,7 @@ import javax.persistence.*;
         @NamedQuery(name = "Warehouse.findByCode", query = "select w from Warehouse w where w.warehouseCode =:warehouseCode")
 })
 @Entity
-@Table(name = "INV_ALMACENES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "inv_almacenes", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 @Filter(name = com.encens.khipus.util.Constants.BUSINESS_UNIT_FILTER_NAME)
 public class Warehouse implements BaseModel {

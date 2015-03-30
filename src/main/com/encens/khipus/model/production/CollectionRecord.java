@@ -39,13 +39,13 @@ public class CollectionRecord implements com.encens.khipus.model.BaseModel {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "CollectionRecord_Generator")
     private Long id;
 
-    @Column(name = "CANTIDADRECIBIDA", columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "CANTIDADRECIBIDA", columnDefinition = "DECIMAL(16,2)",nullable = false)
     private Double receivedAmount;
 
-    @Column(name = "CANTIDADPESADA", columnDefinition = "NUMBER(16,2)",nullable = false)
+    @Column(name = "CANTIDADPESADA", columnDefinition = "DECIMAL(16,2)",nullable = false)
     private Double weightedAmount;
 
-    @Column(name = "CANTIDADRECHAZADA",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "CANTIDADRECHAZADA",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private Double rejectedAmount;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

@@ -58,7 +58,7 @@ public class ClientOrder implements BaseModel {
     @Column(name = "FACTURA",nullable = true)
     private String invoice;
 
-    @Column(name = "SUPERVISOR",nullable = true ,columnDefinition = "NUMBER(24,0)")
+    @Column(name = "SUPERVISOR",nullable = true )
     private String supevisor;
 
     @OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

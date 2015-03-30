@@ -403,7 +403,7 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
     {
         String name = "";
         try{
-            name =  (String)em.createNativeQuery("select nombres||' '||apellidopaterno  from eos.persona where IDPERSONA = :cod")
+            name =  (String)em.createNativeQuery("select nombres||' '||apellidopaterno  from persona where IDPERSONA = :cod")
                     .setParameter("cod",codEmployeed)
                     .getSingleResult();
         }catch(NoResultException e)

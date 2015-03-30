@@ -17,7 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "UNIDADMEDIDA", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {@UniqueConstraint(columnNames = {"NO_CIA", "NOMBRE"})})
+@Table(name = "unidadmedida", schema = Constants.FINANCES_SCHEMA, uniqueConstraints = {@UniqueConstraint(columnNames = {"NO_CIA", "NOMBRE"})})
 public class MeasureUnit implements BaseModel {
 
     @EmbeddedId

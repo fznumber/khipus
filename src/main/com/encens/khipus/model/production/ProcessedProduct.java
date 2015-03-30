@@ -31,7 +31,7 @@ public class ProcessedProduct extends MetaProduct {
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCOMPANIA", columnDefinition = "NUMBER(24,0)", nullable = false, updatable = false, insertable = true)
+    @JoinColumn(name = "IDCOMPANIA", nullable = false, updatable = false, insertable = true)
     private com.encens.khipus.model.admin.Company company;
 
     @OneToMany(mappedBy = "processedProduct", fetch = FetchType.LAZY)
@@ -40,7 +40,7 @@ public class ProcessedProduct extends MetaProduct {
     @Column(name = "UNIDADMEDIDATE", nullable = true, columnDefinition = "VARCHAR(4)")
     private String unidMeasure;
 
-    @Column(name = "CANTIDAD", nullable = true, columnDefinition = "NUMBER(7,2)")
+    @Column(name = "CANTIDAD", nullable = true, columnDefinition = "DECIMAL(7,2)")
     private Double amount;
 
     public List<ProductComposition> getProductCompositionList() {

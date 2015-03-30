@@ -45,31 +45,31 @@ public class RawMaterialProducerDiscount implements com.encens.khipus.model.Base
     @Column(name = "CODIGO", nullable = false)
     private long code;
 
-    @Column(name = "YOGURT",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "YOGURT",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double yogurt = 0.0;
 
-    @Column(name = "VETERINARIO",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "VETERINARIO",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double veterinary = 0.0;
 
-    @Column(name = "CREDITO",columnDefinition = "NUMBER(16,2)" , nullable = false)
+    @Column(name = "CREDITO",columnDefinition = "DECIMAL(16,2)" , nullable = false)
     private double credit = 0.0;
 
-    @Column(name = "TACHOS",columnDefinition = "NUMBER(16,2)" ,nullable = false)
+    @Column(name = "TACHOS",columnDefinition = "DECIMAL(16,2)" ,nullable = false)
     private double cans = 0.0;
 
-    @Column(name = "OTROSDESCUENTOS", nullable = false ,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "OTROSDESCUENTOS", nullable = false ,columnDefinition = "DECIMAL(16,2)")
     private double otherDiscount = 0.0;
 
-    @Column(name = "OTROSINGRESOS", nullable = false,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "OTROSINGRESOS", nullable = false,columnDefinition = "DECIMAL(16,2)")
     private double otherIncoming = 0.0;
 
-    @Column(name = "RETENCION", nullable = false,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "RETENCION", nullable = false,columnDefinition = "DECIMAL(16,2)")
     private double withholdingTax = 0.0;
 
-    @Column(name = "ALCOHOL", nullable = false,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "ALCOHOL", nullable = false,columnDefinition = "DECIMAL(16,2)")
     private double alcohol = 0.0;
 
-    @Column(name = "CONCENTRADOS", nullable = false,columnDefinition = "NUMBER(16,2)")
+    @Column(name = "CONCENTRADOS", nullable = false,columnDefinition = "DECIMAL(16,2)")
     private double concentrated = 0.0;
 
     @OneToOne(mappedBy = "rawMaterialProducerDiscount", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})

@@ -1,13 +1,10 @@
 package com.encens.khipus.model.production;
 
 
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Filter;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.math.BigDecimal;
 import java.util.Date;
 
 @TableGenerator(name = "rawMaterialPayRecord_Generator",
@@ -37,13 +34,13 @@ public class RawMaterialPayRecord {
     @JoinColumn(name = "IDPLANILLAPAGOMATERIAPRIMA", nullable = false, updatable = false, insertable = true)
     private RawMaterialPayRoll rawMaterialPayRoll;
 
-    @Column(name = "CANTIDADTOTAL", columnDefinition = "NUMBER(24,2)" ,nullable = false)
+    @Column(name = "CANTIDADTOTAL", columnDefinition = "DECIMAL(24,2)" ,nullable = false)
     private double totalAmount = 0.0;
 
-    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "AJUSTEZONAPRODUCTIVA",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double productiveZoneAdjustment = 0.0;
 
-    @Column(name = "DESCUENTORESERVA",columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "DESCUENTORESERVA",columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double discountReserve = 0.0;
 
     @Column(name = "LICENCIAIMPUESTOS", nullable = true, length = 200)
@@ -55,13 +52,13 @@ public class RawMaterialPayRecord {
     @Column(name = "FECHAINICIALICENCIAIMPUESTO",columnDefinition = "DATE" ,nullable = true)
     private Date startDateTaxLicence;
 
-    @Column(name = "TOTALGANADO", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALGANADO", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double earnedMoney;
 
-    @Column(name = "TOTALPAGOACOPIO", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "TOTALPAGOACOPIO", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double totalPayCollected = 0.0;
 
-    @Column(name = "LIQUIDOPAGABLE", columnDefinition = "NUMBER(16,2)", nullable = false)
+    @Column(name = "LIQUIDOPAGABLE", columnDefinition = "DECIMAL(16,2)", nullable = false)
     private double liquidPayable = 0.0;
 
     @Version

@@ -27,7 +27,7 @@ import java.util.List;
 @Table(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "VMARCADO")
 public class Mark implements BaseModel {
     @Id
-    @Column(name = "IDRHMARCADO", nullable = false, insertable = false, updatable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "IDRHMARCADO", nullable = false, insertable = false, updatable = false)
     private Long id;
 
     @Column(name = "MARFECHA", insertable = false, updatable = false)

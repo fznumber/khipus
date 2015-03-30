@@ -17,7 +17,7 @@ import javax.persistence.*;
  */
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "CG_UNIDADES", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "cg_unidades", schema = Constants.FINANCES_SCHEMA)
 public class FinancesExecutorUnit implements BaseModel {
 
     @EmbeddedId

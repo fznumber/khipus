@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "SF_TMPDET", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sf_tmpdet", schema = Constants.FINANCES_SCHEMA)
 public class VoucherDetail implements BaseModel {
 
     //Fake ID, just to avoid duplicated in the EntityManager

@@ -1,16 +1,10 @@
 package com.encens.khipus.model.customers;
 
 import com.encens.khipus.model.BaseModel;
-import com.encens.khipus.model.contacts.Address;
-import com.encens.khipus.model.contacts.Zone;
-import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.util.Constants;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,7 +26,7 @@ import java.util.List;
 public class RePrints implements BaseModel {
 
     @Id
-    @Column(name = "ID", columnDefinition = "VARCHAR2(20 BYTE)", nullable = false)
+    @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "RePrints_Generator")
     private Long id;
 
@@ -44,10 +38,10 @@ public class RePrints implements BaseModel {
     @Column(name = "FECHA_EMISION")
     private Date dateEmission;
 
-    @Column(name = "USUA_ID_REIMP",columnDefinition = "NUMBER(10,0)")
+    @Column(name = "USUA_ID_REIMP")
     private Long idUsrRePint;
 
-    @Column(name = "USUA_ID_EMISION",columnDefinition = "NUMBER(10,0)")
+    @Column(name = "USUA_ID_EMISION")
     private Long idUsrEmission;
 
     @Column(name = "EST_COD",columnDefinition = "VARCHAR2(15 BYTE)")
@@ -68,14 +62,14 @@ public class RePrints implements BaseModel {
     @Column(name = "PLAN_ESTUDIO",columnDefinition = "VARCHAR2(30 BYTE)")
     private String planStudy;
 
-    @Column(name = "NUMERO_REIMP",columnDefinition = "NUMBER")
+    @Column(name = "NUMERO_REIMP")
     private Integer numberReImprent;
 
     @Column(name = "ESTADO",columnDefinition = "VARCHAR2(5 BYTE)")
     private String state;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "DOSI_ID", columnDefinition = "NUMBER(10,0)")
+    @JoinColumn(name = "DOSI_ID")
     private Dosage dosage;
 
     @Column(name = "GLOSA",columnDefinition = "VARCHAR2(200 BYTE)")

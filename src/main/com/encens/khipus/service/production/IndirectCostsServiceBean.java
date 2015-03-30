@@ -1,9 +1,7 @@
 package com.encens.khipus.service.production;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
-import com.encens.khipus.model.finances.CashAccount;
 import com.encens.khipus.model.production.*;
-import com.encens.khipus.model.warehouse.Group;
 import com.encens.khipus.model.warehouse.SubGroup;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
@@ -17,7 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -400,7 +401,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         try{
             Object[] datas =  (Object[])em.createNativeQuery("select pe.*\n" +
                     "from PERIODOCOSTOINDIRECTO pe \n" +
-                    "inner join EOS.gestion ge\n" +
+                    "inner join gestion ge\n" +
                     "on pe.idgestion = ge.idgestion \n" +
                     "where pe.MES= :month and ge.anio= :year ")
                     //todo: se suma uno al mes para igualar con el periodo ya que el mes va 0-11
@@ -413,7 +414,7 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
         }catch (NoResultException e){
             List<Object[]> datas =  (List<Object[]>)em.createNativeQuery("select pe.*\n" +
                     "from PERIODOCOSTOINDIRECTO pe \n" +
-                    "inner join EOS.gestion ge\n" +
+                    "inner join gestion ge\n" +
                     "on pe.idgestion = ge.idgestion ")
                     .getResultList();
             Object[] data = datas.get(0);

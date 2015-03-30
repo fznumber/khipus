@@ -19,13 +19,13 @@ import javax.persistence.*;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "GRUPOCTACTB",
+        pkColumnValue = "grupoctactb",
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
-@Table(schema = com.encens.khipus.util.Constants.FINANCES_SCHEMA, name = "GRUPOCTACTB", uniqueConstraints = @UniqueConstraint(columnNames = {"IDCOMPANIA", "NOMBRE"}))
+@Table(schema = com.encens.khipus.util.Constants.FINANCES_SCHEMA, name = "grupoctactb", uniqueConstraints = @UniqueConstraint(columnNames = {"IDCOMPANIA", "NOMBRE"}))
 public class CashAccountGroup implements BaseModel {
     @Id
     @Column(name = "IDGRUPOCTACTB", nullable = false)

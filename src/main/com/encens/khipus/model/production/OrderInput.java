@@ -20,21 +20,21 @@ import java.math.BigDecimal;
 public class OrderInput implements BaseModel {
 
     @Id
-    @Column(name = "IDORDENINSUMO", columnDefinition = "NUMBER(24,0)", nullable = false)
+    @Column(name = "IDORDENINSUMO", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "OrderInput_Generator")
     private Long id;
 
-    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDAD", nullable = false, columnDefinition = "DECIMAL(24,0)")
     private Double amount;
 
     /* TODO: cambiar nullable a false */
-    @Column(name = "CANTIDADSTOCK", nullable = true, columnDefinition = "NUMBER(24,0)")
+    @Column(name = "CANTIDADSTOCK", nullable = true, columnDefinition = "DECIMAL(24,0)")
     private BigDecimal amountStock = new BigDecimal(0.0);
 
-    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOUNITARIO", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal costUnit = new BigDecimal(0.0);
 
-    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "NUMBER(16,6)")
+    @Column(name = "COSTOTOTAL", nullable = true, columnDefinition = "DECIMAL(16,6)")
     private BigDecimal costTotal = new BigDecimal(0.0);
 
     @Column(name = "FORMULAMATEMATICA", nullable = true, length = 500)
@@ -58,11 +58,11 @@ public class OrderInput implements BaseModel {
     private ProductItem productItem;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDORDENPRODUCCION", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    @JoinColumn(name = "IDORDENPRODUCCION", nullable = true, updatable = false, insertable = true)
     private ProductionOrder productionOrder;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "IDPRODUCTOBASE", columnDefinition = "NUMBER(24,0)", nullable = true, updatable = false, insertable = true)
+    @JoinColumn(name = "IDPRODUCTOBASE", nullable = true, updatable = false, insertable = true)
     private BaseProduct baseProductInput;
 
     public Long getId() {
