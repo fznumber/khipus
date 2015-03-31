@@ -633,7 +633,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                         "                              on am.IDPRODUCTORMATERIAPRIMA=pe.idpersona \n" +
                         "                              inner join zonaproductiva zp\n" +
                         "                              on zp.idzonaproductiva = sa.idzonaproductiva\n" +
-                        "                              where sa.fecha = to_date('" + i + "/" + month_act + "/" + gestion.getYear() + "','dd/mm/yyyy') \n" +
+                        "                              where sa.fecha = STR_TO_DATE('" + i + "," + month_act + "," + gestion.getYear() + "','%d,%m,%Y') \n" +
                         "                              AND zp.idzonaproductiva = " + zone.getId().toString() + "\n" +
                         "                              ORDER BY pe.nombres\n" +
                         "      ) A" + cont + ((i != endDay) ? "\n" : "\n");
