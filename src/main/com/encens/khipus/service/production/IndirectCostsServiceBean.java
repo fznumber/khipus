@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -408,8 +409,11 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
                     .setParameter("month",calendar.get(Calendar.MONTH)+1)
                     .setParameter("year",calendar.get(Calendar.YEAR))
                     .getSingleResult();
-            periodIndirectCost.setId(((BigDecimal)datas[0]).longValue());
-            periodIndirectCost.setMonth(((BigDecimal)datas[1]).intValue());
+            /*periodIndirectCost.setId(((BigDecimal)datas[0]).longValue());
+            periodIndirectCost.setMonth(((BigDecimal)datas[1]).intValue());*/
+            // Changes to Mysql:
+            periodIndirectCost.setId(((BigInteger)datas[0]).longValue());
+            periodIndirectCost.setMonth(((Integer)datas[1]).intValue());
 
         }catch (NoResultException e){
             List<Object[]> datas =  (List<Object[]>)em.createNativeQuery("select pe.*\n" +
@@ -418,8 +422,11 @@ public class IndirectCostsServiceBean extends ExtendedGenericServiceBean impleme
                     "on pe.idgestion = ge.idgestion ")
                     .getResultList();
             Object[] data = datas.get(0);
-            periodIndirectCost.setId(((BigDecimal)data[0]).longValue());
-            periodIndirectCost.setMonth(((BigDecimal)data[1]).intValue());
+            /*periodIndirectCost.setId(((BigDecimal)data[0]).longValue());
+            periodIndirectCost.setMonth(((BigDecimal)data[1]).intValue());*/
+            // Changes to Mysql:
+            periodIndirectCost.setId(((BigInteger)data[0]).longValue());
+            periodIndirectCost.setMonth(((Integer)data[1]).intValue());
         }
 
         return periodIndirectCost;
