@@ -59,17 +59,17 @@ public class ArticleOrder {
     @Column(name = "CANTIDAD", nullable = true)
     private Integer amount;
 
-    @Column(name = "COD_ALM", nullable = true ,columnDefinition = "VARCHAR2(6 BYTE)")
+    @Column(name = "COD_ALM", nullable = true )
     private String codWarehouse;
 
-    @Column(name = "PRECIO",nullable = true ,columnDefinition = "DECIMAL(10,2)")
+    @Column(name = "PRECIO",nullable = true )
     private Double price;
 
     @Column(name = "REPOSICION",nullable = true)
     private Integer reposicion;
 
-    @Column(name = "TOTAL",nullable = true,columnDefinition = "DECIMAL(10,2)")
-    private Double total;
+    @Column(name = "TOTAL",nullable = true)
+    private Integer total;
 
     @Column(name = "PROMOCION",nullable = true)
     private Integer promotion;
@@ -147,11 +147,11 @@ public class ArticleOrder {
         this.reposicion = reposicion;
     }
 
-    public Double getTotal() {
+    public Integer getTotal() {
         return total;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(Integer total) {
         this.total = total;
     }
 

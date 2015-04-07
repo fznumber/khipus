@@ -61,9 +61,9 @@ public class ClientOrder implements BaseModel {
     @Column(name = "SUPERVISOR",nullable = true )
     private String supevisor;
 
-    @OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    /*@OneToMany(mappedBy = "clientOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+    private List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();*/
 
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -154,13 +154,13 @@ public class ClientOrder implements BaseModel {
         this.supevisor = supevisor;
     }
 
-    public List<CustomerOrder> getCustomerOrders() {
+/*    public List<CustomerOrder> getCustomerOrders() {
         return customerOrders;
     }
 
     public void setCustomerOrders(List<CustomerOrder> customerOrders) {
         this.customerOrders = customerOrders;
-    }
+    }*/
 
     public ClientPerson getClientPerson() {
         return clientPerson;
