@@ -72,6 +72,13 @@ public class CustomerOrder implements BaseModel  {
     @Column(name = "TOTALIMPORTE")
     private Double totalimporte = 0.0;
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "customerOrder")
+    private Collection<ArticleOrder> articulosPedidos ;
+
+    @OneToOne
+    @JoinColumn(name="codigo")
+    private CodigoPedidoSecuencia codigo;
+
     public Long getIdpedidos() {
         return idpedidos;
     }
@@ -207,5 +214,21 @@ public class CustomerOrder implements BaseModel  {
     @Override
     public Object getId() {
         return null;
+    }
+
+    public Collection<ArticleOrder> getArticulosPedidos() {
+        return articulosPedidos;
+    }
+
+    public void setArticulosPedidos(Collection<ArticleOrder> articulosPedidos) {
+        this.articulosPedidos = articulosPedidos;
+    }
+
+    public CodigoPedidoSecuencia getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(CodigoPedidoSecuencia codigo) {
+        this.codigo = codigo;
     }
 }

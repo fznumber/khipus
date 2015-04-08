@@ -1,6 +1,7 @@
 package com.encens.khipus.model.customers;
 
 import com.encens.khipus.model.warehouse.ProductItem;
+import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.util.Constants;
 import org.hibernate.validator.Length;
 
@@ -16,24 +17,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ARTICULOS_PEDIDO",schema = Constants.CASHBOX_SCHEMA)
-//@Filter(name = "companyFilter")
-//@EntityListeners(CompanyListener.class)
-
 public class ArticleOrder {
-    @EmbeddedId
-    private ArticleOrderPK id = new ArticleOrderPK();
-
-    @Column(name = "ID1", nullable = false, length = 10)
-    @Length(max = 10)
-    private Integer orderID1;
+    @Id
+    @Column(name = "IDARTICULOSPEDIDO")
+    private Long id;
 
     @Column(name = "COD_ART", nullable = false, length = 6,insertable=false,updatable=false)
     @Length(max = 6)
     private String codArt;
-
-/*    @Column(name = "NO_CIA", nullable = false, length = 2)
-    @Length(max = 2)
-    private String companyNumber;*/
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumns({
@@ -42,25 +33,16 @@ public class ArticleOrder {
     })
     private ProductItem productItem;
 
-    /*@ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = true, updatable = false, insertable = false)
-    private CustomerOrder customerOrder;*/
-    @Column(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = false)
-    private Long customerOrder;
-/*
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumns({
-            @JoinColumn(name = "ID_CUENTA", referencedColumnName = "ID_CUENTA"),
-            @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART"),
-            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA")
-    })
-    private AccountItem accountItem;*/
+    @JoinColumn(name = "IDPEDIDOS",referencedColumnName = "IDPEDIDOS")
+    @ManyToOne
+    private CustomerOrder customerOrder;
 
     @Column(name = "CANTIDAD", nullable = true)
     private Integer amount;
 
-    @Column(name = "COD_ALM", nullable = true )
-    private String codWarehouse;
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COD_ALM", nullable = true, updatable = false, insertable = true)
+    private Warehouse warehouse;
 
     @Column(name = "PRECIO",nullable = true )
     private Double price;
@@ -75,14 +57,6 @@ public class ArticleOrder {
     private Integer promotion;
 
 
-    public Integer getOrderID1() {
-        return orderID1;
-    }
-
-    public void setOrderID1(Integer orderID1) {
-        this.orderID1 = orderID1;
-    }
-
     public String getCodArt() {
         return codArt;
     }
@@ -90,30 +64,6 @@ public class ArticleOrder {
     public void setCodArt(String codArt) {
         this.codArt = codArt;
     }
-
-   /* public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }*/
-
-    /*public CustomerOrder getCustomerOrder() {
-        return customerOrder;
-    }
-
-    public void setCustomerOrder(CustomerOrder customerOrder) {
-        this.customerOrder = customerOrder;
-    }
-
-    public AccountItem getAccountItem() {
-        return accountItem;
-    }
-
-    public void setAccountItem(AccountItem accountItem) {
-        this.accountItem = accountItem;
-    }*/
 
     public Integer getAmount() {
         return amount;
@@ -123,12 +73,12 @@ public class ArticleOrder {
         this.amount = amount;
     }
 
-    public String getCodWarehouse() {
-        return codWarehouse;
+    public Warehouse getWarehouse() {
+        return warehouse;
     }
 
-    public void setCodWarehouse(String codWarehouse) {
-        this.codWarehouse = codWarehouse;
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
     }
 
     public Double getPrice() {
@@ -171,19 +121,19 @@ public class ArticleOrder {
         this.productItem = productItem;
     }
 
-    public ArticleOrderPK getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(ArticleOrderPK id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Long getCustomerOrder() {
+    public CustomerOrder getCustomerOrder() {
         return customerOrder;
     }
 
-    public void setCustomerOrder(Long customerOrder) {
+    public void setCustomerOrder(CustomerOrder customerOrder) {
         this.customerOrder = customerOrder;
     }
 }

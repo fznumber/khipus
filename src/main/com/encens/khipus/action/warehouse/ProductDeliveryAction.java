@@ -9,6 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.customers.AccountItemService;
@@ -62,6 +63,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
     private String product;
     private Employee distributor;
+    private CustomerOrder customerOrder;
 
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
@@ -74,13 +76,14 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
 
-        if(!showDeliveryOrder)
+       /* if(!showDeliveryOrder)
         return deliveryInCatch();
         else
         if(date!=null)
         return deliveryOrder();
         else
-        return deliveryOrderWhitoutDate();
+        return deliveryOrderWhitoutDate();*/
+        return deliveryOrder();
 
     }
 
@@ -328,15 +331,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     public void search() {
-        if (productDeliveryType.equals(ProductDeliveryType.CASH_SALE))
-            searchCashSale();
-        if (productDeliveryType.equals(ProductDeliveryType.CASH_ORDER))
-            if(date != null)
-                searchCashOrder();
-            else
-                searchCashOrderWithoutDate();
-
-
+        customerOrder = soldProductService.findPedidoPorCodigo(orderNumber);
+        setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+        getInstance().setInvoiceNumber(null);
+        soldProducts.clear();
     }
 
     private void searchCashSale() {
@@ -697,5 +695,13 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void cleanDistributor(){
         setDistributor(null);
+    }
+
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
+    }
+
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
     }
 }

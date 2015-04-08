@@ -1,8 +1,10 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.SoldProduct;
+import com.encens.khipus.service.customers.OrderClient;
 import com.encens.khipus.util.Constants;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
@@ -181,6 +183,21 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         }
 
         return result;
+    }
+
+    @Override
+    public CustomerOrder findPedidoPorCodigo(String numeroPedido)
+    {
+        CustomerOrder customerOrder;
+        try{
+            customerOrder = (CustomerOrder)getEntityManager()
+                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo")
+                    .setParameter("codigo",numeroPedido)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+        return customerOrder;
     }
 
     @Override
