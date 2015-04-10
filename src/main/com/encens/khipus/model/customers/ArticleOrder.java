@@ -41,7 +41,11 @@ public class ArticleOrder {
     private Integer amount;
 
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "COD_ALM", nullable = true, updatable = false, insertable = true)
+    //@JoinColumn(name = "COD_ALM", nullable = true, updatable = false, insertable = true)
+    @JoinColumns({
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA",nullable = true,updatable = false,insertable = false),
+            @JoinColumn(name = "COD_ALM", referencedColumnName = "COD_ALM",nullable = true,updatable = false,insertable = false)
+    })
     private Warehouse warehouse;
 
     @Column(name = "PRECIO",nullable = true )

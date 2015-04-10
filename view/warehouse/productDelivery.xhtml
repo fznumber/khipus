@@ -56,23 +56,6 @@
             </c:choose>
         </f:facet>
 
-        <s:decorate id="productDeliveryTypeField"
-                    template="/include/inputField.xhtml"
-                    styleClass="formRow">
-            <!--<ui:define name="label">#{messages['ProductDelivery.deliveryType']}</ui:define>-->
-            <h:selectOneRadio value="#{productDeliveryAction.productDeliveryType}"
-                              layout="lineDirection">
-                <s:selectItems value="#{productDeliveryTypes}"
-                               var="element"
-                               label="#{messages[element.resourceKey]}"/>
-                <s:convertEnum/>
-                <a4j:support event="onclick"
-                             ajaxSingle="true"
-                             actionListener="#{productDeliveryAction.cleanInvoiceNumber}"
-                             reRender="invoiceNumber, soldProductPanel, messageSearchOrder "/>
-            </h:selectOneRadio>
-        </s:decorate>
-
         <s:decorate id="invoideNumberField"
                     template="/include/inputField.xhtml"
                     styleClass="formRow">
@@ -142,34 +125,34 @@
             </s:decorate>
         </s:fragment>
         <s:div id="soldProductPanel">
-            <s:fragment id="soldProductInformationPanel" rendered="#{productDeliveryAction.existsSoldProducts}">
+            <s:fragment id="soldProductInformationPanel" rendered="#{productDeliveryAction.customerOrder != null}">
                 <s:decorate id="namesField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.names']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.names}"/>
+                    <h:outputText value="#{productDeliveryAction.customerOrder.cliente.nom}"/>
                 </s:decorate>
                 <s:decorate id="firstNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.firstName']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.firstName}"/>
+                    <h:outputText value="#{productDeliveryAction.customerOrder.cliente.ap}"/>
                 </s:decorate>
                 <s:decorate id="secondNameField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.secondName']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.secondName}"/>
+                    <h:outputText value="#{productDeliveryAction.customerOrder.cliente.am}"/>
                 </s:decorate>
                 <s:decorate id="personalIdentificationField" template="/include/inputField.xhtml"
                             styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.personalIdentification']}</ui:define>
-                    <h:outputText value="#{productDeliveryAction.soldProduct.personalIdentification}"/>
+                    <h:outputText value="#{productDeliveryAction.customerOrder.cliente.nroDoc}"/>
                 </s:decorate>
                 <s:decorate id="stateField" template="/include/inputField.xhtml" styleClass="formRow">
                     <ui:define name="label">#{messages['SoldProduct.state']}</ui:define>
-                    <h:outputText value="#{messages[productDeliveryAction.soldProduct.state.resourceKey]}"/>
+                    <h:outputText value="#{productDeliveryAction.customerOrder.estado}"/>
                 </s:decorate>
                 <s:decorate id="soldProductField"
                             template="/include/inputField.xhtml"
                             styleClass="formRow">
                     <ui:define name="label">#{messages['ProductDelivery.soldProduct']}</ui:define>
                     <ui:param name="vertical" value="true"/>
-                    <rich:dataTable value="#{productDeliveryAction.soldProducts}"
+                    <rich:dataTable value="#{productDeliveryAction.customerOrder.articulosPedidos}"
                                     var="soldProduct"
                                     columnsWidth="70%, 30%"
                                     width="98%">
@@ -183,7 +166,7 @@
                             <f:facet name="header">
                                 #{messages['SoldProduct.quantity']}
                             </f:facet>
-                            <h:outputText value="#{soldProduct.quantity}">
+                            <h:outputText value="#{soldProduct.amount}">
                                 <app:realNumberConverter pattern="#{messages['patterns.decimalNumber']}"/>
                             </h:outputText>
                         </rich:column>

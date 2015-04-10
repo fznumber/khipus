@@ -79,6 +79,10 @@ public class CustomerOrder implements BaseModel  {
     @JoinColumn(name="codigo")
     private CodigoPedidoSecuencia codigo;
 
+    @JoinColumn(name = "IDCLIENTE", referencedColumnName = "IDPERSONACLIENTE")
+    @ManyToOne(optional = false)
+    private ClientePedido cliente;
+
     public Long getIdpedidos() {
         return idpedidos;
     }
@@ -230,5 +234,17 @@ public class CustomerOrder implements BaseModel  {
 
     public void setCodigo(CodigoPedidoSecuencia codigo) {
         this.codigo = codigo;
+    }
+
+    public ClientePedido getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClientePedido cliente) {
+        this.cliente = cliente;
+    }
+
+    public Double getTotalimporte() {
+        return totalimporte;
     }
 }

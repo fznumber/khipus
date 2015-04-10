@@ -2,6 +2,7 @@ package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.Territoriotrabajo;
 import com.encens.khipus.model.warehouse.SoldProduct;
 
 import javax.ejb.Local;
@@ -38,4 +39,6 @@ public interface SoldProductService extends GenericService {
     Map<String,Integer> getSoldProductsPackage(String codArt, Integer amountSoldProductTotal);
 
     public CustomerOrder findPedidoPorCodigo(String numeroPedido);
+
+    List<CustomerOrder> findPedidosPorFechaTerritorio(Date date, Territoriotrabajo territoriotrabajo);
 }

@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Table(name = "codigopedidosecuencia")
 public class CodigoPedidoSecuencia implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PedidosCodigo_Gen")
     @Column(name = "secuencia")
     private Long secuencia;
 

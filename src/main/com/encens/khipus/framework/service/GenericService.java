@@ -4,9 +4,13 @@ import com.encens.khipus.exception.ConcurrencyException;
 import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.EntryNotFoundException;
 import com.encens.khipus.exception.ReferentialIntegrityException;
+import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.Territoriotrabajo;
 import com.encens.khipus.model.production.RawMaterialProducer;
 
 import javax.ejb.Local;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Base entity operations service
