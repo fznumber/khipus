@@ -37,9 +37,9 @@ public class RePrintsServiceBean extends ExtendedGenericServiceBean implements R
 
     @Override
     public String findNameClient(CustomerOrder order) {
-        String name ;
+        String name = "";
         String sql;
-        if(order.getClientOrder().getType().compareTo("P") == 0)
+       /* if(order.getClientOrder().getType().compareTo("P") == 0)
             sql = "select nom||' '||ap||' '||am from user01_daf.PERSONAS where pi_id =:id";
         else
             sql = " select razon_soc from user01_daf.INSTITUCIONES where pi_id =:id";
@@ -50,7 +50,7 @@ public class RePrintsServiceBean extends ExtendedGenericServiceBean implements R
         }catch (NoResultException e)
         {
             return "s/n";
-        }
+        }*/
         return name;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

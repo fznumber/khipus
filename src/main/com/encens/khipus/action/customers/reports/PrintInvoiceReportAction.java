@@ -200,10 +200,10 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         rePrints.setDosage(dosage);
         rePrints.setNumberInvoice(numberInvoice);
         rePrints.setCustomerOrder(order);
-        rePrints.setDateEmission(order.getDateDelicery());
+       /* rePrints.setDateEmission(order.getDateDelicery());
         rePrints.setDateRePrint(new Date());
         rePrints.setGloss("");//verificar
-        rePrints.setNit(order.getClientOrder().getNumberDoc());
+        rePrints.setNit(order.getClientOrder().getNumberDoc());*/
         rePrints.setIdUsrEmission(currentUser.getId());
         rePrints.setIdUsrRePint(currentUser.getId());//verificar
         rePrintsNews.add(rePrints);
@@ -242,7 +242,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
     private void createMovement(ArticleOrder articleOrder,CustomerOrder order,String codControl,Long numberInvoice)
     {
         Movement movement = new Movement();
-        movement.setDate(order.getDateDelicery());
+     /*   movement.setDate(order.getDateDelicery());
         movement.setGloss("nombre");//nombre
         movement.setType("V");
         movement.setCaseEspecial("N");
@@ -257,7 +257,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         movement.setNumberInvoice(numberInvoice);
         movement.setCodControl(codControl);
         movement.setDosage(dosage);
-        movement.setNit(order.getClientOrder().getNumberDoc());
+        movement.setNit(order.getClientOrder().getNumberDoc());*/
         movement.setMount(articleOrder.getAmount());
         movement.setTypePay("1");
         movement.setTypeChange(6.96);
@@ -308,9 +308,9 @@ public class PrintInvoiceReportAction extends GenericReportAction {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("nitEmpresa","123456022");
         paramMap.put("numFac",numfac);
-        paramMap.put("numAutorizacion",dosage.getNumberAuthorization());
+       /* paramMap.put("numAutorizacion",dosage.getNumberAuthorization());
         paramMap.put("nitCliente",customerOrder.getClientOrder().getNumberDoc());
-        paramMap.put("fecha",customerOrder.getDateDelicery());
+        paramMap.put("fecha",customerOrder.getDateDelicery());*/
         paramMap.put("nombreCliente",nameClient);//verificar el nombre del cliente
         paramMap.put("fechaLimite",dosage.getDateExpiration());
         paramMap.put("codigoControl",codControl);
@@ -327,14 +327,7 @@ public class PrintInvoiceReportAction extends GenericReportAction {
     private ControlCode generateCodControl(CustomerOrder order,Integer numberInvoice,BigDecimal numberAutorization,String key)
     {
         Double importeBaseCreditFisical = order.getTotal().doubleValue() * 0.13;
-        ControlCode controlCode = new ControlCode("123456789012"
-                                                   ,numberInvoice
-                                                   ,numberAutorization.toString()
-                                                   ,order.getDateDelicery()
-                                                   ,order.getTotal().doubleValue()
-                                                   ,importeBaseCreditFisical
-                                                   ,order.getClientOrder().getNumberDoc()
-                                                 );
+        ControlCode controlCode = null;
           moneyUtil.getLlaveQR(controlCode,key);
         controlCode.generarCodigoQR();
         return controlCode;
