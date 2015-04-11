@@ -1,6 +1,7 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.sun.org.apache.bcel.internal.generic.InstructionListObserver;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -599,6 +600,32 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             return 0;
         }
         return result.intValue();
+    }
+
+    @Override
+    public List<OrderItem> findArticulosPorFecha(Date date) {
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        List<Object[]> datas = new ArrayList<Object[]>();
+        try {
+                datas = (List<Object[]>)getEntityManager()
+                        .createQuery("select distinct articulos.productItem.name,articulos.productItem.productItemCode  " +
+                                "from CustomerOrder pe inner join pe.articulosPedidos articulos " +
+                                "where pe.estado = 'PREPARAR' " +
+                                "and pe.fechaEntrega =:fecha")
+                .setParameter("fecha",date,TemporalType.DATE)
+                .getResultList();
+
+        }catch (NoResultException e){
+            return orderItems;
+        }
+        for(Object[] obj: datas)
+        {
+            OrderItem item = new OrderItem();
+            item.setNameItem((String)obj[0]);
+            item.setCodArt((String)obj[1]);
+            orderItems.add(item);
+        }
+        return orderItems;
     }
 
     @Override

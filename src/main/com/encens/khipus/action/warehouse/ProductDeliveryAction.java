@@ -9,6 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.customers.ArticleOrder;
 import com.encens.khipus.model.customers.ClientePedido;
 import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.customers.Territoriotrabajo;
@@ -58,15 +59,16 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private ProductDeliveryType productDeliveryType = ProductDeliveryType.CASH_ORDER;
 
     private Boolean showDeliveryOrder = true;
-    private Date date;
-    private List<CustomerOrder> orderClients = new ArrayList<CustomerOrder>();
+    private Date date = new Date();
+    private List<OrderClient> orderClients = new ArrayList<OrderClient>();
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();
     private List<String> numberInvoices = new ArrayList<String>();
     private List<BigDecimal> distributors = new ArrayList<BigDecimal>();
+    private List<CustomerOrder> pedidos = new ArrayList<CustomerOrder>();
     private String product;
-    private ClientePedido distribuidor;
+    private Employee distributor;
     private CustomerOrder customerOrder;
-    private Territoriotrabajo territoriotrabajo;
+    private Territoriotrabajo territorioTrabajo;
 
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
@@ -86,61 +88,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return deliveryOrder();
         else
         return deliveryOrderWhitoutDate();*/
-        return hacerEntrega();
+        return deliveryOrder();
 
-    }
-
-    private String hacerEntrega() {
-        /*if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
-            return Outcome.REDISPLAY;
-        else
-        {*/
-            if(verifyWasDelivery())
-            {
-                return Outcome.REDISPLAY;
-            }
-
-            try {
-                productDeliveryService.deliveryCustomerOrder(customerOrder);
-                addAllDeliveryMessage();
-                return Outcome.SUCCESS;
-            } catch (InventoryException e) {
-                addInventoryErrorMessages(e.getInventoryMessages());
-                return Outcome.REDISPLAY;
-            } catch (ProductItemNotFoundException e) {
-                addProductItemNotFoundMessage(e.getProductItem().getFullName());
-                return Outcome.REDISPLAY;
-            } catch (ProductItemAmountException e) {
-                addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
-                return Outcome.REDISPLAY;
-            } catch (CompanyConfigurationNotFoundException e) {
-                addCompanyConfigurationNotFoundErrorMessage();
-                return Outcome.REDISPLAY;
-            } catch (FinancesExchangeRateNotFoundException e) {
-                addFinancesExchangeRateNotFoundExceptionMessage();
-                return Outcome.REDISPLAY;
-            } catch (FinancesCurrencyNotFoundException e) {
-                addFinancesExchangeRateNotFoundExceptionMessage();
-                return Outcome.REDISPLAY;
-            } catch (InventoryProductItemNotFoundException e) {
-                addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
-                        e.getProductItem(), e.getWarehouse());
-                return Outcome.REDISPLAY;
-            } catch (ReferentialIntegrityException e) {
-                addDeleteReferentialIntegrityMessage();
-                return Outcome.REDISPLAY;
-            } catch (ConcurrencyException e) {
-                addUpdateConcurrencyMessage();
-                return Outcome.REDISPLAY;
-            } catch (InventoryUnitaryBalanceException e) {
-                addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
-                return Outcome.REDISPLAY;
-            } catch (EntryDuplicatedException e) {
-                addDuplicatedMessage();
-                return Outcome.REDISPLAY;
-            }
-
-        //}
     }
 
     private String deliveryOrderWhitoutDate() {
@@ -205,9 +154,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }
     }
 
-    /*private String deliveryOrder() {
+
+    private String deliveryOrder() {
         if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
-          return Outcome.REDISPLAY;
+            return Outcome.REDISPLAY;
         else
         {
             if(verifyWasDelivery())
@@ -256,7 +206,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             }
 
         }
-    }*/
+    }
 
     private String deliveryInCatch()
     {
@@ -323,6 +273,58 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
 
+    public void myCreate() {
+
+        String numbers[] = {
+                "26004386"
+        };
+        for(String number :numbers)
+        {
+
+            try {
+                //for()
+                System.out.println("NUMERO DE FACTURA -> "+number);
+                ProductDelivery productDelivery = productDeliveryService.createAll(number,
+                        MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", number));
+                addSoldProductDeliveredInfoMessage();
+                select(productDelivery);
+                //update();
+            } catch (SoldProductNotFoundException e) {
+                addSoldProductNotFoundMessages();
+            } catch (InventoryException e) {
+                addInventoryErrorMessages(e.getInventoryMessages());
+            } catch (PublicCostCenterNotFound publicCostCenterNotFound) {
+            } catch (WarehouseDocumentTypeNotFoundException e) {
+                addWarehouseDocumentTypeErrorMessage();
+            } catch (ProductItemAmountException e) {
+                addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            } catch (InventoryUnitaryBalanceException e) {
+                addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            } catch (InventoryProductItemNotFoundException e) {
+                addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                        e.getProductItem(), e.getWarehouse());
+            } catch (SoldProductDeliveredException e) {
+                addSoldProductDeliveredErrorMessage();
+            } catch (CompanyConfigurationNotFoundException e) {
+                addCompanyConfigurationNotFoundErrorMessage();
+            } catch (FinancesExchangeRateNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+            } catch (FinancesCurrencyNotFoundException e) {
+                addFinancesExchangeRateNotFoundExceptionMessage();
+            } catch (ConcurrencyException e) {
+                addUpdateConcurrencyMessage();
+            } catch (EntryDuplicatedException e) {
+                addDuplicatedMessage();
+            } catch (ReferentialIntegrityException e) {
+                addDeleteReferentialIntegrityMessage();
+            } catch (ProductItemNotFoundException e) {
+                addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            }catch (SoldProductJustNoProducer soldProductJustNoProducer) {
+                addSoldProductJustNoProducerMessages();
+            }
+        }
+    }
+
     @Override
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','VIEW')}")
@@ -335,11 +337,9 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void search() {
         customerOrder = soldProductService.findPedidoPorCodigo(orderNumber);
-        if(customerOrder == null) {
-            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
-            getInstance().setInvoiceNumber(null);
-            soldProducts.clear();
-        }
+        setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+        getInstance().setInvoiceNumber(null);
+        soldProducts.clear();
     }
 
     private void searchCashSale() {
@@ -359,17 +359,74 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }
     }
 
-    private void buscarPorFechaTerritorio() {
+    public void searchCashOrderWithoutDate() {
 
-        orderClients = soldProductService.findPedidosPorFechaTerritorio(date,territoriotrabajo);
-        if (ValidatorUtil.isEmptyOrNull(orderClients)) {
+        List<SoldProduct> soldProductList = soldProductService.getSoldProductsCashOrder(orderNumber, Constants.defaultCompanyNumber);
+        if (ValidatorUtil.isEmptyOrNull(soldProductList)) {
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
             getInstance().setInvoiceNumber(null);
-            orderClients.clear();
+            soldProducts.clear();
+        } else {
+            setMessageSearchOrder(null);
+            if (soldProductList.get(0).getState().equals(SoldProductState.DELIVERED)) {
+                setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDelivered"));
+                assignNumberCashOrder(soldProductList.get(0));
+            } else
+                assignNumberCashOrder(soldProductList.get(0));
         }
     }
 
-    /*private void searchCashOrder() {
+    public void buscarPorTerritorioFecha(){
+        pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorioTrabajo);
+        List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
+        if(territorioTrabajo == null)
+        {
+            territorios = getTerritorios();
+            for(Territoriotrabajo territorio:territorios) {
+                pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorio);
+                for (CustomerOrder pedido : pedidos) {
+                    OrderClient orderClient = new OrderClient();
+                    orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
+                    orderClient.setName(pedido.getCliente().getNombreCompleto());
+                    orderClient.setType("CLIENTE");
+                    orderClient.setState(pedido.getEstado());
+                    orderClient.setCliente(pedido.getCliente());
+                    orderClients.add(orderClient);
+                }
+                OrderClient orderClient = new OrderClient();
+                orderClient.setName(territorio.getNombre());
+                orderClient.setType("TERRITORIO");
+                orderClients.add(orderClient);
+            }
+
+        }else{
+            for (CustomerOrder pedido : pedidos) {
+                OrderClient orderClient = new OrderClient();
+                orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
+                orderClient.setName(pedido.getCliente().getNombreCompleto());
+                orderClient.setType("CLIENTE");
+                orderClients.add(orderClient);
+            }
+            OrderClient orderClient = new OrderClient();
+            orderClient.setName(territorioTrabajo.getNombre());
+            orderClient.setType("TERRITORIO");
+            orderClients.add(orderClient);
+        }
+        for (CustomerOrder pedido : pedidos) {
+
+        }
+        orderItems = accountItemService.findArticulosPorFecha(date);
+    }
+     private List<Territoriotrabajo> getTerritorios()
+     {
+        List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
+         for(CustomerOrder pedido:pedidos){
+             territorios.add(pedido.getCliente().getTerritoriotrabajo());
+         }
+        return territorios;
+     }
+
+    private void searchCashOrder() {
         distributors = accountItemService.findDistributor(date);
         orderClients.clear();
         orderItems.clear();
@@ -385,41 +442,41 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             orderClients.add(distributorNew);
         }
         else
-        for(BigDecimal idDistributor:distributors)
-        {
-            orderClients.addAll(accountItemService.findClientsOrder(idDistributor,date));
-            OrderClient distributor = new OrderClient();
-            distributor.setName(accountItemService.getNameEmployeed(idDistributor));
-            distributor.setIdDistributor(idDistributor);
-            distributor.setType("DISTRIBUTOR");
-            orderClients.add(distributor);
-        }
+            for(BigDecimal idDistributor:distributors)
+            {
+                orderClients.addAll(accountItemService.findClientsOrder(idDistributor,date));
+                OrderClient distributor = new OrderClient();
+                distributor.setName(accountItemService.getNameEmployeed(idDistributor));
+                distributor.setIdDistributor(idDistributor);
+                distributor.setType("DISTRIBUTOR");
+                orderClients.add(distributor);
+            }
 
         orderItems = accountItemService.findOrderItemByState(date);
         orderItems.addAll(accountItemService.findOrderItemPackByState(date));
-        *//*OrderItem item = new OrderItem("ESTADO");
-        orderItems.add(0,item);*//*
+        /*OrderItem item = new OrderItem("ESTADO");
+        orderItems.add(0,item);*/
         if(distributor != null)
             numberInvoices = soldProductService.getSoldProductsCashOrder(date,new BigDecimal(distributor.getId()));
         else
             numberInvoices = soldProductService.getSoldProductsCashOrder(date);
 
-        *//*if(wasDelivery())
+        /*if(wasDelivery())
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDelivery"));
-        else*//*
+        else*/
         if (ValidatorUtil.isEmptyOrNull(orderClients)) {
             setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderDateNotFound"));
             getInstance().setInvoiceNumber(null);
         }
-    }*/
+    }
 
     private boolean verifyWasDelivery() {
         Boolean result = false;
-        for(CustomerOrder orderClient: orderClients)
+        for(OrderClient orderClient: orderClients)
         {
-            if(orderClient.getEstado()!= null)
-                if(orderClient.getEstado().equals("ENTEGADO")) {
-                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",orderClient.getCodigo().getSecuencia()));
+            if(orderClient.getState()!= null)
+                if(orderClient.getState().equals("ECH")) {
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",orderClient.getIdOrder()));
                     result = true;
                 }
         }
@@ -427,12 +484,12 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private boolean wasDelivery() {
-        for(CustomerOrder orderClient: orderClients)
+        for(OrderClient orderClient: orderClients)
         {
-            if(orderClient.getEstado()!= null)
-            if(orderClient.getEstado().equals("ENTEGADO")) {
-                return true;
-            }
+            if(orderClient.getState()!= null)
+                if(orderClient.getState().equals("ECH")) {
+                    return true;
+                }
         }
         return false;
     }
@@ -499,7 +556,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         orderClients.clear();
         numberInvoices.clear();
         date = null;
-        territoriotrabajo = null;
+        distributor = null;
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -629,11 +686,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return product;
     }
 
-    public List<CustomerOrder> getOrderClients() {
+    public List<OrderClient> getOrderClients() {
         return orderClients;
     }
 
-    public void setOrderClients(List<CustomerOrder> orderClients) {
+    public void setOrderClients(List<OrderClient> orderClients) {
         this.orderClients = orderClients;
     }
 
@@ -664,14 +721,46 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         return val;
     }
 
+    public Integer getCantidad(OrderClient client,OrderItem item){
+        for(CustomerOrder pedido:pedidos)
+        {
+            if(pedido.getCliente().getPiId().equals(client.getCliente().getPiId()))
+            {
+                for(ArticleOrder articulo: pedido.getArticulosPedidos())
+                {
+                    if(articulo.getProductItem().equals(articulo))
+                    {
+                        return articulo.getAmount();
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public Integer getCantidadTotal(OrderItem item){
+        Integer total = 0;
+        for(CustomerOrder pedido:pedidos)
+        {
+                for(ArticleOrder articulo: pedido.getArticulosPedidos())
+                {
+                    if(articulo.getProductItem().equals(articulo))
+                    {
+                        total +=articulo.getAmount();
+                    }
+                }
+        }
+        return total;
+    }
+
     public Integer getAmountSoldProductTotal(OrderItem item){
         if(item.getType()=="ESTADO")
             return 0;
         Integer val;
 
-            val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),date);
-            val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), date);
-            val += accountItemService.getAmountComboTotal(item.getCodArt(), date);
+        val = accountItemService.getAmountByDateAndDistributorOrder(item.getCodArt(),date);
+        val += accountItemService.getAmountByDateAndDistributorInstitution(item.getCodArt(), date);
+        val += accountItemService.getAmountComboTotal(item.getCodArt(), date);
         return val;
     }
 
@@ -683,16 +772,16 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         this.date = date;
     }
 
-    public ClientePedido getDistribuidor() {
-        return distribuidor;
+    public Employee getDistributor() {
+        return distributor;
     }
 
-    public void setDistribuidor(ClientePedido distribuidor) {
-        this.distribuidor = distribuidor;
+    public void setDistributor(Employee distributor) {
+        this.distributor = distributor;
     }
 
     public void cleanDistributor(){
-        setDistribuidor(null);
+        setDistributor(null);
     }
 
     public CustomerOrder getCustomerOrder() {
@@ -703,11 +792,19 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         this.customerOrder = customerOrder;
     }
 
-    public Territoriotrabajo getTerritoriotrabajo() {
-        return territoriotrabajo;
+    public List<CustomerOrder> getPedidos() {
+        return pedidos;
     }
 
-    public void setTerritoriotrabajo(Territoriotrabajo territoriotrabajo) {
-        this.territoriotrabajo = territoriotrabajo;
+    public void setPedidos(List<CustomerOrder> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+    public Territoriotrabajo getTerritorioTrabajo() {
+        return territorioTrabajo;
+    }
+
+    public void setTerritorioTrabajo(Territoriotrabajo territorioTrabajo) {
+        this.territorioTrabajo = territorioTrabajo;
     }
 }

@@ -1,5 +1,7 @@
 package com.encens.khipus.service.customers;
 
+import com.encens.khipus.model.customers.ClientePedido;
+
 import java.math.BigDecimal;
 
 /**
@@ -15,6 +17,7 @@ public class OrderClient
     private String type;
     private BigDecimal idDistributor;
     private String state;
+    private ClientePedido cliente;
 
     public String getIdOrder() {
         return idOrder;
@@ -70,5 +73,13 @@ public class OrderClient
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public ClientePedido getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClientePedido cliente) {
+        this.cliente = cliente;
     }
 }

@@ -61,4 +61,6 @@ public interface AccountItemService extends GenericService {
     public Integer getAmountByDateAndDistributorInstitutionDelivery(String codArt,Date dateOrder);
 
     public Integer getAmountComboTotalDelivery(String codPaquete, Date date);
+
+    List<OrderItem> findArticulosPorFecha(Date date);
 }
