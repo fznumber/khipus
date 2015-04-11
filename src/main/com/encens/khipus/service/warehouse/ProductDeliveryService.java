@@ -8,6 +8,7 @@ import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.ProductDelivery;
 import com.encens.khipus.service.customers.OrderItem;
@@ -56,6 +57,19 @@ public interface ProductDeliveryService extends GenericService {
             ConcurrencyException,
             ReferentialIntegrityException,
             ProductItemNotFoundException, SoldProductNotFoundException, SoldProductJustNoProducer;
+
+    public void deliveryCustomerOrder(CustomerOrder customerOrder) throws
+            InventoryException,
+            ProductItemNotFoundException,
+            ProductItemAmountException,
+            CompanyConfigurationNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            FinancesCurrencyNotFoundException,
+            InventoryProductItemNotFoundException,
+            ReferentialIntegrityException,
+            ConcurrencyException,
+            InventoryUnitaryBalanceException,
+            EntryDuplicatedException;
 
     ProductDelivery select(ProductDelivery entity);
 

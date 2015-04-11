@@ -1,8 +1,11 @@
 package com.encens.khipus.service.warehouse;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.Territoriotrabajo;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.SoldProduct;
+import com.encens.khipus.service.customers.OrderClient;
 import com.encens.khipus.util.Constants;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
@@ -181,6 +184,40 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         }
 
         return result;
+    }
+
+    @Override
+    public CustomerOrder findPedidoPorCodigo(String numeroPedido)
+    {
+        CustomerOrder customerOrder;
+        try{
+            customerOrder = (CustomerOrder)getEntityManager()
+                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PENDIENTE'")
+                    .setParameter("codigo", Long.valueOf(numeroPedido).longValue())
+            .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+        return customerOrder;
+    }
+
+    @Override
+    public List<CustomerOrder> findPedidosPorFechaTerritorio(Date date, Territoriotrabajo territoriotrabajo) {
+        List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
+        try{
+            customerOrders = (List<CustomerOrder>)getEntityManager()
+                    .createQuery("select pe from CustomerOrder pe " +
+                            "where pe.fechaEntrega =:fecha " +
+                            "and pe.estado = 'PENDIENTE' " +
+                            "and pe.cliente.territoriotrabajo =:territorio")
+                    .setParameter("territorio",territoriotrabajo)
+                    .setParameter("fecha",date,TemporalType.DATE)
+                    .getResultList();
+        }catch(NoResultException e)
+        {
+            return customerOrders;
+        }
+        return customerOrders;
     }
 
     @Override

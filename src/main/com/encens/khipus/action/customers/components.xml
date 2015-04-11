@@ -34,4 +34,8 @@
     <framework:entity-query name="customerDiscountRuleQuery"
                             ejbql="select c from CustomerDiscountRule c order by c.name ASC"/>
 
+    <factory name="territorioList" value="#{territorioRuleQuery}"/>
+    <framework:entity-query name="territorioRuleQuery"
+                            ejbql="select t from Territoriotrabajo t"/>
+
 </components>

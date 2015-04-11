@@ -12,8 +12,12 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.validator.Length;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -25,252 +29,222 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-@TableGenerator(name = "CustomerOrder_Generator",
-        table = "SECUENCIA",
-        pkColumnName = "TABLA",
-        valueColumnName = "VALOR",
-        pkColumnValue = "PEDIDOS",
-        allocationSize = 10)
-
 @Entity
-@Table(name = "PEDIDOS",schema = Constants.CASHBOX_SCHEMA)
-//@Filter(name = "companyFilter")
-//@EntityListeners(CompanyListener.class)
-public class CustomerOrder implements BaseModel {
+@Table(name = "pedidos")
+public class CustomerOrder implements BaseModel  {
 
-    /*@EmbeddedId
-    private CustomerOrderPK id = new CustomerOrderPK();*/
+    //todo:revisar por q el id no es correlativo
     @Id
-    @Column(name = "PEDIDO", columnDefinition = "VARCHAR2(10 BYTE)", nullable = false)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CustomerOrder_Generator")
-    private Long id;
-
-    @Column(name = "ID1", nullable = false, insertable = false, updatable = false)
-    private Integer orderID1;
-
+    @Column(name = "IDPEDIDOS")
+    private Long idpedidos;
     @Column(name = "DESCRIPCION")
-    private String description;
-
-    @Column(name = "ESTADO_PEDIDO")
-    private String estate;
-
-    @Column(name = "TIPO_PEDIDO")
-    private String type;
-
-    @Temporal(value = TemporalType.DATE)
+    private String descripcion;
     @Column(name = "FECHA_PEDIDO")
-    private Date date;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH})
-    @JoinColumn(name = "ID", columnDefinition = "VARCHAR2(20 BYTE)", nullable = false, updatable = false, insertable = false)
-    private ClientOrder clientOrder;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDEMPLEADO", nullable = false, updatable = false)
-    private Employee employee;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDDIRECCION", nullable = false, updatable = false)
-    private Address address;
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDZONA", nullable = false, updatable = false)
-    private Zone zone;
-
-    @Column(name = "TOTAL")
-    private BigDecimal total = BigDecimal.ZERO;
-
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
+    private Date fechaPedido;
+    @Basic(optional = false)
     @Column(name = "FECHA_ENTREGA")
-    private Date dateDelicery;
-
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(TemporalType.DATE)
+    private Date fechaEntrega;
     @Column(name = "FECHA_A_PAGAR")
-    private Date dateToPay;
-
+    @Temporal(TemporalType.DATE)
+    private Date fechaAPagar;
     @Column(name = "OBSERVACION")
-    private String observation;
-
+    private String observacion;
     @Column(name = "FACTURA")
-    private String estateInvoice;
+    private String factura;
+    @Column(name = "PORCENTAJECOMISION")
+    private Double porcentajeComision = 0.0;
+    @Column(name = "PORCENTAJEGARANTIA")
+    private Double porcentajeGarantia = 0.0;
+    @Column(name = "VALORCOMISION")
+    private Double valorComision = 0.0;
+    @Column(name = "VALORGARANTIA")
+    private Double valorGarantia = 0.0;
+    @Column(name = "ESTADO")
+    private String estado;
+    @Column(name = "CON_REPOSICION",columnDefinition = "INT(1)")
+    private Boolean conReposicion = false;
+    @Column(name = "TOTAL")
+    private Double total = 0.0;
+    //cantidad * precio de venta
+    @Basic(optional = false)
+    @Column(name = "TOTALIMPORTE")
+    private Double totalimporte = 0.0;
 
-    @Column(name = "SUPERVISOR")
-    private Long supervisorsID;
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "customerOrder")
+    private Collection<ArticleOrder> articulosPedidos ;
 
-    @Column(name = "DISTRIBUIDOR")
-    private Long distributorID;
+    @OneToOne
+    @JoinColumn(name="codigo")
+    private CodigoPedidoSecuencia codigo;
 
-    @OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
-    private List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(0);
+    @JoinColumn(name = "IDCLIENTE", referencedColumnName = "IDPERSONACLIENTE")
+    @ManyToOne(optional = false)
+    private ClientePedido cliente;
 
-    @OneToMany(mappedBy = "customerOrderMovement", fetch = FetchType.LAZY)
-    private List<Movement> movements = new ArrayList<Movement>(0);
-
-    public Long getId() {
-        return id;
+    public Long getIdpedidos() {
+        return idpedidos;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdpedidos(Long idpedidos) {
+        this.idpedidos = idpedidos;
     }
 
-    public List<ArticleOrder> getArticleOrders() {
-        return articleOrders;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setArticleOrders(List<ArticleOrder> articleOrders) {
-        this.articleOrders = articleOrders;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    /*public CustomerOrderPK getId() {
-        return id;
+    public Date getFechaPedido() {
+        return fechaPedido;
     }
 
-    public void setId(CustomerOrderPK id) {
-        this.id = id;
-    }*/
-
-    public Integer getOrderID1() {
-        return orderID1;
+    public void setFechaPedido(Date fechaPedido) {
+        this.fechaPedido = fechaPedido;
     }
 
-    public void setOrderID1(Integer orderID1) {
-        this.orderID1 = orderID1;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getEstate() {
-        return estate;
-    }
-
-    public void setEstate(String estate) {
-        this.estate = estate;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Zone getZone() {
-        return zone;
-    }
-
-    public void setZone(Zone zone) {
-        this.zone = zone;
-    }
-
-    public BigDecimal getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(BigDecimal total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 
-    public Date getDateDelicery() {
-        return dateDelicery;
+    public Date getFechaEntrega() {
+        return fechaEntrega;
     }
 
-    public void setDateDelicery(Date dateDelicery) {
-        this.dateDelicery = dateDelicery;
+    public void setFechaEntrega(Date fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
     }
 
-    public Date getDateToPay() {
-        return dateToPay;
+    public Date getFechaAPagar() {
+        return fechaAPagar;
     }
 
-    public void setDateToPay(Date dateToPay) {
-        this.dateToPay = dateToPay;
+    public void setFechaAPagar(Date fechaAPagar) {
+        this.fechaAPagar = fechaAPagar;
     }
 
-    public String getObservation() {
-        return observation;
+    public String getObservacion() {
+        return observacion;
     }
 
-    public void setObservation(String observation) {
-        this.observation = observation;
+    public void setObservacion(String observacion) {
+        this.observacion = observacion;
     }
 
-    public String getEstateInvoice() {
-        return estateInvoice;
+    public String getFactura() {
+        return factura;
     }
 
-    public void setEstateInvoice(String estateInvoice) {
-        this.estateInvoice = estateInvoice;
+    public void setFactura(String factura) {
+        this.factura = factura;
     }
 
-    public Long getSupervisorsID() {
-        return supervisorsID;
+    public Double getPorcentajeComision() {
+        return porcentajeComision;
     }
 
-    public void setSupervisorsID(Long supervisorsID) {
-        this.supervisorsID = supervisorsID;
+    public void setPorcentajeComision(Double porcenDescuento) {
+        this.porcentajeComision = porcenDescuento;
     }
 
-    public Long getDistributorID() {
-        return distributorID;
+    public Double getPorcentajeGarantia() {
+        return porcentajeGarantia;
     }
 
-    public void setDistributorID(Long distributorID) {
-        this.distributorID = distributorID;
+    public void setPorcentajeGarantia(Double porcenRetencion) {
+        this.porcentajeGarantia = porcenRetencion;
     }
 
-    public ClientOrder getClientOrder() {
-        return clientOrder;
+    public String getEstado() {
+        if(estado == null)
+        {
+            estado = "ACTIVO";
+        }
+        return estado;
     }
 
-    public void setClientOrder(ClientOrder clientOrder) {
-        this.clientOrder = clientOrder;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
-    public List<Movement> getMovements() {
-        return movements;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (idpedidos != null ? idpedidos.hashCode() : 0);
+        return hash;
     }
 
-    public void setMovements(List<Movement> movements) {
-        this.movements = movements;
+    @Override
+    public String toString() {
+        return "com.encens.khipus.model.Pedidos[ idpedidos=" + idpedidos + " ]";
     }
 
-    /* public String getOrder() {
-        return order;
+    public Double getValorComision() {
+        return valorComision;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
-    }*/
+    public void setValorComision(Double valorDescuento) {
+        this.valorComision = valorDescuento;
+    }
+
+    public Double getValorGarantia() {
+        return valorGarantia;
+    }
+
+    public void setValorGarantia(Double valorRetencion) {
+        this.valorGarantia = valorRetencion;
+    }
+
+    public void setTotalimporte(Double totalimporte) {
+        this.totalimporte = totalimporte;
+    }
+
+    public Boolean getConReposicion() {
+        return conReposicion;
+    }
+
+    public void setConReposicion(Boolean conReposicion) {
+        this.conReposicion = conReposicion;
+    }
+
+    @Override
+    public Object getId() {
+        return null;
+    }
+
+    public Collection<ArticleOrder> getArticulosPedidos() {
+        return articulosPedidos;
+    }
+
+    public void setArticulosPedidos(Collection<ArticleOrder> articulosPedidos) {
+        this.articulosPedidos = articulosPedidos;
+    }
+
+    public CodigoPedidoSecuencia getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(CodigoPedidoSecuencia codigo) {
+        this.codigo = codigo;
+    }
+
+    public ClientePedido getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(ClientePedido cliente) {
+        this.cliente = cliente;
+    }
+
+    public Double getTotalimporte() {
+        return totalimporte;
+    }
 }

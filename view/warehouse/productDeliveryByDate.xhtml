@@ -86,15 +86,17 @@
                                            type="date"/>
                     </rich:calendar>
 
-                    <h:outputLabel rendered="#{productDeliveryAction.showDeliveryOrder}" >#{messages['Order.report.distributor']}</h:outputLabel>
-                    <app:selectPopUp id="employee"
-                                     textValue="#{productDeliveryAction.distributor.fullName}"
-                                     value="#{productDeliveryAction.distributor}"
-                                     clearAction="productDeliveryAction.cleanDistributor()"
-                                     searchModalPanel="generalEmployeeListModalPanel"
-                                     dataModel="#{generalEmployeeDataModel}"
-                                     rendered="#{productDeliveryAction.showDeliveryOrder}"
-                                     reRender="employeeField"/>
+                    <h:outputLabel >Territorio:</h:outputLabel>
+                    <h:selectOneMenu id="territorio"
+                                     value="#{productDeliveryAction.territoriotrabajo}"
+                                     styleClass="input">
+                        <s:selectItems value="#{territorioList}"
+                                       var="territorio"
+                                       label="#{territorio.nombre}"
+                                       noSelectionLabel=""
+                                       hideNoSelectionLabel="false"/>
+                        <s:convertEntity/>
+                    </h:selectOneMenu>
 
                 </s:decorate>
 
@@ -102,7 +104,7 @@
                             template="/include/inputField.xhtml"
                             styleClass="formRow">
                     <a4j:commandButton id="searchButtonId"
-                                       action="#{productDeliveryAction.search}"
+                                       action="#{productDeliveryAction.buscarPorFechaTerritorio}"
                                        reRender="buttonDelivery,createButtonId,invoiceNumber, soldProductPanel, messageSearchOrder,soldProductPanel,listProductsSolds"
                                        styleClass="button"
                                        value="#{messages['Common.search']}"
