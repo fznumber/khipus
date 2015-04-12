@@ -378,6 +378,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void buscarPorTerritorioFecha(){
         pedidos.clear();
+        orderClients.clear();
         pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorioTrabajo);
         List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
         if(territorioTrabajo == null)
@@ -553,8 +554,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         orderItems.clear();
         orderClients.clear();
         numberInvoices.clear();
-        date = null;
         distributor = null;
+        pedidos.clear();
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -734,6 +735,21 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 }
             }
         }
+        else
+            for(CustomerOrder pedido:pedidos)
+            {
+                if(pedido.getCliente().getTerritoriotrabajo().getNombre().equals(client.getName()))
+                {
+                    for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
+                        if(articulo.getCodArt().equals(item.getCodArt()))
+                        {
+                            cant = articulo.getAmount();
+                        }
+                    }
+                }
+            }
+
+
         return cant;
     }
 
