@@ -377,17 +377,17 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     public void buscarPorTerritorioFecha(){
+        pedidos.clear();
         pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorioTrabajo);
         List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
         if(territorioTrabajo == null)
         {
-            territorios = getTerritorios();
+            territorios = accountItemService.findTerritoriosPedido(date);
             for(Territoriotrabajo territorio:territorios) {
-                pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorio);
-                for (CustomerOrder pedido : pedidos) {
+                for (CustomerOrder pedido : soldProductService.findPedidosPorFechaTerritorio(date,territorio)) {
                     OrderClient orderClient = new OrderClient();
                     orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
-                    orderClient.setName(pedido.getCliente().getNombreCompleto());
+                    orderClient.setName(pedido.getCodigo().getSecuencia().toString() + "-" + pedido.getCliente().getNombreCompleto());
                     orderClient.setType("CLIENTE");
                     orderClient.setState(pedido.getEstado());
                     orderClient.setCliente(pedido.getCliente());
@@ -412,9 +412,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             orderClient.setType("TERRITORIO");
             orderClients.add(orderClient);
         }
-        for (CustomerOrder pedido : pedidos) {
 
-        }
         orderItems = accountItemService.findArticulosPorFecha(date);
     }
      private List<Territoriotrabajo> getTerritorios()
@@ -722,20 +720,21 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     public Integer getCantidad(OrderClient client,OrderItem item){
+        Integer cant= 0;
+        if(!client.getType().equals("TERRITORIO"))
         for(CustomerOrder pedido:pedidos)
         {
-            if(pedido.getCliente().getPiId().equals(client.getCliente().getPiId()))
+            if(pedido.getCodigo().getSecuencia().toString().equals(client.getIdOrder()))
             {
-                for(ArticleOrder articulo: pedido.getArticulosPedidos())
-                {
-                    if(articulo.getProductItem().equals(articulo))
+                for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
+                    if(articulo.getCodArt().equals(item.getCodArt()))
                     {
-                        return articulo.getAmount();
+                        cant = articulo.getAmount();
                     }
                 }
             }
         }
-        return 0;
+        return cant;
     }
 
     public Integer getCantidadTotal(OrderItem item){
@@ -744,7 +743,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         {
                 for(ArticleOrder articulo: pedido.getArticulosPedidos())
                 {
-                    if(articulo.getProductItem().equals(articulo))
+                    if(articulo.getCodArt().equals(item.getCodArt()))
                     {
                         total +=articulo.getAmount();
                     }
