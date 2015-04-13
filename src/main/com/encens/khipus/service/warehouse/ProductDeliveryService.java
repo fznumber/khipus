@@ -79,4 +79,16 @@ public interface ProductDeliveryService extends GenericService {
 
     void deliveryAll(List<String> numberInvoices) throws InventoryException, ProductItemNotFoundException, ProductItemAmountException, CompanyConfigurationNotFoundException, FinancesExchangeRateNotFoundException, FinancesCurrencyNotFoundException, InventoryProductItemNotFoundException, ReferentialIntegrityException, ConcurrencyException, InventoryUnitaryBalanceException, EntryDuplicatedException;
 
+        public void deliveryCustomerOrders(List<CustomerOrder> pedidos) throws
+                InventoryException,
+                ProductItemNotFoundException,
+                ProductItemAmountException,
+                CompanyConfigurationNotFoundException,
+                FinancesExchangeRateNotFoundException,
+                FinancesCurrencyNotFoundException,
+                InventoryProductItemNotFoundException,
+                ReferentialIntegrityException,
+                ConcurrencyException,
+                InventoryUnitaryBalanceException,
+                EntryDuplicatedException ;
 }

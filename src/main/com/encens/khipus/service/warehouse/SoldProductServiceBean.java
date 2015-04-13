@@ -192,7 +192,7 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         CustomerOrder customerOrder;
         try{
             customerOrder = (CustomerOrder)getEntityManager()
-                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PENDIENTE'")
+                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PREPARAR'")
                     .setParameter("codigo", Long.valueOf(numeroPedido).longValue())
             .getSingleResult();
         }catch (NoResultException e){
