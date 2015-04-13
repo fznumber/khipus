@@ -246,7 +246,8 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                                      List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException, ProductItemNotFoundException {
         String financeUserCode = financesUserService.getFinancesUserCode();
 
-        String transactionNumber = financesPkGeneratorService.getNextPK();
+        //String transactionNumber = financesPkGeneratorService.getNextPK();
+        String transactionNumber = "123";
 
         warehouseVoucher.getId().setTransactionNumber(transactionNumber);
 

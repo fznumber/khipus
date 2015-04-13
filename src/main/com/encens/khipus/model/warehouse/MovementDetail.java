@@ -120,15 +120,23 @@ import java.util.List;
                         "                                             )" +
                         "           )) ) ")
 })
-@SequenceGenerator(name = "MovementDetail.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".INV_MOVDET_SEQ")
+//@SequenceGenerator(name = "MovementDetail.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".INV_MOVDET_SEQ")
+
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "MovementDetail.tableGenerator",
+        table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
+        pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
+        valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
+        pkColumnValue = "inv_movdet",
+        initialValue = 1,
+        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
 @Table(name = "inv_movdet", schema = Constants.FINANCES_SCHEMA)
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 public class MovementDetail implements BaseModel {
     @Id
-    @GeneratedValue(generator = "MovementDetail.sequenceGenerator")
-    @Column(name = "ID_INV_MOVDET", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "MovementDetail.tableGenerator")
+    @Column(name = "ID_INV_MOVDET", nullable = true)
     private Long id;
 
     @Column(name = "NO_CIA", nullable = false, length = 2)

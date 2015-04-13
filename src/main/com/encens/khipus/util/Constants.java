@@ -45,7 +45,7 @@ public final class Constants {
     public static final String SEQUENCE_TABLE_NAME = "secuencia";
     public static final String SEQUENCE_TABLE_PK_COLUMN_NAME = "tabla";
     public static final String SEQUENCE_TABLE_VALUE_COLUMN_NAME = "valor";
-    public static final int SEQUENCE_ALLOCATION_SIZE = 10;
+    public static final int SEQUENCE_ALLOCATION_SIZE = 1;
     public static final String COMPANY_FILTER_NAME = "companyFilter";
     public static final String BUSINESS_UNIT_FILTER_NAME = "businessUnitFilter";
 
