@@ -1,6 +1,7 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.ExtendedGenericServiceBean;
+import com.encens.khipus.model.customers.Territoriotrabajo;
 import com.sun.org.apache.bcel.internal.generic.InstructionListObserver;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -626,6 +627,32 @@ public class AccountItemServiceBean extends ExtendedGenericServiceBean implement
             orderItems.add(item);
         }
         return orderItems;
+    }
+
+    @Override
+    public List<Territoriotrabajo> findTerritoriosPedido(Date date) {
+        List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
+        List<Object[]> datas = new ArrayList<Object[]>();
+        try{
+            datas = (List<Object[]>)em.createQuery("select distinct pe.cliente.territoriotrabajo.nombre,pe.cliente.territoriotrabajo.idterritoriotrabajo  " +
+                    "from CustomerOrder pe " +
+                    "where pe.estado = 'PREPARAR' " +
+                    "and pe.fechaEntrega =:fecha")
+                    .setParameter("fecha",date,TemporalType.DATE)
+                    .getResultList();
+        }catch (NoResultException e){
+            return territorios;
+        }
+
+        for(Object[] obj: datas)
+        {
+            Territoriotrabajo item = new Territoriotrabajo();
+            item.setNombre((String) obj[0]);
+            item.setIdterritoriotrabajo((Long)obj[1]);
+            territorios.add(item);
+        }
+
+        return territorios;
     }
 
     @Override

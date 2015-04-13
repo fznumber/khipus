@@ -189,8 +189,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
     }
 
-    @SuppressWarnings(value = "unchecked")
-    public void deliveryCustomerOrder(CustomerOrder customerOrder) throws
+    @Override
+    public void deliveryCustomerOrders(List<CustomerOrder> pedidos) throws
             InventoryException,
             ProductItemNotFoundException,
             ProductItemAmountException,
@@ -204,12 +204,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             EntryDuplicatedException {
 
 
-            String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", customerOrder.getCodigo().getSecuencia());
-            List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(customerOrder.getArticulosPedidos());
-
-            if(articleOrders.size() != 0) {
-
-                WarehouseDocumentType documentType = getFirstConsumptionType();
+               /* WarehouseDocumentType documentType = getFirstConsumptionType();
                 //always exist almost one sold product that will be delivery
                 ArticleOrder firstSoldProduct = articleOrders.get(0);
                 Warehouse warehouse = firstSoldProduct.getWarehouse();
@@ -238,7 +233,72 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                     log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
                 } catch (WarehouseAccountCashNotFoundException e) {
                     e.printStackTrace();
-                }
+                }*/
+
+                /*ProductDelivery productDelivery = new ProductDelivery();
+                productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
+                productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
+                productDelivery.setWarehouseVoucher(warehouseVoucher);
+                create(productDelivery);
+*/
+            //update state of order
+            for(CustomerOrder pedido:pedidos) {
+                updateCustomerOrder(pedido.getIdpedidos(), "ENTREGADO");
+            }
+
+
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    public void deliveryCustomerOrder(CustomerOrder customerOrder) throws
+            InventoryException,
+            ProductItemNotFoundException,
+            ProductItemAmountException,
+            CompanyConfigurationNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            FinancesCurrencyNotFoundException,
+            InventoryProductItemNotFoundException,
+            ReferentialIntegrityException,
+            ConcurrencyException,
+            InventoryUnitaryBalanceException,
+            EntryDuplicatedException {
+
+
+            String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", customerOrder.getCodigo().getSecuencia());
+            List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(customerOrder.getArticulosPedidos());
+
+            if(articleOrders.size() != 0) {
+
+               /* WarehouseDocumentType documentType = getFirstConsumptionType();
+                //always exist almost one sold product that will be delivery
+                ArticleOrder firstSoldProduct = articleOrders.get(0);
+                Warehouse warehouse = firstSoldProduct.getWarehouse();
+                CostCenter costCenter = findPublicCostCenter(warehouse);
+                Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
+
+                WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, customerOrder);
+
+                Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+                Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+                List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+
+                try {
+
+                    approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
+                            getGlossMessage(warehouseVoucher, warehouseDescription),
+                            movementDetailUnderMinimalStockMap,
+                            movementDetailOverMaximumStockMap,
+                            movementDetailWithoutWarnings);
+
+                } catch (WarehouseVoucherApprovedException e) {
+                    log.debug("This exception never happen because I create a pending WarehouseVoucher.");
+                } catch (WarehouseVoucherNotFoundException e) {
+                    log.debug("This exception never happen because I create a new WarehouseVoucher.");
+                } catch (WarehouseVoucherEmptyException e) {
+                    log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
+                } catch (WarehouseAccountCashNotFoundException e) {
+                    e.printStackTrace();
+                }*/
 
                 /*ProductDelivery productDelivery = new ProductDelivery();
                 productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());

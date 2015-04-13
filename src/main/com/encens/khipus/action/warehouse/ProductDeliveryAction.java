@@ -81,14 +81,25 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
 
-       /* if(!showDeliveryOrder)
-        return deliveryInCatch();
-        else
-        if(date!=null)
+       if(customerOrder == null) {
+           busqueUnpedidoMessage();
+           return Outcome.REDISPLAY;
+       }
+
         return deliveryOrder();
-        else
-        return deliveryOrderWhitoutDate();*/
-        return deliveryOrder();
+
+    }
+
+    @End
+    @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
+    public String entregarTodos() {
+
+        if(pedidos.size() == 0) {
+            busquePedidosMessage();
+            return Outcome.REDISPLAY;
+        }
+
+        return entregarPedidos();
 
     }
 
@@ -154,20 +165,72 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }
     }
 
-
-    private String deliveryOrder() {
-        if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
+    private String entregarPedidos() {
+        /*if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
             return Outcome.REDISPLAY;
         else
+        {*/
+        /*if(fueEntregado())
         {
-            if(verifyWasDelivery())
+            return Outcome.REDISPLAY;
+        }*/
+
+        try {
+            productDeliveryService.deliveryCustomerOrders(pedidos);
+            addAllDeliveryMessage();
+            return Outcome.SUCCESS;
+        } catch (InventoryException e) {
+            addInventoryErrorMessages(e.getInventoryMessages());
+            return Outcome.REDISPLAY;
+        } catch (ProductItemNotFoundException e) {
+            addProductItemNotFoundMessage(e.getProductItem().getFullName());
+            return Outcome.REDISPLAY;
+        } catch (ProductItemAmountException e) {
+            addNotEnoughAmountMessage(e.getProductItem(), e.getAvailableAmount());
+            return Outcome.REDISPLAY;
+        } catch (CompanyConfigurationNotFoundException e) {
+            addCompanyConfigurationNotFoundErrorMessage();
+            return Outcome.REDISPLAY;
+        } catch (FinancesExchangeRateNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.REDISPLAY;
+        } catch (FinancesCurrencyNotFoundException e) {
+            addFinancesExchangeRateNotFoundExceptionMessage();
+            return Outcome.REDISPLAY;
+        } catch (InventoryProductItemNotFoundException e) {
+            addInventoryProductItemNotFoundErrorMessage(e.getExecutorUnitCode(),
+                    e.getProductItem(), e.getWarehouse());
+            return Outcome.REDISPLAY;
+        } catch (ReferentialIntegrityException e) {
+            addDeleteReferentialIntegrityMessage();
+            return Outcome.REDISPLAY;
+        } catch (ConcurrencyException e) {
+            addUpdateConcurrencyMessage();
+            return Outcome.REDISPLAY;
+        } catch (InventoryUnitaryBalanceException e) {
+            addInventoryUnitaryBalanceErrorMessage(e.getAvailableUnitaryBalance(), e.getProductItem());
+            return Outcome.REDISPLAY;
+        } catch (EntryDuplicatedException e) {
+            addDuplicatedMessage();
+            return Outcome.REDISPLAY;
+        }
+
+        //}
+    }
+
+    private String deliveryOrder() {
+        /*if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
+            return Outcome.REDISPLAY;
+        else
+        {*/
+            if(fueEntregado())
             {
                 return Outcome.REDISPLAY;
             }
 
             try {
-                productDeliveryService.deliveryAll(numberInvoices);
-                addAllDeliveryMessage();
+                productDeliveryService.deliveryCustomerOrder(customerOrder);
+                fueEntregadoConExitoMessage();
                 return Outcome.SUCCESS;
             } catch (InventoryException e) {
                 addInventoryErrorMessages(e.getInventoryMessages());
@@ -205,7 +268,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 return Outcome.REDISPLAY;
             }
 
-        }
+        //}
     }
 
     private String deliveryInCatch()
@@ -337,6 +400,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void search() {
         customerOrder = soldProductService.findPedidoPorCodigo(orderNumber);
+        if(customerOrder == null)
         setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
         getInstance().setInvoiceNumber(null);
         soldProducts.clear();
@@ -377,17 +441,18 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     public void buscarPorTerritorioFecha(){
+        pedidos.clear();
+        orderClients.clear();
         pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorioTrabajo);
         List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
         if(territorioTrabajo == null)
         {
-            territorios = getTerritorios();
+            territorios = accountItemService.findTerritoriosPedido(date);
             for(Territoriotrabajo territorio:territorios) {
-                pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorio);
-                for (CustomerOrder pedido : pedidos) {
+                for (CustomerOrder pedido : soldProductService.findPedidosPorFechaTerritorio(date,territorio)) {
                     OrderClient orderClient = new OrderClient();
                     orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
-                    orderClient.setName(pedido.getCliente().getNombreCompleto());
+                    orderClient.setName(pedido.getCodigo().getSecuencia().toString() + "-" + pedido.getCliente().getNombreCompleto());
                     orderClient.setType("CLIENTE");
                     orderClient.setState(pedido.getEstado());
                     orderClient.setCliente(pedido.getCliente());
@@ -412,9 +477,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             orderClient.setType("TERRITORIO");
             orderClients.add(orderClient);
         }
-        for (CustomerOrder pedido : pedidos) {
 
-        }
         orderItems = accountItemService.findArticulosPorFecha(date);
     }
      private List<Territoriotrabajo> getTerritorios()
@@ -482,6 +545,17 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }
         return result;
     }
+
+    private boolean fueEntregado() {
+            if(customerOrder.getEstado()!= null)
+                if(customerOrder.getEstado().equals("PREPARADO")) {
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",customerOrder.getCodigo().getSecuencia()));
+                    return true;
+                }
+
+        return false;
+    }
+
 
     private boolean wasDelivery() {
         for(OrderClient orderClient: orderClients)
@@ -555,8 +629,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         orderItems.clear();
         orderClients.clear();
         numberInvoices.clear();
-        date = null;
         distributor = null;
+        pedidos.clear();
     }
 
     private void addInventoryErrorMessages(List<InventoryMessage> messages) {
@@ -602,6 +676,18 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 productItem.getName(),
                 warehouse.getName(),
                 executorUnitCode);
+    }
+
+    private void busqueUnpedidoMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"Primeramente busque un pedido.");
+    }
+
+    private void busquePedidosMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"No hay pedidos para entregar.");
+    }
+
+    private void fueEntregadoConExitoMessage() {
+        facesMessages.addFromResourceBundle(StatusMessage.Severity.INFO,"El pedido fué entegado exitosamente");
     }
 
     private void addAllDeliveryMessage() {
@@ -722,20 +808,36 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     public Integer getCantidad(OrderClient client,OrderItem item){
+        Integer cant= 0;
+        if(!client.getType().equals("TERRITORIO"))
         for(CustomerOrder pedido:pedidos)
         {
-            if(pedido.getCliente().getPiId().equals(client.getCliente().getPiId()))
+            if(pedido.getCodigo().getSecuencia().toString().equals(client.getIdOrder()))
             {
-                for(ArticleOrder articulo: pedido.getArticulosPedidos())
-                {
-                    if(articulo.getProductItem().equals(articulo))
+                for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
+                    if(articulo.getCodArt().equals(item.getCodArt()))
                     {
-                        return articulo.getAmount();
+                        cant = articulo.getAmount();
                     }
                 }
             }
         }
-        return 0;
+        else
+            for(CustomerOrder pedido:pedidos)
+            {
+                if(pedido.getCliente().getTerritoriotrabajo().getNombre().equals(client.getName()))
+                {
+                    for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
+                        if(articulo.getCodArt().equals(item.getCodArt()))
+                        {
+                            cant = articulo.getAmount();
+                        }
+                    }
+                }
+            }
+
+
+        return cant;
     }
 
     public Integer getCantidadTotal(OrderItem item){
@@ -744,7 +846,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         {
                 for(ArticleOrder articulo: pedido.getArticulosPedidos())
                 {
-                    if(articulo.getProductItem().equals(articulo))
+                    if(articulo.getCodArt().equals(item.getCodArt()))
                     {
                         total +=articulo.getAmount();
                     }

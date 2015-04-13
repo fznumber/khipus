@@ -192,7 +192,7 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         CustomerOrder customerOrder;
         try{
             customerOrder = (CustomerOrder)getEntityManager()
-                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PENDIENTE'")
+                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PREPARAR'")
                     .setParameter("codigo", Long.valueOf(numeroPedido).longValue())
             .getSingleResult();
         }catch (NoResultException e){
@@ -204,18 +204,31 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
     @Override
     public List<CustomerOrder> findPedidosPorFechaTerritorio(Date date, Territoriotrabajo territoriotrabajo) {
         List<CustomerOrder> customerOrders = new ArrayList<CustomerOrder>();
-        try{
-            customerOrders = (List<CustomerOrder>)getEntityManager()
-                    .createQuery("select pe from CustomerOrder pe " +
-                            "where pe.fechaEntrega =:fecha " +
-                            "and pe.estado = 'PENDIENTE' " +
-                            "and pe.cliente.territoriotrabajo =:territorio")
-                    .setParameter("territorio",territoriotrabajo)
-                    .setParameter("fecha",date,TemporalType.DATE)
-                    .getResultList();
-        }catch(NoResultException e)
+        if(territoriotrabajo == null)
         {
-            return customerOrders;
+            try {
+                customerOrders = (List<CustomerOrder>) getEntityManager()
+                        .createQuery("select pe from CustomerOrder pe " +
+                                "where pe.fechaEntrega =:fecha " +
+                                "and pe.estado = 'PREPARAR' ")
+                        .setParameter("fecha", date, TemporalType.DATE)
+                        .getResultList();
+            } catch (NoResultException e) {
+                return customerOrders;
+            }
+        }else {
+            try {
+                customerOrders = (List<CustomerOrder>) getEntityManager()
+                        .createQuery("select pe from CustomerOrder pe " +
+                                "where pe.fechaEntrega =:fecha " +
+                                "and pe.estado = 'PREPARAR' " +
+                                "and pe.cliente.territoriotrabajo =:territorio")
+                        .setParameter("territorio", territoriotrabajo)
+                        .setParameter("fecha", date, TemporalType.DATE)
+                        .getResultList();
+            } catch (NoResultException e) {
+                return customerOrders;
+            }
         }
         return customerOrders;
     }

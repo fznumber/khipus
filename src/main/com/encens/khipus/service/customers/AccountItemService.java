@@ -1,6 +1,7 @@
 package com.encens.khipus.service.customers;
 
 import com.encens.khipus.framework.service.GenericService;
+import com.encens.khipus.model.customers.Territoriotrabajo;
 
 import javax.ejb.Local;
 import java.math.BigDecimal;
@@ -63,4 +64,6 @@ public interface AccountItemService extends GenericService {
     public Integer getAmountComboTotalDelivery(String codPaquete, Date date);
 
     List<OrderItem> findArticulosPorFecha(Date date);
+
+    List<Territoriotrabajo> findTerritoriosPedido(Date date);
 }

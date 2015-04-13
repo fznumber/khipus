@@ -27,7 +27,7 @@
         <h:form id="productDeliveryForm">
             <div class="buttons">
                 <h:commandButton id="createButtonId"
-                                 action="#{productDeliveryAction.create}"
+                                 action="#{productDeliveryAction.entregarTodos}"
                                  value="#{messages['ProductDelivery.button.deliver']}"
                                  styleClass="button"
                                  rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}">
@@ -234,7 +234,7 @@
 
             </s:div>
             <div class="buttons">
-                <h:commandButton action="#{productDeliveryAction.create}"
+                <h:commandButton action="#{productDeliveryAction.entregarTodos}"
                                  value="#{messages['ProductDelivery.button.deliver']}"
                                  styleClass="button"
                                  rendered="#{!productDeliveryAction.managed and s:hasPermission('PRODUCTDELIVERY','CREATE') }"
