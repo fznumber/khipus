@@ -12,6 +12,7 @@ import javax.ejb.Local;
 public interface FinancesPkGeneratorService extends GenericService {
     public enum NativeFunction {
         TRANSACTION_NUMBER("sigte_trans()"),
+        TRANSACTION_NUMBER_TMPENC("next_tmpenc()"),
         CONCILIATION_NUMBER("sigte_conci()");
         private String function;
 
@@ -26,6 +27,8 @@ public interface FinancesPkGeneratorService extends GenericService {
     }
 
     String getNextPK();
+
+    String getNextTmpenc();
 
     String executeFunction(NativeFunction nativeFunction);
 }

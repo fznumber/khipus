@@ -20,14 +20,25 @@ import java.util.List;
  * @author
  * @version 3.5.2.2
  */
-@SequenceGenerator(name = "Voucher.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_trans")
+//@SequenceGenerator(name = "Voucher.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_trans")
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "Voucher.tableGenerator",
+        table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
+        pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
+        valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
+        pkColumnValue = "sf_tmpenc",
+        initialValue = 1,
+        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
+
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
 @Table(name = "sf_tmpenc", schema = Constants.FINANCES_SCHEMA)
 public class Voucher implements BaseModel{
     @Id
-    @GeneratedValue(generator = "Voucher.sequenceGenerator")
-    @Column(name = "NO_TRANS", nullable = false, insertable = true, updatable = false, length = 10)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "Voucher.tableGenerator")
+    @Column(name = "ID_TMPENC", nullable = true)
+    private Long idenc;
+
+    @Column(name = "NO_TRANS", nullable = true, length = 10)
     @Length(max = 10)
     private String transactionNumber;
 
@@ -452,6 +463,14 @@ public class Voucher implements BaseModel{
 
     @Override
     public Object getId() {
-        return this.transactionNumber;
+        return this.transactionNumber.toString() ;
+    }
+
+    public Long getIdenc() {
+        return idenc;
+    }
+
+    public void setIdenc(Long idenc) {
+        this.idenc = idenc;
     }
 }

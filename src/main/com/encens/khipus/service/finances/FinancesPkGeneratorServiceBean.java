@@ -20,6 +20,10 @@ public class FinancesPkGeneratorServiceBean extends GenericServiceBean implement
         return executeFunction(NativeFunction.TRANSACTION_NUMBER);
     }
 
+    public String getNextTmpenc() {
+        return executeFunction(NativeFunction.TRANSACTION_NUMBER_TMPENC);
+    }
+
     public String executeFunction(NativeFunction nativeFunction) {
         return (String) getEntityManager().createNativeQuery("select " + FinancesUtil.addSchema(nativeFunction.getFunction()) + " from dual").getSingleResult();
     }

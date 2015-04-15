@@ -7,17 +7,14 @@ import com.encens.khipus.model.admin.User;
 import com.encens.khipus.model.finances.*;
 import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.util.BigDecimalUtil;
-import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.ValidatorUtil;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import sun.util.calendar.CalendarSystem;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.TemporalType;
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
