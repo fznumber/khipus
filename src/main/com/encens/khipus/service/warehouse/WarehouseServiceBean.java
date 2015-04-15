@@ -248,10 +248,11 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                                      List<MovementDetail> movementDetailWithoutWarnings) throws InventoryException, ProductItemNotFoundException {
         String financeUserCode = financesUserService.getFinancesUserCode();
 
-       String transactionNumber = financesPkGeneratorService.getNextPK();
+        String transactionNumber = financesPkGeneratorService.getNextPK();
         //String transactionNumber = "123";
 
         warehouseVoucher.getId().setTransactionNumber(transactionNumber);
+
         for (MovementDetail movementDetail : movementDetails) {
             validateOutputMovementDetail(warehouseVoucher, movementDetail);
         }
@@ -268,27 +269,6 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
                     movementDetailOverMaximumStockMap,
                     movementDetailWithoutWarnings);
         }
-    }
-    private void insertWarehouse(WarehouseVoucher warehouseVoucher){
-
-        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String fecha = formatter.format(warehouseVoucher.getDate());
-        /*em.createNativeQuery("insert  into " +
-                "inv_vales(no_cia,contracuenta,cod_cc,fecha,cod_doc,no_vale,id_com_encoc,no_trans_rec,estado,dest_cod_cc,cod_alm_dest,version,cod_alm,tiporecepcion,idunidadnegocio,no_cia_raiz,no_trans_raiz,idcontratopuestosol,id_responsable,idunidadnegocio_dest,id_responsable_dest) " +
-                "values (:no_cia,NULL,:cod_cc,:fecha,:cod_doc,NULL,NULL,NULL,:estado,NULL,NULL,:version,:cod_alm,NULL,:idunidadnegocio,NULL,NULL,NULL,:id_responsable,NULL,NULL);")
-                .setParameter("no_cia",warehouseVoucher.getId().getCompanyNumber())
-                .setParameter("cod_cc",warehouseVoucher.getCostCenter())
-                .setParameter("fecha",fecha)
-                .setParameter("cod_doc", warehouseVoucher.getDocumentCode())
-                .setParameter("estado",warehouseVoucher.getState().name())
-                .setParameter("version",warehouseVoucher.getVersion())
-                .setParameter("cod_alm",warehouseVoucher.getWarehouseCode())
-                .setParameter("idunidadnegocio",warehouseVoucher.getExecutorUnit().getId())
-                .setParameter("id_responsable",warehouseVoucher.getResponsible().getId()).executeUpdate();*/
-        em.createNativeQuery(
-                "insert into inv_vales(no_cia,contracuenta,cod_cc,fecha,cod_doc,no_vale,id_com_encoc,no_trans_rec,estado,dest_cod_cc,cod_alm_dest,version,cod_alm,tiporecepcion,idunidadnegocio,no_cia_raiz,no_trans_raiz,idcontratopuestosol,id_responsable,idunidadnegocio_dest,id_responsable_dest) \n" +
-                "values ('01',NULL,'0111','2015-01-31','REC',NULL,NULL,NULL,'PEN',NULL,NULL,0,'2',NULL,470,NULL,NULL,NULL,423,NULL,NULL)")
-                .executeUpdate();
     }
 
     public WarehouseVoucher findWarehouseVoucher(WarehouseVoucherPK id) throws WarehouseVoucherNotFoundException {

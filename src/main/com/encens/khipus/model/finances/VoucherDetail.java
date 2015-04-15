@@ -25,7 +25,7 @@ public class VoucherDetail implements BaseModel {
     @Column(name = "TIMEMILLIS", insertable = false, updatable = false)
     private String id;
 
-    @Column(name = "NO_TRANS", nullable = false, insertable = true, updatable = false, length = 10)
+    @Column(name = "NO_TRANS", nullable = true, insertable = true, updatable = false, length = 10)
     @Length(max = 10)
     private String transactionNumber;
 

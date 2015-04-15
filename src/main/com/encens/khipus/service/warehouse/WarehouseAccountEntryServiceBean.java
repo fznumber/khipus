@@ -19,10 +19,7 @@ import com.encens.khipus.model.warehouse.MovementDetailType;
 import com.encens.khipus.model.warehouse.Warehouse;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
 import com.encens.khipus.service.common.SequenceGeneratorService;
-import com.encens.khipus.service.finances.CashAccountService;
-import com.encens.khipus.service.finances.FinancesExchangeRateService;
-import com.encens.khipus.service.finances.RotatoryFundService;
-import com.encens.khipus.service.finances.VoucherService;
+import com.encens.khipus.service.finances.*;
 import com.encens.khipus.service.fixedassets.CompanyConfigurationService;
 import com.encens.khipus.service.purchases.GlossGeneratorService;
 import com.encens.khipus.util.*;
@@ -78,6 +75,9 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
     @In
     private CashAccountService cashAccountService;
+
+    @In
+    private FinancesPkGeneratorService financesPkGeneratorService;
 
     /* For advance payments of warehouse and fixedAssets */
 
@@ -927,6 +927,9 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
+
+        String transactionNumber = financesPkGeneratorService.getNextTmpenc();
+        voucherForGeneration.setTransactionNumber(transactionNumber);
 
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
                 executorUnit.getExecutorUnitCode(),
