@@ -9,7 +9,7 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `sigte_trans`() RETURNS VARCHAR(10)
 BEGIN
 	DECLARE act_trans VARCHAR(10);
 	SET act_trans = 0;
-	SELECT MAX(no_trans) INTO act_trans FROM khipus.inv_vales;
+	SELECT IFNULL(MAX(no_trans),0) INTO act_trans FROM khipus.inv_vales;
   RETURN act_trans+1;
     END$$
 
