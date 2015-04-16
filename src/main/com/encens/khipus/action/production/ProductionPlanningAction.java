@@ -446,7 +446,9 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
         getInstance().setState(TABULATED);
 
         productionPlanningService.updateProductionPlanningDirect(getInstance());
-        approvedAllVoucherEntries();
+
+        /* todo: Aprobacion de asientos de producción con oracle */
+        //approvedAllVoucherEntries();
     }
 
     public void approvedAllVoucherEntries(){
