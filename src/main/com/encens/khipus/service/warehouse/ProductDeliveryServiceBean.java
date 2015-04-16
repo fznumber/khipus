@@ -65,6 +65,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     @In
     private AccountItemService accountItemService;
 
+    @In
+    private InventoryService inventoryService;
+
     @In(value = "monthProcessService")
     private MonthProcessService monthProcessService;
 
@@ -249,6 +252,56 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     }
 
+    //todo: que hacer con los no producidos
+    //todo: en caso que sea un combo verificar sus articulos
+    //todo: que hacer con el queso edam y el queso recorte
+    //todo: que hacer con los productos de prueba
+    @Override
+    public boolean verifyAmounts(CustomerOrder customerOrder, Date date, Employee distributor) {
+        Boolean result = false;
+        List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
+
+        WarehouseDocumentType documentType = getFirstConsumptionType();
+
+        Warehouse warehouse = inventoryService.findWarehouseByItemArticle(new ArrayList<ArticleOrder>(customerOrder.getArticulosPedidos()).get(0).getProductItem());
+        CostCenter costCenter = findPublicCostCenter(warehouse);
+        for(ArticleOrder articulo:customerOrder.getArticulosPedidos()) {
+            try {
+
+                approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(articulo.getAmount()),
+                        warehouse,
+                        articulo.getProductItem(),
+                        costCenter);
+            } catch (InventoryException e) {
+                facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                        "ProductDelivery.warehouseVoucher.packError", articulo.getProductItem().getFullName());
+                errorMessages.addAll(e.getInventoryMessages());
+            }
+        }
+
+        if (errorMessages.size() > 0) {
+            addInventoryErrorMessages(errorMessages);
+            return true;
+        }
+
+        if (customerOrder.getArticulosPedidos().size() == 0) {
+            addSoldProductNotFoundMessages(customerOrder.getCodigo().getSecuencia().toString());
+            result = true;
+        }
+
+        if (null == documentType) {
+            addWarehouseDocumentTypeErrorMessage(customerOrder.getCodigo().getSecuencia().toString());
+            result = true;
+        }
+
+        if (null == costCenter) {
+            addcenterCostNotFoundErrorMessage();
+            result = true;
+        }
+
+        return result;
+    }
+
     @SuppressWarnings(value = "unchecked")
     public void deliveryCustomerOrder(CustomerOrder customerOrder) throws
             InventoryException,
@@ -269,10 +322,10 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
             if(articleOrders.size() != 0) {
 
-               /* WarehouseDocumentType documentType = getFirstConsumptionType();
+                WarehouseDocumentType documentType = getFirstConsumptionType();
                 //always exist almost one sold product that will be delivery
                 ArticleOrder firstSoldProduct = articleOrders.get(0);
-                Warehouse warehouse = firstSoldProduct.getWarehouse();
+                Warehouse warehouse = inventoryService.findWarehouseByItemArticle(firstSoldProduct.getProductItem());
                 CostCenter costCenter = findPublicCostCenter(warehouse);
                 Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
 
@@ -298,7 +351,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                     log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
                 } catch (WarehouseAccountCashNotFoundException e) {
                     e.printStackTrace();
-                }*/
+                }
 
                 /*ProductDelivery productDelivery = new ProductDelivery();
                 productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());

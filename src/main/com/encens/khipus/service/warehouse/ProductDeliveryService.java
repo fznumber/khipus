@@ -91,4 +91,6 @@ public interface ProductDeliveryService extends GenericService {
                 ConcurrencyException,
                 InventoryUnitaryBalanceException,
                 EntryDuplicatedException ;
+
+        boolean verifyAmounts(CustomerOrder customerOrder, Date date, Employee distributor);
 }
