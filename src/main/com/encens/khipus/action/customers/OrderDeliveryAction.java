@@ -9,6 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
+import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.warehouse.ProductDeliveryService;
 import com.encens.khipus.service.warehouse.SoldProductService;
@@ -113,7 +114,7 @@ public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
 
-    public void myCreate() {
+   /* public void myCreate() {
 
         String numbers[] = {
 //AL CONTADO
@@ -213,7 +214,7 @@ public class OrderDeliveryAction extends GenericAction<ProductDelivery> {
                 continue;
             }
         }
-    }
+    }*/
 
     @Override
     @Begin(ifOutcome = Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)

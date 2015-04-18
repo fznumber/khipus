@@ -5,6 +5,9 @@ import com.encens.khipus.exception.EntryDuplicatedException;
 import com.encens.khipus.exception.warehouse.ProductItemMinimalStockIsGreaterThanMaximumStockException;
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.Promocion;
+import com.encens.khipus.model.customers.Ventaarticulo;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
 import com.encens.khipus.service.common.SequenceGeneratorService;
@@ -16,6 +19,7 @@ import org.jboss.seam.annotations.Name;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -128,6 +132,20 @@ public class ProductItemServiceBean extends GenericServiceBean implements Produc
                 .setParameter("productItemCode", productItemCode)
                 .getSingleResult();
         return productItem;
+    }
+
+    @Override
+    public List<Ventaarticulo> findArticuloCombo(ArticleOrder articulo) {
+        Promocion promocion;
+        try{
+            promocion = (Promocion)em.createQuery("select promocion from Promocion promocion " +
+                    " where promocion.productItem =:productItem")
+            .setParameter("productItem",articulo.getProductItem())
+            .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+        return new ArrayList<Ventaarticulo>(promocion.getVentaarticulos());
     }
 
 }
