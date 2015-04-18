@@ -219,10 +219,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private String deliveryOrder() {
-        /*if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
+        if(productDeliveryService.verifyAmounts(customerOrder,date,distributor))
             return Outcome.REDISPLAY;
         else
-        {*/
+        {
             if(fueEntregado())
             {
                 return Outcome.REDISPLAY;
@@ -268,7 +268,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 return Outcome.REDISPLAY;
             }
 
-        //}
+        }
     }
 
     private String deliveryInCatch()
@@ -548,7 +548,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     private boolean fueEntregado() {
             if(customerOrder.getEstado()!= null)
-                if(customerOrder.getEstado().equals("PREPARADO")) {
+                if(customerOrder.getEstado().equals("ENTREGADO")) {
                     setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",customerOrder.getCodigo().getSecuencia()));
                     return true;
                 }

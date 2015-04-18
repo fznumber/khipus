@@ -60,6 +60,9 @@ public class ArticleOrder {
     @Column(name = "PROMOCION",nullable = true)
     private Integer promotion;
 
+    @Column(name="TIPO")
+    private String tipo;
+
 
     public String getCodArt() {
         return codArt;
@@ -139,5 +142,13 @@ public class ArticleOrder {
 
     public void setCustomerOrder(CustomerOrder customerOrder) {
         this.customerOrder = customerOrder;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }
