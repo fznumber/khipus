@@ -884,6 +884,10 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
 
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
+
+        String transactionNumber = financesPkGeneratorService.getNextTmpenc();
+        voucherForGeneration.setTransactionNumber(transactionNumber);
+
         Warehouse warehouse = warehouseService.findWarehouseByCode(warehouseVoucher.getWarehouseCode());
         BigDecimal total = BigDecimal.ZERO;
         for(ProductionPlanningAction.AccountOrderProduction accountOrderProduction :accountOrderProductions)
