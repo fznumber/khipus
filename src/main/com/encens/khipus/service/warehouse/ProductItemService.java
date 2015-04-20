@@ -6,6 +6,7 @@ import com.encens.khipus.exception.warehouse.ProductItemMinimalStockIsGreaterTha
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.ArticulosPromocion;
 import com.encens.khipus.model.customers.Ventaarticulo;
 import com.encens.khipus.model.warehouse.ProductItem;
 import com.encens.khipus.model.warehouse.WarehouseVoucher;
@@ -53,5 +54,5 @@ public interface ProductItemService extends GenericService {
     @SuppressWarnings(value = "unchecked")
     public ProductItem findProductItemByCode(String productItemCode);
 
-    List<Ventaarticulo> findArticuloCombo(ArticleOrder articulo);
+    List<ArticulosPromocion> findArticuloCombo(ArticleOrder articulo);
 }

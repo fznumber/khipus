@@ -92,5 +92,7 @@ public interface ProductDeliveryService extends GenericService {
                 InventoryUnitaryBalanceException,
                 EntryDuplicatedException ;
 
-        boolean verifyAmounts(CustomerOrder customerOrder, Date date, Employee distributor);
+        boolean verifyAmounts(CustomerOrder customerOrder);
+
+        boolean verifyAmounts(List<CustomerOrder> pedidos);
 }

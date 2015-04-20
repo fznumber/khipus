@@ -166,10 +166,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private String entregarPedidos() {
-        /*if(productDeliveryService.verifyAmounts(numberInvoices,orderItems,date,distributor))
+        if(productDeliveryService.verifyAmounts(pedidos))
             return Outcome.REDISPLAY;
         else
-        {*/
+        {
         /*if(fueEntregado())
         {
             return Outcome.REDISPLAY;
@@ -215,11 +215,11 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             return Outcome.REDISPLAY;
         }
 
-        //}
+        }
     }
 
     private String deliveryOrder() {
-        if(productDeliveryService.verifyAmounts(customerOrder,date,distributor))
+        if(productDeliveryService.verifyAmounts(customerOrder))
             return Outcome.REDISPLAY;
         else
         {

@@ -9,6 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.ArticulosPromocion;
 import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.customers.Ventaarticulo;
 import com.encens.khipus.model.employees.Employee;
@@ -207,47 +208,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             InventoryUnitaryBalanceException,
             EntryDuplicatedException {
 
-
-               /* WarehouseDocumentType documentType = getFirstConsumptionType();
-                //always exist almost one sold product that will be delivery
-                ArticleOrder firstSoldProduct = articleOrders.get(0);
-                Warehouse warehouse = firstSoldProduct.getWarehouse();
-                CostCenter costCenter = findPublicCostCenter(warehouse);
-                Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
-
-                WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, customerOrder);
-
-                Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
-                Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
-                List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
-
-                try {
-
-                    approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
-                            getGlossMessage(warehouseVoucher, warehouseDescription),
-                            movementDetailUnderMinimalStockMap,
-                            movementDetailOverMaximumStockMap,
-                            movementDetailWithoutWarnings);
-
-                } catch (WarehouseVoucherApprovedException e) {
-                    log.debug("This exception never happen because I create a pending WarehouseVoucher.");
-                } catch (WarehouseVoucherNotFoundException e) {
-                    log.debug("This exception never happen because I create a new WarehouseVoucher.");
-                } catch (WarehouseVoucherEmptyException e) {
-                    log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
-                } catch (WarehouseAccountCashNotFoundException e) {
-                    e.printStackTrace();
-                }*/
-
-                /*ProductDelivery productDelivery = new ProductDelivery();
-                productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
-                productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
-                productDelivery.setWarehouseVoucher(warehouseVoucher);
-                create(productDelivery);
-*/
-            //update state of order
             for(CustomerOrder pedido:pedidos) {
-                updateCustomerOrder(pedido.getIdpedidos(), "ENTREGADO");
+                deliveryCustomerOrder(pedido);
             }
 
 
@@ -258,7 +220,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     //todo: que hacer con el queso edam y el queso recorte
     //todo: que hacer con los productos de prueba
     @Override
-    public boolean verifyAmounts(CustomerOrder customerOrder, Date date, Employee distributor) {
+    public boolean verifyAmounts(CustomerOrder customerOrder) {
         Boolean result = false;
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
 
@@ -269,17 +231,17 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
         for(ArticleOrder articulo:customerOrder.getArticulosPedidos()) {
             if(articulo.getTipo().equals("COMBO")){
-                List<Ventaarticulo> articulosCombo = productItemService.findArticuloCombo(articulo);
-                for(Ventaarticulo articuloCombo :articulosCombo) {
+                List<ArticulosPromocion> articulosCombo = productItemService.findArticuloCombo(articulo);
+                for(ArticulosPromocion articuloCombo :articulosCombo) {
                     try {
 
                         approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(articuloCombo.getCantidad()*articulo.getAmount()),
                                 warehouse,
-                                articulo.getProductItem(),
+                                articuloCombo.getVentaarticulo().getProductItem(),
                                 costCenter);
                     } catch (InventoryException e) {
                         facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
-                                "ProductDelivery.warehouseVoucher.packError", articuloCombo.getProductItem().getFullName());
+                                "ProductDelivery.warehouseVoucher.packError", articuloCombo.getVentaarticulo().getProductItem().getFullName());
                         errorMessages.addAll(e.getInventoryMessages());
                     }
                 }
@@ -318,6 +280,16 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         }
 
         return result;
+    }
+
+    @Override
+    public boolean verifyAmounts(List<CustomerOrder> pedidos) {
+        Boolean error = false;
+        for(CustomerOrder pedido:pedidos)
+        {
+            error = verifyAmounts(pedido);
+        }
+        return error;
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -942,25 +914,25 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         for (ArticleOrder articleOrder: customerOrder.getArticulosPedidos()) {
             if(articleOrder.getTipo().equals("COMBO"))
             {
-                List<Ventaarticulo> articulosCombo = productItemService.findArticuloCombo(articleOrder);
-                for(Ventaarticulo articuloCombo :articulosCombo) {
+                List<ArticulosPromocion> articulosCombo = productItemService.findArticuloCombo(articleOrder);
+                for(ArticulosPromocion articuloCombo :articulosCombo) {
                     MovementDetail movementDetailTemp = new MovementDetail();
                     movementDetailTemp.setWarehouse(warehouse); //revisar
-                    movementDetailTemp.setProductItem(articuloCombo.getProductItem());
-                    movementDetailTemp.setProductItemAccount(articuloCombo.getProductItem().getProductItemAccount());
+                    movementDetailTemp.setProductItem(articuloCombo.getVentaarticulo().getProductItem());
+                    movementDetailTemp.setProductItemAccount(articuloCombo.getVentaarticulo().getProductItem().getProductItemAccount());
                     movementDetailTemp.setQuantity(new BigDecimal(articuloCombo.getCantidad() * articleOrder.getAmount()));
-                    movementDetailTemp.setUnitCost(articuloCombo.getProductItem().getUnitCost());
+                    movementDetailTemp.setUnitCost(articuloCombo.getVentaarticulo().getProductItem().getUnitCost());
                     movementDetailTemp.setAmount(null);
                     movementDetailTemp.setExecutorUnit(warehouse.getExecutorUnit());
                     movementDetailTemp.setCostCenterCode(publicCostCenter.getId().getCode());
-                    movementDetailTemp.setMeasureUnit(articuloCombo.getProductItem().getUsageMeasureUnit());
+                    movementDetailTemp.setMeasureUnit(articuloCombo.getVentaarticulo().getProductItem().getUsageMeasureUnit());
 
             /* revisar */
                     Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
-                    movementDetailUnderMinimalStockMap.put(movementDetailTemp, articuloCombo.getProductItem().getMinimalStock());
+                    movementDetailUnderMinimalStockMap.put(movementDetailTemp, articuloCombo.getVentaarticulo().getProductItem().getMinimalStock());
 
                     Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
-                    movementDetailOverMaximumStockMap.put(movementDetailTemp, articuloCombo.getProductItem().getMaximumStock());
+                    movementDetailOverMaximumStockMap.put(movementDetailTemp, articuloCombo.getVentaarticulo().getProductItem().getMaximumStock());
 
                     List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
                     movementDetailWithoutWarnings.add(movementDetailTemp);

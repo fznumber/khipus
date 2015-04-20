@@ -31,6 +31,8 @@ public class Ventaarticulo implements Serializable {
         @JoinColumn(name = "COD_ART", referencedColumnName = "COD_ART")})
     @ManyToOne(optional = false)
     private ProductItem productItem;
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "ventaarticulo")
+    private Collection<ArticulosPromocion> articulosPromocions;
     @JoinColumn(name="IDPROMOCION",referencedColumnName = "IDPROMOCION")
     @ManyToOne
     private Promocion promocion;
@@ -90,5 +92,13 @@ public class Ventaarticulo implements Serializable {
 
     public void setPromocion(Promocion promocion) {
         this.promocion = promocion;
+    }
+
+    public Collection<ArticulosPromocion> getArticulosPromocions() {
+        return articulosPromocions;
+    }
+
+    public void setArticulosPromocions(Collection<ArticulosPromocion> articulosPromocions) {
+        this.articulosPromocions = articulosPromocions;
     }
 }

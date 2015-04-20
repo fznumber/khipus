@@ -878,28 +878,11 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
         BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
         Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
 
-        if(codArt.equals(Constants.COD_CHEESE_PRESSED))
-            amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
-                    "from USER01_DAF.pedidos ped\n" +
-                    "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
-                    "on art.pedido = ped.pedido\n" +
-                    "where ped.estado_pedido = 'PEN'\n" +
-                    "and ped.FECHA_ENTREGA between :startDate and :dateDelivery\n" +
-                    "and art.cod_art in (:codArt,:codEDAM)\n")
-                    .setParameter("codArt",codArt)
-                    .setParameter("codEDAM",Constants.COD_CHEESE_EDAM)
-                    .setParameter("startDate",startDate, TemporalType.DATE)
-                    .setParameter("dateDelivery",date, TemporalType.DATE)
-                    .getSingleResult();
-        else
-        if(codArt.equals(Constants.COD_CHEESE_EDAM))
-            return BigDecimal.ZERO;
-        else
-        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
-                " from USER01_DAF.pedidos ped\n" +
-                "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
-                "on art.pedido = ped.pedido\n" +
-                "where ped.estado_pedido = 'PEN'\n" +
+        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select IFNULL(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
+                " from khipus.pedidos ped\n" +
+                "INNER  JOIN khipus.articulos_pedido art\n" +
+                "on art.idpedidos = ped.idpedidos\n" +
+                "where ped.estado_pedido = 'PENDIENTE'\n" +
                 "and ped.FECHA_ENTREGA between :startDate and :dateDelivery\n" +
                 "and art.cod_art = :codArt\n")
                 .setParameter("codArt",codArt)
@@ -917,27 +900,11 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
     public BigDecimal findAmountOrderByCodArt(String codArt,Gestion gestion) {
         BigDecimal amountOrderByCodArt = BigDecimal.ZERO;
         Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
-        if(codArt.equals(Constants.COD_CHEESE_PRESSED))
-        amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
-                "from USER01_DAF.pedidos ped\n" +
-                "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
-                "on art.pedido = ped.pedido\n" +
-                "where ped.estado_pedido = 'PEN'\n" +
-                "and ped.FECHA_ENTREGA >= :startDate \n" +
-                "and art.cod_art in (:codArt,:codEDAM)\n")
-                .setParameter("codArt",codArt)
-                .setParameter("codEDAM",Constants.COD_CHEESE_EDAM)
-                .setParameter("startDate",startDate, TemporalType.DATE)
-                .getSingleResult();
-        else
-        if(codArt.equals(Constants.COD_CHEESE_EDAM))
-            return BigDecimal.ZERO;
-            else
-            amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select nvl(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
-                    "from USER01_DAF.pedidos ped\n" +
-                    "INNER  JOIN USER01_DAF.articulos_pedido art\n" +
-                    "on art.pedido = ped.pedido\n" +
-                    "where ped.estado_pedido = 'PEN'\n" +
+            amountOrderByCodArt = (BigDecimal) em.createNativeQuery("select IFNULL(sum(art.cantidad + art.REPOSICION + art.PROMOCION),0)\n" +
+                    "from khipus.pedidos ped\n" +
+                    "INNER  JOIN khipus.articulos_pedido art\n" +
+                    "on art.idpedidos = ped.idpedidos\n" +
+                    "where ped.estado_pedido = 'PENDIENTE'\n" +
                     "and ped.FECHA_ENTREGA >= :startDate \n" +
                     "and art.cod_art = :codArt\n")
                     .setParameter("codArt",codArt)
@@ -981,7 +948,7 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
         Date startDate = DateUtils.firstDayOfYear(gestion.getYear());
         Date endDate = DateUtils.lastDayOfYear(gestion.getYear());
 
-        expectedAmountOrderProduction = (BigDecimal) em.createNativeQuery("select nvl(sum(ps.cantidad),0) from productobase pb\n" +
+        expectedAmountOrderProduction = (BigDecimal) em.createNativeQuery("select ifnull(sum(ps.cantidad),0) from productobase pb\n" +
                 "inner join productosimple ps\n" +
                 "on pb.idproductobase = ps.idproductobase\n" +
                 "inner join planificacionproduccion pp\n" +

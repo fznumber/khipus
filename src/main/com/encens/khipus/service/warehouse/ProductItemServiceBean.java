@@ -6,6 +6,7 @@ import com.encens.khipus.exception.warehouse.ProductItemMinimalStockIsGreaterTha
 import com.encens.khipus.exception.warehouse.ProductItemNotFoundException;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.customers.ArticleOrder;
+import com.encens.khipus.model.customers.ArticulosPromocion;
 import com.encens.khipus.model.customers.Promocion;
 import com.encens.khipus.model.customers.Ventaarticulo;
 import com.encens.khipus.model.warehouse.ProductItem;
@@ -135,17 +136,17 @@ public class ProductItemServiceBean extends GenericServiceBean implements Produc
     }
 
     @Override
-    public List<Ventaarticulo> findArticuloCombo(ArticleOrder articulo) {
+    public List<ArticulosPromocion> findArticuloCombo(ArticleOrder articulo) {
         Promocion promocion;
         try{
             promocion = (Promocion)em.createQuery("select promocion from Promocion promocion " +
-                    " where promocion.productItem =:productItem")
+                    " where promocion.invArticulos =:productItem")
             .setParameter("productItem",articulo.getProductItem())
             .getSingleResult();
         }catch (NoResultException e){
             return null;
         }
-        return new ArrayList<Ventaarticulo>(promocion.getVentaarticulos());
+        return new ArrayList<ArticulosPromocion>(promocion.getArticulosPromocions());
     }
 
 }
