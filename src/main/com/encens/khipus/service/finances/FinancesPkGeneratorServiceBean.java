@@ -20,6 +20,13 @@ public class FinancesPkGeneratorServiceBean extends GenericServiceBean implement
         return executeFunction(NativeFunction.TRANSACTION_NUMBER);
     }
 
+    @Override
+    public void setNextPK(String nextNoTrans) {
+        getEntityManager().createNativeQuery("call sp_setSeqVal('VALE',:nextNoTrans)")
+                .setParameter("nextNoTrans",nextNoTrans)
+                .executeUpdate();
+    }
+
     public String getNextTmpenc() {
         return executeFunction(NativeFunction.TRANSACTION_NUMBER_TMPENC);
     }

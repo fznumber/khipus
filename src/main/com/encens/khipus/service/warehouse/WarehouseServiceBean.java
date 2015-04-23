@@ -32,10 +32,7 @@ import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
-import javax.persistence.EntityManager;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceException;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -87,19 +84,16 @@ public class WarehouseServiceBean extends GenericServiceBean implements Warehous
             throws InventoryException, ProductItemNotFoundException {
 
         String financeUserCode = financesUserService.getFinancesUserCode();
-
         String transactionNumber = financesPkGeneratorService.getNextPK();
 
         warehouseVoucher.getId().setTransactionNumber(transactionNumber);
 
         validateOutputMovementDetail(warehouseVoucher, movementDetail);
-
         getEntityManager().persist(warehouseVoucher);
         getEntityManager().flush();
 
         createInventoryMovement(warehouseVoucher, financeUserCode, inventoryMovement);
         getEntityManager().flush();
-
         if (null != movementDetail) {
             persistMovementDetail(warehouseVoucher, movementDetail,
                     movementDetailUnderMinimalStockMap,

@@ -19,6 +19,7 @@ import com.encens.khipus.model.products.Product;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.customers.AccountItemService;
 import com.encens.khipus.service.customers.OrderItem;
+import com.encens.khipus.service.finances.FinancesPkGeneratorService;
 import com.encens.khipus.util.Constants;
 import com.encens.khipus.util.DateUtils;
 import com.encens.khipus.util.MessageUtils;
@@ -69,6 +70,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     @In
     private InventoryService inventoryService;
+
+    @In
+    private FinancesPkGeneratorService financesPkGeneratorService;
 
     @In(value = "monthProcessService")
     private MonthProcessService monthProcessService;
@@ -207,12 +211,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             ConcurrencyException,
             InventoryUnitaryBalanceException,
             EntryDuplicatedException {
-
             for(CustomerOrder pedido:pedidos) {
                 deliveryCustomerOrder(pedido);
             }
-
-
     }
 
     //todo: que hacer con los no producidos

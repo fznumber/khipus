@@ -830,7 +830,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                     for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
                         if(articulo.getCodArt().equals(item.getCodArt()))
                         {
-                            cant = articulo.getAmount();
+                            cant += articulo.getAmount();
                         }
                     }
                 }
