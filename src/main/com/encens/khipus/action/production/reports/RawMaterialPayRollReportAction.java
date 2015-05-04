@@ -137,7 +137,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalYogourdByGAB", rawMaterialPayRoll.getTotalYogourdByGAB());
         params.put("totalRecipByGAB", rawMaterialPayRoll.getTotalRecipByGAB());
         params.put("totalDiscountByGAB", rawMaterialPayRoll.getTotalDiscountByGAB());
-        params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB()-rawMaterialPayRoll.getTotalReserveDicount());
+        params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB());
+        params.put("totalReserveDicount", rawMaterialPayRoll.getTotalReserveDicount());
         params.put("totalOtherIncomeByGAB", rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB", rawMaterialPayRoll.getTotalLiquidByGAB());
         params.put("dateStart", "Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
@@ -205,7 +206,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             params.put("totalYogourdByGAB", rawMaterialPayRoll.getTotalYogourdByGAB());
             params.put("totalRecipByGAB", rawMaterialPayRoll.getTotalRecipByGAB());
             params.put("totalDiscountByGAB", rawMaterialPayRoll.getTotalDiscountByGAB());
-            params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB()-rawMaterialPayRoll.getTotalReserveDicount());
+            params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB());
+            params.put("totalReserveDicount", rawMaterialPayRoll.getTotalReserveDicount());
             params.put("totalOtherIncomeByGAB", rawMaterialPayRoll.getTotalOtherIncomeByGAB());
             params.put("totalLiquidByGAB", rawMaterialPayRoll.getTotalLiquidByGAB());
             params.put("dateStart", "Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
@@ -268,12 +270,13 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " rawMaterialProducerDiscount.yogurt, " +
                 " rawMaterialProducerDiscount.cans, " +
                 " rawMaterialProducerDiscount.otherDiscount, " +
-                " rawMaterialPayRecord.productiveZoneAdjustment - rawMaterialPayRecord.discountReserve , " +
+                " rawMaterialPayRecord.productiveZoneAdjustment, " +
                 " rawMaterialProducerDiscount.otherIncoming, " +
                 " rawMaterialPayRecord.liquidPayable, " +
                 " rawMaterialProducer.lastName, " +
                 " rawMaterialProducer.maidenName, " +
-                " productiveZone.name " +
+                " productiveZone.name, " +
+                " rawMaterialPayRecord.discountReserve " +
                 " FROM RawMaterialPayRoll rawMaterialPayRoll " +
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
