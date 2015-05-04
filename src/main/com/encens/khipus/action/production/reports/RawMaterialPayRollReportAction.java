@@ -136,7 +136,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         params.put("totalYogourdByGAB", rawMaterialPayRoll.getTotalYogourdByGAB());
         params.put("totalRecipByGAB", rawMaterialPayRoll.getTotalRecipByGAB());
         params.put("totalDiscountByGAB", rawMaterialPayRoll.getTotalDiscountByGAB());
-        params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB()-rawMaterialPayRoll.getTotalReserveDicount());
+        params.put("totalAdjustmentByGAB", rawMaterialPayRoll.getTotalAdjustmentByGAB());
+        params.put("totalReserveDicount", rawMaterialPayRoll.getTotalReserveDicount());
         params.put("totalOtherIncomeByGAB", rawMaterialPayRoll.getTotalOtherIncomeByGAB());
         params.put("totalLiquidByGAB", rawMaterialPayRoll.getTotalLiquidByGAB());
         params.put("dateStart", "Fecha Inicio - " + FastDateFormat.getInstance("dd-MM-yyyy").format(dateIni));
@@ -267,12 +268,13 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                 " rawMaterialProducerDiscount.yogurt, " +
                 " rawMaterialProducerDiscount.cans, " +
                 " rawMaterialProducerDiscount.otherDiscount, " +
-                " rawMaterialPayRecord.productiveZoneAdjustment - rawMaterialPayRecord.discountReserve , " +
+                " rawMaterialPayRecord.productiveZoneAdjustment, " +
                 " rawMaterialProducerDiscount.otherIncoming, " +
                 " rawMaterialPayRecord.liquidPayable, " +
                 " rawMaterialProducer.lastName, " +
                 " rawMaterialProducer.maidenName, " +
-                " productiveZone.name " +
+                " productiveZone.name, " +
+                " rawMaterialPayRecord.discountReserve " +
                 " FROM RawMaterialPayRoll rawMaterialPayRoll " +
                 " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
                 " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
@@ -594,8 +596,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         return sql;
     }
 
-    private String getSqlOld() {
-
+    /*private String getSqlOld() {
         int initDay = periodo.getInitDay();
         int endDay = periodo.getEndDay(month.getValue() + 1, gestion.getYear());
         int cont = 1;
@@ -654,6 +655,49 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             sql += ((cont == 2) ? " WHERE A" : " and A") + 1 + ".IDPRODUCTORMATERIAPRIMA = A" + cont + ".IDPRODUCTORMATERIAPRIMA\n";
             cont++;
         }
+
+        return sql;
+    }*/
+    private String getSqlOld() {
+
+        int initDay = periodo.getInitDay();
+        int endDay = periodo.getEndDay(month.getValue() + 1, gestion.getYear());
+        String sql = "SELECT \tp.productor AS productor, \n";
+        int cont = 1;
+        for(int d=initDay;d<=endDay;d++ )
+        {
+            sql +=" IFNULL(d"+cont+".cantidad, 0) D"+cont+",\n";
+            cont ++;
+        }
+        if (periodo.getResourceKey().toString().equals("Periodo.first")) {
+            sql +=" 0.0 D16,\n";
+        }
+        cont = 1;
+        sql += " IFNULL(d"+cont+".cantidad, 0) ";
+        for(int d=initDay+1;d<=endDay;d++)
+        {
+            sql += " +IFNULL(d"+cont+".cantidad, 0) ";
+            cont++;
+        }
+        sql +=" TOTAL \n" + " FROM\n" +
+                "(\tSELECT pm.`idzonaproductiva`, pm.`idproductormateriaprima`, CONCAT(pe.`apellidopaterno`,' ',pe.`apellidomaterno`,' ',pe.`nombres`) AS productor, 0 AS cantidad\n" +
+                "\tFROM productormateriaprima pm                             \n" +
+                "\tLEFT JOIN persona pe ON pm.`idproductormateriaprima` = pe.idpersona\n" +
+                ")p\n";
+        int month_act = (month.getValue()) + 1;
+        cont = 1;
+        for(int d=initDay;d<=endDay;d++)
+        {
+            sql +="LEFT JOIN \n" +
+                    "\t(\tSELECT sa.`fecha`, sa.`idzonaproductiva`, am.`idproductormateriaprima`, am.`cantidad`\n" +
+                    "\t\tFROM acopiomateriaprima am\n" +
+                    "\t\t\tLEFT JOIN sesionacopio sa ON am.`idsesionacopio` \t  = sa.`idsesionacopio`\n" +
+                    "\t\t\tLEFT JOIN persona pe      ON am.`idproductormateriaprima` = pe.`idpersona`\n" +
+                    "\t\tWHERE sa.`fecha` = '"+gestion.getYear()+"-"+month_act+"-"+cont+"'\n" +
+                    "\t) d"+cont+" \tON p.idproductormateriaprima = d"+cont+".idproductormateriaprima\n";
+            cont++;
+        }
+        sql +=" WHERE p.idzonaproductiva = " + zone.getId().toString();
 
         return sql;
     }
