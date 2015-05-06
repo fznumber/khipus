@@ -856,11 +856,66 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             dispobleBalance = true;
             showButtonAddInput = true;
             showMainProduct = false;
+            agregarInsumosDeProductosCompuestos();
 
         } catch (Exception ex) {
             log.error("Exception caught", ex);
             facesMessages.addFromResourceBundle(ERROR, "Common.globalError.description");
         }
+    }
+
+    private void agregarInsumosDeProductosCompuestos() throws IOException, ProductCompositionException {
+
+    List<OrderInput> aux = new ArrayList<OrderInput>();
+        aux.clear();
+        aux.addAll(productionOrder.getOrderInputs());
+     for(OrderInput orderInput:aux){
+         if(articleEstateService.verifyEstate(orderInput.getProductItem(),Constants.ESTATE_ARTICLE_COMPOSITE))
+         {
+             ProcessedProduct compuesto = processedProductService.findByCode(orderInput.getProductItemCode());
+             //todo: se tomara en cuenta la primera formulacion por defecto
+             ProductComposition formulacion = compuesto.getProductCompositionList().get(0);
+             evaluatorMathematicalExpressionsService.excuteFormulate(formulacion.getProductionIngredientList(),formulacion.getSupposedAmount(),formulacion.getContainerWeight(),orderInput.getAmount());
+             for (ProductionIngredient ingredient : formulacion.getProductionIngredientList()) {
+                 int pos = yaSeEncuentra(ingredient.getMetaProduct().getProductItemCode());
+                 if(pos != -1){
+                     OrderInput input = productionOrder.getOrderInputs().get(pos);
+                     input.setAmount(input.getAmount()+ingredient.getAmount());
+                 }else {
+                     OrderInput input = new OrderInput();
+                     input.setProductItem(ingredient.getMetaProduct().getProductItem());
+                     input.setProductionOrder(productionOrder);
+                     input.setAmount(ingredient.getAmount());
+                     input.setAmountStock(ingredient.getMountWareHouse());
+                     input.setProductItemCode(ingredient.getMetaProduct().getProductItemCode());
+                     input.setCompanyNumber(ingredient.getMetaProduct().getCompanyNumber());
+                     input.setMathematicalFormula(ingredient.getMathematicalFormula());
+                     BigDecimal costUnit;
+
+                     if (articleEstateService.verifyEstate(ingredient.getMetaProduct().getProductItem(), Constants.ESTATE_ARTICLE_COMPOSITE))
+                         costUnit = getCostUnitProdComposite(ingredient);
+                     else
+                         costUnit = ingredient.getMetaProduct().getProductItem().getUnitCost();
+
+                     input.setCostUnit(costUnit);
+                     input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue((ingredient.getAmount() * costUnit.doubleValue()), 2, RoundUtil.RoundMode.SYMMETRIC)));
+                     productionOrder.getOrderInputs().add(input);
+                 }
+             }
+         }
+     }
+    }
+
+    public int yaSeEncuentra(String codArt){
+        int band = -1;
+        int cont = 0;
+        for(OrderInput input:productionOrder.getOrderInputs()){
+            if(input.getProductItemCode().equals(codArt)){
+                band = cont;
+            }
+            cont ++;
+        }
+        return band;
     }
 
     public void saveGreasePercentaje(ProductionOrder order)
@@ -1284,6 +1339,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             productionOrder.getOrderInputs().addAll(productionPlanningService.getInputsAdd(productionOrder));
         }{
            input.setCostTotal(new BigDecimal(RoundUtil.getRoundValue(input.getAmount() * input.getCostUnit().doubleValue(),2, RoundUtil.RoundMode.SYMMETRIC)));
+        }
+        try {
+            agregarInsumosDeProductosCompuestos();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ProductCompositionException e) {
+            e.printStackTrace();
         }
 
     }
