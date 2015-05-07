@@ -11,13 +11,13 @@ import javax.persistence.*;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "acopiomateriaprima",
-        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
+        pkColumnValue = "ACOPIOMATERIAPRIMA",
+        allocationSize = 10)
 
 @Entity
 @Filter(name = com.encens.khipus.util.Constants.COMPANY_FILTER_NAME)
 @EntityListeners({CompanyListener.class, UpperCaseStringListener.class})
-@Table(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "acopiomateriaprima", uniqueConstraints = @UniqueConstraint(columnNames = {"IDSESIONACOPIO", "IDPRODUCTORMATERIAPRIMA"}))
+@Table(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "ACOPIOMATERIAPRIMA", uniqueConstraints = @UniqueConstraint(columnNames = {"IDSESIONACOPIO", "IDPRODUCTORMATERIAPRIMA"}))
 public class CollectedRawMaterial implements com.encens.khipus.model.BaseModel {
 
     @Id
