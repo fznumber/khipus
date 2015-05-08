@@ -48,7 +48,7 @@ public class MoneyUtil{
             //se divide el numero 0000000,00 -> entero y decimal
             String Num[] = numero.split(",");
             //de da formato al numero decimal
-            parte_decimal = Num[1] + "/100 Bolivianos.";
+            parte_decimal = ( Integer.parseInt(Num[1]) < 10 ? "0" : "") + Num[1] + "/100 Bolivianos.";
             //se convierte el numero a literal
             if (Integer.parseInt(Num[0]) == 0) {//si el valor es cero
                 literal = "cero ";

@@ -875,7 +875,7 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
              ProcessedProduct compuesto = processedProductService.findByCode(orderInput.getProductItemCode());
              //todo: se tomara en cuenta la primera formulacion por defecto
              ProductComposition formulacion = compuesto.getProductCompositionList().get(0);
-             evaluatorMathematicalExpressionsService.excuteFormulate(formulacion.getProductionIngredientList(),formulacion.getSupposedAmount(),formulacion.getContainerWeight(),orderInput.getAmount());
+             evaluatorMathematicalExpressionsService.excuteFormulate(formulacion.getProductionIngredientList(),orderInput.getAmount(),orderInput.getAmount(),orderInput.getAmount());
              for (ProductionIngredient ingredient : formulacion.getProductionIngredientList()) {
                  int pos = yaSeEncuentra(ingredient.getMetaProduct().getProductItemCode());
                  if(pos != -1){
