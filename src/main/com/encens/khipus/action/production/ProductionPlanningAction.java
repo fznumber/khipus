@@ -2429,6 +2429,13 @@ public class ProductionPlanningAction extends GenericAction<ProductionPlanning> 
             this.productComposition = productionOrder.getProductComposition();
             this.processedProduct = productComposition.getProcessedProduct();
             evaluateMathematicalExpression();
+            try {
+                agregarInsumosDeProductosCompuestos();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ProductCompositionException e) {
+                e.printStackTrace();
+            }
         }
 
         formulaState = FormulaState.EDIT;
