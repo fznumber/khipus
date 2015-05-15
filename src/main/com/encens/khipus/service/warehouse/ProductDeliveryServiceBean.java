@@ -288,7 +288,8 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         Boolean error = false;
         for(CustomerOrder pedido:pedidos)
         {
-            error = verifyAmounts(pedido);
+            if(verifyAmounts(pedido))
+                error = true;
         }
         return error;
     }
