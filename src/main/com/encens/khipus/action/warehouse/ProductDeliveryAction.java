@@ -444,6 +444,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         pedidos.clear();
         orderClients.clear();
         pedidos = soldProductService.findPedidosPorFechaTerritorio(date,territorioTrabajo);
+        setMessageSearchOrder("");
         List<Territoriotrabajo> territorios = new ArrayList<Territoriotrabajo>();
         if(territorioTrabajo == null)
         {
@@ -479,6 +480,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }
 
         orderItems = accountItemService.findArticulosPorFecha(date);
+        if(orderItems.size()==0)
+        {
+            setMessageSearchOrder("Na hay pedidos para entregar en esta fecha.");
+        }
     }
      private List<Territoriotrabajo> getTerritorios()
      {
