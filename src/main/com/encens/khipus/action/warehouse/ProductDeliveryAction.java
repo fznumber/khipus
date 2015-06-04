@@ -9,10 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.framework.action.Outcome;
-import com.encens.khipus.model.customers.ArticleOrder;
-import com.encens.khipus.model.customers.ClientePedido;
-import com.encens.khipus.model.customers.CustomerOrder;
-import com.encens.khipus.model.customers.Territoriotrabajo;
+import com.encens.khipus.model.customers.*;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.*;
 import com.encens.khipus.service.customers.AccountItemService;
@@ -68,6 +65,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private String product;
     private Employee distributor;
     private CustomerOrder customerOrder;
+    private VentaDirecta ventaDirecta;
     private Territoriotrabajo territorioTrabajo;
 
     @Factory(value = "productDelivery", scope = ScopeType.STATELESS)
@@ -81,7 +79,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     @Restrict("#{s:hasPermission('PRODUCTDELIVERY','CREATE')}")
     public String create() {
 
-       if(customerOrder == null) {
+       if(customerOrder == null && ventaDirecta == null) {
            busqueUnpedidoMessage();
            return Outcome.REDISPLAY;
        }
@@ -219,7 +217,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private String deliveryOrder() {
-        if(productDeliveryService.verifyAmounts(customerOrder))
+        if(productDeliveryService.verifyAmounts(customerOrder) || productDeliveryService.verifyAmounts(ventaDirecta))
             return Outcome.REDISPLAY;
         else
         {
@@ -229,7 +227,10 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             }
 
             try {
+                if(customerOrder != null)
                 productDeliveryService.deliveryCustomerOrder(customerOrder);
+                if(ventaDirecta != null)
+                productDeliveryService.deliveryVentaDirecta(ventaDirecta);
                 fueEntregadoConExitoMessage();
                 return Outcome.SUCCESS;
             } catch (InventoryException e) {
@@ -400,7 +401,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void search() {
         customerOrder = soldProductService.findPedidoPorCodigo(orderNumber);
-        if(customerOrder == null)
+        ventaDirecta = soldProductService.findVentaPorCodigo(orderNumber);
+        if(customerOrder == null && ventaDirecta == null)
         setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
         getInstance().setInvoiceNumber(null);
         soldProducts.clear();
@@ -552,11 +554,19 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private boolean fueEntregado() {
-            if(customerOrder.getEstado()!= null)
-                if(customerOrder.getEstado().equals("ENTREGADO")) {
-                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder",customerOrder.getCodigo().getSecuencia()));
+            if(customerOrder.getEstado()!= null) {
+                if (!customerOrder.getEstado().equals("PREPARAR")) {
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", customerOrder.getCodigo().getSecuencia()));
                     return true;
                 }
+            }
+
+            if(ventaDirecta.getEstado()!=null){
+                if(!ventaDirecta.getEstado().equals("PREPARAR")){
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", ventaDirecta.getCodigo()));
+                    return true;
+                }
+            }
 
         return false;
     }
@@ -913,5 +923,13 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void setTerritorioTrabajo(Territoriotrabajo territorioTrabajo) {
         this.territorioTrabajo = territorioTrabajo;
+    }
+
+    public VentaDirecta getVentaDirecta() {
+        return ventaDirecta;
+    }
+
+    public void setVentaDirecta(VentaDirecta ventaDirecta) {
+        this.ventaDirecta = ventaDirecta;
     }
 }

@@ -3,6 +3,7 @@ package com.encens.khipus.service.warehouse;
 import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.customers.CustomerOrder;
 import com.encens.khipus.model.customers.Territoriotrabajo;
+import com.encens.khipus.model.customers.VentaDirecta;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.SoldProduct;
 import com.encens.khipus.service.customers.OrderClient;
@@ -231,6 +232,20 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
             }
         }
         return customerOrders;
+    }
+
+    @Override
+    public VentaDirecta findVentaPorCodigo(String orderNumber) {
+        VentaDirecta ventaDirecta;
+        try{
+            ventaDirecta = (VentaDirecta)getEntityManager()
+                    .createQuery("select venta from VentaDirecta venta where venta.codigo =:codigo and venta.estado = 'PREPARAR'")
+                    .setParameter("codigo", Long.valueOf(orderNumber).longValue())
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+        return ventaDirecta;
     }
 
     @Override

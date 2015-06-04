@@ -9,6 +9,7 @@ import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundExceptio
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericService;
 import com.encens.khipus.model.customers.CustomerOrder;
+import com.encens.khipus.model.customers.VentaDirecta;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.warehouse.ProductDelivery;
 import com.encens.khipus.service.customers.OrderItem;
@@ -70,10 +71,24 @@ public interface ProductDeliveryService extends GenericService {
             ConcurrencyException,
             InventoryUnitaryBalanceException,
             EntryDuplicatedException;
+    public void deliveryVentaDirecta(VentaDirecta ventaDirecta) throws
+                InventoryException,
+                ProductItemNotFoundException,
+                ProductItemAmountException,
+                CompanyConfigurationNotFoundException,
+                FinancesExchangeRateNotFoundException,
+                FinancesCurrencyNotFoundException,
+                InventoryProductItemNotFoundException,
+                ReferentialIntegrityException,
+                ConcurrencyException,
+                InventoryUnitaryBalanceException,
+                EntryDuplicatedException;
 
     ProductDelivery select(ProductDelivery entity);
 
     public void updateOrderEstate(String invoiceNumber);
+
+    public void updateVentaDirecta(Long idVentadirecta,String estado);
 
     public Boolean verifyAmounts(List<String> numberInvoices,List<OrderItem> orderItems,Date date,Employee distribuitor);
 
@@ -93,6 +108,8 @@ public interface ProductDeliveryService extends GenericService {
                 EntryDuplicatedException ;
 
         boolean verifyAmounts(CustomerOrder customerOrder);
+
+        public boolean verifyAmounts(VentaDirecta ventaDirecta);
 
         boolean verifyAmounts(List<CustomerOrder> pedidos);
 }

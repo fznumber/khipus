@@ -8,10 +8,7 @@ import com.encens.khipus.exception.finances.FinancesCurrencyNotFoundException;
 import com.encens.khipus.exception.finances.FinancesExchangeRateNotFoundException;
 import com.encens.khipus.exception.warehouse.*;
 import com.encens.khipus.framework.service.GenericServiceBean;
-import com.encens.khipus.model.customers.ArticleOrder;
-import com.encens.khipus.model.customers.ArticulosPromocion;
-import com.encens.khipus.model.customers.CustomerOrder;
-import com.encens.khipus.model.customers.Ventaarticulo;
+import com.encens.khipus.model.customers.*;
 import com.encens.khipus.model.employees.Employee;
 import com.encens.khipus.model.finances.CostCenter;
 import com.encens.khipus.model.finances.CostCenterPk;
@@ -87,7 +84,7 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     @Override
     public void updateOrderEstate(String invoiceNumber) {
 
-        getEntityManager().createNativeQuery("update USER01_DAF.pedidos set estado_pedido = :state where pedido = :pedido")
+        getEntityManager().createNativeQuery("update pedidos set estado_pedido = :state where pedido = :pedido")
                 .setParameter("pedido", invoiceNumber)
                 .setParameter("state", Constants.ESTATE_ORDER_DELIVERED)
                 .executeUpdate();
@@ -95,15 +92,23 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     public void updateCustomerOrder(Long idCustomreOrder,String estado) {
 
-        getEntityManager().createNativeQuery("update khipus.pedidos set estado = :state where IDPEDIDOS = :pedido")
+        getEntityManager().createNativeQuery("update pedidos set estado = :state where IDPEDIDOS = :pedido")
                 .setParameter("pedido", idCustomreOrder)
+                .setParameter("state", estado)
+                .executeUpdate();
+    }
+
+    public void updateVentaDirecta(Long idVentadirecta,String estado) {
+
+        getEntityManager().createNativeQuery("update ventadirecta set estado = :state where IDVENTADIRECTA = :venta")
+                .setParameter("venta", idVentadirecta)
                 .setParameter("state", estado)
                 .executeUpdate();
     }
 
     public void updateOrderIncashEstate(String invoiceNumber) {
 
-        getEntityManager().createNativeQuery("update WISE.inv_ventart set ESTADO = :state where no_fact = :pedido")
+        getEntityManager().createNativeQuery("update inv_ventart set ESTADO = :state where no_fact = :pedido")
                 .setParameter("pedido", invoiceNumber)
                 .setParameter("state", Constants.ESTATE_ORDER_DELIVERED_INCASH)
                 .executeUpdate();
@@ -283,6 +288,68 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
         return result;
     }
 
+    public boolean verifyAmounts(VentaDirecta ventaDirecta) {
+        Boolean result = false;
+        List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
+
+        WarehouseDocumentType documentType = getFirstConsumptionType();
+
+        Warehouse warehouse = inventoryService.findWarehouseByItemArticle(new ArrayList<ArticleOrder>(ventaDirecta.getArticulosPedidos()).get(0).getProductItem());
+        CostCenter costCenter = findPublicCostCenter(warehouse);
+
+        for(ArticleOrder articulo:ventaDirecta.getArticulosPedidos()) {
+            if(articulo.getTipo().equals("COMBO")){
+                List<ArticulosPromocion> articulosCombo = productItemService.findArticuloCombo(articulo);
+                for(ArticulosPromocion articuloCombo :articulosCombo) {
+                    try {
+
+                        approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(articuloCombo.getCantidad()*articulo.getAmount()),
+                                warehouse,
+                                articuloCombo.getVentaarticulo().getProductItem(),
+                                costCenter);
+                    } catch (InventoryException e) {
+                        facesMessages.addFromResourceBundle(StatusMessage.Severity.ERROR,
+                                "ProductDelivery.warehouseVoucher.packError", articuloCombo.getVentaarticulo().getProductItem().getFullName());
+                        errorMessages.addAll(e.getInventoryMessages());
+                    }
+                }
+
+            }else {
+                try {
+
+                    approvalWarehouseVoucherService.validateOutputQuantity(new BigDecimal(articulo.getAmount()),
+                            warehouse,
+                            articulo.getProductItem(),
+                            costCenter);
+                } catch (InventoryException e) {
+                    errorMessages.addAll(e.getInventoryMessages());
+                }
+            }
+        }
+
+        if (errorMessages.size() > 0) {
+            addInventoryErrorMessages(errorMessages);
+            return true;
+        }
+
+        if (ventaDirecta.getArticulosPedidos().size() == 0) {
+            addSoldProductNotFoundMessages(ventaDirecta.getCodigo().toString());
+            result = true;
+        }
+
+        if (null == documentType) {
+            addWarehouseDocumentTypeErrorMessage(ventaDirecta.getCodigo().toString());
+            result = true;
+        }
+
+        if (null == costCenter) {
+            addcenterCostNotFoundErrorMessage();
+            result = true;
+        }
+
+        return result;
+    }
+
     @Override
     public boolean verifyAmounts(List<CustomerOrder> pedidos) {
         Boolean error = false;
@@ -357,6 +424,70 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
             }
 
     }
+
+    public void deliveryVentaDirecta(VentaDirecta ventaDirecta) throws
+            InventoryException,
+            ProductItemNotFoundException,
+            ProductItemAmountException,
+            CompanyConfigurationNotFoundException,
+            FinancesExchangeRateNotFoundException,
+            FinancesCurrencyNotFoundException,
+            InventoryProductItemNotFoundException,
+            ReferentialIntegrityException,
+            ConcurrencyException,
+            InventoryUnitaryBalanceException,
+            EntryDuplicatedException {
+
+
+        String warehouseDescription = MessageUtils.getMessage("ProductDelivery.warehouseVoucher.description", ventaDirecta.getCodigo());
+        List<ArticleOrder> articleOrders = new ArrayList<ArticleOrder>(ventaDirecta.getArticulosPedidos());
+
+        if(articleOrders.size() != 0) {
+
+            WarehouseDocumentType documentType = getFirstConsumptionType();
+            //always exist almost one sold product that will be delivery
+            ArticleOrder firstSoldProduct = articleOrders.get(0);
+            Warehouse warehouse = inventoryService.findWarehouseByItemArticle(firstSoldProduct.getProductItem());
+            CostCenter costCenter = findPublicCostCenter(warehouse);
+            Employee responsible = getEntityManager().find(Employee.class, warehouse.getResponsibleId());
+
+            WarehouseVoucher warehouseVoucher = createWarehouseVoucherAll(documentType, warehouse, responsible, costCenter, warehouseDescription, ventaDirecta);
+
+            Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+            Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+            List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+
+            try {
+
+                approvalWarehouseVoucherService.approveWarehouseVoucherFromDeliveryProduct(warehouseVoucher.getId(),
+                        getGlossMessage(warehouseVoucher, warehouseDescription),
+                        movementDetailUnderMinimalStockMap,
+                        movementDetailOverMaximumStockMap,
+                        movementDetailWithoutWarnings);
+
+            } catch (WarehouseVoucherApprovedException e) {
+                log.debug("This exception never happen because I create a pending WarehouseVoucher.");
+            } catch (WarehouseVoucherNotFoundException e) {
+                log.debug("This exception never happen because I create a new WarehouseVoucher.");
+            } catch (WarehouseVoucherEmptyException e) {
+                log.debug("This exception never happen because I create a WarehouseVoucher with details inside.");
+            } catch (WarehouseAccountCashNotFoundException e) {
+                e.printStackTrace();
+            }
+
+                /*ProductDelivery productDelivery = new ProductDelivery();
+                productDelivery.setCompanyNumber(warehouse.getId().getCompanyNumber());
+                productDelivery.setInvoiceNumber(firstSoldProduct.getInvoiceNumber());
+                productDelivery.setWarehouseVoucher(warehouseVoucher);
+                create(productDelivery);
+*/
+            //update state of order
+            ventaDirecta.setEstado("ENTREGADO");
+            updateVentaDirecta(ventaDirecta.getIdventadirecta(), "ENTREGADO");
+        }
+
+    }
+
 
 
     @SuppressWarnings(value = "unchecked")
@@ -882,6 +1013,107 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
                         " and his state is pending");
             } catch (WarehouseVoucherNotFoundException e) {
                 log.debug("This exception never happen because I just created a new WarehouseVoucher");
+            }
+        }
+
+        return warehouseVoucher;
+    }
+
+    private WarehouseVoucher createWarehouseVoucherAll(WarehouseDocumentType warehouseDocumentType,
+                                                       Warehouse warehouse,
+                                                       Employee responsible,
+                                                       CostCenter publicCostCenter,
+                                                       String warehouseVoucherDescription,
+                                                       VentaDirecta ventaDirecta)
+            throws InventoryException, ProductItemNotFoundException {
+        //Create the WarehouseVoucher
+        WarehouseVoucher warehouseVoucher = new WarehouseVoucher();
+        warehouseVoucher.setDocumentType(warehouseDocumentType);
+        warehouseVoucher.setWarehouse(warehouse);
+        warehouseVoucher.setDate(ventaDirecta.getFechaPedido());
+        //todo: cambiar el estado del vale
+        warehouseVoucher.setState(WarehouseVoucherState.PEN);
+
+        warehouseVoucher.setExecutorUnit(warehouse.getExecutorUnit());
+        warehouseVoucher.setCostCenterCode(publicCostCenter.getId().getCode());
+        warehouseVoucher.setResponsible(responsible);
+
+        InventoryMovement inventoryMovement = new InventoryMovement();
+        inventoryMovement.setDescription(warehouseVoucherDescription);
+
+        warehouseService.createWarehouseVoucher(warehouseVoucher, inventoryMovement, null, null, null, null);
+
+        //Create the MovementDetails
+        for (ArticleOrder articleOrder: ventaDirecta.getArticulosPedidos()) {
+            if(articleOrder.getTipo().equals("COMBO"))
+            {
+                List<ArticulosPromocion> articulosCombo = productItemService.findArticuloCombo(articleOrder);
+                for(ArticulosPromocion articuloCombo :articulosCombo) {
+                    MovementDetail movementDetailTemp = new MovementDetail();
+                    movementDetailTemp.setWarehouse(warehouse); //revisar
+                    movementDetailTemp.setProductItem(articuloCombo.getVentaarticulo().getProductItem());
+                    movementDetailTemp.setProductItemAccount(articuloCombo.getVentaarticulo().getProductItem().getProductItemAccount());
+                    movementDetailTemp.setQuantity(new BigDecimal(articuloCombo.getCantidad() * articleOrder.getAmount()));
+                    movementDetailTemp.setUnitCost(articuloCombo.getVentaarticulo().getProductItem().getUnitCost());
+                    movementDetailTemp.setAmount(null);
+                    movementDetailTemp.setExecutorUnit(warehouse.getExecutorUnit());
+                    movementDetailTemp.setCostCenterCode(publicCostCenter.getId().getCode());
+                    movementDetailTemp.setMeasureUnit(articuloCombo.getVentaarticulo().getProductItem().getUsageMeasureUnit());
+
+            /* revisar */
+                    Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+                    movementDetailUnderMinimalStockMap.put(movementDetailTemp, articuloCombo.getVentaarticulo().getProductItem().getMinimalStock());
+
+                    Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+                    movementDetailOverMaximumStockMap.put(movementDetailTemp, articuloCombo.getVentaarticulo().getProductItem().getMaximumStock());
+
+                    List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+                    movementDetailWithoutWarnings.add(movementDetailTemp);
+            /* revisar */
+
+                    try {
+                        //warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, null, null, null); // revisar
+                        warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
+                    } catch (WarehouseVoucherApprovedException e) {
+                        log.debug("This exception never happen because I just created a new WarehouseVoucher" +
+                                " and his state is pending");
+                    } catch (WarehouseVoucherNotFoundException e) {
+                        log.debug("This exception never happen because I just created a new WarehouseVoucher");
+                    }
+                }
+            }else{
+
+                MovementDetail movementDetailTemp = new MovementDetail();
+                movementDetailTemp.setWarehouse(warehouse); //revisar
+                movementDetailTemp.setProductItem(articleOrder.getProductItem());
+                movementDetailTemp.setProductItemAccount(articleOrder.getProductItem().getProductItemAccount());
+                movementDetailTemp.setQuantity(new BigDecimal(articleOrder.getAmount()));
+                movementDetailTemp.setUnitCost(articleOrder.getProductItem().getUnitCost());
+                movementDetailTemp.setAmount(null);
+                movementDetailTemp.setExecutorUnit(warehouse.getExecutorUnit());
+                movementDetailTemp.setCostCenterCode(publicCostCenter.getId().getCode());
+                movementDetailTemp.setMeasureUnit(articleOrder.getProductItem().getUsageMeasureUnit());
+
+            /* revisar */
+                Map<MovementDetail, BigDecimal> movementDetailUnderMinimalStockMap = new HashMap<MovementDetail, BigDecimal>();
+                movementDetailUnderMinimalStockMap.put(movementDetailTemp, articleOrder.getProductItem().getMinimalStock());
+
+                Map<MovementDetail, BigDecimal> movementDetailOverMaximumStockMap = new HashMap<MovementDetail, BigDecimal>();
+                movementDetailOverMaximumStockMap.put(movementDetailTemp, articleOrder.getProductItem().getMaximumStock());
+
+                List<MovementDetail> movementDetailWithoutWarnings = new ArrayList<MovementDetail>();
+                movementDetailWithoutWarnings.add(movementDetailTemp);
+            /* revisar */
+
+                try {
+                    //warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, null, null, null); // revisar
+                    warehouseService.createMovementDetail(warehouseVoucher, movementDetailTemp, movementDetailUnderMinimalStockMap, movementDetailOverMaximumStockMap, movementDetailWithoutWarnings);
+                } catch (WarehouseVoucherApprovedException e) {
+                    log.debug("This exception never happen because I just created a new WarehouseVoucher" +
+                            " and his state is pending");
+                } catch (WarehouseVoucherNotFoundException e) {
+                    log.debug("This exception never happen because I just created a new WarehouseVoucher");
+                }
             }
         }
 

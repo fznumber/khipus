@@ -674,8 +674,8 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
             sql +=" 0.0 D16,\n";
         }
         cont = 1;
-        sql += " IFNULL(d"+cont+".cantidad, 0) ";
-        for(int d=initDay+1;d<=endDay;d++)
+        //sql += " IFNULL(d"+cont+".cantidad, 0) ";
+        for(int d=initDay+1;d<=endDay+1;d++)
         {
             sql += " +IFNULL(d"+cont+".cantidad, 0) ";
             cont++;
@@ -694,7 +694,7 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
                     "\t\tFROM acopiomateriaprima am\n" +
                     "\t\t\tLEFT JOIN sesionacopio sa ON am.`idsesionacopio` \t  = sa.`idsesionacopio`\n" +
                     "\t\t\tLEFT JOIN persona pe      ON am.`idproductormateriaprima` = pe.`idpersona`\n" +
-                    "\t\tWHERE sa.`fecha` = '"+gestion.getYear()+"-"+month_act+"-"+cont+"'\n" +
+                    "\t\tWHERE sa.`fecha` = '"+gestion.getYear()+"-"+month_act+"-"+d+"'\n" +
                     "\t) d"+cont+" \tON p.idproductormateriaprima = d"+cont+".idproductormateriaprima\n";
             cont++;
         }
