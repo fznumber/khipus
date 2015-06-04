@@ -757,6 +757,18 @@
         </rich:menuItem>
     </rich:menuGroup>
 </rich:dropDownMenu>
+
+
+<rich:dropDownMenu value="#{messages['menu.finances.accounting']}" >
+    <rich:menuItem submitMode="none"
+                       styleClass="main-menu-item">
+        <s:link view="/accounting/voucherList.xhtml"
+                    value="#{messages['menu.finances.accounting.accountingEntries']}"
+                    propagation="none"/>
+    </rich:menuItem>
+</rich:dropDownMenu>
+
+
 <rich:dropDownMenu value="#{messages['menu.finances.treasury']}"
                    rendered="#{s:hasPermission('BANKINGMOVEMENTSYNC','VIEW')}">
     <rich:menuItem submitMode="none"

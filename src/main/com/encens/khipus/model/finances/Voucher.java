@@ -168,6 +168,10 @@ public class Voucher implements BaseModel{
     @Transient
     private List<VoucherDetail> details = new ArrayList<VoucherDetail>(0);
 
+    @Transient
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "voucher")
+    private List<VoucherDetail> voucherDetailList = new ArrayList<VoucherDetail>(0);
+
     @PrePersist
     private void defineCurrentDate() {
         if (date == null) {
@@ -472,5 +476,13 @@ public class Voucher implements BaseModel{
 
     public void setIdenc(Long idenc) {
         this.idenc = idenc;
+    }
+
+    public List<VoucherDetail> getVoucherDetailList() {
+        return voucherDetailList;
+    }
+
+    public void setVoucherDetailList(List<VoucherDetail> voucherDetailList) {
+        this.voucherDetailList = voucherDetailList;
     }
 }

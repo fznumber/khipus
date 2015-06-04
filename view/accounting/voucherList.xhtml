@@ -1,0 +1,290 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:app="http://encens.com/products/khipus/facelets"
+                template="/layout/template.xhtml">
+
+<ui:define name="pageTitle">#{messages['WarehouseVoucher.list']}</ui:define>
+<ui:param name="bodyAlign" value="center"/>
+<ui:param name="bodyWidth" value="97%"/>
+
+<ui:param name="selectedTab" value="finances"/>
+<ui:define name="body">
+<h:form id="WarehouseVoucherSearch">
+<rich:simpleTogglePanel id="warehouseVoucherSearchPanelId"
+                        label="#{messages['WarehouseVoucher.search']}"
+                        switchType="client">
+    <h:panelGrid columns="2"
+                 width="100%"
+                 cellpadding="0"
+                 cellspacing="0"
+                 border="0"
+                 columnClasses="width50percent,width50percent">
+        <s:div id="leftSidePanel">
+            <s:decorate id="transactionNumberField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define
+                        name="label">#{messages['Voucher.transactionNumber']}
+                </ui:define>
+                <h:inputText id="invoiceNumber"
+                             value="#{voucherDataModel.transactionNumber}"
+                             styleClass="input"
+                             maxlength="150"
+                             tabindex="1"/>
+            </s:decorate>
+            <s:decorate id="glossField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define
+                        name="label">#{messages['Voucher.gloss']}
+                </ui:define>
+                <h:inputText id="invoiceNumber"
+                             value="#{voucherDataModel.gloss}"
+                             styleClass="input"
+                             maxlength="150"
+                             tabindex="2"/>
+            </s:decorate>
+            <s:decorate template="/include/viewField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['WarehouseVoucher.date']}</ui:define>
+                <h:panelGrid columns="4" width="100%"
+                             columnClasses="top,top,top,top">
+                    <!--<h:outputText value="#{messages['Common.dateFrom']}"/>-->
+                    <s:decorate template="/include/validateField.xhtml" styleClass="formRow">
+                        <rich:calendar id="startDate"
+                                       value="#{warehouseVoucherDataModel.startDate}"
+                                       inputClass="inputSmall"
+                                       datePattern="#{messages['patterns.date']}"
+                                       enableManualInput="true"
+                                       tabindex="5">
+                            <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                               timeZone="#{sessionUser.timeZone}"
+                                               type="date"/>
+                        </rich:calendar>
+                    </s:decorate>
+                    <h:outputText value="#{messages['Common.dateTo']}"/>
+                    <s:decorate template="/include/validateField.xhtml" styleClass="formRow">
+                        <rich:calendar id="endDate"
+                                       value="#{warehouseVoucherDataModel.endDate}"
+                                       inputClass="inputSmall"
+                                       datePattern="#{messages['patterns.date']}"
+                                       enableManualInput="true"
+                                       tabindex="5">
+                            <f:convertDateTime pattern="#{messages['patterns.date']}"
+                                               timeZone="#{sessionUser.timeZone}"
+                                               type="date"/>
+                        </rich:calendar>
+                    </s:decorate>
+                </h:panelGrid>
+            </s:decorate>
+        </s:div>
+
+        <s:div id="rightSidePanel">
+            <s:decorate id="numberField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define name="label">#{messages['WarehouseVoucher.number']}</ui:define>
+                <h:inputText id="number"
+                             value="#{warehouseVoucherDataModel.criteria.number}"
+                             styleClass="input"
+                             maxlength="150"
+                             tabindex="6"/>
+            </s:decorate>
+            <s:decorate id="inventoryMovementDescriptionField" template="/include/inputField.xhtml"
+                        styleClass="formRow">
+                <ui:define name="label">#{messages['InventoryMovement.description']}</ui:define>
+                <h:inputText id="inventoryMovementDescription"
+                             value="#{warehouseVoucherDataModel.inventoryMovementDescription}"
+                             styleClass="input"
+                             maxlength="150"
+                             tabindex="9"/>
+            </s:decorate>
+            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                <s:div styleClass="right input">
+                    <a4j:commandButton action="#{warehouseVoucherDataModel.search}"
+                                       reRender="warehouseVoucherSearchPanelId, warehouseVoucherList, dataScroller"
+                                       styleClass="button"
+                                       value="#{messages['Common.search']}"
+                                       id="searchButtonId"
+                                       tabindex="10">
+                        <s:defaultAction/>
+                    </a4j:commandButton>
+                    <a4j:commandButton action="#{warehouseVoucherDataModel.clear}"
+                                       reRender="warehouseVoucherSearchPanelId, warehouseVoucherList, dataScroller"
+                                       ajaxSingle="true"
+                                       immediate="true"
+                                       styleClass="button"
+                                       value="#{messages['Common.clear']}"
+                                       tabindex="11"/>
+                </s:div>
+            </s:decorate>
+        </s:div>
+    </h:panelGrid>
+
+    <rich:jQuery selector="#invoiceNumber" query="focus()" timing="onload"/>
+</rich:simpleTogglePanel>
+
+<div class="buttons">
+    <h:commandButton action="#{warehouseVoucherCreateAction.closeCurrentMonthProcess}"
+                     value="#{messages['Warehouse.button.closeProcessMonth']}"
+                     styleClass="button"/>
+
+    <s:button value="#{messages['Common.new']}"
+              view="/warehouse/warehouseVoucherCreate.xhtml"
+              styleClass="button"
+              rendered="#{s:hasPermission('WAREHOUSEVOUCHER','CREATE')}"
+              propagation="begin"/>
+</div>
+<rich:dataTable id="voucherList"
+                value="#{vouherDataModel}"
+                var="voucherItem"
+                rows="#{sessionUser.rowsPerPage}"
+                width="100%"
+                columnsWidth="7%, 7%, 7%, 7%, 7%, 55%, 5%">
+    <f:facet name="header">
+        <rich:columnGroup>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.date"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.date']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.transactionNumber"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.transactionNumber']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.documentType"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.documentType']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.form"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.moduleForm']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.state"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.state']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.gloss"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.gloss']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column styleClass="center">
+                #{messages['Common.action']}
+            </rich:column>
+        </rich:columnGroup>
+    </f:facet>
+    <rich:column>
+        <h:outputText value="#{voucherItem.date}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.transactionNumber}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.documentType}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.form}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.state}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.gloss}"/>
+    </rich:column>
+    <rich:column styleClass="center">
+        <h:commandLink value="#{messages['Common.select']}"
+                       immediate="true"
+                       action="#{voucherAction.select(voucherItem)}"
+                       rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}">
+            <s:conversationPropagation value="none"/>
+        </h:commandLink>
+        &#160;
+        <h:commandLink>
+            <h:graphicImage value="/img/pdfIcon.gif" styleClass="select-image"
+                            title="#{messages['WarehouseVoucher.button.generateDocument']}"/>
+        </h:commandLink>
+    </rich:column>
+</rich:dataTable>
+
+<app:dataScroller id="dataScroller" for="voucherList" dataModel="#{voucherDataModel}"/>
+
+<div class="buttons">
+    <h:commandButton action="#{warehouseVoucherCreateAction.closeCurrentMonthProcess}"
+                     value="#{messages['Warehouse.button.closeProcessMonth']}"
+                     styleClass="button"/>
+
+    <s:button value="#{messages['Common.new']}"
+              view="/warehouse/warehouseVoucherCreate.xhtml"
+              styleClass="button"
+              rendered="#{s:hasPermission('WAREHOUSEVOUCHER','CREATE')}"
+              propagation="begin"/>
+</div>
+</h:form>
+
+<s:decorate id="providerListModalPanelContainer" template="/finances/providerListModalPanel.xhtml">
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           title="#{messages['Common.choose']}"
+                           action="#{warehouseVoucherDataModel.setProvider(providerItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image"
+                           reRender="providerField"
+                           oncomplete="Richfaces.hideModalPanel('providerListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+
+<s:decorate id="costCenterListModalPanelContainer" template="/finances/costCenterListModalPanel.xhtml">
+    <ui:param name="containerId" value="costCenterListModalPanelContainer"/>
+    <ui:param name="dialogId" value="costCenterListModalPanel"/>
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton" title="#{messages['Common.choose']}"
+                           action="#{warehouseVoucherDataModel.setCostCenter(costCenterItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image"
+                           immediate="true"
+                           reRender="costCenterCodeField"
+                           oncomplete="Richfaces.hideModalPanel('costCenterListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+<s:decorate id="productItemListModalPanelContainer" template="/warehouse/productItemListModalPanel.xhtml">
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           action="#{warehouseVoucherDataModel.assignProductItem(productItemItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image-middle"
+                           reRender="productItemField"
+                           oncomplete="Richfaces.hideModalPanel('productItemListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+<s:decorate id="generalEmployeeListModalPanelContainer"
+            template="/employees/generalEmployeeListModalPanel.xhtml">
+    <ui:param name="dialogId" value="generalEmployeeListModalPanel"/>
+    <ui:param name="dataModel" value="#{generalEmployeeDataModel}"/>
+    <ui:define name="assignButton">
+        <a4j:commandButton id="assignButton"
+                           title="#{messages['Common.choose']}"
+                           action="#{warehouseVoucherDataModel.setResponsible(employeeItem)}"
+                           image="/img/active.gif"
+                           styleClass="select-image"
+                           reRender="responsbleField"
+                           oncomplete="Richfaces.hideModalPanel('generalEmployeeListModalPanel');"/>
+    </ui:define>
+</s:decorate>
+</ui:define>
+
+</ui:composition>
