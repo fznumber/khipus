@@ -70,4 +70,6 @@ public interface RawMaterialPayRollService extends GenericService {
     List<DiscountProducer> findDiscountProducerByDate(Date startDate, Date endDate);
 
     void approvedReservProductor(Calendar startDate, Calendar endDate);
+
+    public List<BoletaPagoProductor> findBoletaDePago(Date fechaIni,Date fechaFin, RawMaterialProducer rawMaterialProducer,ProductiveZone productiveZone,MetaProduct metaProduct);
 }

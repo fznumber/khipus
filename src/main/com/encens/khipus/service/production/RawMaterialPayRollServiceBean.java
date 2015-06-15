@@ -318,6 +318,113 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         return discountProducers.get(0);
     }
 
+    public List<BoletaPagoProductor> findBoletaDePago(Date fechaIni,Date fechaFin, RawMaterialProducer rawMaterialProducer,ProductiveZone productiveZone,MetaProduct metaProduct){
+        List<Object[]> datos= new ArrayList<Object[]>();
+        List<BoletaPagoProductor> boletaPagoProductors = new ArrayList<BoletaPagoProductor>();
+        if(rawMaterialProducer != null && productiveZone != null)
+            datos = getEntityManager().createQuery(consultaBoletaDePago(rawMaterialProducer,productiveZone))
+                    .setParameter("fechaIni",fechaIni,TemporalType.DATE)
+                    .setParameter("fechaFin",fechaFin,TemporalType.DATE)
+                    .setParameter("rawMaterialProducer",rawMaterialProducer)
+                    .setParameter("productiveZone",productiveZone)
+                    .setParameter("metaProduct",metaProduct)
+                    .getResultList();
+        else{
+            if(rawMaterialProducer != null)
+            datos = getEntityManager().createQuery(consultaBoletaDePago(rawMaterialProducer, productiveZone))
+                    .setParameter("fechaIni",fechaIni,TemporalType.DATE)
+                    .setParameter("fechaFin",fechaFin,TemporalType.DATE)
+                    .setParameter("rawMaterialProducer",rawMaterialProducer)
+                    .setParameter("metaProduct", metaProduct)
+                    .getResultList();
+            if(productiveZone != null)
+                datos = getEntityManager().createQuery(consultaBoletaDePago(rawMaterialProducer, productiveZone))
+                        .setParameter("fechaIni",fechaIni,TemporalType.DATE)
+                        .setParameter("fechaFin",fechaFin,TemporalType.DATE)
+                        .setParameter("productiveZone", productiveZone)
+                        .setParameter("metaProduct",metaProduct)
+                        .getResultList();
+            if(rawMaterialProducer == null && productiveZone == null)
+                datos = getEntityManager().createQuery(consultaBoletaDePago(rawMaterialProducer, productiveZone))
+                        .setParameter("fechaIni",fechaIni,TemporalType.DATE)
+                        .setParameter("fechaFin",fechaFin,TemporalType.DATE)
+                        .setParameter("metaProduct", metaProduct)
+                        .getResultList();
+        }
+
+        for(Object[] dato:datos)
+        {
+            BoletaPagoProductor boletaPagoProductor = new BoletaPagoProductor();
+            boletaPagoProductor.setNombrecompletoProductor((String)dato[1] +" "+ (String)dato[2]+" "+ (String)dato[3]);
+            boletaPagoProductor.setTotalLitrosLeche((Double)dato[4]);
+            boletaPagoProductor.setPrecioLeche((Double)dato[5]);
+            boletaPagoProductor.setTotalBrutoBs((Double)dato[6]);
+            boletaPagoProductor.setRetencion((Double)dato[7]);
+            boletaPagoProductor.setReserva((Double)dato[19]);
+            boletaPagoProductor.setAlcohol((Double)dato[8]);
+            boletaPagoProductor.setConcentrados((Double)dato[9]);
+            boletaPagoProductor.setCredito((Double)dato[10]);
+            boletaPagoProductor.setVeterinario((Double)dato[11]);
+            boletaPagoProductor.setYogurt((Double)dato[12]);
+            boletaPagoProductor.setTachos((Double)dato[13]);
+            boletaPagoProductor.setAjustes((Double)dato[15]);
+            boletaPagoProductor.setOtrosDescuentos((Double) dato[14]);
+            boletaPagoProductor.setOtrosIngresos((Double)dato[16]);
+            boletaPagoProductor.setLiquidoPagable((Double)dato[17]);
+            boletaPagoProductor.setCi((String)dato[20]);
+
+            boletaPagoProductors.add(boletaPagoProductor);
+        }
+
+        return boletaPagoProductors;
+    }
+
+    private String consultaBoletaDePago(RawMaterialProducer rawMaterialProducer,ProductiveZone productiveZone){
+
+        String query= "SELECT " +
+                " rawMaterialPayRecord.id, " +
+                " rawMaterialProducer.firstName, " +
+                " rawMaterialProducer.lastName, " +
+                " rawMaterialProducer.maidenName, " +
+                " RawMaterialPayRecord.totalAmount, " +
+                " rawMaterialPayRoll.unitPrice, " +
+                " RawMaterialPayRecord.totalPayCollected, " +
+                " rawMaterialProducerDiscount.withholdingTax, " +
+                " rawMaterialProducerDiscount.alcohol, " +
+                " rawMaterialProducerDiscount.concentrated, " +
+                " rawMaterialProducerDiscount.credit, " +
+                " rawMaterialProducerDiscount.veterinary, " +
+                " rawMaterialProducerDiscount.yogurt, " +
+                " rawMaterialProducerDiscount.cans, " +
+                " rawMaterialProducerDiscount.otherDiscount, " +
+                " rawMaterialPayRecord.productiveZoneAdjustment, " +
+                " rawMaterialProducerDiscount.otherIncoming, " +
+                " rawMaterialPayRecord.liquidPayable, " +
+                " productiveZone.name, " +
+                " rawMaterialPayRecord.discountReserve, " +
+                " rawMaterialProducer.idNumber " +
+                " FROM RawMaterialPayRoll rawMaterialPayRoll " +
+                " inner join RawMaterialPayRoll.rawMaterialPayRecordList rawMaterialPayRecord " +
+                " inner join rawMaterialPayRecord.rawMaterialProducerDiscount rawMaterialProducerDiscount " +
+                " inner join rawMaterialProducerDiscount.rawMaterialProducer rawMaterialProducer " +
+                " inner join RawMaterialPayRoll.productiveZone productiveZone " +
+                " where rawMaterialPayRoll.startDate =:fechaIni" +
+                " and rawMaterialPayRoll.endDate =:fechaFin" +
+                " and rawMaterialPayRecord.liquidPayable > 0" +
+                " and rawMaterialPayRoll.metaProduct =:metaProduct";
+        if(rawMaterialProducer!=null)
+        {
+            query += " and rawMaterialProducer =:rawMaterialProducer";
+        }
+
+        if(productiveZone!=null)
+        {
+            query += " and productiveZone =:productiveZone";
+        }
+        return query;
+    }
+
+
     public List<DiscountProducer> findDiscountsProducerByDate(Date date) {
         List<DiscountProducer> discountProducers = new ArrayList<DiscountProducer>();
         try {
