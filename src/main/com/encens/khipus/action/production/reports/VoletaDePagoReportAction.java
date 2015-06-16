@@ -144,7 +144,7 @@ public class VoletaDePagoReportAction extends GenericReportAction {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         params.put("fecha",new Date());
         params.put("hora",new Date());
-        String periodo = "PERIODO DEL" +df.format(dateIni.getTime())+" AL "+df.format(dateEnd.getTime());
+        String periodo = "PERIODO DEL " +df.format(dateIni.getTime())+" AL "+df.format(dateEnd.getTime());
         params.put("periodo",periodo);
         params.put("ci",boleta.getCi());
         params.put("nombreProductor",boleta.getNombrecompletoProductor());
@@ -152,7 +152,7 @@ public class VoletaDePagoReportAction extends GenericReportAction {
         params.put("precioLeche",boleta.getPrecioLeche());
         params.put("totalBrutoBs",boleta.getTotalBrutoBs());
         params.put("totalLitrosLeche",boleta.getTotalLitrosLeche());
-        params.put("debLeche",boleta.getTotalBrutoBs());
+        params.put("credLeche",boleta.getTotalBrutoBs());
         params.put("debRetencion",boleta.getRetencion());
         params.put("debReserva",boleta.getReserva());
         params.put("debAlcohol",boleta.getAlcohol());
@@ -161,8 +161,8 @@ public class VoletaDePagoReportAction extends GenericReportAction {
         params.put("debVeterinario",boleta.getVeterinario());
         params.put("debYogurt",boleta.getYogurt());
         params.put("debTachos",boleta.getTachos());
-        if(boleta.getAjustes()>0.0)
-            params.put("debAjustes",boleta.getAjustes());
+        if(boleta.getAjustes()<0.0)
+            params.put("debAjustes",boleta.getAjustes()*-1);
         else
             params.put("credAjustes",boleta.getAjustes());
         params.put("debOtrosDescuentos",boleta.getOtrosDescuentos());
