@@ -161,7 +161,10 @@ public class VoletaDePagoReportAction extends GenericReportAction {
         params.put("debVeterinario",boleta.getVeterinario());
         params.put("debYogurt",boleta.getYogurt());
         params.put("debTachos",boleta.getTachos());
-        params.put("debAjustes",boleta.getAjustes());
+        if(boleta.getAjustes()>0.0)
+            params.put("debAjustes",boleta.getAjustes());
+        else
+            params.put("credAjustes",boleta.getAjustes());
         params.put("debOtrosDescuentos",boleta.getOtrosDescuentos());
         params.put("credOtrosIngresos",boleta.getOtrosIngresos());
         params.put("liquidoPagable",boleta.getLiquidoPagable());

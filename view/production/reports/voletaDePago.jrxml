@@ -13,18 +13,42 @@
 	<parameter name="precioLeche" class="java.lang.Double"/>
 	<parameter name="totalBrutoBs" class="java.lang.Double"/>
 	<parameter name="totalLitrosLeche" class="java.lang.Double"/>
-	<parameter name="debLeche" class="java.lang.Double"/>
-	<parameter name="debRetencion" class="java.lang.Double"/>
-	<parameter name="debReserva" class="java.lang.Double"/>
-	<parameter name="debAlcohol" class="java.lang.Double"/>
-	<parameter name="debConcentrados" class="java.lang.Double"/>
-	<parameter name="debCredito" class="java.lang.Double"/>
-	<parameter name="debVeterinario" class="java.lang.Double"/>
-	<parameter name="debYogurt" class="java.lang.Double"/>
-	<parameter name="debTachos" class="java.lang.Double"/>
-	<parameter name="debAjustes" class="java.lang.Double"/>
-	<parameter name="debOtrosDescuentos" class="java.lang.Double"/>
-	<parameter name="debOtrosIngresos" class="java.lang.Double"/>
+	<parameter name="debLeche" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debRetencion" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debReserva" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debAlcohol" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debConcentrados" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debCredito" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debVeterinario" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debYogurt" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debTachos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debAjustes" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debOtrosDescuentos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="debOtrosIngresos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
 	<parameter name="credLeche" class="java.lang.Double">
 		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
 	</parameter>
@@ -61,7 +85,45 @@
 	<parameter name="credOtrosIngresos" class="java.lang.Double">
 		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
 	</parameter>
-	<parameter name="liquidoPagable" class="java.lang.Double" isForPrompting="false"/>
+	<parameter name="liquidoPagable" class="java.lang.Double" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalLeche" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{debLeche}-$P{credLeche}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalRetencion" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalLeche}+$P{credCredito}-$P{debRetencion}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalReserva" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalRetencion}+$P{credReserva}-$P{debReserva}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalAlcohol" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalReserva}+$P{credAlcohol}-$P{debAlcohol}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalConcentrados" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalAlcohol}+$P{credConcentrados}-$P{debConcentrados}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalCredito" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalConcentrados}+$P{credCredito}+$P{debCredito}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalVeterinario" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalCredito}+$P{credVeterinario}-$P{debVeterinario}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalYogurt" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalVeterinario}+$P{credYogurt}-$P{debYogurt}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalTachos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalYogurt}+$P{credTachos}-$P{debTachos}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalAjustes" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalTachos}+$P{credAjustes}-$P{debAjustes}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalOtrosDescuentos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalAjustes}+$P{credOtrosDescuentos}-$P{debOtrosDescuentos}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="totalOtrosIngresos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[$P{totalOtrosDescuentos}+$P{credOtrosIngresos}-$P{debOtrosIngresos}]]></defaultValueExpression>
+	</parameter>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -261,7 +323,7 @@
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="29" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credAlcohol}-$P{debLeche}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalLeche}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="172" y="42" width="128" height="13"/>
@@ -271,7 +333,7 @@
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="42" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credRetencion}-$P{debRetencion}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalRetencion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="300" y="42" width="128" height="13"/>
@@ -443,61 +505,61 @@
 			</textField>
 			<textField>
 				<reportElement x="200" y="233" width="125" height="20"/>
-				<textElement/>
+				<textElement textAlignment="Center"/>
 				<textFieldExpression class="java.lang.String"><![CDATA["Recibi conforme"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="161" y="233" width="191" height="1"/>
+				<reportElement x="166" y="233" width="191" height="1"/>
 			</line>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="55" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credReserva}-$P{debRetencion}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalReserva}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="171" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credOtrosIngresos}-$P{credOtrosIngresos}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalOtrosIngresos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="120" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credYogurt}-$P{debYogurt}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalYogurt}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="94" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credCredito}-$P{debCredito}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalCredito}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="158" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credOtrosDescuentos}-$P{credOtrosDescuentos}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalOtrosDescuentos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="132" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credTachos}-$P{debTachos}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalTachos}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="145" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credAjustes}-$P{debAjustes}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalAjustes}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="68" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credAlcohol}-$P{debAlcohol}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalAlcohol}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="81" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credConcentrados}-$P{debConcentrados}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalConcentrados}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="107" width="128" height="13"/>
 				<textElement/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{credVeterinario}-$P{debVeterinario}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalVeterinario}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
