@@ -422,6 +422,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         {
             query += " and productiveZone =:productiveZone";
         }
+        query +=" order by rawMaterialProducer.firstName asc";
         return query;
     }
 
