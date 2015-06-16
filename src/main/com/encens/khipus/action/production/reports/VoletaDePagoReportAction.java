@@ -92,15 +92,19 @@ public class VoletaDePagoReportAction extends GenericReportAction {
     private void generarBoletas(List<BoletaPagoProductor> boletaPagoProductors){
         Map params = new HashMap();
         TypedReportData typedReportData;
-        setParameters(params,boletaPagoProductors.get(0));
-        super.setPageFormat(PageFormat.CUSTOM);
+        setParameters(params, boletaPagoProductors.get(0));
+        super.setPageFormat(PageFormat.LETTER);
+        params.put("REPORT_LOCALE", new java.util.Locale("en", "US"));
         typedReportData = super.getReport("voletaDePago"
                 , "/production/reports/voletaDePago.jrxml"
                 , "Boleta de Pago"
                 , params);
+        typedReportData.getJasperPrint().setPageHeight(419);
+        typedReportData.getJasperPrint().setLocaleCode("US");
         for(int i=1;i<boletaPagoProductors.size();i++)
         {
             setParameters(params,boletaPagoProductors.get(i));
+            params.put("REPORT_LOCALE", new java.util.Locale("en", "US"));
             TypedReportData boleta = super.getReport("voletaDePago"
                     , "/production/reports/voletaDePago.jrxml"
                     , "Boleta de Pago"
