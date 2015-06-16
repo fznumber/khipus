@@ -100,6 +100,7 @@ public class VoletaDePagoReportAction extends GenericReportAction {
                 PageOrientation.PORTRAIT,
                 messages.get("Report.rawMaterialPaySummaryReportAction"),
                 params);*/
+        super.setPageFormat(PageFormat.CUSTOM);
         typedReportData = super.getReport("voletaDePago"
                 , "/production/reports/voletaDePago.jrxml"
                 , "Boleta de Pago"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voletaDePago" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voletaDePago" pageWidth="612" pageHeight="395" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -25,18 +25,42 @@
 	<parameter name="debAjustes" class="java.lang.Double"/>
 	<parameter name="debOtrosDescuentos" class="java.lang.Double"/>
 	<parameter name="debOtrosIngresos" class="java.lang.Double"/>
-	<parameter name="credLeche" class="java.lang.Double"/>
-	<parameter name="credRetencion" class="java.lang.Double"/>
-	<parameter name="credReserva" class="java.lang.Double"/>
-	<parameter name="credAlcohol" class="java.lang.Double"/>
-	<parameter name="credConcentrados" class="java.lang.Double"/>
-	<parameter name="credCredito" class="java.lang.Double"/>
-	<parameter name="credVeterinario" class="java.lang.Double"/>
-	<parameter name="credYogurt" class="java.lang.Double"/>
-	<parameter name="credTachos" class="java.lang.Double"/>
-	<parameter name="credAjustes" class="java.lang.Double"/>
-	<parameter name="credOtrosDescuentos" class="java.lang.Double"/>
-	<parameter name="credOtrosIngresos" class="java.lang.Double"/>
+	<parameter name="credLeche" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credRetencion" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credReserva" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credAlcohol" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credConcentrados" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credCredito" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credVeterinario" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credYogurt" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credTachos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credAjustes" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credOtrosDescuentos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="credOtrosIngresos" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[new Double(0.0)]]></defaultValueExpression>
+	</parameter>
 	<parameter name="liquidoPagable" class="java.lang.Double" isForPrompting="false"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -83,7 +107,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{periodo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="K:mm a, z" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="K:mm" isBlankWhenNull="true">
 				<reportElement key="date_text" style="titleStyle" positionType="Float" x="325" y="12" width="247" height="12"/>
 				<box padding="1">
 					<pen lineStyle="Solid" lineColor="#000000"/>

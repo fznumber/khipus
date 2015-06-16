@@ -356,6 +356,7 @@ public class RawMaterialPayRollServiceBean extends ExtendedGenericServiceBean im
         {
             BoletaPagoProductor boletaPagoProductor = new BoletaPagoProductor();
             boletaPagoProductor.setNombrecompletoProductor((String)dato[1] +" "+ (String)dato[2]+" "+ (String)dato[3]);
+            boletaPagoProductor.setNombreGAB((String)dato[18]);
             boletaPagoProductor.setTotalLitrosLeche((Double)dato[4]);
             boletaPagoProductor.setPrecioLeche((Double)dato[5]);
             boletaPagoProductor.setTotalBrutoBs((Double)dato[6]);
