@@ -208,8 +208,14 @@
             s:hasPermission('CASHACCOUNTGROUP','VIEW') or
             s:hasPermission('COSTCENTER','VIEW') or
             s:hasPermission('COSTCENTERGROUP','VIEW')}">
-<h:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0"
+<h:panelGrid columns="8" cellpadding="0" cellspacing="0" border="0"
              columnClasses="tab-separator,tab-separator,tab-separator,tab-separator,tab-separator,tab-separator,tab-end-separator">
+
+    <s:link view="/accounting/voucherList.xhtml"
+            value="#{messages['menu.finances.accounting']}"
+            styleClass="tab-cell"
+            propagation="none"/>
+
 <rich:dropDownMenu value="#{messages['menu.finances.inventory']}" rendered="#{
         s:hasPermission('WAREHOUSEPURCHASEORDER','VIEW') or
         s:hasPermission('WAREHOUSEVOUCHER','VIEW') or
@@ -756,16 +762,6 @@
                     propagation="none"/>
         </rich:menuItem>
     </rich:menuGroup>
-</rich:dropDownMenu>
-
-
-<rich:dropDownMenu value="#{messages['menu.finances.accounting']}" >
-    <rich:menuItem submitMode="none"
-                       styleClass="main-menu-item">
-        <s:link view="/accounting/voucherList.xhtml"
-                    value="#{messages['menu.finances.accounting.accountingEntries']}"
-                    propagation="none"/>
-    </rich:menuItem>
 </rich:dropDownMenu>
 
 

@@ -17,7 +17,7 @@
     <page view-id="/accounting/voucher.xhtml" no-conversation-view-id="/accounting/voucherList.xhtml">
         <navigation>
             <rule>
-                <redirect view-id="/contacts/voucherList.xhtml"/>
+                <redirect view-id="/accounting/voucherList.xhtml"/>
             </rule>
         </navigation>
     </page>

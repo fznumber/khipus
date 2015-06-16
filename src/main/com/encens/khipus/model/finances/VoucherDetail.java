@@ -56,11 +56,12 @@ public class VoucherDetail implements BaseModel {
     @Column(name = "TC", precision = 10, scale = 6, updatable = false)
     private BigDecimal exchangeAmount;
 
-    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
-            @JoinColumn(name = "NO_TRANS", nullable = false, updatable = false, insertable = false)
+            @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
+            @JoinColumn(name = "CUENTA", referencedColumnName = "CUENTA", nullable = false, updatable = false, insertable = false)
     })
-    private Voucher voucher;*/
+    private CashAccount cashAccount;
 
     public VoucherDetail(String businessUnitCode, String costCenterCode, String account,
                          BigDecimal debit, BigDecimal credit, FinancesCurrencyType currency, BigDecimal exchangeAmount) {
@@ -71,6 +72,9 @@ public class VoucherDetail implements BaseModel {
         this.credit = credit;
         this.currency = currency;
         this.exchangeAmount = exchangeAmount;
+    }
+
+    public VoucherDetail() {
     }
 
     @PrePersist
@@ -158,11 +162,11 @@ public class VoucherDetail implements BaseModel {
         this.exchangeAmount = exchangeAmount;
     }
 
-   /* public Voucher getVoucher() {
-        return voucher;
+    public CashAccount getCashAccount() {
+        return cashAccount;
     }
 
-    public void setVoucher(Voucher voucher) {
-        this.voucher = voucher;
-    }*/
+    public void setCashAccount(CashAccount cashAccount) {
+        this.cashAccount = cashAccount;
+    }
 }

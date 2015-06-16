@@ -2,8 +2,12 @@ package com.encens.khipus.action.accounting;
 
 import com.encens.khipus.framework.action.GenericAction;
 import com.encens.khipus.model.finances.Voucher;
+import com.encens.khipus.model.finances.VoucherDetail;
+import com.encens.khipus.service.accouting.VoucherAccoutingService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.*;
+
+import java.util.List;
 
 /**
  * OrganizationAction
@@ -25,6 +29,8 @@ public class VoucherAction extends GenericAction<Voucher> {
         return "name";
     }
 
+    @In
+    private VoucherAccoutingService voucherAccoutingService;
 
     @Override
     @Begin(ifOutcome = com.encens.khipus.framework.action.Outcome.SUCCESS, flushMode = FlushModeType.MANUAL)
@@ -32,4 +38,12 @@ public class VoucherAction extends GenericAction<Voucher> {
         String outCome = super.select(instance);
         return outCome;
     }
+
+    public List<VoucherDetail> getVoucherDetailList(String transactionNumber) {
+
+        List<VoucherDetail> voucherDetails = voucherAccoutingService.getVoucherDetailList(transactionNumber);
+
+        return voucherDetails;
+    }
+
 }
