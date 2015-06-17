@@ -124,6 +124,7 @@
 	<parameter name="totalOtrosIngresos" class="java.lang.Double">
 		<defaultValueExpression><![CDATA[$P{totalOtrosDescuentos}+$P{credOtrosIngresos}-$P{debOtrosIngresos}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="liquidoPagableLiteral" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -276,7 +277,7 @@
 		</band>
 	</title>
 	<summary>
-		<band height="254" splitType="Stretch">
+		<band height="273" splitType="Stretch">
 			<textField>
 				<reportElement x="211" y="0" width="141" height="14"/>
 				<textElement>
@@ -592,14 +593,14 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{liquidoPagable}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="200" y="233" width="125" height="20"/>
+				<reportElement x="195" y="253" width="125" height="20"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial Narrow"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Recibi conforme"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="166" y="233" width="191" height="1"/>
+				<reportElement x="161" y="253" width="191" height="1"/>
 			</line>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="428" y="55" width="128" height="13"/>
@@ -670,6 +671,11 @@
 					<font fontName="Arial Narrow"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$P{totalVeterinario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="198" width="540" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{liquidoPagableLiteral}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

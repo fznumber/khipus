@@ -138,6 +138,7 @@ public class VoletaDePagoReportAction extends GenericReportAction {
     }
 
     private void setParameters(Map params,BoletaPagoProductor boleta){
+        MoneyUtil moneyUtil = new MoneyUtil();
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         params.put("fecha",new Date());
         params.put("hora",new Date());
@@ -165,6 +166,7 @@ public class VoletaDePagoReportAction extends GenericReportAction {
         params.put("debOtrosDescuentos",boleta.getOtrosDescuentos());
         params.put("credOtrosIngresos",boleta.getOtrosIngresos());
         params.put("liquidoPagable",boleta.getLiquidoPagable());
+        params.put("liquidoPagableLiteral",moneyUtil.Convertir(boleta.getLiquidoPagable().toString(), true));
     }
 
     private String getMes(Month month) {
