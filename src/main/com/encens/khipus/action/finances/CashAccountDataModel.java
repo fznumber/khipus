@@ -21,7 +21,7 @@ import java.util.List;
 @Name("cashAccountDataModel")
 @Scope(ScopeType.PAGE)
 public class CashAccountDataModel extends QueryDataModel<CashAccountPk, CashAccount> {
-    private static final String[] RESTRICTIONS =
+    /*private static final String[] RESTRICTIONS =
             {"lower(cashAccount.accountCode) like  concat(lower(#{cashAccountDataModel.criteria.accountCode}), '%')",
                     "lower(cashAccount.description) like  concat('%',concat(lower(#{cashAccountDataModel.criteria.description}), '%'))",
                     "cashAccount.hasAccountingPermission = #{cashAccountDataModel.criteria.hasAccountingPermission}",
@@ -35,7 +35,17 @@ public class CashAccountDataModel extends QueryDataModel<CashAccountPk, CashAcco
                     "cashAccount.active = #{cashAccountDataModel.active}",
                     "cashAccount.accountType = #{cashAccountDataModel.criteria.accountType}",
                     "cashAccount.accountClass = #{cashAccountDataModel.criteria.accountClass}",
-                    "cashAccount.currency = #{cashAccountDataModel.criteria.currency}"};
+                    "cashAccount.currency = #{cashAccountDataModel.criteria.currency}"};*/
+
+    private static final String[] RESTRICTIONS =
+            {"lower(cashAccount.accountCode) like  concat(lower(#{cashAccountDataModel.criteria.accountCode}), '%')",
+             "lower(cashAccount.description) like  concat('%',concat(lower(#{cashAccountDataModel.criteria.description}), '%'))",
+             "cashAccount.movementAccount = #{cashAccountDataModel.movementAccount}",
+             "cashAccount.active = #{cashAccountDataModel.active}",
+             "cashAccount.accountType = #{cashAccountDataModel.criteria.accountType}",
+             /*"cashAccount.accountClass = #{cashAccountDataModel.criteria.accountClass}",*/
+             "cashAccount.currency = #{cashAccountDataModel.criteria.currency}"
+            };
 
     private Boolean movementAccount = Boolean.TRUE;
     private Boolean active = Boolean.TRUE;

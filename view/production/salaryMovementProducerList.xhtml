@@ -136,7 +136,9 @@
                     <h:outputText value="#{salaryMovementProducerItem.description}"/>
                 </rich:column>
                 <rich:column>
-                    <h:outputText value="#{salaryMovementProducerItem.valor}"/>
+                    <h:outputText value="#{salaryMovementProducerItem.valor}">
+                        <f:convertNumber pattern="#{messages['patterns.decimalNumber']}"/>
+                    </h:outputText>
                 </rich:column>
                 <rich:column>
                     <h:outputText value="#{salaryMovementProducerItem.typeMovementProducer.name}"/>
