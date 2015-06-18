@@ -447,7 +447,7 @@
 				<textElement>
 					<font fontName="Arial Narrow"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$P{debCredito}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{debVeterinario}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="21" y="94" width="151" height="13"/>
