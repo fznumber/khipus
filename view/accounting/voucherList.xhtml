@@ -1,0 +1,165 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:s="http://jboss.com/products/seam/taglib"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:a4j="http://richfaces.org/a4j"
+                xmlns:rich="http://richfaces.org/rich"
+                xmlns:app="http://encens.com/products/khipus/facelets"
+                template="/layout/template.xhtml">
+
+<ui:define name="pageTitle">#{messages['WarehouseVoucher.list']}</ui:define>
+<ui:param name="bodyAlign" value="center"/>
+<ui:param name="bodyWidth" value="97%"/>
+
+<ui:param name="selectedTab" value="finances"/>
+<ui:define name="body">
+<h:form id="VoucherSearch">
+<rich:simpleTogglePanel id="voucherSearchPanelId"
+                        label="#{messages['menu.finances.accounting']}"
+                        switchType="client">
+    <h:panelGrid columns="2"
+                 width="100%"
+                 cellpadding="0"
+                 cellspacing="0"
+                 border="0"
+                 columnClasses="width50percent,width50percent">
+        <s:div id="leftSidePanel">
+            <s:decorate id="transactionNumberField" template="/include/inputField.xhtml" styleClass="formRow">
+            <ui:define
+                    name="label">#{messages['Voucher.transactionNumber']}
+            </ui:define>
+            <h:inputText id="transactionNumber"
+                         value="#{voucherDataModel.criteria.transactionNumber}"
+                         styleClass="input"
+                         maxlength="150"
+                         tabindex="1"/>
+            </s:decorate>
+            <s:decorate id="glossField" template="/include/inputField.xhtml" styleClass="formRow">
+                <ui:define
+                        name="label">#{messages['Voucher.gloss']}
+                </ui:define>
+                <h:inputText id="gloss"
+                             value="#{voucherDataModel.criteria.gloss}"
+                             styleClass="input"
+                             maxlength="150"
+                             tabindex="2"/>
+            </s:decorate>
+    </s:div>
+
+        <s:div id="rightSidePanel">
+            <s:decorate template="/include/inputField.xhtml" styleClass="formRow">
+                <s:div styleClass="right input">
+                    <a4j:commandButton action="#{voucherDataModel.search}"
+                                       reRender="voucherSearchPanelId, voucherList, dataScroller"
+                                       styleClass="button"
+                                       value="#{messages['Common.search']}"
+                                       id="searchButtonId"
+                                       tabindex="10">
+                        <s:defaultAction/>
+                    </a4j:commandButton>
+                    <!--<a4j:commandButton action="#{warehouseVoucherDataModel.clear}"
+                                       reRender="warehouseVoucherSearchPanelId, warehouseVoucherList, dataScroller"
+                                       ajaxSingle="true"
+                                       immediate="true"
+                                       styleClass="button"
+                                       value="#{messages['Common.clear']}"
+                                       tabindex="11"/>-->
+                </s:div>
+            </s:decorate>
+        </s:div>
+    </h:panelGrid>
+
+    <rich:jQuery selector="#transactionNumber" query="focus()" timing="onload"/>
+
+</rich:simpleTogglePanel>
+
+<div class="buttons"></div>
+
+<rich:dataTable id="voucherList"
+                value="#{voucherDataModel}"
+                var="voucherItem"
+                rows="#{sessionUser.rowsPerPage}"
+                width="100%"
+                columnsWidth="7%, 7%, 7%, 7%, 7%, 55%, 5%">
+    <f:facet name="header">
+        <rich:columnGroup>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.date"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.date']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.transactionNumber"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.transactionNumber']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.documentType"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.documentType']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.form"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.moduleForm']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.state"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.state']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column>
+                <app:commandSortHeader sortProperty="voucher.gloss"
+                                       dataModel="#{voucherDataModel}"
+                                       reRender="voucherList, dataScroller">
+                    #{messages['Voucher.gloss']}
+                </app:commandSortHeader>
+            </rich:column>
+            <rich:column styleClass="center">
+                #{messages['Common.action']}
+            </rich:column>
+        </rich:columnGroup>
+    </f:facet>
+    <rich:column>
+        <h:outputText value="#{voucherItem.date}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.transactionNumber}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.documentType}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.form}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.state}"/>
+    </rich:column>
+    <rich:column>
+        <h:outputText value="#{voucherItem.gloss}"/>
+    </rich:column>
+    <rich:column styleClass="center">
+        <h:commandLink value="#{messages['Common.select']}"
+                       immediate="true"
+                       action="#{voucherAction.select(voucherItem)}">
+            <s:conversationPropagation value="none"/>
+        </h:commandLink>
+    </rich:column>
+</rich:dataTable>
+<app:dataScroller id="dataScroller" for="voucherList" dataModel="#{voucherDataModel}"/>
+
+</h:form>
+</ui:define>
+
+</ui:composition>

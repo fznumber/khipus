@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns="http://jboss.com/products/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+       login-view-id="/login.xhtml">
+
+    <page view-id="/accounting/*" login-required="true"/>
+
+    <page view-id="/accounting/voucherList.xhtml">
+        <end-conversation/>
+        <navigation from-action="#{voucherAction.select(voucherItem)}">
+            <rule if-outcome="Success">
+                <redirect view-id="/accounting/voucher.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+    <page view-id="/accounting/voucher.xhtml" no-conversation-view-id="/accounting/voucherList.xhtml">
+        <navigation>
+            <rule>
+                <redirect view-id="/accounting/voucherList.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+</pages>        
