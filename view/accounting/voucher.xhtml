@@ -11,7 +11,7 @@
 </ui:define>
 
 <ui:param name="bodyAlign" value="center"/>
-<ui:param name="bodyWidth" value="50%"/>
+<ui:param name="bodyWidth" value="70%"/>
 
 <ui:param name="selectedTab" value="financesVoucher"/>
 <ui:define name="body">
@@ -20,15 +20,15 @@
 
 <div class="buttons">
 
-    <h:commandButton
+    <!--<h:commandButton
             action="#"
             value="#{messages['WarehouseVoucher.button.generateDocument']}"
             immediate="true"
             styleClass="button"
-            rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}"/>
+            rendered="#{s:hasPermission('WAREHOUSEVOUCHER','VIEW')}"/>-->
 
 
-    <h:commandButton action="#"
+    <h:commandButton action="#{voucherAction.cancel}"
                      value="#{messages['Common.cancel']}"
                      styleClass="button"
                      immediate="true"/>
