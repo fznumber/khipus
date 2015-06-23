@@ -293,7 +293,8 @@ public class PayableDocument implements BaseModel {
 
     public void setEntity(FinancesEntity entity) {
         this.entity = entity;
-        setEntityCode(entity != null ? entity.getCode() : null);
+        //setEntityCode(entity != null ? entity.getCode() : null);
+        setEntityCode(entity != null ? entity.getId().toString() : null);
     }
 
     public Provider getProvider() {
