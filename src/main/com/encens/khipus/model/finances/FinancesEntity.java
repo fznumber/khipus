@@ -18,20 +18,32 @@ import javax.persistence.*;
         @NamedQuery(name = "FinancesEntity.countByAcronymAndEntity", query = "select count(fe) from FinancesEntity fe where lower(fe.acronym)=lower(:acronym) and fe.id<>:financesEntityId")
 })
 
-@SequenceGenerator(name = "FinancesEntity.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_entidad")
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "FinancesEntity.tableGenerator",
+        table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
+        pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
+        valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
+        pkColumnValue = "sf_entidades",
+        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
+
+/*@SequenceGenerator(name = "FinancesEntity.sequenceGenerator", sequenceName = Constants.FINANCES_SCHEMA + ".sf_entidad")*/
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
 @Table(name = "sf_entidades", schema = Constants.FINANCES_SCHEMA)
 public class FinancesEntity implements BaseModel {
 
     @Id
-    @Column(name = "COD_ENTI", length = 6, nullable = false, updatable = false)
-    @GeneratedValue(generator = "FinancesEntity.sequenceGenerator")
-    private String id;
+    @Column(name = "COD_ENTI", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "FinancesEntity.tableGenerator")
+    private Long id;
+
+    /*@Id
+    @javax.persistence.Column(name = "idgestion", nullable = false)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "Gestion.tableGenerator")
+    private Long id;*/
 
     //todo This attribute must be use for readonly
-    @Column(name = "COD_ENTI", insertable = false, updatable = false)
-    private String code;
+    /*@Column(name = "COD_ENTI", insertable = false, updatable = false)
+    private String code;*/
 
     @Column(name = "NIT", length = 20)
     @Length(max = 20)
@@ -89,21 +101,21 @@ public class FinancesEntity implements BaseModel {
     @Column(name = "VERSION")
     private long version;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getCode() {
+    /*public String getCode() {
         return code;
-    }
+    }*/
 
-    public void setCode(String code) {
+    /*public void setCode(String code) {
         this.code = code;
-    }
+    }*/
 
     public String getNitNumber() {
         return nitNumber;

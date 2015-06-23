@@ -55,7 +55,7 @@ public class FinanceProviderServiceBean extends GenericServiceBean implements Fi
         FinancesEntity financesEntity = provider.getEntity();
         super.create(financesEntity);
         provider.setEntity(financesEntity);
-        provider.setId(new ProviderPk(Constants.defaultCompanyNumber, financesEntity.getId()));
+        provider.setId(new ProviderPk(Constants.defaultCompanyNumber, financesEntity.getId().toString()));
         super.create(provider);
         if (moduleProviderType != null) {
             getEntityManager().refresh(provider);
@@ -72,7 +72,7 @@ public class FinanceProviderServiceBean extends GenericServiceBean implements Fi
         super.update(provider.getEntity());
         getEntityManager().refresh(provider.getEntity());
         if (provider.getId() == null) {
-            provider.setId(new ProviderPk(Constants.defaultCompanyNumber, provider.getEntity().getId()));
+            provider.setId(new ProviderPk(Constants.defaultCompanyNumber, provider.getEntity().getId().toString()));
             super.create(provider);
         } else {
             super.update(provider);

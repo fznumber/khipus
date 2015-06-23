@@ -212,7 +212,7 @@ public class FinanceAccountingDocumentServiceBean extends GenericServiceBean imp
         id.setAuthorizationNumber(document.getAuthorizationNumber());
         id.setInvoiceNumber(document.getNumber());
         id.setCompanyNumber(Constants.defaultCompanyNumber);
-        id.setEntityCode(document.getFinancesEntity().getId());
+        id.setEntityCode(document.getFinancesEntity().getId().toString());
 
         return id;
     }
@@ -222,7 +222,7 @@ public class FinanceAccountingDocumentServiceBean extends GenericServiceBean imp
         id.setAuthorizationNumber(document.getAuthorizationNumber());
         id.setInvoiceNumber(document.getNumber());
         id.setCompanyNumber(Constants.defaultCompanyNumber);
-        id.setEntityCode(document.getFinancesEntity().getId());
+        id.setEntityCode(document.getFinancesEntity().getId().toString());
 
         return id;
     }
@@ -232,7 +232,7 @@ public class FinanceAccountingDocumentServiceBean extends GenericServiceBean imp
         id.setAuthorizationNumber(collectionDocument.getAuthorizationNumber());
         id.setInvoiceNumber(collectionDocument.getNumber());
         id.setCompanyNumber(Constants.defaultCompanyNumber);
-        id.setEntityCode(collectionDocument.getFinancesEntity().getId());
+        id.setEntityCode(collectionDocument.getFinancesEntity().getId().toString());
         return id;
     }
 }

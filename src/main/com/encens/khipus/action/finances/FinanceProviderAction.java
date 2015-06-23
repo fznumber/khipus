@@ -58,7 +58,7 @@ public class FinanceProviderAction extends GenericAction<Provider> {
     public void selectInstanceByEntityInModalPanel(FinancesEntity financesEntity) {
         setOp(OP_UPDATE);
         try {
-            setInstance(financeProviderService.findById(new ProviderPk(Constants.defaultCompanyNumber, financesEntity.getId())));
+            setInstance(financeProviderService.findById(new ProviderPk(Constants.defaultCompanyNumber, financesEntity.getId().toString())));
         } catch (EntryNotFoundException e) {
             getInstance().setEntity(financesEntity);
         }

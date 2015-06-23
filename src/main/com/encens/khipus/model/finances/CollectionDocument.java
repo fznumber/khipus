@@ -37,7 +37,7 @@ public class CollectionDocument extends AccountingDocument {
     private RotatoryFundCollection rotatoryFundCollection;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDENTIDAD")
+    @JoinColumn(name = "IDENTIDAD", referencedColumnName = "COD_ENTI")
     private FinancesEntity financesEntity;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

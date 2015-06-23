@@ -48,7 +48,7 @@ public class DischargeDocument extends AccountingDocument {
     private BigDecimal exchangeRate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "IDENTIDAD", nullable = true, insertable = true, updatable = true)
+    @JoinColumn(name = "IDENTIDAD", referencedColumnName = "COD_ENTI", nullable = true, insertable = true, updatable = true)
     private FinancesEntity financesEntity;
 
 
