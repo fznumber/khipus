@@ -673,6 +673,9 @@ public class RawMaterialPayRollReportAction extends GenericReportAction {
         if (periodo.getResourceKey().toString().equals("Periodo.first")) {
             sql +=" 0.0 D16,\n";
         }
+        if (periodo.getResourceKey().toString().equals("Periodo.second") && endDay == 30) {
+            sql +=" 0.0 D16,\n";
+        }
         cont = 1;
         //sql += " IFNULL(d"+cont+".cantidad, 0) ";
         for(int d=initDay+1;d<=endDay+1;d++)
