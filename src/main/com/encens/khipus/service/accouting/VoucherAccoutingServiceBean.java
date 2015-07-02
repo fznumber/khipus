@@ -1,6 +1,7 @@
 package com.encens.khipus.service.accouting;
 
 import com.encens.khipus.framework.service.GenericServiceBean;
+import com.encens.khipus.model.finances.Voucher;
 import com.encens.khipus.model.finances.VoucherDetail;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
@@ -41,4 +42,21 @@ public class VoucherAccoutingServiceBean extends GenericServiceBean implements V
         }
         return voucherDetails;
     }
+
+    @Override
+    public Voucher getVoucher(String transactionNumber) {
+
+        Voucher voucher = null;
+        try {
+            voucher = (Voucher) em.createQuery("select voucher from Voucher voucher " +
+                    " where voucher.transactionNumber = :transactionNumber ")
+                    .setParameter("transactionNumber", transactionNumber)
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return null;
+        }
+        return voucher;
+    }
+
+
 }

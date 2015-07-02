@@ -25,9 +25,9 @@
                          border="0"
                          columnClasses="width50percent,width50percent">
                 <s:decorate id="codeField" template="/include/inputField.xhtml" styleClass="formRow">
-                    <ui:define name="label">#{messages['FinancesEntity.code']}</ui:define>
+                    <ui:define name="label">#{messages['FinancesEntity.id']}</ui:define>
                     <h:inputText id="#{dialogId}-code"
-                                 value="#{financesEntityDataModel.criteria.code}"
+                                 value="#{financesEntityDataModel.criteria.id}"
                                  tabindex="1"
                                  styleClass="input"/>
                 </s:decorate>
@@ -60,7 +60,7 @@
             <f:facet name="header">
                 <rich:columnGroup>
                     <rich:column>
-                        <app:commandSortHeader sortProperty="financesEntity.code"
+                        <app:commandSortHeader sortProperty="financesEntity.id"
                                                dataModel="#{financesEntityDataModel}"
                                                reRender="financesEntityList, dataScroller">
                             #{messages['FinancesEntity.code']}
@@ -86,7 +86,7 @@
                 </rich:columnGroup>
             </f:facet>
             <rich:column>
-                <h:outputText value="#{instance.code}"/>
+                <h:outputText value="#{instance.id}"/>
             </rich:column>
             <rich:column>
                 <h:outputText value="#{instance.acronym}"/>

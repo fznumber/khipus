@@ -18,7 +18,7 @@ import java.util.List;
 @Scope(ScopeType.PAGE)
 public class FinancesEntityDataModel extends QueryDataModel<String, FinancesEntity> {
     private static final String[] RESTRICTIONS = {
-            "lower(financesEntity.code) like concat(lower(#{financesEntityDataModel.criteria.code}), '%')",
+            "lower(financesEntity.code) like concat(lower(#{financesEntityDataModel.criteria.id}), '%')",
             "lower(financesEntity.acronym) like concat('%', concat(lower(#{financesEntityDataModel.criteria.acronym}), '%'))"
     };
 

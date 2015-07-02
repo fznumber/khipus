@@ -4,7 +4,9 @@ import com.encens.khipus.framework.service.GenericServiceBean;
 import com.encens.khipus.model.finances.FinanceDocument;
 import com.encens.khipus.model.finances.FinanceDocumentPk;
 import com.encens.khipus.model.finances.Voucher;
+import com.encens.khipus.service.accouting.VoucherAccoutingService;
 import org.jboss.seam.annotations.AutoCreate;
+import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 
 import javax.ejb.Stateless;
@@ -17,12 +19,17 @@ import javax.ejb.Stateless;
 @Name("paymentRemakeHelperService")
 @AutoCreate
 public class PaymentRemakeHelperServiceBean extends GenericServiceBean implements PaymentRemakeHelperService {
+
+    @In
+    private VoucherAccoutingService voucherAccoutingService;
+
     public FinanceDocument getFinanceDocument(String companyNumber, String transactionNumber) {
         return getEntityManager().find(FinanceDocument.class, new FinanceDocumentPk(companyNumber, transactionNumber));
     }
 
     public Voucher getVoucher(String transactionNumber) {
-        return getEntityManager().find(Voucher.class, transactionNumber);
+        return voucherAccoutingService.getVoucher(transactionNumber);
+        //return getEntityManager().find(Voucher.class, transactionNumber);
     }
 
     public Boolean isStoredInAccountingMovementDetail(String companyNumber, String transactionNumber) {
