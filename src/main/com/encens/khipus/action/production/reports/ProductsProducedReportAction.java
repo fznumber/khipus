@@ -3,23 +3,16 @@ package com.encens.khipus.action.production.reports;
 import com.encens.khipus.action.reports.GenericReportAction;
 import com.encens.khipus.action.reports.PageFormat;
 import com.encens.khipus.action.reports.PageOrientation;
-import com.encens.khipus.model.warehouse.SubGroupPK;
-import com.encens.khipus.model.warehouse.SubGroupState;
-import com.encens.khipus.service.production.ProductionPlanningService;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Create;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.annotations.security.Restrict;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Encens S.R.L.
@@ -48,11 +41,13 @@ public class ProductsProducedReportAction extends GenericReportAction {
 
     @Override
     protected String getEjbql() {
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        //DateFormat df = new SimpleDateFormat("dd/MM/yyyy"); //For Oracle
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String start = df.format(startDate);
         String end = df.format(endDate);
 
-        return  " SELECT distinct productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
+        //For Oracle
+        /*return  " SELECT distinct productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
                       " ,productionOrder.productComposition.processedProduct.productItem.name as name" +
                 " FROM  ProductionPlanning productionPlanning " +
                 " inner join productionPlanning.productionOrderList productionOrder " +
@@ -63,8 +58,20 @@ public class ProductsProducedReportAction extends GenericReportAction {
                 " FROM ProductionPlanning productionPlanning " +
                 " inner join productionPlanning.baseProducts baseProduct " +
                 " inner join baseProduct.singleProducts singleProduct " +
-                " where productionPlanning.date between to_date('"+start+"','dd/mm/yyyy') and to_date('"+end+"','dd/mm/yyyy')";
+                " where productionPlanning.date between to_date('"+start+"','dd/mm/yyyy') and to_date('"+end+"','dd/mm/yyyy')";*/
 
+        return  " SELECT distinct productionOrder.productComposition.processedProduct.productItem.productItemCode as productItemCode " +
+                " ,productionOrder.productComposition.processedProduct.productItem.name as name" +
+                " FROM  ProductionPlanning productionPlanning " +
+                " inner join productionPlanning.productionOrderList productionOrder " +
+                " where productionPlanning.date between '"+start+"' and '"+end+"'" +
+                " union " +
+                " SELECT distinct singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode as productItemCode " +
+                " ,singleProduct.productProcessingSingle.metaProduct.productItem.name as name " +
+                " FROM ProductionPlanning productionPlanning " +
+                " inner join productionPlanning.baseProducts baseProduct " +
+                " inner join baseProduct.singleProducts singleProduct " +
+                " where productionPlanning.date between '"+start+"' and '"+end+"'";
     }
 
     public void generateReport() {

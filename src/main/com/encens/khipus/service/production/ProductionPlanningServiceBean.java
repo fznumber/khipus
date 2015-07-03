@@ -22,7 +22,6 @@ import javax.persistence.TemporalType;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -466,7 +465,8 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     public Double getTotalProducedOrderByArticleAndDate(String codArt, Date startDate, Date endDate) {
         Double total = 0.0;
         try {
-            total = (Double)getEntityManager()
+            //For Oracle
+            /*total = (Double)getEntityManager()
                     .createQuery("select nvl(sum(productionOrder.producedAmount),0.0) from ProductionPlanning productionPlanning " +
                             " inner join productionPlanning.productionOrderList productionOrder " +
                             " where productionPlanning.date between :startDate and :endDate " +
@@ -474,7 +474,19 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                     .setParameter("startDate", startDate, TemporalType.DATE)
                     .setParameter("endDate",endDate,TemporalType.DATE)
                     .setParameter("codArt",codArt)
+                    .getSingleResult();*/
+
+            Object obj = getEntityManager().createQuery("select sum(productionOrder.producedAmount) from ProductionPlanning productionPlanning " +
+                    " inner join productionPlanning.productionOrderList productionOrder " +
+                    " where productionPlanning.date between :startDate and :endDate " +
+                    " and productionOrder.productComposition.processedProduct.productItem.productItemCode =:codArt")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("codArt",codArt)
                     .getSingleResult();
+
+            if(obj == null) total = 0.0; else total = (Double)obj;
+
         }catch(NoResultException e){
             return 0.0;
         }
@@ -484,8 +496,10 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
     @Override
     public Double getTotalProducedReproByArticleAndDate(String codArt, Date startDate, Date endDate) {
         Long total;
+
         try {
-            total = (Long)getEntityManager()
+            //For Oracle
+            /*total = (Long)getEntityManager()
                     .createQuery("select nvl(sum(singleProduct.amount),0) from ProductionPlanning productionPlanning " +
                             " inner join productionPlanning.baseProducts baseProduct " +
                             " inner join baseProduct.singleProducts singleProduct " +
@@ -494,7 +508,20 @@ public class ProductionPlanningServiceBean extends ExtendedGenericServiceBean im
                     .setParameter("startDate", startDate, TemporalType.DATE)
                     .setParameter("endDate",endDate,TemporalType.DATE)
                     .setParameter("codArt",codArt)
+                    .getSingleResult();*/
+
+            Object obj = getEntityManager().createQuery("select sum(singleProduct.amount) from ProductionPlanning productionPlanning " +
+                            " inner join productionPlanning.baseProducts baseProduct " +
+                            " inner join baseProduct.singleProducts singleProduct " +
+                            " where productionPlanning.date between :startDate and :endDate " +
+                            " and singleProduct.productProcessingSingle.metaProduct.productItem.productItemCode =:codArt")
+                    .setParameter("startDate", startDate, TemporalType.DATE)
+                    .setParameter("endDate",endDate,TemporalType.DATE)
+                    .setParameter("codArt",codArt)
                     .getSingleResult();
+
+            if(obj == null) total = 0L ; else total = (Long)obj;
+
         }catch(NoResultException e){
             return 0.0;
         }
