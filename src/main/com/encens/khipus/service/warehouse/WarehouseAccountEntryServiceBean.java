@@ -430,6 +430,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
         }
+        voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
         voucherService.create(voucher);
         return voucher;
     }

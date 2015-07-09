@@ -84,6 +84,7 @@ public class VoucherServiceBean implements VoucherService {
             if (!BigDecimalUtil.isZeroOrNull(detail.getDebit()) || !BigDecimalUtil.isZeroOrNull(detail.getCredit())) {
                 isEmpty = false;
                 detail.setTransactionNumber(voucher.getTransactionNumber());
+                detail.setVoucher(voucher);
                 em.persist(detail);
             }
         }

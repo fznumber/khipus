@@ -15,15 +15,26 @@ import java.util.UUID;
  * @author
  * @version 1.4
  */
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "Voucher.tableGenerator",
+        table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
+        pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
+        valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
+        pkColumnValue = "sf_tmpdet",
+        initialValue = 1,
+        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
 @Table(name = "sf_tmpdet", schema = Constants.FINANCES_SCHEMA)
 public class VoucherDetail implements BaseModel {
 
-    //Fake ID, just to avoid duplicated in the EntityManager
     @Id
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "Voucher.tableGenerator")
+    @Column(name = "ID_TMPDET", nullable = true)
+    private Long id;
+
+    //Fake ID, just to avoid duplicated in the EntityManager
     @Column(name = "TIMEMILLIS", insertable = false, updatable = false)
-    private String id;
+    private String idTime;
 
     @Column(name = "NO_TRANS", nullable = true, insertable = true, updatable = false, length = 10)
     @Length(max = 10)
@@ -56,6 +67,10 @@ public class VoucherDetail implements BaseModel {
     @Column(name = "TC", precision = 10, scale = 6, updatable = false)
     private BigDecimal exchangeAmount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tmpenc", nullable = false)
+    private Voucher voucher;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
             @JoinColumn(name = "NO_CIA", referencedColumnName = "NO_CIA", nullable = false, updatable = false, insertable = false),
@@ -79,15 +94,15 @@ public class VoucherDetail implements BaseModel {
 
     @PrePersist
     private void defineFakeIdentifier() {
-        id = UUID.randomUUID().toString();
+        idTime = UUID.randomUUID().toString();
     }
 
-    public String getId() {
-        return id;
+    public String getIdTime() {
+        return idTime;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdTime(String idTime) {
+        this.idTime = idTime;
     }
 
     public String getTransactionNumber() {
@@ -168,5 +183,22 @@ public class VoucherDetail implements BaseModel {
 
     public void setCashAccount(CashAccount cashAccount) {
         this.cashAccount = cashAccount;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
     }
 }
