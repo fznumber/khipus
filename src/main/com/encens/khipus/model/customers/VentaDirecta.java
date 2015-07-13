@@ -41,8 +41,8 @@ public class VentaDirecta implements BaseModel  {
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "customerOrder")
     private Collection<ArticleOrder> articulosPedidos ;
 
-    @Column(name="CODIGO")
-    private Integer codigo;
+    @Column(name="CODIGO",columnDefinition="int(11)")
+    private Long codigo;
 
     @JoinColumn(name = "IDCLIENTE", referencedColumnName = "IDPERSONACLIENTE")
     @ManyToOne(optional = false)
@@ -129,11 +129,11 @@ public class VentaDirecta implements BaseModel  {
         this.articulosPedidos = articulosPedidos;
     }
 
-    public Integer getCodigo() {
+    public Long getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Integer codigo) {
+    public void setCodigo(Long codigo) {
         this.codigo = codigo;
     }
 

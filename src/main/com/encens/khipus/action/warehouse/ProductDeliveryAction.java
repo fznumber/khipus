@@ -454,8 +454,8 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
             for(Territoriotrabajo territorio:territorios) {
                 for (CustomerOrder pedido : soldProductService.findPedidosPorFechaTerritorio(date,territorio)) {
                     OrderClient orderClient = new OrderClient();
-                    orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
-                    orderClient.setName(pedido.getCodigo().getSecuencia().toString() + "-" + pedido.getCliente().getNombreCompleto());
+                    orderClient.setIdOrder(pedido.getCodigo().toString());
+                    orderClient.setName(pedido.getCodigo().toString() + "-" + pedido.getCliente().getNombreCompleto());
                     orderClient.setType("CLIENTE");
                     orderClient.setState(pedido.getEstado());
                     orderClient.setCliente(pedido.getCliente());
@@ -470,7 +470,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         }else{
             for (CustomerOrder pedido : pedidos) {
                 OrderClient orderClient = new OrderClient();
-                orderClient.setIdOrder(pedido.getCodigo().getSecuencia().toString());
+                orderClient.setIdOrder(pedido.getCodigo().toString());
                 orderClient.setName(pedido.getCliente().getNombreCompleto());
                 orderClient.setType("CLIENTE");
                 orderClients.add(orderClient);
@@ -556,7 +556,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     private boolean fueEntregado() {
             if(customerOrder.getEstado()!= null) {
                 if (!customerOrder.getEstado().equals("PREPARAR")) {
-                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", customerOrder.getCodigo().getSecuencia()));
+                    setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", customerOrder.getCodigo()));
                     return true;
                 }
             }
@@ -827,7 +827,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
         if(!client.getType().equals("TERRITORIO"))
         for(CustomerOrder pedido:pedidos)
         {
-            if(pedido.getCodigo().getSecuencia().toString().equals(client.getIdOrder()))
+            if(pedido.getCodigo().toString().equals(client.getIdOrder()))
             {
                 for(ArticleOrder articulo: pedido.getArticulosPedidos()) {
                     if(articulo.getCodArt().equals(item.getCodArt()))

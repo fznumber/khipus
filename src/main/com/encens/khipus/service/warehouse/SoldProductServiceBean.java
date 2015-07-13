@@ -15,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -193,8 +194,8 @@ public class SoldProductServiceBean extends GenericServiceBean implements SoldPr
         CustomerOrder customerOrder;
         try{
             customerOrder = (CustomerOrder)getEntityManager()
-                    .createQuery("select pe from CustomerOrder pe where pe.codigo.secuencia =:codigo and pe.estado = 'PREPARAR'")
-                    .setParameter("codigo", Long.valueOf(numeroPedido).longValue())
+                    .createQuery("select pe from CustomerOrder pe where pe.codigo =:codigo and pe.estado = 'PREPARAR'")
+                    .setParameter("codigo",Long.valueOf(numeroPedido).longValue() )
             .getSingleResult();
         }catch (NoResultException e){
             return null;
