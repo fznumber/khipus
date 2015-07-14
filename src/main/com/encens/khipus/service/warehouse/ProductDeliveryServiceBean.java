@@ -228,6 +228,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
     @Override
     public boolean verifyAmounts(CustomerOrder customerOrder) {
         Boolean result = false;
+        if(customerOrder == null)
+            return result;
+
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
 
         WarehouseDocumentType documentType = getFirstConsumptionType();
@@ -290,6 +293,9 @@ public class ProductDeliveryServiceBean extends GenericServiceBean implements Pr
 
     public boolean verifyAmounts(VentaDirecta ventaDirecta) {
         Boolean result = false;
+        if(ventaDirecta == null)
+            return result;
+
         List<InventoryMessage> errorMessages = new ArrayList<InventoryMessage>();
 
         WarehouseDocumentType documentType = getFirstConsumptionType();

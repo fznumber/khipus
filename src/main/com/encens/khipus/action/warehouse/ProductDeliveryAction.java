@@ -554,6 +554,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
     }
 
     private boolean fueEntregado() {
+        if(customerOrder != null)
             if(customerOrder.getEstado()!= null) {
                 if (!customerOrder.getEstado().equals("PREPARAR")) {
                     setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", customerOrder.getCodigo()));
@@ -561,6 +562,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 }
             }
 
+        if(ventaDirecta != null)
             if(ventaDirecta.getEstado()!=null){
                 if(!ventaDirecta.getEstado().equals("PREPARAR")){
                     setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageWasDeliveryOrder", ventaDirecta.getCodigo()));
