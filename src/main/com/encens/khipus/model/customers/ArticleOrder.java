@@ -37,6 +37,10 @@ public class ArticleOrder {
     @ManyToOne
     private CustomerOrder customerOrder;
 
+    @JoinColumn(name = "IDVENTADIRECTA",referencedColumnName = "IDVENTADIRECTA")
+    @ManyToOne
+    private VentaDirecta ventaDirecta;
+
     @Column(name = "CANTIDAD", nullable = true)
     private Integer amount;
 
@@ -150,5 +154,13 @@ public class ArticleOrder {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public VentaDirecta getVentaDirecta() {
+        return ventaDirecta;
+    }
+
+    public void setVentaDirecta(VentaDirecta ventaDirecta) {
+        this.ventaDirecta = ventaDirecta;
     }
 }

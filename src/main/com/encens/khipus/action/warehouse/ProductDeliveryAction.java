@@ -401,9 +401,16 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
 
     public void search() {
         customerOrder = soldProductService.findPedidoPorCodigo(orderNumber);
-        ventaDirecta = soldProductService.findVentaPorCodigo(orderNumber);
-        if(customerOrder == null && ventaDirecta == null)
+        if(customerOrder == null)
         setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
+        getInstance().setInvoiceNumber(null);
+        soldProducts.clear();
+    }
+
+    public void searchVentaDirecta() {
+        ventaDirecta = soldProductService.findVentaPorCodigo(orderNumber);
+        if(ventaDirecta == null)
+            setMessageSearchOrder(MessageUtils.getMessage("ProductDelivery.messageSearchOrderNotFound"));
         getInstance().setInvoiceNumber(null);
         soldProducts.clear();
     }

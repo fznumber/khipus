@@ -38,10 +38,10 @@ public class VentaDirecta implements BaseModel  {
     @Column(name = "TOTALIMPORTE")
     private Double totalimporte = 0.0;
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "customerOrder")
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "ventaDirecta")
     private Collection<ArticleOrder> articulosPedidos ;
 
-    @Column(name="CODIGO",columnDefinition="int(11)")
+    @Column(name="CODIGO",columnDefinition="BIGINT(20)")
     private Long codigo;
 
     @JoinColumn(name = "IDCLIENTE", referencedColumnName = "IDPERSONACLIENTE")

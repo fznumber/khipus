@@ -49,6 +49,12 @@
 
 
             <div class="buttons">
+                <s:button value="Entrega Ventas al Contado"
+                          view="/warehouse/productDeliveryVentaDirecta.xhtml"
+                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          styleClass="button"
+                          propagation="begin"/>
+
                 <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
                           view="/warehouse/productDelivery.xhtml"
                           rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
@@ -133,6 +139,11 @@
             </rich:dataTable>
             <app:dataScroller id="dataScroller" for="productDeliveryList" dataModel="#{productDeliveryDataModel}"/>
             <div class="buttons">
+                <s:button value="Entrega Ventas al Contado"
+                          view="/warehouse/productDeliveryVentaDirecta.xhtml"
+                          rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
+                          styleClass="button"
+                          propagation="begin"/>
                 <s:button value="#{messages['menu.warehouse.productDeliveryByOrder']}"
                           view="/warehouse/productDelivery.xhtml"
                           rendered="#{s:hasPermission('PRODUCTDELIVERY','CREATE')}"
