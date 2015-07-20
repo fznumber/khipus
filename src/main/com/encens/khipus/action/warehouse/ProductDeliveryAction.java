@@ -872,7 +872,7 @@ public class ProductDeliveryAction extends GenericAction<ProductDelivery> {
                 {
                     if(articulo.getCodArt().equals(item.getCodArt()))
                     {
-                        total +=articulo.getAmount();
+                        total +=articulo.getTotal();
                     }
                 }
         }
