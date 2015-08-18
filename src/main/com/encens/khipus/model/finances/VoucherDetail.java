@@ -15,20 +15,20 @@ import java.util.UUID;
  * @author
  * @version 1.4
  */
-@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "Voucher.tableGenerator",
+@TableGenerator(schema = com.encens.khipus.util.Constants.KHIPUS_SCHEMA, name = "VoucherDetail.tableGenerator",
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "sf_tmpdet",
+        pkColumnValue = "sftmpdet",
         initialValue = 1,
-        allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
+        allocationSize = 1)
 @Entity
 @EntityListeners(UpperCaseStringListener.class)
-@Table(name = "sf_tmpdet", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sftmpdet", schema = Constants.FINANCES_SCHEMA)
 public class VoucherDetail implements BaseModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "Voucher.tableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "VoucherDetail.tableGenerator")
     @Column(name = "ID_TMPDET", nullable = true)
     private Long id;
 

@@ -191,7 +191,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                         BigDecimal.ONE));
             }
 
-            voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
+            //voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc()); Error
+            voucher.setTransactionNumber(financesPkGeneratorService.getNextNoTransTmpenc());
             voucherService.create(voucher);
             purchaseOrderPayment.setTransactionNumber(voucher.getTransactionNumber());
             if (!getEntityManager().contains(purchaseOrderPayment)) {
@@ -301,7 +302,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
         }
-        voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
+        //voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc()); Error
+        voucher.setTransactionNumber(financesPkGeneratorService.getNextNoTransTmpenc());
         voucherService.create(voucher);
     }
 
@@ -430,7 +432,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
         }
-        voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
+        //voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc()); Error
+        voucher.setTransactionNumber(financesPkGeneratorService.getNextNoTransTmpenc());
         voucherService.create(voucher);
         return voucher;
     }
@@ -563,7 +566,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                             FinancesCurrencyType.P,
                             BigDecimal.ONE));
                 }
-                voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
+                //voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc()); Error
+                voucher.setTransactionNumber(financesPkGeneratorService.getNextNoTransTmpenc());
                 voucherService.create(voucher);
                 transactionNumber = voucher.getTransactionNumber();
                 purchaseOrderPayment.setTransactionNumber(voucher.getTransactionNumber());
@@ -675,7 +679,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                             FinancesCurrencyType.P,
                             BigDecimal.ONE));
                 }
-                voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc());
+                //voucher.setTransactionNumber(financesPkGeneratorService.getNextTmpenc()); Error
+                voucher.setTransactionNumber(financesPkGeneratorService.getNextNoTransTmpenc());
                 voucherService.create(voucher);
 
                 purchaseOrderPayment.setTransactionNumber(voucher.getTransactionNumber());
@@ -890,7 +895,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.INPUT_PROD_WAREHOUSE, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUserProduction().getId());
 
-        String transactionNumber = financesPkGeneratorService.getNextTmpenc();
+        //String transactionNumber = financesPkGeneratorService.getNextTmpenc(); Error
+        String transactionNumber = financesPkGeneratorService.getNextNoTransTmpenc();
         voucherForGeneration.setTransactionNumber(transactionNumber);
 
         Warehouse warehouse = warehouseService.findWarehouseByCode(warehouseVoucher.getWarehouseCode());
@@ -938,7 +944,8 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         Voucher voucherForGeneration = VoucherBuilder.newGeneralVoucher(Constants.WAREHOUSE_VOUCHER_FORM, gloss);
         voucherForGeneration.setUserNumber(companyConfiguration.getDefaultAccountancyUser().getId());
 
-        String transactionNumber = financesPkGeneratorService.getNextTmpenc();
+        //String transactionNumber = financesPkGeneratorService.getNextTmpenc(); Error
+        String transactionNumber = financesPkGeneratorService.getNextNoTransTmpenc();
         voucherForGeneration.setTransactionNumber(transactionNumber);
 
         voucherForGeneration.addVoucherDetail(VoucherDetailBuilder.newDebitVoucherDetail(
@@ -1110,6 +1117,9 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
         CompanyConfiguration companyConfiguration = companyConfigurationService.findCompanyConfiguration();
         List<MovementDetail> movementDetails = movementDetailService.findDetailByVoucherAndType(warehouseVoucher, MovementDetailType.S);
 
+        String transactionNumber = financesPkGeneratorService.getNextNoTransTmpenc();
+        voucherForGeneration.setTransactionNumber(transactionNumber);
+
         BigDecimal total = BigDecimal.ZERO;
         for (MovementDetail movementDetail : movementDetails) {
             if (!movementDetail.getProductItem().getControlValued()) {
@@ -1148,6 +1158,7 @@ public class WarehouseAccountEntryServiceBean extends GenericServiceBean impleme
                     FinancesCurrencyType.P,
                     BigDecimal.ONE));
             //check transactionNumber
+            System.out.println("--------> * " + voucherForGeneration.getTransactionNumber());
             voucherService.create(voucherForGeneration);
         }
     }

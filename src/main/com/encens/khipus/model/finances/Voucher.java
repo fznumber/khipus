@@ -25,13 +25,13 @@ import java.util.List;
         table = com.encens.khipus.util.Constants.SEQUENCE_TABLE_NAME,
         pkColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_PK_COLUMN_NAME,
         valueColumnName = com.encens.khipus.util.Constants.SEQUENCE_TABLE_VALUE_COLUMN_NAME,
-        pkColumnValue = "sf_tmpenc",
+        pkColumnValue = "sftmpenc",
         initialValue = 1,
         allocationSize = com.encens.khipus.util.Constants.SEQUENCE_ALLOCATION_SIZE)
 
 @Entity
 @EntityListeners({CompanyNumberListener.class, UpperCaseStringListener.class})
-@Table(name = "sf_tmpenc", schema = Constants.FINANCES_SCHEMA)
+@Table(name = "sftmpenc", schema = Constants.FINANCES_SCHEMA)
 public class Voucher implements BaseModel{
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "Voucher.tableGenerator")
